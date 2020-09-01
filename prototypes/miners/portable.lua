@@ -2,7 +2,7 @@
 -- mining speed is 2/3 that of electric miner
 local pm = table.deepcopy(data.raw['mining-drill']['burner-mining-drill'])
 
-pm.name = "portable-miner-drill"
+pm.name = "portable-miner"
 pm.vector_to_place_result = {0,0.01}
 pm.resource_searching_radius = 0.49
 pm.mining_speed = 1/3
@@ -14,7 +14,7 @@ if not pm.flags then pm.flags = {} end
 table.insert(pm.flags,"not-deconstructable")
 
 local pmbox = table.deepcopy(data.raw['container']['wooden-chest'])
-pmbox.name = "portable-miner"
+pmbox.name = "portable-miner-box"
 pmbox.inventory_size = 1
 pmbox.enable_inventory_bar = false
 pmbox.minable.result = "portable-miner"
@@ -30,8 +30,14 @@ table.insert(pmbox.flags,"placeable-off-grid")
 
 local pmitem = table.deepcopy(data.raw['item']['burner-mining-drill'])
 pmitem.name = "portable-miner"
+pmitem.subgroup = "production-miner"
+pmitem.order = "a"
 pmitem.stack_size = 1
-pmitem.place_result = "portable-miner-drill"
+pmitem.place_result = "portable-miner"
+pmitem.icons = {{
+	icon = "__Satisfactorio__/graphics/icons/portable-miner.png",
+	icon_size = 64
+}}
 
 local pmrecipe = {
 	name = "portable-miner",
@@ -42,7 +48,7 @@ local pmrecipe = {
 	},
 	result = "portable-miner",
 	energy_required = 1,
-	category = "building",
+	category = "equipment",
 	hide_from_stats = true
 }
 
