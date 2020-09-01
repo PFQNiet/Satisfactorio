@@ -13,6 +13,9 @@ local function OnEntityCreated(event)
 		entity.minable = false
 		entity.destructible = false
 	end
+	if entity.name == "craft-bench" then
+		entity.active = false
+	end
 end
 local function OnEntityRemoved(event)
 	local entity = event.entity
@@ -27,6 +30,22 @@ local function OnEntityRemoved(event)
 		drill.destroy()
 	end
 end
+local function OnGuiOpened(event)
+	if event.gui_type ~= defines.gui_type.entity then return end
+	local entity = event.entity
+	if not entity or not entity.valid then return end
+	if entity.name == "craft-bench" then
+		entity.active = true
+	end
+end
+local function OnGuiClosed(event)
+	if event.gui_type ~= defines.gui_type.entity then return end
+	local entity = event.entity
+	if not entity or not entity.valid then return end
+	if entity.name == "craft-bench" then
+		entity.active = false
+	end
+end
 local function registerEvents()
 	local portable_miner_filter = {{filter="name",name="portable-miner"}, {filter="name",name="portable-miner-drill"}}
 	script.on_event( defines.events.on_built_entity, OnEntityCreated, portable_miner_filter )
@@ -37,7 +56,9 @@ local function registerEvents()
 	script.on_event( defines.events.on_robot_mined_entity, OnEntityRemoved, portable_miner_filter )
 	script.on_event( defines.events.on_entity_died, OnEntityRemoved, portable_miner_filter )
 	script.on_event( defines.events.script_raised_destroy, OnEntityRemoved )
-	log("Registered events!")
+	
+	script.on_event( defines.events.on_gui_opened, OnGuiOpened)
+	script.on_event( defines.events.on_gui_closed, OnGuiClosed)
 end
 
 script.on_init(function(event)

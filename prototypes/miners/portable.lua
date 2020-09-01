@@ -41,7 +41,9 @@ local pmrecipe = {
 		{"iron-stick",4}
 	},
 	result = "portable-miner",
-	energy_required = 1
+	energy_required = 1,
+	category = "building",
+	hide_from_stats = true
 }
 
 data:extend({pm,pmbox,pmitem,pmrecipe})
