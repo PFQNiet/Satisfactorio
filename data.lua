@@ -7,6 +7,7 @@ data:extend({
 	{type="recipe-category",name="assembling"},
 	{type="recipe-category",name="manufacturing"},
 	{type="recipe-category",name="refining"},
+	{type="item-subgroup",group="logistics",name="belt-undo",order="s-a-a"},
 	{type="item-subgroup",group="production",name="production-fluid",order="s-a-a"},
 	{type="item-subgroup",group="production",name="production-manufacturer",order="s-a-b"},
 	{type="item-subgroup",group="production",name="production-miner",order="s-a-c"},
@@ -24,5 +25,6 @@ table.insert(data.raw['god-controller'].default.crafting_categories, "unbuilding
 
 require("prototypes.resources")
 require("prototypes.materials")
+require("prototypes.logistics")
 require("prototypes.miners")
 require("prototypes.constructors")

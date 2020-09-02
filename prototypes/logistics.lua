@@ -1,0 +1,1 @@
+require("prototypes.logistics.conveyor-belt-mk-1")
