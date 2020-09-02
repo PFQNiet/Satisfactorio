@@ -84,7 +84,7 @@ local pmrecipe = {
 	type = "recipe",
 	ingredients = ingredients,
 	result = name,
-	energy_required = 1,
+	energy_required = 10/4,
 	category = "equipment",
 	hide_from_stats = true
 }

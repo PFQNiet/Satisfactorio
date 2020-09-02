@@ -20,7 +20,7 @@ local bench = {
 	},
 	collision_box = {{-1.2,-0.6},{1.2,0.6}},
 	corpse = "big-remnants",
-	crafting_categories = {"crafting", "smelting"},
+	crafting_categories = {"crafting"},
 	crafting_speed = 1,
 	dying_explosion = "big-explosion",
 	energy_source = {type="void"},
