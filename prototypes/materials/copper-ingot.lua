@@ -1,16 +1,16 @@
-local name = "iron-ingot"
+local name = "copper-ingot"
 local ingot = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	name = name,
-	order = "a["..name.."]",
+	order = "b["..name.."]",
 	stack_size = 100,
 	subgroup = "raw-material",
 	type = "item"
 }
 
 local ingredients = {
-	{"iron-ore",1}
+	{"copper-ore",1}
 }
 local ingotrecipe1 = { -- by hand in Craft Bench
 	name = name.."-manual",

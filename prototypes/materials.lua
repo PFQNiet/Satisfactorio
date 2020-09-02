@@ -1,3 +1,7 @@
 require("prototypes.materials.iron-ingot")
 require("prototypes.materials.iron-plate")
 require("prototypes.materials.iron-rod")
+require("prototypes.materials.copper-ingot")
+require("prototypes.materials.wire")
+require("prototypes.materials.cable")
+require("prototypes.materials.copper-sheet")

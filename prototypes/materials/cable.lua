@@ -1,21 +1,21 @@
--- adjust vanilla iron stick
-local name = "iron-rod"
-local basename = "iron-stick"
+-- repurpose vanilla copper cable
+local name = "cable"
+local basename = "copper-cable"
 
-local rod = {
+local cable = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	name = basename,
-	order = "a["..basename.."]",
+	order = "c-b["..basename.."]",
 	stack_size = 100,
 	subgroup = "intermediate-product",
 	type = "item"
 }
 
 local ingredients = {
-	{"iron-ingot",1}
+	{"wire",2}
 }
-local rodrecipe1 = { -- by hand in Craft Bench
+local cablerecipe1 = { -- by hand in Craft Bench
 	name = basename.."-manual",
 	type = "recipe",
 	ingredients = ingredients,
@@ -23,16 +23,16 @@ local rodrecipe1 = { -- by hand in Craft Bench
 	energy_required = 1/4,
 	category = "crafting"
 }
-local rodrecipe2 = { -- in Smelter
+local cablerecipe2 = { -- in Constructor
 	name = basename,
 	type = "recipe",
 	ingredients = ingredients,
 	result = basename,
-	energy_required = 4,
+	energy_required = 2,
 	category = "constructing",
 	hide_from_player_crafting = true
 }
 
-data:extend({rodrecipe1})
-data.raw.item[basename] = rod
-data.raw.recipe[basename] = rodrecipe2
+data:extend({cablerecipe1})
+data.raw.item[basename] = cable
+data.raw.recipe[basename] = cablerecipe2

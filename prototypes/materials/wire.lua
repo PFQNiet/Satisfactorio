@@ -1,39 +1,35 @@
--- adjust vanilla iron plate
-local name = "iron-plate"
-
-local plate = {
+local name = "wire"
+local wire = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	name = name,
-	order = "a["..name.."]",
-	stack_size = 100,
+	order = "c-a["..name.."]",
+	stack_size = 500,
 	subgroup = "intermediate-product",
 	type = "item"
 }
 
 local ingredients = {
-	{"iron-ingot",3}
+	{"copper-ingot",1}
 }
-local platerecipe1 = { -- by hand in Craft Bench
+local wirerecipe1 = { -- by hand in Craft Bench
 	name = name.."-manual",
 	type = "recipe",
 	ingredients = ingredients,
 	result = name,
 	result_count = 2,
-	energy_required = 3/4,
+	energy_required = 2/4,
 	category = "crafting"
 }
-local platerecipe2 = { -- in Constructor
+local wirerecipe2 = { -- in Constructor
 	name = name,
 	type = "recipe",
 	ingredients = ingredients,
 	result = name,
 	result_count = 2,
-	energy_required = 6,
+	energy_required = 3,
 	category = "constructing",
 	hide_from_player_crafting = true
 }
 
-data:extend({platerecipe1})
-data.raw.item[name] = plate
-data.raw.recipe[name] = platerecipe2
+data:extend({wire,wirerecipe1,wirerecipe2})
