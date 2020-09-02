@@ -1,40 +1,69 @@
-local workshop = table.deepcopy(data.raw['assembling-machine']['assembling-machine-1'])
-workshop.name = "equipment-workshop"
-workshop.gui_title_key = "equipment-workshop"
-workshop.minable.result = "equipment-workshop"
-workshop.crafting_categories = {"equipment"}
-workshop.crafting_speed = 1
-workshop.energy_source = {type="void"}
-workshop.allowed_effects = nil
-workshop.collision_box = {{-2.4,-1.4},{2.4,1.4}}
-workshop.selection_box = {{-2.5,-1.5},{2.5,1.5}}
-workshop.next_upgrade = nil
-workshop.fast_replace_group = ""
-workshop.icons = {{
-	icon = "__Satisfactorio__/graphics/icons/equipment-workshop.png",
-	icon_size = 64
-}}
-
-local workshopitem = table.deepcopy(data.raw['item']['assembling-machine-1'])
-workshopitem.name = "equipment-workshop"
-workshopitem.subgroup = "production-workstation"
-workshopitem.order = "b"
-workshopitem.stack_size = 1
-workshopitem.place_result = "equipment-workshop"
-workshopitem.order = "s-b[equipment-workshop]"
-workshopitem.icons = {{
-	icon = "__Satisfactorio__/graphics/icons/equipment-workshop.png",
-	icon_size = 64
-}}
-
-local workshoprecipe = {
-	name = "equipment-workshop",
-	type = "recipe",
-	ingredients = {
-		{"iron-plate",6},
-		{"iron-stick",4}
+local name = "equipment-workshop"
+local workshop = {
+	animation = {
+		north = {
+			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-ns.png",
+			size = {160,96}
+		},
+		east = {
+			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-ew.png",
+			size = {96,160}
+		},
+		south = {
+			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-ns.png",
+			size = {160,96}
+		},
+		west = {
+			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-ew.png",
+			size = {96,160}
+		}
 	},
-	result = "equipment-workshop",
+	collision_box = {{-2.2,-1.2},{2.2,1.2}},
+	corpse = "big-remnants",
+	crafting_categories = {"equipment"},
+	crafting_speed = 1,
+	dying_explosion = "big-explosion",
+	energy_source = {type="void"},
+	energy_usage = "1W",
+	flags = {
+		"placeable-neutral",
+		"placeable-player",
+		"player-creation",
+		"no-automated-item-removal",
+		"no-automated-item-insertion"
+	},
+	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon_size = 64,
+	max_health = 1,
+	minable = {
+		mining_time = 0.5,
+		result = name
+	},
+	name = name,
+	selection_box = {{-2.5,-1.5},{2.5,1.5}},
+	type = "assembling-machine"
+}
+
+local workshopitem = {
+	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon_size = 64,
+	name = name,
+	order = "b["..name.."]",
+	place_result = name,
+	stack_size = 1,
+	subgroup = "production-workstation",
+	type = "item"
+}
+
+local ingredients = {
+	{"iron-plate",6},
+	{"iron-stick",4}
+}
+local workshoprecipe = {
+	name = name,
+	type = "recipe",
+	ingredients = ingredients,
+	result = name,
 	energy_required = 1,
 	category = "building",
 	allow_intermediates = false,
@@ -42,15 +71,12 @@ local workshoprecipe = {
 	hide_from_stats = true
 }
 local workshoprecipe_undo = {
-	name = "equipment-workshop-undo",
+	name = name.."-undo",
 	type = "recipe",
 	ingredients = {
-		{"equipment-workshop",1}
+		{name,1}
 	},
-	results = {
-		{"iron-plate",6},
-		{"iron-stick",4}
-	},
+	results = ingredients,
 	energy_required = 1,
 	category = "unbuilding",
 	subgroup = workshopitem.subgroup .. "-undo",
@@ -61,7 +87,7 @@ local workshoprecipe_undo = {
 	hide_from_stats = true,
 	icons = {
 		{icon = "__base__/graphics/icons/deconstruction-planner.png", icon_size = 64},
-		{icon = "__Satisfactorio__/graphics/icons/equipment-workshop.png", icon_size = 64}
+		{icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64}
 	}
 }
 

@@ -1,52 +1,89 @@
--- repurpose burner mining drill as portable
+local name = "portable-miner"
 -- mining speed is 2/3 that of electric miner
-local pm = table.deepcopy(data.raw['mining-drill']['burner-mining-drill'])
-
-pm.name = "portable-miner"
-pm.vector_to_place_result = {0,0.01}
-pm.resource_searching_radius = 0.49
-pm.mining_speed = 1/3
-pm.energy_source = {type="void"}
-pm.collision_box = {{-0.4,-0.4},{0.4,0.4}}
-pm.selection_box = {{-0.5,-0.5},{0.5,0.5}}
-pm.minable = nil
-if not pm.flags then pm.flags = {} end
-table.insert(pm.flags,"not-deconstructable")
-
-local pmbox = table.deepcopy(data.raw['container']['wooden-chest'])
-pmbox.name = "portable-miner-box"
-pmbox.inventory_size = 1
-pmbox.enable_inventory_bar = false
-pmbox.minable.result = "portable-miner"
-pmbox.selection_priority = (pmbox.selection_priority or 50) + 10 -- increase priority to default + 10
-pmbox.placeable_by = {item="portable-miner",count=1}
-pmbox.allow_copy_paste = false
-pmbox.placeable_off_grid = true
-if not pmbox.flags then pmbox.flags = {} end
-table.insert(pmbox.flags,"not-blueprintable")
-table.insert(pmbox.flags,"no-automated-item-removal")
-table.insert(pmbox.flags,"no-copy-paste")
-table.insert(pmbox.flags,"placeable-off-grid")
-
-local pmitem = table.deepcopy(data.raw['item']['burner-mining-drill'])
-pmitem.name = "portable-miner"
-pmitem.subgroup = "production-miner"
-pmitem.order = "a"
-pmitem.stack_size = 1
-pmitem.place_result = "portable-miner"
-pmitem.icons = {{
-	icon = "__Satisfactorio__/graphics/icons/portable-miner.png",
-	icon_size = 64
-}}
-
-local pmrecipe = {
-	name = "portable-miner",
-	type = "recipe",
-	ingredients = {
-		{"iron-plate",2},
-		{"iron-stick",4}
+local pm = {
+	allowed_effects = {},
+	animations = {
+		filename = "__Satisfactorio__/graphics/placeholders/"..name..".png",
+		size = {32,32}
 	},
-	result = "portable-miner",
+	collision_box = {{-0.4,-0.4},{0.4,0.4}},
+	corpse = "small-remnants",
+	dying_explosion = "explosion",
+	energy_source = {type="void"},
+	energy_usage = "1W",
+	flags = {
+		"placeable-neutral",
+		"placeable-player",
+		"player-creation",
+		"no-automated-item-removal",
+		"no-automated-item-insertion",
+		"not-deconstructable"
+	},
+	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon_size = 64,
+	max_health = 1,
+	minable = nil, -- not minable - mine the box instead
+	mining_speed = 1/3, -- base 20/min
+	name = name,
+	resource_categories = {"basic-solid"},
+	resource_searching_radius = 0.49,
+	selection_box = {{-0.5,-0.5},{0.5,0.5}},
+	type = "mining-drill",
+	vector_to_place_result = {0,0} -- may need to be {0,-0.01}
+}
+
+local pmbox = {
+	collision_box = {{-0.35,-0.35},{0.35,0.35}},
+	corpse = "small-remnants",
+	dying_explosion = "explosion",
+	enable_inventory_bar = false,
+	flags = {
+		"placeable-neutral",
+		"placeable-player",
+		"player-creation",
+		"not-blueprintable",
+		"no-automated-item-removal",
+		"no-copy-paste"
+	},
+	icon = pm.icon,
+	icon_size = pm.icon_size,
+	inventory_size = 1,
+	max_health = 1,
+	minable = {
+		mining_time = 0.25,
+		result = name,
+	},
+	name = name.."-box",
+	picture = {
+		filename = "__Satisfactorio__/graphics/placeholders/"..name..".png",
+		size = {32,32}
+	},
+	placeable_by = {item=name,count=1},
+	selection_box = {{-0.5,-0.5},{0.5,0.5}},
+	selection_priority = 60,
+	type = "container"
+}
+
+local pmitem = {
+	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon_size = 64,
+	name = name,
+	order = "a["..name.."]",
+	place_result = name,
+	stack_size = 1,
+	subgroup = "production-miner",
+	type = "item"
+}
+
+local ingredients = {
+	{"iron-plate",2},
+	{"iron-stick",4}
+}
+local pmrecipe = {
+	name = name,
+	type = "recipe",
+	ingredients = ingredients,
+	result = name,
 	energy_required = 1,
 	category = "equipment",
 	hide_from_stats = true

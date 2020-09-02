@@ -9,7 +9,8 @@ local function onBuilt(event)
 		local box = entity.surface.create_entity{
 			name = box,
 			position = entity.position,
-			force = entity.force
+			force = entity.force,
+			raise_built = true
 		}
 		-- make the drill intangible
 		entity.operable = false

@@ -1,40 +1,69 @@
-local bench = table.deepcopy(data.raw['assembling-machine']['assembling-machine-1'])
-bench.name = "craft-bench"
-bench.gui_title_key = "craft-bench"
-bench.minable.result = "craft-bench"
-bench.crafting_categories = {"crafting","smelting"}
-bench.crafting_speed = 1
-bench.energy_source = {type="void"}
-bench.allowed_effects = nil
-bench.collision_box = {{-1.4,-0.9},{1.4,0.9}}
-bench.selection_box = {{-1.5,-1.0},{1.5,1.0}}
-bench.next_upgrade = nil
-bench.fast_replace_group = ""
-bench.icons = {{
-	icon = "__Satisfactorio__/graphics/icons/craft-bench.png",
-	icon_size = 64
-}}
-
-local benchitem = table.deepcopy(data.raw['item']['assembling-machine-1'])
-benchitem.name = "craft-bench"
-benchitem.subgroup = "production-workstation"
-benchitem.order = "a"
-benchitem.stack_size = 1
-benchitem.place_result = "craft-bench"
-benchitem.order = "s-a[craft-bench]"
-benchitem.icons = {{
-	icon = "__Satisfactorio__/graphics/icons/craft-bench.png",
-	icon_size = 64
-}}
-
-local benchrecipe = {
-	name = "craft-bench",
-	type = "recipe",
-	ingredients = {
-		{"iron-plate",3},
-		{"iron-stick",3}
+local name = "craft-bench"
+local bench = {
+	animation = {
+		north = {
+			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-ns.png",
+			size = {96,64}
+		},
+		east = {
+			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-ew.png",
+			size = {64,96}
+		},
+		south = {
+			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-ns.png",
+			size = {96,64}
+		},
+		west = {
+			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-ew.png",
+			size = {64,96}
+		}
 	},
-	result = "craft-bench",
+	collision_box = {{-1.2,-0.6},{1.2,0.6}},
+	corpse = "big-remnants",
+	crafting_categories = {"crafting", "smelting"},
+	crafting_speed = 1,
+	dying_explosion = "big-explosion",
+	energy_source = {type="void"},
+	energy_usage = "1W",
+	flags = {
+		"placeable-neutral",
+		"placeable-player",
+		"player-creation",
+		"no-automated-item-removal",
+		"no-automated-item-insertion"
+	},
+	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon_size = 64,
+	max_health = 1,
+	minable = {
+		mining_time = 0.5,
+		result = name
+	},
+	name = name,
+	selection_box = {{-1.5,-1.0},{1.5,1.0}},
+	type = "assembling-machine"
+}
+
+local benchitem = {
+	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon_size = 64,
+	name = name,
+	order = "a["..name.."]",
+	place_result = name,
+	stack_size = 1,
+	subgroup = "production-workstation",
+	type = "item"
+}
+
+local ingredients = {
+	{"iron-plate",3},
+	{"iron-stick",3}
+}
+local benchrecipe = {
+	name = name,
+	type = "recipe",
+	ingredients = ingredients,
+	result = name,
 	energy_required = 1,
 	category = "building",
 	allow_intermediates = false,
@@ -42,15 +71,12 @@ local benchrecipe = {
 	hide_from_stats = true
 }
 local benchrecipe_undo = {
-	name = "craft-bench-undo",
+	name = name.."-undo",
 	type = "recipe",
 	ingredients = {
-		{"craft-bench",1}
+		{name,1}
 	},
-	results = {
-		{"iron-plate",3},
-		{"iron-stick",3}
-	},
+	results = ingredients,
 	energy_required = 1,
 	category = "unbuilding",
 	subgroup = benchitem.subgroup .. "-undo",
@@ -61,7 +87,7 @@ local benchrecipe_undo = {
 	hide_from_stats = true,
 	icons = {
 		{icon = "__base__/graphics/icons/deconstruction-planner.png", icon_size = 64},
-		{icon = "__Satisfactorio__/graphics/icons/craft-bench.png", icon_size = 64}
+		{icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64}
 	}
 }
 

@@ -31,6 +31,8 @@ for _, res in ipairs(resources) do
 	resource.resource_patch_search_radius = 1
 end
 -- change oil value to scale as m^3
+dataResource['crude-oil'].collision_box = {{-0.1,-0.1},{0.1,0.1}}
+dataResource['crude-oil'].highlight = false
 dataResource['crude-oil'].minable.results = {{
 	type = "fluid",
 	name = "crude-oil",
