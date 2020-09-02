@@ -18,3 +18,4 @@ item.icon_mipmaps = 0
 item.stack_size = 100
 item.fuel_category = "carbon"
 item.fuel_value = "300MJ"
+item.pictures = nil

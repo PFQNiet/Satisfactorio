@@ -128,4 +128,4 @@ local minerrecipe_undo = {
 	}
 }
 
-data:extend({miner,minerbox,mineritem,minerrecipe})
+data:extend({miner,minerbox,mineritem,minerrecipe,minerrecipe_undo})
