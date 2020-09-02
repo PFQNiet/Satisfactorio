@@ -1,4 +1,5 @@
 data:extend({
+	{type="fuel-category",name="carbon"},
 	{type="recipe-category",name="building"},
 	{type="recipe-category",name="unbuilding"},
 	{type="recipe-category",name="equipment"},

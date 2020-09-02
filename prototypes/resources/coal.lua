@@ -16,3 +16,5 @@ local item = data.raw.item[name]
 item.icon = ore.icon
 item.icon_mipmaps = 0
 item.stack_size = 100
+item.fuel_category = "carbon"
+item.fuel_value = "300MJ"
