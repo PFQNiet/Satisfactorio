@@ -1,8 +1,32 @@
-local retrieve = require("scripts.lualib.retrieve-items")
-
 local hub = "the-hub"
 local terminal = "the-hub-terminal"
 local bench = "craft-bench"
+
+local function retrieveItemsFromCraftBench(bench, target)
+	-- collect items from a given assembler's inventories (input, output, modules, and craft-in-progress if any) and place them in target
+	-- note this is best used with an event buffer, as it makes no checks for whether it was actually able to insert the items.
+	local inventories = {
+		defines.inventory.assembling_machine_input,
+		defines.inventory.assembling_machine_output,
+		defines.inventory.assembling_machine_modules
+	}
+	for _, k in ipairs(inventories) do
+		local source = bench.get_inventory(k)
+		for i = 1, #source do
+			local stack = source[i]
+			if stack.valid and stack.valid_for_read then
+				target.insert(stack)
+			end
+		end
+	end
+	if bench.is_crafting() then
+		-- a craft was left in progress, get the ingredients and give those back too
+		local recipe = bench.get_recipe()
+		for i = 1, #recipe.ingredients do
+			target.insert(recipe.ingredients[i])
+		end
+	end
+end
 
 local dirnames = {
 	[defines.direction.north] = hub.."-north",
@@ -73,7 +97,7 @@ local function onRemoved(event)
 			return
 		end
 		if event.buffer then
-			retrieve(craft, event.buffer)
+			retrieveItemsFromCraftBench(craft, event.buffer)
 		end
 		craft.destroy()
 		-- and the graphic
