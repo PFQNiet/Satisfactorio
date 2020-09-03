@@ -1,36 +1,18 @@
 local miner = "miner-mk-1"
 local box = "miner-mk-1-box"
 
-local miner_box_offsets = {
-	[defines.direction.north] = {0,-4},
-	[defines.direction.east] = {4,0},
-	[defines.direction.south] = {0,4},
-	[defines.direction.west] = {-4,0}
-}
-local function getMinerBoxPosition(miner)
-	return {
-		(miner.position[1] or miner.position.x) + miner_box_offsets[miner.direction][1],
-		(miner.position[2] or miner.position.y) + miner_box_offsets[miner.direction][2]
-	}
-end
-local miner_loader_offsets = {
-	[defines.direction.north] = {0,-6},
-	[defines.direction.east] = {6,0},
-	[defines.direction.south] = {0,6},
-	[defines.direction.west] = {-6,0}
-}
-local function getMinerLoaderPosition(miner)
-	return {
-		(miner.position[1] or miner.position.x) + miner_loader_offsets[miner.direction][1],
-		(miner.position[2] or miner.position.y) + miner_loader_offsets[miner.direction][2]
-	}
-end
 local rotations = {
 	[defines.direction.north] = {0,-1},
 	[defines.direction.east] = {1,0},
 	[defines.direction.south] = {0,1},
 	[defines.direction.west] = {-1,0}
 }
+local function getMinerLoaderPosition(miner)
+	return {
+		(miner.position[1] or miner.position.x) + 6*rotations[miner.direction][1],
+		(miner.position[2] or miner.position.y) + 6*rotations[miner.direction][2]
+	}
+end
 
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
@@ -39,10 +21,11 @@ local function onBuilt(event)
 		-- spawn a box for this drill
 		local store = entity.surface.create_entity{
 			name = box,
-			position = getMinerBoxPosition(entity),
+			position = entity.position,
 			force = entity.force,
 			raise_built = true
 		}
+		entity.drop_target = store
 		-- an output belt
 		local belt = entity.surface.create_entity{
 			name = "loader-conveyor",
@@ -59,10 +42,7 @@ local function onBuilt(event)
 			force = entity.force,
 			raise_built = true
 		}
-		inserter_left.pickup_position = {
-			inserter_left.position.x + rotations[entity.direction][1]*-1,
-			inserter_left.position.y + rotations[entity.direction][2]*-1
-		}
+		inserter_left.pickup_target = store
 		inserter_left.drop_position = {
 			inserter_left.position.x + rotations[entity.direction][1]*0.25 + rotations[entity.direction][2]*0.25,
 			inserter_left.position.y + rotations[entity.direction][1]*0.25 + rotations[entity.direction][2]*0.25
@@ -77,7 +57,7 @@ local function onBuilt(event)
 			force = entity.force,
 			raise_built = true
 		}
-		inserter_right.pickup_position = inserter_left.pickup_position
+		inserter_right.pickup_target = store
 		inserter_right.drop_position = {
 			inserter_right.position.x + rotations[entity.direction][1]*0.25 + rotations[entity.direction][2]*-0.25,
 			inserter_right.position.y+ rotations[entity.direction][1]*-0.25 + rotations[entity.direction][2]*0.25

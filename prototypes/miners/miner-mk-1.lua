@@ -49,11 +49,11 @@ local miner = {
 	resource_searching_radius = 0.49,
 	selection_box = {{-2.5,-6.5},{2.5,2.5}},
 	type = "mining-drill",
-	vector_to_place_result = {0,-5} -- may need to be {0,-0.01}
+	vector_to_place_result = {0,0}
 }
 
 local minerbox = {
-	collision_box = {{-2.3,-2.3},{2.3,2.3}},
+	collision_box = {{-1.3,-1.3},{1.3,1.3}},
 	corpse = "big-remnants",
 	dying_explosion = "big-explosion",
 	enable_inventory_bar = false,
@@ -75,7 +75,7 @@ local minerbox = {
 	name = name.."-box",
 	picture = data.raw.container['steel-chest'].picture,
 	placeable_by = {item=name,count=1},
-	selection_box = {{-2.5,-2.5},{2.5,2.5}},
+	selection_box = {{-1.5,-1.5},{1.5,1.5}},
 	selection_priority = 60,
 	type = "container"
 }

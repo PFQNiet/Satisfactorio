@@ -7,6 +7,10 @@ data:extend({
 	{type="recipe-category",name="assembling"},
 	{type="recipe-category",name="manufacturing"},
 	{type="recipe-category",name="refining"},
+	{type="recipe-category",name="hub-progressing"},
+	{type="item-group",name="special",order="a",icon="__base__/graphics/item-group/effects.png",icon_size=64},
+	{type="item-subgroup",group="special",name="special",order="s-a-a"},
+	{type="item-subgroup",group="special",name="special-undo",order="s-b-a"},
 	{type="item-subgroup",group="logistics",name="belt-undo",order="s-a-a"},
 	{type="item-subgroup",group="production",name="production-fluid",order="s-a-a"},
 	{type="item-subgroup",group="production",name="production-manufacturer",order="s-a-b"},
@@ -25,6 +29,7 @@ table.insert(data.raw['god-controller'].default.crafting_categories, "unbuilding
 
 require("prototypes.resources")
 require("prototypes.materials")
+require("prototypes.special")
 require("prototypes.logistics")
 require("prototypes.miners")
 require("prototypes.constructors")

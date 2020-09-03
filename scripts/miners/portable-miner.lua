@@ -6,12 +6,13 @@ local function onBuilt(event)
 	if not entity or not entity.valid then return end
 	if entity.name == miner then
 		-- spawn a box for this drill
-		entity.surface.create_entity{
+		local store = entity.surface.create_entity{
 			name = box,
 			position = entity.position,
 			force = entity.force,
 			raise_built = true
 		}
+		entity.drop_target = store
 		-- make the drill intangible
 		entity.operable = false
 		entity.minable = false
