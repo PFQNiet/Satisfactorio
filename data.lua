@@ -23,10 +23,10 @@ data:extend({
 	{type="item-subgroup",group="production",name="production-smelter-undo",order="s-b-d"},
 	{type="item-subgroup",group="production",name="production-workstation-undo",order="s-b-e"}
 })
-data.raw.character.character.crafting_categories = {"building","unbuilding"}
 table.insert(data.raw['god-controller'].default.crafting_categories, "building")
 table.insert(data.raw['god-controller'].default.crafting_categories, "unbuilding")
 
+require("prototypes.character")
 require("prototypes.resources")
 require("prototypes.materials")
 require("prototypes.special")
