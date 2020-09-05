@@ -36,7 +36,7 @@ local hub = {
 	},
 	collision_box = {{-5.3,-3.3},{7.3,3.3}},
 	corpse = "big-remnants",
-	crafting_categories = {"hub-progressing"},
+	crafting_categories = {"nil"},
 	crafting_speed = 1,
 	dying_explosion = "big-explosion",
 	energy_source = {type="void"},
@@ -66,7 +66,7 @@ local hubterminal = {
 		size = {32,40},
 		shift = {0,-0.015625}
 	},
-	collision_box = {{-0.35,-0.35},{0.35,0.35}},
+	collision_box = {{-0.35,-0.85},{0.35,0.85}},
 	corpse = "small-remnants",
 	crafting_categories = {"hub-progressing"},
 	crafting_speed = 1,
@@ -78,6 +78,7 @@ local hubterminal = {
 		"placeable-player",
 		"player-creation",
 		"not-blueprintable",
+		"placeable-off-grid", -- it goes between two tiles
 		"no-automated-item-removal",
 		"no-automated-item-insertion"
 	},
@@ -90,7 +91,7 @@ local hubterminal = {
 	},
 	name = name.."-terminal",
 	placeable_by = {item=name,count=1},
-	selection_box = {{-0.5,-0.5},{0.5,0.5}},
+	selection_box = {{-0.5,-1},{0.5,1}},
 	type = "assembling-machine"
 }
 
@@ -189,4 +190,4 @@ local hubrecipe_undo = {
 	}
 }
 
-data:extend({hub,hubterminal,hubgraphic_north,hubgraphic_east,hubgraphic_south,hubgraphic_west,hubitem,hubrecipe,hubrecipe_undo})
+data:extend({hub,hubterminal,hubgraphic_north,hubgraphic_east,hubgraphic_south,hubgraphic_west,hubitem,hubrecipe}) -- hubrecipe_undo

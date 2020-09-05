@@ -19,7 +19,8 @@ local wirerecipe1 = { -- by hand in Craft Bench
 	result = name,
 	result_count = 2,
 	energy_required = 2/4,
-	category = "crafting"
+	category = "craft-bench",
+	enabled = false
 }
 local wirerecipe2 = { -- in Constructor
 	name = name,
@@ -29,7 +30,8 @@ local wirerecipe2 = { -- in Constructor
 	result_count = 2,
 	energy_required = 3,
 	category = "constructing",
-	hide_from_player_crafting = true
+	hide_from_player_crafting = true,
+	enabled = false
 }
 
 data:extend({wire,wirerecipe1,wirerecipe2})

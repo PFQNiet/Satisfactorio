@@ -1,14 +1,19 @@
 data:extend({
 	{type="fuel-category",name="carbon"},
+	{type="recipe-category",name="nil"},
+	{type="recipe-category",name="craft-bench"},
 	{type="recipe-category",name="building"},
 	{type="recipe-category",name="unbuilding"},
 	{type="recipe-category",name="equipment"},
+	{type="recipe-category",name="smelter"},
 	{type="recipe-category",name="constructing"},
 	{type="recipe-category",name="assembling"},
 	{type="recipe-category",name="manufacturing"},
 	{type="recipe-category",name="refining"},
+	{type="recipe-category",name="resource-scanner"},
 	{type="recipe-category",name="hub-progressing"},
 	{type="item-group",name="special",order="a",icon="__base__/graphics/item-group/effects.png",icon_size=64},
+	{type="item-group",name="milestones",order="h",icon="__Satisfactorio__/graphics/icons/the-hub.png",icon_size=64},
 	{type="item-subgroup",group="special",name="special",order="s-a-a"},
 	{type="item-subgroup",group="special",name="special-undo",order="s-b-a"},
 	{type="item-subgroup",group="logistics",name="belt-undo",order="s-a-a"},
@@ -21,15 +26,27 @@ data:extend({
 	{type="item-subgroup",group="production",name="production-manufacturer-undo",order="s-b-b"},
 	{type="item-subgroup",group="production",name="production-miner-undo",order="s-b-c"},
 	{type="item-subgroup",group="production",name="production-smelter-undo",order="s-b-d"},
-	{type="item-subgroup",group="production",name="production-workstation-undo",order="s-b-e"}
+	{type="item-subgroup",group="production",name="production-workstation-undo",order="s-b-e"},
+	{type="item-subgroup",group="milestones",name="hub-tier0",order="a"},
+	{type="item-subgroup",group="milestones",name="hub-tier1",order="b"},
+	{type="item-subgroup",group="milestones",name="hub-tier2",order="c"},
+	{type="item-subgroup",group="milestones",name="hub-tier3",order="d"},
+	{type="item-subgroup",group="milestones",name="hub-tier4",order="e"},
+	{type="item-subgroup",group="milestones",name="hub-tier5",order="f"},
+	{type="item-subgroup",group="milestones",name="hub-tier6",order="g"},
+	{type="item-subgroup",group="milestones",name="hub-tier7",order="h"}
 })
 table.insert(data.raw['god-controller'].default.crafting_categories, "building")
 table.insert(data.raw['god-controller'].default.crafting_categories, "unbuilding")
 
+require("prototypes.vanilla-cleanup")
 require("prototypes.character")
 require("prototypes.resources")
+require("prototypes.resource-scanner")
 require("prototypes.materials")
 require("prototypes.special")
 require("prototypes.logistics")
 require("prototypes.miners")
 require("prototypes.constructors")
+require("prototypes.milestones")
+require("prototypes.technology")

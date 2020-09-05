@@ -21,7 +21,8 @@ local cablerecipe1 = { -- by hand in Craft Bench
 	ingredients = ingredients,
 	result = basename,
 	energy_required = 1/4,
-	category = "crafting"
+	category = "craft-bench",
+	enabled = false
 }
 local cablerecipe2 = { -- in Constructor
 	name = basename,
@@ -30,7 +31,8 @@ local cablerecipe2 = { -- in Constructor
 	result = basename,
 	energy_required = 2,
 	category = "constructing",
-	hide_from_player_crafting = true
+	hide_from_player_crafting = true,
+	enabled = false
 }
 
 data:extend({cablerecipe1})

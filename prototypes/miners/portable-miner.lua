@@ -50,7 +50,7 @@ local pmbox = {
 	inventory_size = 1,
 	max_health = 1,
 	minable = {
-		mining_time = 0.25,
+		mining_time = 0.5,
 		result = name,
 	},
 	name = name.."-box",
@@ -86,7 +86,8 @@ local pmrecipe = {
 	result = name,
 	energy_required = 10/4,
 	category = "equipment",
-	hide_from_stats = true
+	hide_from_stats = true,
+	enabled = false
 }
 
 data:extend({pm,pmbox,pmitem,pmrecipe})

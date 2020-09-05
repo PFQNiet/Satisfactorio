@@ -105,7 +105,8 @@ local minerrecipe = {
 	category = "building",
 	allow_intermediates = false,
 	allow_as_intermediate = false,
-	hide_from_stats = true
+	hide_from_stats = true,
+	enabled = false
 }
 local minerrecipe_undo = {
 	name = name.."-undo",
@@ -125,7 +126,8 @@ local minerrecipe_undo = {
 	icons = {
 		{icon = "__base__/graphics/icons/deconstruction-planner.png", icon_size = 64},
 		{icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64}
-	}
+	},
+	enabled = false
 }
 
 data:extend({miner,minerbox,mineritem,minerrecipe,minerrecipe_undo})

@@ -36,7 +36,7 @@ local workshop = {
 	icon_size = 64,
 	max_health = 1,
 	minable = {
-		mining_time = 0.5,
+		mining_time = 1,
 		result = name
 	},
 	name = name,
@@ -68,7 +68,8 @@ local workshoprecipe = {
 	category = "building",
 	allow_intermediates = false,
 	allow_as_intermediate = false,
-	hide_from_stats = true
+	hide_from_stats = true,
+	enabled = false
 }
 local workshoprecipe_undo = {
 	name = name.."-undo",
@@ -88,7 +89,8 @@ local workshoprecipe_undo = {
 	icons = {
 		{icon = "__base__/graphics/icons/deconstruction-planner.png", icon_size = 64},
 		{icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64}
-	}
+	},
+	enabled = false
 }
 
 data:extend({workshop,workshopitem,workshoprecipe,workshoprecipe_undo})

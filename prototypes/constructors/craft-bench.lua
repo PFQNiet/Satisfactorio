@@ -20,7 +20,7 @@ local bench = {
 	},
 	collision_box = {{-1.2,-0.6},{1.2,0.6}},
 	corpse = "big-remnants",
-	crafting_categories = {"crafting"},
+	crafting_categories = {"craft-bench"},
 	crafting_speed = 1,
 	dying_explosion = "big-explosion",
 	energy_source = {type="void"},
@@ -36,7 +36,7 @@ local bench = {
 	icon_size = 64,
 	max_health = 1,
 	minable = {
-		mining_time = 0.5,
+		mining_time = 1,
 		result = name
 	},
 	name = name,

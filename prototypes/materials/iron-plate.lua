@@ -21,7 +21,7 @@ local platerecipe1 = { -- by hand in Craft Bench
 	result = name,
 	result_count = 2,
 	energy_required = 3/4,
-	category = "crafting"
+	category = "craft-bench"
 }
 local platerecipe2 = { -- in Constructor
 	name = name,

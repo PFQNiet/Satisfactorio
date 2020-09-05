@@ -21,7 +21,7 @@ local rodrecipe1 = { -- by hand in Craft Bench
 	ingredients = ingredients,
 	result = basename,
 	energy_required = 1/4,
-	category = "crafting"
+	category = "craft-bench"
 }
 local rodrecipe2 = { -- in Smelter
 	name = basename,

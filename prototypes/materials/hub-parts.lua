@@ -6,7 +6,8 @@ local hubparts = {
 	order = "a["..name.."]",
 	stack_size = 1,
 	subgroup = "raw-material",
-	type = "item"
+	type = "tool",
+	infinite = true
 }
 
 data:extend({hubparts})

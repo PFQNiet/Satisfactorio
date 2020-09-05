@@ -44,8 +44,8 @@ local function onBuilt(event)
 		}
 		inserter_left.pickup_target = store
 		inserter_left.drop_position = {
-			inserter_left.position.x + rotations[entity.direction][1]*0.25 + rotations[entity.direction][2]*0.25,
-			inserter_left.position.y + rotations[entity.direction][1]*0.25 + rotations[entity.direction][2]*0.25
+			inserter_left.position.x + rotations[entity.direction][1]*0.49 + rotations[entity.direction][2]*0.25,
+			inserter_left.position.y + rotations[entity.direction][1]*0.25 + rotations[entity.direction][2]*0.49
 		}
 		inserter_left.operable = false
 		inserter_left.minable = false
@@ -59,8 +59,8 @@ local function onBuilt(event)
 		}
 		inserter_right.pickup_target = store
 		inserter_right.drop_position = {
-			inserter_right.position.x + rotations[entity.direction][1]*0.25 + rotations[entity.direction][2]*-0.25,
-			inserter_right.position.y+ rotations[entity.direction][1]*-0.25 + rotations[entity.direction][2]*0.25
+			inserter_right.position.x + rotations[entity.direction][1]*0.49 + rotations[entity.direction][2]*-0.25,
+			inserter_right.position.y+ rotations[entity.direction][1]*-0.25 + rotations[entity.direction][2]*0.49
 		}
 		inserter_right.operable = false
 		inserter_right.minable = false

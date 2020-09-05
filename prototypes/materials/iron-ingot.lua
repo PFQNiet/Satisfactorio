@@ -18,7 +18,7 @@ local ingotrecipe1 = { -- by hand in Craft Bench
 	ingredients = ingredients,
 	result = name,
 	energy_required = 3/4,
-	category = "crafting"
+	category = "craft-bench"
 }
 local ingotrecipe2 = { -- in Smelter
 	name = name,
@@ -26,7 +26,7 @@ local ingotrecipe2 = { -- in Smelter
 	ingredients = ingredients,
 	result = name,
 	energy_required = 2,
-	category = "smelting",
+	category = "smelter",
 	hide_from_player_crafting = true
 }
 

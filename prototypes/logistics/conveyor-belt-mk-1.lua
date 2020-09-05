@@ -22,7 +22,8 @@ local beltrecipe = {
 	category = "building",
 	allow_intermediates = false,
 	allow_as_intermediate = false,
-	hide_from_stats = true
+	hide_from_stats = true,
+	enabled = false
 }
 local beltrecipe_undo = {
 	name = basename.."-undo",
@@ -42,7 +43,8 @@ local beltrecipe_undo = {
 	icons = {
 		{icon = "__base__/graphics/icons/deconstruction-planner.png", icon_size = 64},
 		{icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64}
-	}
+	},
+	enabled = false
 }
 
 data.raw.recipe[basename] = beltrecipe
