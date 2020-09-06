@@ -12,12 +12,8 @@ data:extend({{
 	},
 	effects = {
 		{type="unlock-recipe",recipe="constructor"},
-		-- {type="unlock-recipe",recipe="constructor-undo"}, -- TODO Implement as part of handler
-		-- {type="unlock-recipe",recipe="concrete-manual"}, -- TODO Implement as part of handler
 		{type="unlock-recipe",recipe="concrete"},
-		-- {type="unlock-recipe",recipe="screw-manual"}, -- TODO Implement as part of handler
 		{type="unlock-recipe",recipe="screw"},
-		-- {type="unlock-recipe",recipe="reinforced-iron-plate-manual"}, -- TODO Implement as part of handler
 		{type="unlock-recipe",recipe="reinforced-iron-plate"},
 		{type="unlock-recipe",recipe="scanner-stone"}
 	}

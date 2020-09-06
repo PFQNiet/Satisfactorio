@@ -12,9 +12,7 @@ data:extend({{
 	},
 	effects = {
 		{type="unlock-recipe",recipe="miner-mk-1"},
-		-- {type="unlock-recipe",recipe="miner-mk-1-undo"}, -- TODO Implement as part of handler
 		{type="unlock-recipe",recipe="iron-chest"},
-		-- {type="unlock-recipe",recipe="iron-chest-undo"}, -- TODO Implement as part of handler
 		{type="nothing",effect_description={"technology-effect.add-biomass-burner-to-hub"}}
 	}
 }})

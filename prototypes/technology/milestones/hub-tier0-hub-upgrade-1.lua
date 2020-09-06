@@ -12,7 +12,6 @@ data:extend({{
 	},
 	effects = {
 		{type="unlock-recipe",recipe="equipment-workshop"},
-		-- {type="unlock-recipe",recipe="equipment-workshop-undo"}, -- TODO Implement as part of handler
 		{type="unlock-recipe",recipe="portable-miner"},
 		{type="character-inventory-slots-bonus",modifier=3},
 		{type="nothing",effect_description={"technology-effect.add-storage-to-hub"}}

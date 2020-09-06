@@ -19,7 +19,7 @@ local inserter = {
 	energy_per_movement = "1W",
 	energy_per_rotation = "1W",
 	energy_source = {type="void"},
-	extension_speed = 1,
+	extension_speed = 10,
 	rotation_speed = 0.5,
 	pickup_position = {0, -1},
 	insert_position = {0, 1.2},

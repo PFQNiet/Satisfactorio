@@ -12,12 +12,8 @@ data:extend({{
 	},
 	effects = {
 		{type="unlock-recipe",recipe="smelter"},
-		-- {type="unlock-recipe",recipe="smelter-undo"}, -- TODO Implement as part of handler
-		-- {type="unlock-recipe",recipe="copper-ingot-manual"}, -- TODO Implement as part of handler
 		{type="unlock-recipe",recipe="copper-ingot"},
-		-- {type="unlock-recipe",recipe="wire-manual"}, -- TODO Implement as part of handler
 		{type="unlock-recipe",recipe="wire"},
-		-- {type="unlock-recipe",recipe="copper-cable-manual"}, -- TODO Implement as part of handler
 		{type="unlock-recipe",recipe="copper-cable"},
 		{type="unlock-recipe",recipe="scanner-copper-ore"},
 		{type="nothing",effect_description={"technology-effect.add-biomass-burner-to-hub"}}

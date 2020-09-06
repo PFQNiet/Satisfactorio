@@ -12,7 +12,6 @@ data:extend({{
 	},
 	effects = {
 		{type="unlock-recipe",recipe="transport-belt"},
-		-- {type="unlock-recipe",recipe="transport-belt-undo"}, -- TODO Implement as part of handler
 		{type="character-inventory-slots-bonus",modifier=3}
 	}
 }})

@@ -1,3 +1,5 @@
+local io = require("scripts.lualib.input-output")
+
 local miner = "miner-mk-1"
 local box = "miner-mk-1-box"
 
@@ -25,50 +27,12 @@ local function onBuilt(event)
 			force = entity.force,
 			raise_built = true
 		}
-		entity.drop_target = store
-		-- an output belt
-		local belt = entity.surface.create_entity{
-			name = "loader-conveyor",
-			position = getMinerLoaderPosition(entity),
-			direction = entity.direction,
-			force = entity.force,
-			raise_built = true
-		}
-		-- and a pair of inserters
-		local inserter_left = entity.surface.create_entity{
-			name = "loader-inserter",
-			position = getMinerLoaderPosition(entity),
-			direction = entity.direction,
-			force = entity.force,
-			raise_built = true
-		}
-		inserter_left.pickup_target = store
-		inserter_left.drop_position = {
-			inserter_left.position.x + rotations[entity.direction][1]*0.49 + rotations[entity.direction][2]*0.25,
-			inserter_left.position.y + rotations[entity.direction][1]*0.25 + rotations[entity.direction][2]*0.49
-		}
-		inserter_left.operable = false
-		inserter_left.minable = false
-		inserter_left.destructible = false
-		local inserter_right = entity.surface.create_entity{
-			name = "loader-inserter",
-			position = getMinerLoaderPosition(entity),
-			direction = entity.direction,
-			force = entity.force,
-			raise_built = true
-		}
-		inserter_right.pickup_target = store
-		inserter_right.drop_position = {
-			inserter_right.position.x + rotations[entity.direction][1]*0.49 + rotations[entity.direction][2]*-0.25,
-			inserter_right.position.y+ rotations[entity.direction][1]*-0.25 + rotations[entity.direction][2]*0.49
-		}
-		inserter_right.operable = false
-		inserter_right.minable = false
-		inserter_right.destructible = false
+		io.addOutput(entity, {0,-6})
 		-- make the drill intangible
 		entity.operable = false
 		entity.minable = false
 		entity.destructible = false
+		entity.rotatable = false
 	end
 end
 
@@ -82,27 +46,9 @@ local function onRemoved(event)
 			game.print("Couldn't find the drill")
 			return
 		end
-		-- and the belt
-		local belt = entity.surface.find_entity("loader-conveyor",getMinerLoaderPosition(drill))
-		if not belt or not belt.valid then
-			game.print("Couldn't find belt")
-		else
-			belt.destroy()
-		end
-		-- and the loader-inserters
-		local inserter1 = entity.surface.find_entity("loader-inserter",getMinerLoaderPosition(drill))
-		if not inserter1 or not inserter1.valid then
-			game.print("Couldn't find inserter 1")
-		else
-			inserter1.destroy()
-		end
-		local inserter2 = entity.surface.find_entity("loader-inserter",getMinerLoaderPosition(drill))
-		if not inserter2 or not inserter2.valid then
-			game.print("Couldn't find inserter 2")
-		else
-			inserter2.destroy()
-		end
 		drill.destroy()
+		-- and the output
+		io.removeOutput(entity, {0,-6}, event)
 	end
 end
 
