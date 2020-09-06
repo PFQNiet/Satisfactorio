@@ -171,6 +171,7 @@ local hubrecipe = {
 }
 local hubrecipe_undo = {
 	name = name.."-undo",
+	localised_name = name.."-undo",
 	type = "recipe",
 	ingredients = {
 		{name,1}
@@ -190,4 +191,4 @@ local hubrecipe_undo = {
 	}
 }
 
-data:extend({hub,hubterminal,hubgraphic_north,hubgraphic_east,hubgraphic_south,hubgraphic_west,hubitem,hubrecipe}) -- hubrecipe_undo
+data:extend({hub,hubterminal,hubgraphic_north,hubgraphic_east,hubgraphic_south,hubgraphic_west,hubitem,hubrecipe,hubrecipe_undo})

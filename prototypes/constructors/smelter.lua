@@ -43,9 +43,7 @@ local smelter = {
 	},
 	name = name,
 	selection_box = {{-1.5,-2.5},{1.5,2.5}},
-	type = "furnace",
-	source_inventory_size = 1,
-	result_inventory_size = 1
+	type = "assembling-machine"
 }
 
 local smelteritem = {

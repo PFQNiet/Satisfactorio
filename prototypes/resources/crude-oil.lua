@@ -19,6 +19,7 @@ ore.minable.results = {{
 	amount_max = 0.5, -- originally 10
 	probability = 1
 }}
+ore.category = "crude-oil"
 
 local fluid = data.raw.fluid[name]
 fluid.icon = ore.icon

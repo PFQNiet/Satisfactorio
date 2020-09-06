@@ -18,7 +18,7 @@ local constructor = {
 			size = {160,96}
 		}
 	},
-	collision_box = {{-2.2,-1.2},{2.2,1.2}},
+	collision_box = {{-1.2,-2.2},{1.2,2.2}},
 	corpse = "big-remnants",
 	crafting_categories = {"constructing"},
 	crafting_speed = 1,
@@ -42,7 +42,7 @@ local constructor = {
 		result = name
 	},
 	name = name,
-	selection_box = {{-2.5,-1.5},{2.5,1.5}},
+	selection_box = {{-1.5,-2.5},{1.5,2.5}},
 	type = "assembling-machine"
 }
 

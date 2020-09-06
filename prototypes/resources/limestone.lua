@@ -12,6 +12,7 @@ ore.minimum = 1
 ore.normal = 60
 ore.map_grid = false
 ore.resource_patch_search_radius = 1
+ore.category = "solid"
 
 local item = data.raw.item[basename]
 item.icon = ore.icon

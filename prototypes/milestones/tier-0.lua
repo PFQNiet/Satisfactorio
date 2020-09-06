@@ -8,7 +8,8 @@ data:extend({
 		stack_size = 1,
 		subgroup = "hub-tier0",
 		type = "tool",
-		durability = 1
+		infinite = true,
+		flags = {"hidden"}
 	},
 	{
 		name = "hub-tier0-hub-upgrade-1",
@@ -32,7 +33,8 @@ data:extend({
 		stack_size = 1,
 		subgroup = "hub-tier0",
 		type = "tool",
-		durability = 1
+		infinite = true,
+		flags = {"hidden"}
 	},
 	{
 		name = "hub-tier0-hub-upgrade-2",
@@ -58,7 +60,8 @@ data:extend({
 		stack_size = 1,
 		subgroup = "hub-tier0",
 		type = "tool",
-		durability = 1
+		infinite = true,
+		flags = {"hidden"}
 	},
 	{
 		name = "hub-tier0-hub-upgrade-3",
@@ -85,7 +88,8 @@ data:extend({
 		stack_size = 1,
 		subgroup = "hub-tier0",
 		type = "tool",
-		durability = 1
+		infinite = true,
+		flags = {"hidden"}
 	},
 	{
 		name = "hub-tier0-hub-upgrade-4",
@@ -112,7 +116,8 @@ data:extend({
 		stack_size = 1,
 		subgroup = "hub-tier0",
 		type = "tool",
-		durability = 1
+		infinite = true,
+		flags = {"hidden"}
 	},
 	{
 		name = "hub-tier0-hub-upgrade-5",
@@ -139,7 +144,8 @@ data:extend({
 		stack_size = 1,
 		subgroup = "hub-tier0",
 		type = "tool",
-		durability = 1
+		infinite = true,
+		flags = {"hidden"}
 	},
 	{
 		name = "hub-tier0-hub-upgrade-6",

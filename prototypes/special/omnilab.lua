@@ -20,5 +20,6 @@ lab.inputs = {
 local labitem = table.deepcopy(data.raw.item.lab)
 labitem.name = lab.name
 labitem.place_result = lab.name
+labitem.flags = {"hidden"}
 
 data:extend({lab,labitem})

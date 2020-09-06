@@ -9,6 +9,7 @@ data:extend(
 		icon_size = 64,
 		flags = {"placeable-neutral"},
 		order="a-b-e",
+		category = "solid",
 		tree_removal_probability = 0,
 		tree_removal_max_distance = 0,
 		minable =

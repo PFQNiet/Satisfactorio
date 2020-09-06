@@ -7,7 +7,8 @@ local hubparts = {
 	stack_size = 1,
 	subgroup = "raw-material",
 	type = "tool",
-	infinite = true
+	infinite = true,
+	flags = {"hidden"}
 }
 
 data:extend({hubparts})

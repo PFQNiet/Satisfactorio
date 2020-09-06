@@ -15,6 +15,7 @@ local mining = ore.minable
 mining.required_fluid = nil
 mining.fluid_amount = 0
 mining.mining_time = 1
+ore.category = "solid"
 
 local item = data.raw.item[name]
 item.icon = ore.icon

@@ -12,6 +12,7 @@ data:extend({{
 	},
 	effects = {
 		{type="unlock-recipe",recipe="constructor"},
+		{type="unlock-recipe",recipe="small-electric-pole"},
 		{type="unlock-recipe",recipe="concrete"},
 		{type="unlock-recipe",recipe="screw"},
 		{type="unlock-recipe",recipe="reinforced-iron-plate"},

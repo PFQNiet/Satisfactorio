@@ -3,19 +3,6 @@ local io = require("scripts.lualib.input-output")
 local miner = "miner-mk-1"
 local box = "miner-mk-1-box"
 
-local rotations = {
-	[defines.direction.north] = {0,-1},
-	[defines.direction.east] = {1,0},
-	[defines.direction.south] = {0,1},
-	[defines.direction.west] = {-1,0}
-}
-local function getMinerLoaderPosition(miner)
-	return {
-		(miner.position[1] or miner.position.x) + 6*rotations[miner.direction][1],
-		(miner.position[2] or miner.position.y) + 6*rotations[miner.direction][2]
-	}
-end
-
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not entity or not entity.valid then return end
