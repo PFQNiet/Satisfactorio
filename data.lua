@@ -17,6 +17,7 @@ data:extend({
 	{type="item-subgroup",group="special",name="special",order="s-a-a"},
 	{type="item-subgroup",group="special",name="special-undo",order="s-b-a"},
 	{type="item-subgroup",group="logistics",name="belt-undo",order="s-a-a"},
+	{type="item-subgroup",group="logistics",name="storage-undo",order="s-e-a"},
 	{type="item-subgroup",group="production",name="production-fluid",order="s-a-a"},
 	{type="item-subgroup",group="production",name="production-manufacturer",order="s-a-b"},
 	{type="item-subgroup",group="production",name="production-miner",order="s-a-c"},
@@ -39,6 +40,7 @@ data:extend({
 table.insert(data.raw['god-controller'].default.crafting_categories, "building")
 table.insert(data.raw['god-controller'].default.crafting_categories, "unbuilding")
 
+require("prototypes.fonts")
 require("prototypes.vanilla-cleanup")
 require("prototypes.character")
 require("prototypes.resources")

@@ -1,4 +1,4 @@
-local hub = require("scripts/lualib/the-hub")
+local hub = require("scripts.lualib.the-hub")
 
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
@@ -7,9 +7,7 @@ local function onBuilt(event)
 		hub.buildFloor(entity)
 		hub.buildTerminal(entity)
 		hub.buildCraftBench(entity)
-		if global['hub-completed'] and global['hub-completed'][entity.force.name] and global['hub-completed'][entity.force.name]['hub-tier0-hub-upgrade-1'] then
-			hub.buildStorageChest(entity)
-		end
+		hub.buildStorageChest(entity)
 		-- remove base item
 		entity.destroy()
 	end
@@ -21,20 +19,21 @@ local function onRemoved(event)
 	if entity.name == hub.terminal then
 		hub.removeCraftBench(entity, event and event.buffer or nil)
 		hub.removeStorageChest(entity, event and event.buffer or nil)
-		hub.removeGraphic(entity)
-		-- remove terminal entity from global list
-		global['hub-terminal'][entity.force.name] = nil
+		hub.removeFloor(entity)
 	end
 end
 
-local function onInit()
-	global['hub-terminal'] = {} -- dictionary Force.name -> {surface, position} of the Terminal
-	global['hub-completed'] = {} -- dictionary Force.name -> list of completed milestones
-	-- TODO if a new force is added, it too should benefit from the default research
-	game.forces.player.technologies['the-hub'].researched = true
+local function onResearch(event)
+	-- can just pass all researches to the HUB library, since that already checks if it's a HUB tech.
+	hub.completeMilestone(event.research)
 end
+local function onGuiClick(event)
+	if event.element.name == "hub-submit" then
+		hub.submitMilestone(game.players[event.player_index].force)
+	end
+end
+
 return {
-	on_init = onInit,
 	on_nth_tick = {
 		[300] = hub.updateMilestoneGUI
 	},
@@ -47,6 +46,9 @@ return {
 		[defines.events.on_player_mined_entity] = onRemoved,
 		[defines.events.on_robot_mined_entity] = onRemoved,
 		[defines.events.on_entity_died] = onRemoved,
-		[defines.events.script_raised_destroy] = onRemoved
+		[defines.events.script_raised_destroy] = onRemoved,
+
+		[defines.events.on_research_finished] = onResearch,
+		[defines.events.on_gui_click] = onGuiClick
 	}
 }

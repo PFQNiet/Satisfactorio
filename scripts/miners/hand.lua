@@ -1,6 +1,4 @@
-local function starts_with(str, start)
-	return str.sub(str, 1, string.len(start)) == start
-end
+local string = require("scripts.lualib.string")
 
 local function onMined(event)
 	local entity = event.entity
@@ -18,25 +16,25 @@ local function onMined(event)
 		-- do some fancy shenanigans to add extras to trees
 		-- they'll give Leaves and Wood, but may also give Mycelia (dirt), Flower Petals (grass), Limestone (sand) or Silica (desert) based on the tile
 		local tile = entity.surface.get_tile(entity.position).name
-		if starts_with(tile,"grass") then
+		if string.starts_with(tile,"grass") then
 			local count = math.floor(math.random(1,5)*math.random(1,5)/5) -- 0-5
 			if count > 0 then
 				buffer.insert{name="flower-petals",count=count}
 			end
 		end
-		if starts_with(tile,"sand") then
+		if string.starts_with(tile,"sand") then
 			local count = math.floor(math.random(1,4)*math.random(1,4)/4)*2 -- 0,2,4,6,8
 			if count > 0 then
 				buffer.insert{name="stone",count=count}
 			end
 		end
-		if starts_with(tile,"dirt") then
+		if string.starts_with(tile,"dirt") then
 			local count = math.floor(math.random(1,5)*math.random(1,5)/5) -- 0-5
 			if count > 0 then
 				buffer.insert{name="mycelia",count=count}
 			end
 		end
-		if starts_with(tile,"red-desert") then
+		if string.starts_with(tile,"red-desert") then
 			local count = math.floor(math.random(1,5)*math.random(1,5)/5) -- 0-5
 			if count > 0 then
 				--buffer.insert{name="silica",count=count}

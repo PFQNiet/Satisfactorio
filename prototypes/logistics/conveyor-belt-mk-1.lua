@@ -1,13 +1,13 @@
 -- it's just a standard transport belt :D
 local name = "conveyor-belt-mk-1"
 local basename = "transport-belt"
-local belt = data.raw['transport-belt']['transport-belt']
+local belt = data.raw['transport-belt'][basename]
 belt.icon = "__Satisfactorio__/graphics/icons/"..name..".png"
 belt.icon_mipmaps = 0
 belt.max_health = 1
 belt.speed = 1/256
 
-local beltitem = data.raw.item['transport-belt']
+local beltitem = data.raw.item[basename]
 beltitem.icon = belt.icon
 beltitem.icon_mipmaps = 0
 beltitem.stack_size = 50
@@ -27,6 +27,7 @@ local beltrecipe = {
 }
 local beltrecipe_undo = {
 	name = basename.."-undo",
+	localised_name = {"recipe-name."..basename.."-undo"},
 	type = "recipe",
 	ingredients = {
 		{basename,1}

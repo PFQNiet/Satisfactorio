@@ -17,7 +17,7 @@ data:extend({
 			{"iron-stick",10}
 		},
 		result = "hub-tier0-hub-upgrade-1",
-		energy_required = 60,
+		energy_required = 1,
 		category = "hub-progressing",
 		allow_intermediates = false,
 		allow_as_intermediate = false,
@@ -42,7 +42,7 @@ data:extend({
 			{"iron-plate",10}
 		},
 		result = "hub-tier0-hub-upgrade-2",
-		energy_required = 60,
+		energy_required = 1,
 		category = "hub-progressing",
 		allow_intermediates = false,
 		allow_as_intermediate = false,
@@ -69,7 +69,7 @@ data:extend({
 			{"wire",20}
 		},
 		result = "hub-tier0-hub-upgrade-3",
-		energy_required = 60,
+		energy_required = 1,
 		category = "hub-progressing",
 		allow_intermediates = false,
 		allow_as_intermediate = false,
@@ -96,7 +96,7 @@ data:extend({
 			{"concrete",10}
 		},
 		result = "hub-tier0-hub-upgrade-4",
-		energy_required = 60,
+		energy_required = 1,
 		category = "hub-progressing",
 		allow_intermediates = false,
 		allow_as_intermediate = false,
@@ -123,7 +123,7 @@ data:extend({
 			{"concrete",20}
 		},
 		result = "hub-tier0-hub-upgrade-5",
-		energy_required = 60,
+		energy_required = 1,
 		category = "hub-progressing",
 		allow_intermediates = false,
 		allow_as_intermediate = false,
@@ -151,7 +151,7 @@ data:extend({
 			{"concrete",50}
 		},
 		result = "hub-tier0-hub-upgrade-6",
-		energy_required = 60,
+		energy_required = 1,
 		category = "hub-progressing",
 		allow_intermediates = false,
 		allow_as_intermediate = false,
