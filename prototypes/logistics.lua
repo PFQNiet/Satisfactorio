@@ -1,6 +1,5 @@
 require("prototypes.logistics.loader-inserter")
 require("prototypes.logistics.loader-conveyor")
-require("prototypes.logistics.power-pole-mk-1")
 require("prototypes.logistics.conveyor-belt-mk-1")
 require("prototypes.logistics.pipe")
 require("prototypes.logistics.pipe-to-ground")

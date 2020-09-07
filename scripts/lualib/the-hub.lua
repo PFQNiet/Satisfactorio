@@ -299,7 +299,7 @@ local upgrades = {
 	["hub-tier0-hub-upgrade-6"] = {
 		-- Tier 1 & 2 turn-in items
 		-- "space-elevator-undo",
-		-- "biomass-burner-undo",
+		"biomass-burner-undo",
 		"biomass-from-wood-manual",
 		"biomass-from-leaves-manual"
 		-- TODO add freighter

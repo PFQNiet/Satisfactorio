@@ -25,6 +25,7 @@ local beltrecipe = {
 	hide_from_stats = true,
 	enabled = false
 }
+local _group = data.raw['item-subgroup'][beltitem.subgroup]
 local beltrecipe_undo = {
 	name = basename.."-undo",
 	localised_name = {"recipe-name."..basename.."-undo"},
@@ -35,11 +36,12 @@ local beltrecipe_undo = {
 	results = ingredients,
 	energy_required = 0.1,
 	category = "unbuilding",
-	subgroup = beltitem.subgroup .. "-undo",
-	order = beltitem.order,
+	subgroup = _group.group .. "-undo",
+	order = _group.order .. "-" .. beltitem.order,
 	allow_decomposition = false,
 	allow_intermediates = false,
 	allow_as_intermediate = false,
+	always_show_products = true,
 	hide_from_stats = true,
 	icons = {
 		{icon = "__base__/graphics/icons/deconstruction-planner.png", icon_size = 64},

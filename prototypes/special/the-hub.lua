@@ -169,9 +169,10 @@ local hubrecipe = {
 	allow_as_intermediate = false,
 	hide_from_stats = true
 }
+local _group = data.raw['item-subgroup'][hubitem.subgroup]
 local hubrecipe_undo = {
 	name = name.."-undo",
-	localised_name = name.."-undo",
+	localised_name = {"recipe-name."..name.."-undo"},
 	type = "recipe",
 	ingredients = {
 		{name,1}
@@ -179,11 +180,12 @@ local hubrecipe_undo = {
 	results = ingredients,
 	energy_required = 1,
 	category = "unbuilding",
-	subgroup = hubitem.subgroup .. "-undo",
-	order = hubitem.order,
+	subgroup = _group.group .. "-undo",
+	order = _group.order .. "-" .. hubitem.order,
 	allow_decomposition = false,
 	allow_intermediates = false,
 	allow_as_intermediate = false,
+	always_show_products = true,
 	hide_from_stats = true,
 	icons = {
 		{icon = "__base__/graphics/icons/deconstruction-planner.png", icon_size = 64},
