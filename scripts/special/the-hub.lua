@@ -27,31 +27,32 @@ local function onRemoved(event)
 	end
 end
 
+local function onTick(event)
+	hub.updateMilestoneGUI()
+end
 local function onResearch(event)
 	-- can just pass all researches to the HUB library, since that already checks if it's a HUB tech.
 	hub.completeMilestone(event.research)
 end
 local function onGuiClick(event)
-	if event.element.name == "hub-submit" then
+	if event.element.name == "hub-milestone-tracking-submit" then
 		hub.submitMilestone(game.players[event.player_index].force)
 	end
 end
 
 return {
-	on_nth_tick = {
-		[300] = hub.updateMilestoneGUI
-	},
 	events = {
 		[defines.events.on_built_entity] = onBuilt,
 		[defines.events.on_robot_built_entity] = onBuilt,
 		[defines.events.script_raised_built] = onBuilt,
 		[defines.events.script_raised_revive] = onBuilt,
-
+		
 		[defines.events.on_player_mined_entity] = onRemoved,
 		[defines.events.on_robot_mined_entity] = onRemoved,
 		[defines.events.on_entity_died] = onRemoved,
 		[defines.events.script_raised_destroy] = onRemoved,
-
+		
+		[defines.events.on_tick] = onTick,
 		[defines.events.on_research_finished] = onResearch,
 		[defines.events.on_gui_click] = onGuiClick
 	}

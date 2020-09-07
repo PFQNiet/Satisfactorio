@@ -1,5 +1,6 @@
 -- uses global['hub-terminal'] as table of Force name -> {surface, position} of the HUB terminal
 -- uses global['hub-milestones'] as table of Force name -> milestone[]
+-- uses global['hub-milestone-gui'] as table of Force name -> milestone shown in GUI - if different to current selection then GUI needs refresh, otherwise just update counts
 
 local mod_gui = require("mod-gui")
 local util = require("util")
@@ -349,113 +350,153 @@ local function completeMilestone(technology)
 	end
 end
 
-local function updateMilestoneGUI()
-	local cache = {}
-	for _,player in pairs(game.players) do
-		if not cache[player.force.name] then
-			local submitted = nil
-			local hub = findHubForForce(player.force)
-			local term = nil
-			local recipe = nil
-			local milestone = nil
-			local ingredients = nil
-			if hub and hub.valid then
-				recipe = hub.get_recipe()
-				if recipe then
-					-- TODO Check if this Milestone has already been researched, and reject if so
-					local inventory = hub.get_inventory(defines.inventory.assembling_machine_input)
-					submitted = inventory.get_contents()
-					milestone = game.item_prototypes[recipe.products[1].name]
-					ingredients = {}
-					for _,ingredient in ipairs(recipe.ingredients) do
-						ingredients[ingredient.name] = {
-							item = game.item_prototypes[ingredient.name],
-							amount = ingredient.amount
-						}
-						if submitted[ingredient.name] and submitted[ingredient.name] > ingredient.amount then
-							-- remove excess...
-							hub.surface.spill_item_stack(
-								hub.position,
-								{
-									name = ingredient.name,
-									count = inventory.remove{
-										name = ingredient.name,
-										count = submitted[ingredient.name] - ingredient.amount
-									},
-								},
-								true,
-								hub.force,
-								false
-							)
-							submitted[ingredient.name] = ingredient.amount
-						end
-					end
+local function updateMilestoneGUI(force)
+	if not force then
+		for _,force in pairs(game.forces) do
+			updateMilestoneGUI(force)
+		end
+		return
+	end
+
+	if not global['hub-milestone-gui'] then global['hub-milestone-gui'] = {} end
+
+	local hub = findHubForForce(force)
+	local milestone = {name="none"}
+	local recipe
+	local submitted
+	-- if a HUB exists for this force, check its recipe and inventory
+	if hub and hub.valid then
+		recipe = hub.get_recipe()
+		if recipe then
+			milestone = game.item_prototypes[recipe.products[1].name]
+			-- TODO Check if this Milestone has already been researched, and reject if so
+			local inventory = hub.get_inventory(defines.inventory.assembling_machine_input)
+			submitted = inventory.get_contents()
+			for _,ingredient in ipairs(recipe.ingredients) do
+				if submitted[ingredient.name] and submitted[ingredient.name] > ingredient.amount then
+					-- spill the excess
+					hub.surface.spill_item_stack(
+						hub.position,
+						{
+							name = ingredient.name,
+							count = inventory.remove{
+								name = ingredient.name,
+								count = submitted[ingredient.name] - ingredient.amount
+							}
+						},
+						true, hub.force, false
+					)
+					submitted[ingredient.name] = ingredient.amount
 				end
 			end
-			if not recipe then
-				cache[player.force.name] = {valid=false}
-			else
-				cache[player.force.name] = {
-					valid = true,
-					submitted = submitted,
-					recipe = recipe,
-					milestone = milestone,
-					ingredients = ingredients
-				}
-			end
 		end
+	end
 
+	for _,player in pairs(force.players) do
 		local gui = mod_gui.get_frame_flow(player)
 		local frame = gui['hub-milestone-tracking']
-		local data = cache[player.force.name]
-		if not data.valid then
-			if frame then frame.destroy() end
-		else
-			if not frame then
-				frame = gui.add{
-					type="frame",
-					name="hub-milestone-tracking",
-					direction="vertical",
-					caption={"gui.hub-milestone-tracking-caption"},
-					style=mod_gui.frame_style
-				}
-				frame.style.use_header_filler = false
-			end
-			frame.clear()
-			frame.add{type="label", caption={"","[item="..data.milestone.name.."] [font=heading-2]",data.milestone.localised_name,"[/font]"}}
-			local inner = frame.add{type = "frame", style = "inside_shallow_frame", direction = "vertical"}
+		-- create the GUI if it doesn't exist yet (should only happen once per player)
+		if not frame then
+			frame = gui.add{
+				type = "frame",
+				name = "hub-milestone-tracking",
+				direction = "vertical",
+				caption = {"gui.hub-milestone-tracking-caption"},
+				style = mod_gui.frame_style
+			}
+			frame.style.use_header_filler = false
+			frame.add{
+				type = "label",
+				name = "hub-milestone-tracking-name",
+				caption = {"","[font=heading-2]",{"gui.hub-milestone-tracking-none-selected"},"[/font]"}
+			}
+			local inner = frame.add{
+				type = "frame",
+				name = "hub-milestone-tracking-content",
+				style = "inside_shallow_frame",
+				direction = "vertical"
+			}
 			inner.style.horizontally_stretchable = true
 			inner.style.top_margin = 4
 			inner.style.bottom_margin = 4
-			local table = inner.add{
+			inner.add{
 				type = "table",
+				name = "hub-milestone-tracking-table",
 				style = "bordered_table",
 				column_count = 3
 			}
-			local ready = true -- set to false if any ingredient doesn't fulfill its need
-			for key,ingredient in pairs(data.ingredients) do
-				local sprite = table.add{type="sprite-button", sprite="item/"..ingredient.item.name, style="transparent_slot"}
-				sprite.style.height = 20
-				sprite.style.width = 20
-				table.add{type="label", caption=ingredient.item.localised_name, style="bold_label"}
-				local count_flow = table.add{type="flow"}
-				local pusher = count_flow.add{type="empty-widget"}
-				pusher.style.horizontally_stretchable = true
-				count_flow.add{type="label", caption={"gui.fraction", util.format_number(data.submitted[key] or 0), ingredient.amount}}
-				if (data.submitted[key] or 0) < ingredient.amount then
+			local bottom = frame.add{
+				type = "flow",
+				name = "hub-milestone-tracking-bottom"
+			}
+			local pusher = bottom.add{type="empty-widget"}
+			pusher.style.horizontally_stretchable = true
+			bottom.add{
+				type = "button",
+				style = "confirm_button",
+				name = "hub-milestone-tracking-submit",
+				caption = {"gui.hub-milestone-submit-caption"}
+			}
+		end
+
+		-- gather up GUI element references
+		local name = frame['hub-milestone-tracking-name']
+		local inner = frame['hub-milestone-tracking-content']
+		local table = inner['hub-milestone-tracking-table']
+		local bottom = frame['hub-milestone-tracking-bottom']
+		local button = bottom['hub-milestone-tracking-submit']
+
+		-- check if the selected milestone has been changed
+		if milestone.name ~= global['hub-milestone-gui'][force.name] then
+			global['hub-milestone-gui'][force.name] = milestone.name
+			inner.visible = milestone.name ~= "none"
+			bottom.visible = inner.visible
+			button.enabled = false
+			table.clear()
+			if milestone.name == "none" then
+				name.caption = {"","[font=heading-2]",{"gui.hub-milestone-tracking-none-selected"},"[/font]"}
+			else
+				-- if milestone is actually set then we know this is valid
+				name.caption = {"","[img=item/"..milestone.name.."] [font=heading-2]",milestone.localised_name,"[/font]"}
+				for _,ingredient in ipairs(recipe.ingredients) do
+					local sprite = table.add{
+						type = "sprite-button",
+						sprite = "item/"..ingredient.name,
+						style = "transparent_slot"
+					}
+					sprite.style.width = 20
+					sprite.style.height = 20
+					table.add{
+						type = "label",
+						caption = game.item_prototypes[ingredient.name].localised_name,
+						style = "bold_label"
+					}
+					local count_flow = table.add{
+						type = "flow",
+						name = "hub-milestone-tracking-ingredient-"..ingredient.name
+					}
+					local pusher = count_flow.add{type="empty-widget"}
+					pusher.style.horizontally_stretchable = true
+					count_flow.add{
+						type = "label",
+						name = "hub-milestone-tracking-ingredient-"..ingredient.name.."-count",
+						caption = {"gui.fraction", -1, -1} -- unset by default, will be populated in the next block
+					}
+				end
+			end
+		end
+
+		-- so now we've established the GUI exists, and is populated with a table for the currently selected milestone... if there is one, update the counts now
+		if milestone.name ~= "none" then
+			local ready = true
+			for _,ingredient in ipairs(recipe.ingredients) do
+				local label = table['hub-milestone-tracking-ingredient-'..ingredient.name]['hub-milestone-tracking-ingredient-'..ingredient.name..'-count']
+				label.caption = {"gui.fraction", util.format_number(submitted[ingredient.name] or 0), util.format_number(ingredient.amount)}
+				if (submitted[ingredient.name] or 0) < ingredient.amount then
 					ready = false
 				end
 			end
-			local bottom = frame.add{type="flow"}
-			local pusher = bottom.add{type="empty-widget"}
-			pusher.style.horizontally_stretchable = true
-			local btn = bottom.add{
-				type = "button",
-				style = "confirm_button",
-				name = "hub-submit",
-				caption = {"gui.hub-milestone-submit-caption"},
-				enabled = ready
-			}
+			button.enabled = ready
 		end
 	end
 end
