@@ -1,38 +1,28 @@
-local name = "smelter"
-local smelter = {
+local name = "biomass-burner"
+local burner = {
 	animation = {
-		north = {
-			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-ns.png",
-			size = {96,160}
-		},
-		east = {
-			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-ew.png",
-			size = {160,96}
-		},
-		south = {
-			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-ns.png",
-			size = {96,160}
-		},
-		west = {
-			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-ew.png",
-			size = {160,96}
-		}
+		filename = "__Satisfactorio__/graphics/placeholders/"..name..".png",
+		size = {128,128},
 	},
-	collision_box = {{-1.3,-2.3},{1.3,2.3}},
+	collision_box = {{-1.8,-1.8},{1.8,1.8}},
 	corpse = "big-remnants",
-	crafting_categories = {"smelter"},
-	crafting_speed = 1,
 	dying_explosion = "big-explosion",
 	energy_source = {
 		type = "electric",
-		usage_priority = "secondary-input",
-		drain = "0W"
+		usage_priority = "secondary-output"
 	},
-	energy_usage = "4MW",
+	burner = {
+		type = "burner",
+		fuel_category = "chemical",
+		fuel_inventory_size = 1
+	},
+	max_power_output = "30MW",
 	flags = {
 		"placeable-neutral",
 		"placeable-player",
-		"player-creation"
+		"player-creation",
+		"no-automated-item-removal",
+		"no-automated-item-insertion"
 	},
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
@@ -42,26 +32,27 @@ local smelter = {
 		result = name
 	},
 	name = name,
-	selection_box = {{-1.5,-2.5},{1.5,2.5}},
-	type = "assembling-machine"
+	selection_box = {{-2,-2},{2,2}},
+	type = "burner-generator"
 }
 
-local smelteritem = {
+local burneritem = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	name = name,
 	order = "a["..name.."]",
 	place_result = name,
 	stack_size = 1,
-	subgroup = "production-smelter",
+	subgroup = "production-power",
 	type = "item"
 }
 
 local ingredients = {
-	{"iron-stick",5},
-	{"wire",8}
+	{"iron-plate",15},
+	{"iron-stick",15},
+	{"wire",25}
 }
-local smelterrecipe = {
+local burnerrecipe = {
 	name = name,
 	type = "recipe",
 	ingredients = ingredients,
@@ -73,7 +64,7 @@ local smelterrecipe = {
 	hide_from_stats = true,
 	enabled = false
 }
-local smelterrecipe_undo = {
+local burnerrecipe_undo = {
 	name = name.."-undo",
 	type = "recipe",
 	ingredients = {
@@ -82,8 +73,8 @@ local smelterrecipe_undo = {
 	results = ingredients,
 	energy_required = 1,
 	category = "unbuilding",
-	subgroup = smelteritem.subgroup .. "-undo",
-	order = smelteritem.order,
+	subgroup = burneritem.subgroup .. "-undo",
+	order = burneritem.order,
 	allow_decomposition = false,
 	allow_intermediates = false,
 	allow_as_intermediate = false,
@@ -95,4 +86,4 @@ local smelterrecipe_undo = {
 	enabled = false
 }
 
-data:extend({smelter,smelteritem,smelterrecipe,smelterrecipe_undo})
+data:extend({burner,burneritem,burnerrecipe,burnerrecipe_undo})

@@ -10,6 +10,8 @@ local hub = "the-hub"
 local terminal = "the-hub-terminal"
 local bench = "craft-bench"
 local storage = "wooden-chest"
+local biomassburner = "biomass-burner-hub"
+local powerpole = "small-electric-pole"
 local graphics = {
 	[defines.direction.north] = hub.."-north",
 	[defines.direction.east] = hub.."-east",
@@ -68,6 +70,20 @@ local function retrieveItemsFromStorage(box, target)
 		end
 	end
 end
+local function retrieveItemsFromBurner(burner, target)
+	-- collect items from the Personal Storage inventory and place them in target event buffer
+	local source = burner.get_inventory(defines.inventory.fuel)
+	for i = 1, #source do
+		local stack = source[i]
+		if stack.valid and stack.valid_for_read then
+			if target then
+				target.insert(stack)
+			else
+				burner.surface.spill_item_stack(burner.position, stack, true, burner.force, false)
+			end
+		end
+	end
+end
 
 local rotations = {
 	[defines.direction.north] = {0,-1},
@@ -89,6 +105,9 @@ local spawn_pos = {0,1}
 local bench_pos = {0,2.5}
 local bench_rotation = 2 -- 90deg
 local storage_pos = {-2,0}
+local burner_1_pos = {2,-4}
+local burner_2_pos = {-2,-4}
+local powerpole_pos = {0,-5}
 
 local function buildFloor(hub)
 	-- also build the Omnilab (which will check if this is the first time the HUB is being placed)
@@ -172,6 +191,60 @@ local function removeStorageChest(hub, buffer) -- only if it exists
 	end
 end
 
+local function buildBiomassBurner1(hub)
+	-- only if HUB Upgrade 2 is done
+	if not (global['hub-milestones'] and global['hub-milestones'][hub.force.name] and global['hub-milestones'][hub.force.name]['hub-tier0-hub-upgrade-2']) then
+		return
+	end
+	local burner = hub.surface.create_entity{
+		name = biomassburner,
+		position = position(burner_1_pos,hub),
+		force = hub.force,
+		raise_built = true
+	}
+	burner.minable = false
+	local pole = hub.surface.create_entity{
+		name = powerpole,
+		position = position(powerpole_pos,hub),
+		force = hub.force,
+		raise_built = true
+	}
+	pole.minable = false
+	return burner, pole
+end
+local function removeBiomassBurner1(hub, buffer) -- only if it exists
+	local burner = hub.surface.find_entity(biomassburner,position(burner_1_pos,hub))
+	if burner and burner.valid then
+		if buffer then retrieveItemsFromBurner(burner, buffer) end
+		burner.destroy()
+	end
+	local pole = hub.surface.find_entity(powerpole,position(powerpole_pos,hub))
+	if pole and pole.valid then
+		pole.destroy()
+	end
+end
+local function buildBiomassBurner2(hub)
+	-- only if HUB Upgrade 5 is done
+	if not (global['hub-milestones'] and global['hub-milestones'][hub.force.name] and global['hub-milestones'][hub.force.name]['hub-tier0-hub-upgrade-5']) then
+		return
+	end
+	local burner = hub.surface.create_entity{
+		name = biomassburner,
+		position = position(burner_2_pos,hub),
+		force = hub.force,
+		raise_built = true
+	}
+	burner.minable = false
+	return burner
+end
+local function removeBiomassBurner2(hub, buffer) -- only if it exists
+	local burner = hub.surface.find_entity(biomassburner,position(burner_2_pos,hub))
+	if burner and burner.valid then
+		if buffer then retrieveItemsFromBurner(burner, buffer) end
+		burner.destroy()
+	end
+end
+
 local upgrades = {
 	-- These are called on research completion to unlock hand-crafting recipes and building-undo recipes
 	-- Tier 0 also has some HUB upgrades done here, and also unlocks the next HUB upgrade (or Tier 1/2 for the last one)
@@ -192,8 +265,13 @@ local upgrades = {
 		"smelter-undo",
 		"copper-ingot-manual",
 		"wire-manual",
-		"copper-cable-manual"
-		-- TODO add biomass burner (and power pole)
+		"copper-cable-manual",
+		function(force)
+			local hub = findHubForForce(force)
+			if hub and hub.valid then
+				buildBiomassBurner1(hub)
+			end
+		end
 	},
 	["hub-tier0-hub-upgrade-3"] = {
 		"hub-tier0-hub-upgrade-4",
@@ -210,8 +288,13 @@ local upgrades = {
 	["hub-tier0-hub-upgrade-5"] = {
 		"hub-tier0-hub-upgrade-6",
 		"miner-mk-1-undo",
-		"iron-chest-undo"
-		-- TODO add biomass burner (but no pole)
+		"iron-chest-undo",
+		function(force)
+			local hub = findHubForForce(force)
+			if hub and hub.valid then
+				buildBiomassBurner2(hub)
+			end
+		end
 	},
 	["hub-tier0-hub-upgrade-6"] = {
 		-- Tier 1 & 2 turn-in items
@@ -425,8 +508,13 @@ return {
 	removeCraftBench = removeCraftBench,
 	buildStorageChest = buildStorageChest,
 	removeStorageChest = removeStorageChest,
+	buildBiomassBurner1 = buildBiomassBurner1,
+	removeBiomassBurner1 = removeBiomassBurner1,
+	buildBiomassBurner2 = buildBiomassBurner2,
+	removeBiomassBurner2 = removeBiomassBurner2,
 	retrieveItemsFromCraftBench = retrieveItemsFromCraftBench,
 	retrieveItemsFromStorage = retrieveItemsFromStorage,
+	retrieveItemsFromBurner = retrieveItemsFromBurner,
 	updateMilestoneGUI = updateMilestoneGUI,
 	submitMilestone = submitMilestone,
 	completeMilestone = completeMilestone

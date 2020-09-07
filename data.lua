@@ -21,16 +21,18 @@ data:extend({
 	{type="item-subgroup",group="logistics",name="storage-undo",order="s-a-a"},
 	{type="item-subgroup",group="logistics",name="belt-undo",order="s-b-a"},
 	{type="item-subgroup",group="logistics",name="energy-pipe-distribution-undo",order="s-d-a"},
-	{type="item-subgroup",group="production",name="production-fluid",order="s-a-a"},
-	{type="item-subgroup",group="production",name="production-manufacturer",order="s-a-b"},
-	{type="item-subgroup",group="production",name="production-miner",order="s-a-c"},
-	{type="item-subgroup",group="production",name="production-smelter",order="s-a-d"},
-	{type="item-subgroup",group="production",name="production-workstation",order="s-a-e"},
-	{type="item-subgroup",group="production",name="production-fluid-undo",order="s-b-a"},
-	{type="item-subgroup",group="production",name="production-manufacturer-undo",order="s-b-b"},
-	{type="item-subgroup",group="production",name="production-miner-undo",order="s-b-c"},
-	{type="item-subgroup",group="production",name="production-smelter-undo",order="s-b-d"},
-	{type="item-subgroup",group="production",name="production-workstation-undo",order="s-b-e"},
+	{type="item-subgroup",group="production",name="production-power",order="s-a-a"},
+	{type="item-subgroup",group="production",name="production-fluid",order="s-a-b"},
+	{type="item-subgroup",group="production",name="production-manufacturer",order="s-a-c"},
+	{type="item-subgroup",group="production",name="production-miner",order="s-a-d"},
+	{type="item-subgroup",group="production",name="production-smelter",order="s-a-e"},
+	{type="item-subgroup",group="production",name="production-workstation",order="s-a-f"},
+	{type="item-subgroup",group="production",name="production-power-undo",order="s-a-a"},
+	{type="item-subgroup",group="production",name="production-fluid-undo",order="s-b-b"},
+	{type="item-subgroup",group="production",name="production-manufacturer-undo",order="s-b-c"},
+	{type="item-subgroup",group="production",name="production-miner-undo",order="s-b-d"},
+	{type="item-subgroup",group="production",name="production-smelter-undo",order="s-b-e"},
+	{type="item-subgroup",group="production",name="production-workstation-undo",order="s-b-f"},
 	{type="item-subgroup",group="intermediate-products",name="organic-resource",order="a"},
 	{type="item-subgroup",group="milestones",name="hub-tier0",order="a"},
 	{type="item-subgroup",group="milestones",name="hub-tier1",order="b"},
@@ -51,6 +53,7 @@ require("prototypes.resources")
 require("prototypes.resource-scanner")
 require("prototypes.materials")
 require("prototypes.special")
+require("prototypes.power")
 require("prototypes.logistics")
 require("prototypes.miners")
 require("prototypes.constructors")

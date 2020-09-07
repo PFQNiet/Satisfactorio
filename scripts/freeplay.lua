@@ -8,6 +8,7 @@ local function onInit()
 		remote.call("freeplay","set_respawn_items",{})
 		remote.call("freeplay","set_skip_intro",true)
 		remote.call("freeplay","set_disable_crashsite",true)
+		remote.call("freeplay","set_chart_distance",1)
 	end
 end
 

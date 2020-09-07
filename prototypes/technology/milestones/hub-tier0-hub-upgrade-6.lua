@@ -12,7 +12,7 @@ data:extend({{
 	},
 	effects = {
 		--{type="unlock-recipe",recipe="space-elevator"},
-		--{type="unlock-recipe",recipe="biomass-burner"},
+		{type="unlock-recipe",recipe="biomass-burner"},
 		{type="unlock-recipe",recipe="biomass-from-leaves"},
 		{type="unlock-recipe",recipe="biomass-from-wood"},
 		{type="nothing",effect_description={"technology-effect.add-ficsit-freighter-to-hub"}}

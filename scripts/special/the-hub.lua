@@ -8,6 +8,8 @@ local function onBuilt(event)
 		hub.buildTerminal(entity)
 		hub.buildCraftBench(entity)
 		hub.buildStorageChest(entity)
+		hub.buildBiomassBurner1(entity)
+		hub.buildBiomassBurner2(entity)
 		-- remove base item
 		entity.destroy()
 	end
@@ -19,6 +21,8 @@ local function onRemoved(event)
 	if entity.name == hub.terminal then
 		hub.removeCraftBench(entity, event and event.buffer or nil)
 		hub.removeStorageChest(entity, event and event.buffer or nil)
+		hub.removeBiomassBurner1(entity, event and event.buffer or nil)
+		hub.removeBiomassBurner2(entity, event and event.buffer or nil)
 		hub.removeFloor(entity)
 	end
 end

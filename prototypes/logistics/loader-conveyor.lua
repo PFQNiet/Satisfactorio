@@ -7,4 +7,5 @@ belt.max_health = 1
 belt.next_upgrade = nil
 belt.fast_replaceable_group = nil
 belt.minable = nil
+belt.selection_priority = 30
 data:extend({belt})
