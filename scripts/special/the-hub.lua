@@ -41,6 +41,9 @@ local function onGuiClick(event)
 end
 
 return {
+	on_nth_tick = {
+		[6] = onTick
+	},
 	events = {
 		[defines.events.on_built_entity] = onBuilt,
 		[defines.events.on_robot_built_entity] = onBuilt,
@@ -52,7 +55,6 @@ return {
 		[defines.events.on_entity_died] = onRemoved,
 		[defines.events.script_raised_destroy] = onRemoved,
 		
-		[defines.events.on_tick] = onTick,
 		[defines.events.on_research_finished] = onResearch,
 		[defines.events.on_gui_click] = onGuiClick
 	}
