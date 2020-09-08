@@ -39,6 +39,7 @@ data:extend({
 })
 table.insert(data.raw['god-controller'].default.crafting_categories, "building")
 table.insert(data.raw['god-controller'].default.crafting_categories, "unbuilding")
+table.insert(data.raw['god-controller'].default.mining_categories, "solid")
 
 require("prototypes.fonts")
 require("prototypes.vanilla-cleanup")
