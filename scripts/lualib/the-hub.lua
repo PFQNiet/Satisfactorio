@@ -369,24 +369,40 @@ local function updateMilestoneGUI(force)
 		recipe = hub.get_recipe()
 		if recipe then
 			milestone = game.item_prototypes[recipe.products[1].name]
-			-- TODO Check if this Milestone has already been researched, and reject if so
-			local inventory = hub.get_inventory(defines.inventory.assembling_machine_input)
-			submitted = inventory.get_contents()
-			for _,ingredient in ipairs(recipe.ingredients) do
-				if submitted[ingredient.name] and submitted[ingredient.name] > ingredient.amount then
-					-- spill the excess
+			if global['hub-milestones'] and global['hub-milestones'][force.name] and global['hub-milestones'][force.name][milestone.name] then
+				-- milestone already completed, so reject it
+				local spill = hub.set_recipe(nil)
+				for name,count in pairs(spill) do
 					hub.surface.spill_item_stack(
 						hub.position,
 						{
-							name = ingredient.name,
-							count = inventory.remove{
-								name = ingredient.name,
-								count = submitted[ingredient.name] - ingredient.amount
-							}
+							name = name,
+							count = count,
 						},
 						true, hub.force, false
 					)
-					submitted[ingredient.name] = ingredient.amount
+				end
+				force.print({"message.milestone-already-researched",milestone.name,milestone.localised_name})
+				milestone = {name="none"}
+			else
+				local inventory = hub.get_inventory(defines.inventory.assembling_machine_input)
+				submitted = inventory.get_contents()
+				for _,ingredient in ipairs(recipe.ingredients) do
+					if submitted[ingredient.name] and submitted[ingredient.name] > ingredient.amount then
+						-- spill the excess
+						hub.surface.spill_item_stack(
+							hub.position,
+							{
+								name = ingredient.name,
+								count = inventory.remove{
+									name = ingredient.name,
+									count = submitted[ingredient.name] - ingredient.amount
+								}
+							},
+							true, hub.force, false
+						)
+						submitted[ingredient.name] = ingredient.amount
+					end
 				end
 			end
 		end
