@@ -1,6 +1,6 @@
--- uses global['hub-terminal'] as table of Force name -> {surface, position} of the HUB terminal
--- uses global['hub-milestones'] as table of Force name -> milestone[]
--- uses global['hub-milestone-gui'] as table of Force name -> milestone shown in GUI - if different to current selection then GUI needs refresh, otherwise just update counts
+-- uses global['hub-terminal'] as table of Force index -> {surface, position} of the HUB terminal
+-- uses global['hub-milestones'] as table of Force index -> milestone[]
+-- uses global['hub-milestone-gui'] as table of Force index -> milestone shown in GUI - if different to current selection then GUI needs refresh, otherwise just update counts
 
 local mod_gui = require("mod-gui")
 local util = require("util")
@@ -21,7 +21,7 @@ local graphics = {
 }
 
 local function findHubForForce(force)
-	local pos = global['hub-terminal'] and global['hub-terminal'][force.name] or nil
+	local pos = global['hub-terminal'] and global['hub-terminal'][force.index] or nil
 	if not pos then return nil end
 	return game.get_surface(pos[1]).find_entity(terminal,pos[2])
 end
@@ -130,7 +130,7 @@ local function removeFloor(hub)
 	end
 	dec.destroy()
 	-- remove terminal entity from global list
-	global['hub-terminal'][hub.force.name] = nil
+	global['hub-terminal'][hub.force.index] = nil
 end
 local function buildTerminal(hub)
 	local terminal = hub.surface.create_entity{
@@ -142,7 +142,7 @@ local function buildTerminal(hub)
 	}
 	terminal.active = false -- "crafting" is faked :D
 	if not global['hub-terminal'] then global['hub-terminal'] = {} end
-	global['hub-terminal'][terminal.force.name] = {terminal.surface.name, terminal.position}
+	global['hub-terminal'][terminal.force.index] = {terminal.surface.name, terminal.position}
 	hub.force.set_spawn_position(position(spawn_pos,hub), hub.surface)
 	return terminal
 end
@@ -172,7 +172,7 @@ end
 
 local function buildStorageChest(hub)
 	-- only if HUB Upgrade 1 is done
-	if not (global['hub-milestones'] and global['hub-milestones'][hub.force.name] and global['hub-milestones'][hub.force.name]['hub-tier0-hub-upgrade-1']) then
+	if not (global['hub-milestones'] and global['hub-milestones'][hub.force.index] and global['hub-milestones'][hub.force.index]['hub-tier0-hub-upgrade-1']) then
 		return
 	end
 	local box = hub.surface.create_entity{
@@ -194,7 +194,7 @@ end
 
 local function buildBiomassBurner1(hub)
 	-- only if HUB Upgrade 2 is done
-	if not (global['hub-milestones'] and global['hub-milestones'][hub.force.name] and global['hub-milestones'][hub.force.name]['hub-tier0-hub-upgrade-2']) then
+	if not (global['hub-milestones'] and global['hub-milestones'][hub.force.index] and global['hub-milestones'][hub.force.index]['hub-tier0-hub-upgrade-2']) then
 		return
 	end
 	local burner = hub.surface.create_entity{
@@ -226,7 +226,7 @@ local function removeBiomassBurner1(hub, buffer) -- only if it exists
 end
 local function buildBiomassBurner2(hub)
 	-- only if HUB Upgrade 5 is done
-	if not (global['hub-milestones'] and global['hub-milestones'][hub.force.name] and global['hub-milestones'][hub.force.name]['hub-tier0-hub-upgrade-5']) then
+	if not (global['hub-milestones'] and global['hub-milestones'][hub.force.index] and global['hub-milestones'][hub.force.index]['hub-tier0-hub-upgrade-5']) then
 		return
 	end
 	local burner = hub.surface.create_entity{
@@ -314,12 +314,12 @@ local function completeMilestone(technology)
 			return
 		end
 		if not global['hub-milestones'] then global['hub-milestones'] = {} end
-		if not global['hub-milestones'][technology.force.name] then global['hub-milestones'][technology.force.name] = {} end
-		if global['hub-milestones'][technology.force.name][technology.name] then
+		if not global['hub-milestones'][technology.force.index] then global['hub-milestones'][technology.force.index] = {} end
+		if global['hub-milestones'][technology.force.index][technology.name] then
 			technology.force.print("Milestone already researched")
 			return
 		end
-		global['hub-milestones'][technology.force.name][technology.name] = true
+		global['hub-milestones'][technology.force.index][technology.name] = true
 		for _,effect in pairs(upgrades[technology.name]) do
 			if type(effect) == "function" then
 				effect(technology.force)
@@ -369,7 +369,7 @@ local function updateMilestoneGUI(force)
 		recipe = hub.get_recipe()
 		if recipe then
 			milestone = game.item_prototypes[recipe.products[1].name]
-			if global['hub-milestones'] and global['hub-milestones'][force.name] and global['hub-milestones'][force.name][milestone.name] then
+			if global['hub-milestones'] and global['hub-milestones'][force.index] and global['hub-milestones'][force.index][milestone.name] then
 				-- milestone already completed, so reject it
 				local spill = hub.set_recipe(nil)
 				for name,count in pairs(spill) do
@@ -463,8 +463,8 @@ local function updateMilestoneGUI(force)
 		local button = bottom['hub-milestone-tracking-submit']
 
 		-- check if the selected milestone has been changed
-		if milestone.name ~= global['hub-milestone-gui'][force.name] then
-			global['hub-milestone-gui'][force.name] = milestone.name
+		if milestone.name ~= global['hub-milestone-gui'][force.index] then
+			global['hub-milestone-gui'][force.index] = milestone.name
 			inner.visible = milestone.name ~= "none"
 			bottom.visible = inner.visible
 			button.enabled = false
@@ -522,7 +522,7 @@ local function submitMilestone(force)
 	local recipe = hub.get_recipe()
 	if not recipe then return end
 	local milestone = recipe.products[1].name
-	if global['hub-milestones'] and global['hub-milestones'][force.name] and global['hub-milestones'][force.name][milestone] then return end
+	if global['hub-milestones'] and global['hub-milestones'][force.index] and global['hub-milestones'][force.index][milestone] then return end
 	local inventory = hub.get_inventory(defines.inventory.assembling_machine_input)
 	local submitted = inventory.get_contents()
 	for _,ingredient in pairs(recipe.ingredients) do

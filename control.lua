@@ -6,6 +6,7 @@ handler.add_libraries(require("scripts.constructors"))
 handler.add_libraries(require("scripts.miners"))
 handler.add_libraries(require("scripts.special"))
 handler.add_libraries(require("scripts.logistics"))
+handler.add_lib(require("scripts.lualib.resource-spawner"))
 handler.add_lib({
 	on_init = function()
 		local resources = {"coal","stone","iron-ore","copper-ore","uranium-ore","crude-oil","caterium-ore"}
