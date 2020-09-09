@@ -82,7 +82,9 @@ local function spawnNode(resource, surface, cx, cy)
 						if not global['queued-nodes'][chunkpos.y][chunkpos.x] then global['queued-nodes'][chunkpos.y][chunkpos.x] = {} end
 						table.insert(global['queued-nodes'][chunkpos.y][chunkpos.x], entity)
 					else
-						table.insert(landfill, {name="landfill",position={tx,ty}})
+						if surface.get_tile(tx,ty).collides_with("water-tile") then
+							table.insert(landfill, {name="landfill",position={tx,ty}})
+						end
 						surface.create_entity(entity)
 					end
 				end
@@ -200,7 +202,9 @@ local function onChunkGenerated(event)
 	if global['queued-nodes'] and global['queued-nodes'][pos.y] and global['queued-nodes'][pos.y][pos.x] and #global['queued-nodes'][pos.y][pos.x] > 0 then
 		local landfill = {}
 		for _,node in pairs(global['queued-nodes'][pos.y][pos.x]) do
-			table.insert(landfill, {name="landfill",position={node.position[1],node.position[2]}})
+			if event.surface.get_tile(node.position[1],node.position[2]).collides_with("water-tile") then
+				table.insert(landfill, {name="landfill",position={node.position[1],node.position[2]}})
+			end
 			event.surface.create_entity(node)
 		end
 		if #landfill > 0 then

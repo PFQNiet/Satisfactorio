@@ -63,5 +63,11 @@ data:extend({
 		movement_slow_down_factor = 1,
 		spread_duration = 120,
 		fade_away_duration = 30
+	},
+	{
+		type = "sprite",
+		name = "resource-scanner-ping",
+		filename = "__Satisfactorio__/graphics/particles/resource-scanner-ping.png",
+		size = 64
 	}
 })

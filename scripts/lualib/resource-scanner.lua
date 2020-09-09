@@ -1,5 +1,12 @@
+-- uses global['resource-scanner-fx'] as a queue of effects
 local mod_gui = require("mod-gui")
-local string = require("scripts.lualib.string")
+local util = require("util")
+
+local function queueEffect(tick, effect)
+	if not global['resource-scanner-fx'] then global['resource-scanner-fx'] = {} end
+	if not global['resource-scanner-fx'][tick] then global['resource-scanner-fx'][tick] = {} end
+	table.insert(global['resource-scanner-fx'][tick], effect)
+end
 
 local function getUnlockedScans(force)
 	local recipes = {}
@@ -11,8 +18,7 @@ local function getUnlockedScans(force)
 	table.sort(recipes, function(a,b) return (a.order or a.name) < (b.order or b.name) end)
 	return recipes
 end
-local function openResourceScanner(event)
-	local player = game.players[event.player_index]
+local function openResourceScanner(player)
 	local gui = player.gui.screen['resource-scanner']
 	local menu
 	if not gui then
@@ -72,16 +78,28 @@ end
 local function closeResourceScanner(player)
 	local gui = player.gui.screen['resource-scanner']
 	if gui then gui.visible = false end
+	player.opened = nil
+end
+
+local function toggleResourceScanner(event)
+	local player = game.players[event.player_index]
+	if event.name == defines.events.on_lua_shortcut and event.prototype_name ~= "resource-scanner" then
+		log("Event was on_lua_shortcut but prototype_name was "..event.prototype_name)
+		return
+	end
+	if player.opened and player.opened.name == "resource-scanner" then
+		closeResourceScanner(player)
+	else
+		openResourceScanner(player)
+	end
 end
 local function onGuiClick(event)
 	local player = game.players[event.player_index]
 	if event.element.name == "resource-scanner-close" then
 		closeResourceScanner(player)
-		player.opened = nil
 	end
 	if event.element.name == "resource-scanner-scan" then
 		closeResourceScanner(player)
-		player.opened = nil
 		local index = player.gui.screen['resource-scanner']['resource-scanner-item'].selected_index
 		if not index then
 			return
@@ -96,10 +114,7 @@ local function onGuiClick(event)
 			return
 		end
 
-		player.surface.create_trivial_smoke{
-			name = "resource-scanner-pulse",
-			position = player.position
-		}
+		queueEffect(event.tick + 30, {type="pulse", player=player})
 		local rdata = global['resources'][type]
 		-- find nearest grid squares having nodes
 		local nodes = {}
@@ -136,14 +151,80 @@ local function onGuiClick(event)
 		local closest = {table.unpack(nodes, 1, math.min(3,#nodes))}
 		-- for now just insta-ping them
 		for _,pos in pairs(closest) do
-			player.print({"","[img=item."..rdata.type.."] ",{"item-name."..rdata.type}," found at [gps=",math.floor(pos[1]),",",math.floor(pos[2]),"]"})
+			local dx = pos[1] - player.position.x
+			local dy = pos[2] - player.position.y
+			local distance = math.floor(math.sqrt(dx*dx+dy*dy)+1)
+			queueEffect(event.tick + distance + 30, {
+				type = "ping",
+				player = player,
+				resource = rdata.type,
+				direction = math.atan2(-dy,dx),
+				distance = distance
+			})
 		end
+	end
+end
+
+local function onTick(event)
+	if global['resource-scanner-fx'] and global['resource-scanner-fx'][event.tick] then
+		for _,effect in pairs(global['resource-scanner-fx'][event.tick]) do
+			if effect.type == "pulse" then
+				effect.player.surface.create_trivial_smoke{
+					name = "resource-scanner-pulse",
+					position = effect.player.position
+				}
+			elseif effect.type == "ping" then
+				local offset = {
+					math.cos(effect.direction),
+					-math.sin(effect.direction)
+				}
+				local ttl = 20*60
+				rendering.draw_sprite{
+					sprite = "resource-scanner-ping",
+					target = effect.player.character,
+					target_offset = {offset[1]*3,offset[2]*3},
+					surface = effect.player.surface,
+					time_to_live = ttl,
+					players = {effect.player}
+				}
+				rendering.draw_sprite{
+					sprite = "item/"..effect.resource,
+					target = effect.player.character,
+					target_offset = {offset[1]*3,offset[2]*3},
+					surface = effect.player.surface,
+					time_to_live = ttl,
+					players = {effect.player}
+				}
+				rendering.draw_sprite{
+					sprite = "utility/indication_arrow",
+					orientation = 0.25 - effect.direction / math.pi/2,
+					target = effect.player.character,
+					target_offset = {offset[1]*4,offset[2]*4},
+					surface = effect.player.surface,
+					time_to_live = ttl,
+					players = {effect.player}
+				}
+				rendering.draw_text{
+					text = {"gui.resource-scanner-distance",util.format_number(effect.distance)},
+					color = {1,1,1},
+					surface = effect.player.surface,
+					target = effect.player.character,
+					target_offset = {offset[1]*3,offset[2]*3+0.25},
+					time_to_live = ttl,
+					players = {effect.player},
+					alignment = "center"
+				}
+			end
+		end
+		global['resource-scanner-fx'][event.tick] = nil
 	end
 end
 
 return {
 	events = {
-		["resource-scanner"] = openResourceScanner,
+		["resource-scanner"] = toggleResourceScanner,
+		[defines.events.on_lua_shortcut] = toggleResourceScanner,
+		[defines.events.on_tick] = onTick,
 		[defines.events.on_gui_click] = onGuiClick,
 		[defines.events.on_gui_closed] = function(event)
 			if event.gui_type == defines.gui_type.custom and event.element.name == "resource-scanner" then
