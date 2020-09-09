@@ -2,19 +2,19 @@ local name = "smelter"
 local smelter = {
 	animation = {
 		north = {
-			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-ns.png",
+			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-n.png",
 			size = {96,160}
 		},
 		east = {
-			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-ew.png",
+			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-e.png",
 			size = {160,96}
 		},
 		south = {
-			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-ns.png",
+			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-s.png",
 			size = {96,160}
 		},
 		west = {
-			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-ew.png",
+			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-w.png",
 			size = {160,96}
 		}
 	},

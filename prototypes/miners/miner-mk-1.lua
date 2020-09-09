@@ -3,22 +3,22 @@ local miner = {
 	allowed_effects = {"speed","consumption"},
 	animations = {
 		north = {
-			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-ns.png",
+			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-n.png",
 			size = {160,288},
 			shift = {0,-2}
 		},
 		east = {
-			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-ew.png",
+			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-e.png",
 			size = {288,160},
 			shift = {2,0}
 		},
 		south = {
-			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-ns.png",
+			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-s.png",
 			size = {160,288},
 			shift = {0,2}
 		},
 		west = {
-			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-ew.png",
+			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-w.png",
 			size = {288,160},
 			shift = {-2,0}
 		}
