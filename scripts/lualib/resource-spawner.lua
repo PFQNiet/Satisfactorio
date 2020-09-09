@@ -101,8 +101,6 @@ local function addNode(resource, surface, x, y)
 	if not resource.grid[surface.index][gy] then resource.grid[surface.index][gy] = {} end
 	resource.grid[surface.index][gy][gx] = {x,y}
 	table.insert(resource.nodes[surface.index], {x,y})
-	-- TODO actually spawn the node! For now just log it and make them all Pure nodes
-	game.print("Spawned "..resource.type.." at "..math.floor(x)..","..math.floor(y))
 	spawnNode(resource, surface, x, y)
 end
 local function existsNear(mytype, surface, x, y)
@@ -208,6 +206,7 @@ local function onChunkGenerated(event)
 		if #landfill > 0 then
 			event.surface.set_tiles(landfill, true, false, false, false)
 		end
+		global['queued-nodes'][pos.y][pos.x] = nil
 	end
 end
 
