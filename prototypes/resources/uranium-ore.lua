@@ -16,9 +16,9 @@ mining.required_fluid = nil
 mining.fluid_amount = 0
 mining.mining_time = 1
 ore.category = "solid"
--- ore.resource_patch_search_radius = 0
--- if not ore.flags then ore.flags = {} end
--- table.insert(ore.flags,"not-on-map")
+ore.resource_patch_search_radius = 0
+if not ore.flags then ore.flags = {} end
+table.insert(ore.flags,"not-on-map")
 
 local item = data.raw.item[name]
 item.icon = ore.icon

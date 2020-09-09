@@ -20,6 +20,9 @@ ore.minable.results = {{
 	probability = 1
 }}
 ore.category = "crude-oil"
+ore.resource_patch_search_radius = 0
+if not ore.flags then ore.flags = {} end
+table.insert(ore.flags,"not-on-map")
 
 local fluid = data.raw.fluid[name]
 fluid.icon = ore.icon

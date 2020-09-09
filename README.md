@@ -6,7 +6,7 @@ Being an overhaul mod, compatibility with QoL mods is probably fine but it obvio
 ## Core gameplay changes
 ### Mining
 - Ore patches are replaced with nodes. Nodes appear in small clusters and provide infinite resources at a slow rate.
-- Nodes can be Impure, Normal or Pure. In Factorio this is represented as 100%, 200% and 400% yield (in Map view, the "node" is actually 9 tiles for a "combined yield" of 900%, 1800% and 3600%)
+- Nodes can be Impure, Normal or Pure. In Factorio this is represented as 100%, 200% and 400% yield respectively.
 - The types of resources you can find vary the further away from spawn you are, with basic resources close by and more advanced ones further away.
 - With increased distance also comes better chances at nodes with higher purity.
 - You can also find resource deposits scattered around, which can be mined for extra resources.

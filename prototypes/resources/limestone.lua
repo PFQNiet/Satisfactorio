@@ -13,6 +13,9 @@ ore.normal = 60
 ore.map_grid = false
 ore.resource_patch_search_radius = 1
 ore.category = "solid"
+ore.resource_patch_search_radius = 0
+if not ore.flags then ore.flags = {} end
+table.insert(ore.flags,"not-on-map")
 
 local item = data.raw.item[basename]
 item.icon = ore.icon
