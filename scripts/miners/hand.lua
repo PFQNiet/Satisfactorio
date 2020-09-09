@@ -12,8 +12,11 @@ local function onMined(event)
 		local buffer = event.buffer
 		buffer.clear()
 		buffer.insert{name="wood",count=math.random(1,2)}
-		buffer.insert{name="leaves",count=math.random(4,10)}
 		-- do some fancy shenanigans to add extras to trees
+		-- if it's not a dead tree...
+		if entity.name ~= "dead-dry-hairy-tree" and entity.name ~= "dead-grey-trunk" and entity.name ~= "dead-tree-desert" and entity.name ~= "dry-hairy-tree" and entity.name ~= "dry-tree" then
+			buffer.insert{name="leaves",count=math.random(4,10)}
+		end
 		-- they'll give Leaves and Wood, but may also give Mycelia (dirt), Flower Petals (grass), Limestone (sand) or Silica (desert) based on the tile
 		local tile = entity.surface.get_tile(entity.position).name
 		if string.starts_with(tile,"grass") then

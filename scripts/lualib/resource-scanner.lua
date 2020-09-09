@@ -1,9 +1,20 @@
 local mod_gui = require("mod-gui")
 local string = require("scripts.lualib.string")
 
+local function getUnlockedScans(force)
+	local recipes = {}
+	for _,recipe in pairs(force.recipes) do
+		if recipe.category == "resource-scanner" and recipe.enabled then
+			table.insert(recipes, recipe)
+		end
+	end
+	table.sort(recipes, function(a,b) return (a.order or a.name) < (b.order or b.name) end)
+	return recipes
+end
 local function openResourceScanner(event)
 	local player = game.players[event.player_index]
 	local gui = player.gui.screen['resource-scanner']
+	local menu
 	if not gui then
 		gui = player.gui.screen.add{
 			type = "frame",
@@ -20,33 +31,40 @@ local function openResourceScanner(event)
 		pusher.drag_target = gui
 		title_flow.add{type = "sprite-button", style = "frame_action_button", sprite = "utility/close_white", name = "resource-scanner-close"}
 
+		gui.add{
+			type = "label",
+			caption = {"","[font=heading-2]",{"gui.resource-scanner-scan-for"},"[/font]"}
+		}
+		menu = gui.add{
+			type = "list-box",
+			name = "resource-scanner-item"
+		}
+		menu.style.top_margin = 4
+		menu.style.bottom_margin = 4
+
 		local flow = gui.add{
 			type = "flow",
-			name = "resource-scanner-content",
 			direction = "horizontal"
 		}
-		flow.style.vertical_align = "center"
-		flow.add{
-			type = "label",
-			caption = {"gui.resource-scanner-scan-for"}
-		}
-		flow.add{
-			type = "choose-elem-button",
-			name = "resource-scanner-item",
-			elem_type = "recipe",
-			recipe = "scanner-iron-ore",
-			elem_filters = {
-				{filter="category", category="resource-scanner"},
-				{mode="and", filter="enabled"}
-			}
-		}
+		pusher = flow.add{type = "empty-widget"}
+		pusher.style.horizontally_stretchable = true
 		flow.add{
 			type = "button",
 			style = "confirm_button",
 			name = "resource-scanner-scan",
 			caption = {"gui.resource-scanner-scan"}
 		}
+	else
+		menu = gui['resource-scanner-item']
 	end
+	local index = menu.selected_index or 0
+	if index == 0 then index = 1 end
+	menu.clear_items()
+	for _,recipe in ipairs(getUnlockedScans(player.force)) do
+		menu.add_item({"","[img=item."..recipe.products[1].name.."] ",game.item_prototypes[recipe.products[1].name].localised_name})
+	end
+	menu.selected_index = index
+
 	gui.visible = true
 	player.opened = gui
 	gui.force_auto_center()
@@ -64,24 +82,24 @@ local function onGuiClick(event)
 	if event.element.name == "resource-scanner-scan" then
 		closeResourceScanner(player)
 		player.opened = nil
-		player.surface.create_trivial_smoke{
-			name = "resource-scanner-pulse",
-			position = player.position
-		}
+		local index = player.gui.screen['resource-scanner']['resource-scanner-item'].selected_index
+		if not index then
+			return
+		end
 		if not global['resources'] then
 			player.print("Resource entities not loaded yet")
 			return
 		end
-		local type = player.gui.screen['resource-scanner']['resource-scanner-content']['resource-scanner-item'].elem_value
-		if not string.starts_with(type, "scanner-") then
-			player.print("Selected resource "..type.." can't be scanned")
-			return
-		end
-		type = string.remove_prefix(type,"scanner-")
+		local type = getUnlockedScans(player.force)[index].products[1].name
 		if not global['resources'][type] then
 			player.print("Selected resource "..type.." has no resource data")
 			return
 		end
+
+		player.surface.create_trivial_smoke{
+			name = "resource-scanner-pulse",
+			position = player.position
+		}
 		local rdata = global['resources'][type]
 		-- find nearest grid squares having nodes
 		local nodes = {}
