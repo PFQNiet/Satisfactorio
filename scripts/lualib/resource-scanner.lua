@@ -94,6 +94,7 @@ local function toggleResourceScanner(event)
 	end
 end
 local function onGuiClick(event)
+	if not (event.element and event.element.valid) then return end
 	local player = game.players[event.player_index]
 	if event.element.name == "resource-scanner-close" then
 		closeResourceScanner(player)
@@ -227,7 +228,7 @@ return {
 		[defines.events.on_tick] = onTick,
 		[defines.events.on_gui_click] = onGuiClick,
 		[defines.events.on_gui_closed] = function(event)
-			if event.gui_type == defines.gui_type.custom and event.element.name == "resource-scanner" then
+			if event.gui_type == defines.gui_type.custom and event.element.valid and event.element.name == "resource-scanner" then
 				closeResourceScanner(game.players[event.player_index])
 			end
 		end

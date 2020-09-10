@@ -326,6 +326,10 @@ local upgrades = {
 		"conveyor-splitter-undo",
 		"conveyor-merger-undo",
 		"underground-belt-undo"
+	},
+	["hub-tier1-field-research"] = {
+		"mam-undo",
+		"wooden-chest-undo"
 	}
 }
 local function completeMilestone(technology)

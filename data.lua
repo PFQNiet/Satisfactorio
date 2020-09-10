@@ -14,6 +14,7 @@ data:extend({
 	{type="recipe-category",name="refining"},
 	{type="recipe-category",name="resource-scanner"},
 	{type="recipe-category",name="hub-progressing"},
+	{type="recipe-category",name="mam-research"},
 	{type="item-group",name="special",order="a",icon="__base__/graphics/item-group/effects.png",icon_size=64},
 	{type="item-group",name="milestones",order="h",icon="__Satisfactorio__/graphics/icons/the-hub.png",icon_size=64},
 	{type="item-subgroup",group="special",name="special",order="s-a-a"},
@@ -52,7 +53,9 @@ require("prototypes.materials")
 require("prototypes.special")
 require("prototypes.power")
 require("prototypes.logistics")
+require("prototypes.organisation")
 require("prototypes.miners")
 require("prototypes.constructors")
 require("prototypes.milestones")
 require("prototypes.technology")
+require("prototypes.map-tweaks")
