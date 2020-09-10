@@ -33,9 +33,9 @@ local function onRemoved(event)
 			game.print("Couldn't find the drill")
 			return
 		end
-		drill.destroy()
 		-- and the output
-		io.removeOutput(entity, {0,-6}, event)
+		io.removeOutput(drill, {0,-6}, event)
+		drill.destroy()
 	end
 end
 

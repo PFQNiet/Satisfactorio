@@ -2,7 +2,7 @@ data:extend({{
 	type = "technology",
 	name = "hub-tier0-hub-upgrade-6",
 	order = "a-0-6",
-	icon = "__Satisfactorio__/graphics/icons/mycelia.png",
+	icon = "__Satisfactorio__/graphics/icons/biomass-burner.png",
 	icon_size = 64,
 	prerequisites = {"hub-tier0-hub-upgrade-5"},
 	unit = {

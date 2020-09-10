@@ -13,6 +13,7 @@ local inserter = {
 	icon_size = 64,
 	minable = nil, -- will always be removed by the building that spawned it
 	collision_box = {{-0.2, -0.2}, {0.2, 0.2}},
+	collision_mask = {},
 	selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
 	selection_priority = 30,
 	allow_custom_vectors = true,

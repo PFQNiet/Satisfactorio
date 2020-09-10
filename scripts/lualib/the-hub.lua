@@ -1,6 +1,7 @@
 -- uses global['hub-terminal'] as table of Force index -> {surface, position} of the HUB terminal
 -- uses global['hub-milestones'] as table of Force index -> milestone[]
 -- uses global['hub-milestone-gui'] as table of Force index -> milestone shown in GUI - if different to current selection then GUI needs refresh, otherwise just update counts
+-- uses global['hub-cooldown'] as table of Force index -> tick at which the Freighter returns
 
 local mod_gui = require("mod-gui")
 local util = require("util")
@@ -13,6 +14,7 @@ local bench = "craft-bench"
 local storage = "wooden-chest"
 local biomassburner = "biomass-burner-hub"
 local powerpole = "small-electric-pole"
+local freighter = "ficsit-freighter"
 local graphics = {
 	[defines.direction.north] = hub.."-north",
 	[defines.direction.east] = hub.."-east",
@@ -109,6 +111,7 @@ local storage_pos = {-2,0}
 local burner_1_pos = {2,-4}
 local burner_2_pos = {-2,-4}
 local powerpole_pos = {0,-5}
+local freighter_pos = {0,6}
 
 local function buildFloor(hub)
 	-- also build the Omnilab (which will check if this is the first time the HUB is being placed)
@@ -245,6 +248,56 @@ local function removeBiomassBurner2(hub, buffer) -- only if it exists
 		burner.destroy()
 	end
 end
+local function buildFreighter(hub)
+	-- only if HUB Upgrade 6 is done
+	if not (global['hub-milestones'] and global['hub-milestones'][hub.force.index] and global['hub-milestones'][hub.force.index]['hub-tier0-hub-upgrade-6']) then
+		return
+	end
+	local silo = hub.surface.create_entity{
+		name = freighter,
+		position = position(freighter_pos,hub),
+		force = hub.force,
+		raise_built = true
+	}
+	silo.operable = false
+	silo.minable = false
+	silo.auto_launch = true
+
+	local inserter = hub.surface.create_entity{
+		name = "loader-inserter",
+		position = silo.position,
+		force = hub.force,
+		raise_built = true
+	}
+	inserter.drop_position = silo.position
+	inserter.operable = false
+	inserter.minable = false
+	inserter.destructible = false
+end
+local function removeFreighter(hub, buffer)
+	local silo = hub.surface.find_entity(freighter,position(freighter_pos,hub))
+	if silo and silo.valid then
+		silo.destroy()
+	end
+	local inserter = hub.surface.find_entity("loader-inserter",position(freighter_pos,hub))
+	if inserter and inserter.valid then
+		inserter.destroy()
+	end
+end
+local function launchFreighter(hub, item)
+	local silo = hub.surface.find_entity(freighter,position(freighter_pos,hub))
+	if not (silo and silo.valid) then
+		game.print("Could not find Freighter")
+		return
+	end
+	local inserter = hub.surface.find_entity("loader-inserter",position(freighter_pos,hub))
+	if not (inserter and inserter.valid) then
+		game.print("Could not find Freighter Loader")
+		return
+	end
+	inserter.held_stack.set_stack({name=item, count=1})
+	silo.rocket_parts = 1
+end
 
 local upgrades = {
 	-- These are called on research completion to unlock hand-crafting recipes and building-undo recipes
@@ -299,13 +352,26 @@ local upgrades = {
 	},
 	["hub-tier0-hub-upgrade-6"] = {
 		-- Tier 1 & 2 turn-in items
+		"hub-tier1-base-building",
+		"hub-tier1-logistics",
+		"hub-tier1-field-research",
 		-- "space-elevator-undo",
 		"biomass-burner-undo",
 		"biomass-from-wood-manual",
-		"biomass-from-leaves-manual"
-		-- TODO add freighter
-	}
+		"biomass-from-leaves-manual",
+		function(force)
+			local hub = findHubForForce(force)
+			if hub and hub.valid then
+				buildFreighter(hub)
+			end
+		end
+	},
 	-- TODO Update floor graphics according to progression
+	["hub-tier1-base-building"] = {
+		"lookout-tower-undo",
+		"foundation-undo",
+		"stone-wall-undo"
+	}
 }
 local function completeMilestone(technology)
 	if string.starts_with(technology.name, "hub-tier") then
@@ -347,6 +413,13 @@ local function completeMilestone(technology)
 			end
 		end
 		technology.force.print(message)
+		-- launch freighter if needed
+		local time = technology.research_unit_energy
+		if time > 30*60 then
+			launchFreighter(findHubForForce(technology.force), technology.research_unit_ingredients[1].name)
+			if not global['hub-cooldown'] then global['hub-cooldown'] = {} end
+			global['hub-cooldown'][technology.force.index] = game.tick + time
+		end
 	end
 end
 
@@ -441,6 +514,11 @@ local function updateMilestoneGUI(force)
 				style = "bordered_table",
 				column_count = 3
 			}
+			local cooldown = frame.add{
+				type = "label",
+				name = "hub-milestone-tracking-cooldown"
+			}
+			cooldown.visible = false
 			local bottom = frame.add{
 				type = "flow",
 				name = "hub-milestone-tracking-bottom"
@@ -459,6 +537,7 @@ local function updateMilestoneGUI(force)
 		local name = frame['hub-milestone-tracking-name']
 		local inner = frame['hub-milestone-tracking-content']
 		local table = inner['hub-milestone-tracking-table']
+		local cooldown = frame['hub-milestone-tracking-cooldown']
 		local bottom = frame['hub-milestone-tracking-bottom']
 		local button = bottom['hub-milestone-tracking-submit']
 
@@ -505,6 +584,21 @@ local function updateMilestoneGUI(force)
 		-- so now we've established the GUI exists, and is populated with a table for the currently selected milestone... if there is one, update the counts now
 		if milestone.name ~= "none" then
 			local ready = true
+			if global['hub-cooldown'] and global['hub-cooldown'][player.force.index] then
+				if global['hub-cooldown'][player.force.index] > game.tick then
+					ready = false
+					local ticks = global['hub-cooldown'][player.force.index] - game.tick
+					local tenths = math.floor(ticks/6)%10
+					local seconds = math.floor(ticks/60)
+					local minutes = math.floor(seconds/60)
+					seconds = seconds % 60
+					local seconds_padding = seconds < 10 and "0" or ""
+					cooldown.caption = {"gui.hub-milestone-cooldown", minutes, seconds_padding, seconds, tenths}
+					cooldown.visible = true
+				else
+					cooldown.visible = false
+				end
+			end
 			for _,ingredient in ipairs(recipe.ingredients) do
 				local label = table['hub-milestone-tracking-ingredient-'..ingredient.name]['hub-milestone-tracking-ingredient-'..ingredient.name..'-count']
 				label.caption = {"gui.fraction", util.format_number(submitted[ingredient.name] or 0), util.format_number(ingredient.amount)}
@@ -569,10 +663,13 @@ return {
 	removeBiomassBurner1 = removeBiomassBurner1,
 	buildBiomassBurner2 = buildBiomassBurner2,
 	removeBiomassBurner2 = removeBiomassBurner2,
+	buildFreighter = buildFreighter,
+	removeFreighter = removeFreighter,
 	retrieveItemsFromCraftBench = retrieveItemsFromCraftBench,
 	retrieveItemsFromStorage = retrieveItemsFromStorage,
 	retrieveItemsFromBurner = retrieveItemsFromBurner,
 	updateMilestoneGUI = updateMilestoneGUI,
 	submitMilestone = submitMilestone,
-	completeMilestone = completeMilestone
+	completeMilestone = completeMilestone,
+	launchFreighter = launchFreighter
 }

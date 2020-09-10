@@ -137,7 +137,7 @@ data:extend({
 		enabled = false
 	},
 	{
-		icon = "__Satisfactorio__/graphics/icons/mycelia.png",
+		icon = "__Satisfactorio__/graphics/icons/biomass-burner.png",
 		icon_size = 64,
 		name = "hub-tier0-hub-upgrade-6",
 		order = "f",

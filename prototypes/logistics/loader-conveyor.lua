@@ -8,4 +8,5 @@ belt.next_upgrade = nil
 belt.fast_replaceable_group = nil
 belt.minable = nil
 belt.selection_priority = 30
+belt.collision_mask = {}
 data:extend({belt})
