@@ -13,6 +13,6 @@ data:extend({{
 	effects = {
 		{type="unlock-recipe",recipe="conveyor-splitter"},
 		{type="unlock-recipe",recipe="conveyor-merger"},
-		{type="unlock-recipe",recipe="underground-transport-belt"}
+		{type="unlock-recipe",recipe="underground-belt"}
 	}
 }})

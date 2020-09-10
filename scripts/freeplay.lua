@@ -9,6 +9,9 @@ local function onInit()
 		remote.call("freeplay","set_skip_intro",true)
 		remote.call("freeplay","set_disable_crashsite",true)
 		remote.call("freeplay","set_chart_distance",1)
+		if remote.interfaces['silo-script'] then
+			remote.call("silo_script", "set_no_victory", true)
+		end
 	end
 end
 

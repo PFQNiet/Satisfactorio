@@ -8,43 +8,44 @@ local function addToBufferOrSpillStack(stack, entity, buffer)
 	end
 end
 
-local function addInput(entity, offset, target)
+local function addInput(entity, offset, target, direction)
 	offset = math2d.position.rotate_vector(offset, entity.direction/8*360)
 	local position = math2d.position.add(entity.position, offset)
+	direction = direction or defines.direction.north
 	local belt = entity.surface.create_entity{
 		name = "loader-conveyor",
 		position = position,
-		direction = entity.direction,
+		direction = (entity.direction + direction) % 8,
 		force = entity.force,
 		raise_built = true
 	}
 	local inserter_left = entity.surface.create_entity{
 		name = "loader-inserter",
 		position = position,
-		direction = entity.direction,
+		direction = (entity.direction + direction) % 8,
 		force = entity.force,
 		raise_built = true
 	}
-	inserter_left.pickup_position = math2d.position.add(position, math2d.position.rotate_vector({-0.25,0.25},entity.direction/8*360))
+	inserter_left.pickup_position = math2d.position.add(position, math2d.position.rotate_vector({-0.25,0.25},((entity.direction+direction)%8)/8*360))
 	inserter_left.drop_position = (target or entity).position
-	inserter_left.operable = false
+	--inserter_left.operable = false
 	inserter_left.minable = false
 	inserter_left.destructible = false
 	local inserter_right = entity.surface.create_entity{
 		name = "loader-inserter",
 		position = position,
-		direction = entity.direction,
+		direction = (entity.direction + direction) % 8,
 		force = entity.force,
 		raise_built = true
 	}
-	inserter_right.pickup_position = math2d.position.add(position, math2d.position.rotate_vector({0.25,0.25},entity.direction/8*360))
+	inserter_right.pickup_position = math2d.position.add(position, math2d.position.rotate_vector({0.25,0.25},((entity.direction+direction)%8)/8*360))
 	inserter_right.drop_position = (target or entity).position
-	inserter_right.operable = false
+	--inserter_right.operable = false
 	inserter_right.minable = false
 	inserter_right.destructible = false
 	local visual = rendering.draw_sprite{
 		sprite = "utility.indication_line",
-		orientation = entity.direction/8,
+		orientation = ((entity.direction + direction) % 8)/8,
 		render_layer = "arrow",
 		target = entity,
 		target_offset = {offset.x, offset.y},
@@ -85,43 +86,44 @@ local function removeInput(entity, offset, event)
 	-- visualisation is linked to the main entity so it gets destroyed automatically
 end
 
-local function addOutput(entity, offset, target)
+local function addOutput(entity, offset, target, direction)
 	offset = math2d.position.rotate_vector(offset, entity.direction/8*360)
 	local position = math2d.position.add(entity.position, offset)
+	direction = direction or defines.direction.north
 	local belt = entity.surface.create_entity{
 		name = "loader-conveyor",
 		position = position,
-		direction = entity.direction,
+		direction = (entity.direction+direction)%8,
 		force = entity.force,
 		raise_built = true
 	}
 	local inserter_left = entity.surface.create_entity{
 		name = "loader-inserter",
 		position = position,
-		direction = entity.direction,
+		direction = (entity.direction+direction)%8,
 		force = entity.force,
 		raise_built = true
 	}
 	inserter_left.pickup_position = (target or entity).position
-	inserter_left.drop_position = math2d.position.add(position, math2d.position.rotate_vector({-0.25,-0.49},entity.direction/8*360))
-	inserter_left.operable = false
+	inserter_left.drop_position = math2d.position.add(position, math2d.position.rotate_vector({-0.25,-0.49},((entity.direction+direction)%8)/8*360))
+	--inserter_left.operable = false
 	inserter_left.minable = false
 	inserter_left.destructible = false
 	local inserter_right = entity.surface.create_entity{
 		name = "loader-inserter",
 		position = position,
-		direction = entity.direction,
+		direction = (entity.direction+direction)%8,
 		force = entity.force,
 		raise_built = true
 	}
 	inserter_right.pickup_position = (target or entity).position
 	inserter_right.drop_position = math2d.position.add(position, math2d.position.rotate_vector({0.25,-0.49},entity.direction/8*360))
-	inserter_right.operable = false
+	--inserter_right.operable = false
 	inserter_right.minable = false
 	inserter_right.destructible = false
 	local visual = rendering.draw_sprite{
 		sprite = "utility.indication_arrow",
-		orientation = entity.direction/8,
+		orientation = ((entity.direction+direction)%8)/8,
 		render_layer = "arrow",
 		target = entity,
 		target_offset = {offset.x, offset.y},

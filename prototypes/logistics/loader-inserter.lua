@@ -26,10 +26,11 @@ local inserter = {
 	insert_position = {0, 1.2},
 	draw_held_item = false,
 	draw_inserter_arrow = false,
+	draw_circuit_wires = false,
 	platform_picture = empty_sprite,
 	hand_base_picture = empty_sprite,
 	hand_open_picture = empty_sprite,
 	hand_closed_picture = empty_sprite,
-	circuit_wire_max_distance = 0
+	circuit_wire_max_distance = 5
 }
 data:extend({inserter})

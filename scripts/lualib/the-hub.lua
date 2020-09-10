@@ -7,6 +7,7 @@ local mod_gui = require("mod-gui")
 local util = require("util")
 local string = require("scripts.lualib.string")
 local omnilab = require("scripts.lualib.omnilab")
+local getitems = require("scripts.lualib.get-items-from")
 
 local hub = "the-hub"
 local terminal = "the-hub-terminal"
@@ -28,64 +29,13 @@ local function findHubForForce(force)
 	return game.get_surface(pos[1]).find_entity(terminal,pos[2])
 end
 local function retrieveItemsFromCraftBench(bench, target)
-	-- collect items from the Craft Bench inventories (input, output, modules, and craft-in-progress if any) and place them in target event buffer
-	local inventories = {
-		defines.inventory.assembling_machine_input,
-		defines.inventory.assembling_machine_output,
-		defines.inventory.assembling_machine_modules
-	}
-	for _, k in ipairs(inventories) do
-		local source = bench.get_inventory(k)
-		for i = 1, #source do
-			local stack = source[i]
-			if stack.valid and stack.valid_for_read then
-				if target then
-					target.insert(stack)
-				else
-					bench.surface.spill_item_stack(bench.position, stack, true, bench.force, false)
-				end
-			end
-		end
-	end
-	if bench.is_crafting() then
-		-- a craft was left in progress, get the ingredients and give those back too
-		local recipe = bench.get_recipe()
-		for i = 1, #recipe.ingredients do
-			if target then
-				target.insert(recipe.ingredients[i])
-			else
-				bench.surface.spill_item_stack(bench.position, recipe.ingredients[i], true, bench.force, false)
-			end
-		end
-	end
+	getitems.assembler(bench, target)
 end
 local function retrieveItemsFromStorage(box, target)
-	-- collect items from the Personal Storage inventory and place them in target event buffer
-	local source = box.get_inventory(defines.inventory.chest)
-	for i = 1, #source do
-		local stack = source[i]
-		if stack.valid and stack.valid_for_read then
-			if target then
-				target.insert(stack)
-			else
-				box.surface.spill_item_stack(box.position, stack, true, box.force, false)
-			end
-		end
-	end
+	getitems.storage(box, target)
 end
 local function retrieveItemsFromBurner(burner, target)
-	-- collect items from the Personal Storage inventory and place them in target event buffer
-	local source = burner.get_inventory(defines.inventory.fuel)
-	for i = 1, #source do
-		local stack = source[i]
-		if stack.valid and stack.valid_for_read then
-			if target then
-				target.insert(stack)
-			else
-				burner.surface.spill_item_stack(burner.position, stack, true, burner.force, false)
-			end
-		end
-	end
+	getitems.burner(burner, target)
 end
 
 local rotations = {
@@ -371,6 +321,11 @@ local upgrades = {
 		"lookout-tower-undo",
 		"foundation-undo",
 		"stone-wall-undo"
+	},
+	["hub-tier1-logistics"] = {
+		"conveyor-splitter-undo",
+		"conveyor-merger-undo",
+		"underground-belt-undo"
 	}
 }
 local function completeMilestone(technology)
