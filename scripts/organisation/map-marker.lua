@@ -83,8 +83,11 @@ local function onGuiClick(event)
 		local tag = findBeaconTag(beacon)
 		if tag and tag.valid then
 			local gui = player.gui.screen['beacon-naming']['beacon-naming-inner']['beacon-naming-table']
-			tag.icon = gui['beacon-naming-icon'].elem_value
-			tag.text = gui['beacon-naming-name'].text
+			tag.destroy()
+			local params = {position=beacon.position,icon={type="item",name="map-marker"}}
+			if gui['beacon-naming-icon'].elem_value then params.icon = gui['beacon-naming-icon'].elem_value end
+			if gui['beacon-naming-name'].text then params.text = gui['beacon-naming-name'].text end
+			beacon.force.add_chart_tag(beacon.surface, params)
 		end
 		closeBeaconGUI(player)
 	end
@@ -93,7 +96,7 @@ local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not entity or not entity.valid then return end
 	if entity.name == beacon then
-		entity.force.add_chart_tag(entity.surface, {position=entity.position,text="Beacon"})
+		entity.force.add_chart_tag(entity.surface, {position=entity.position,icon={type="item",name="map-marker"}})
 		if event.type == defines.events.on_build_entity then
 			local player = game.players[event.player_index]
 			openBeaconGUI(entity, player)
