@@ -31,7 +31,7 @@ local beacon = {
 		mining_time = 1,
 		result = name
 	},
-	selection_box = {{-1,-1},{1,1}}
+	selection_box = {{-0.5,-0.5},{0.5,0.5}}
 }
 
 local beaconitem = {

@@ -2,7 +2,8 @@ local name = "lookout-tower"
 local tower = {
 	type = "radar",
 	name = name,
-	collision_box = {{-1.8,-1.8},{1.8,1.8}},
+	collision_box = {{-1.7,-1.7},{1.7,1.7}},
+	collision_mask = {"item-layer", "object-layer", "water-tile"},
 	selection_box = {{-2,-2},{2,2}},
 	corpse = "big-remnants",
 	dying_explosion = "big-explosion",
@@ -89,4 +90,44 @@ local towerrecipe_undo = {
 	}
 }
 
-data:extend({tower,toweritem,towerrecipe,towerrecipe_undo})
+local tower_vehicle = {
+	-- a fake car for the player to "climb on" the tower
+	type = "car",
+	name = name.."-car",
+	animation = {
+		direction_count = 1,
+		filename = "__core__/graphics/empty.png",
+		width = 1,
+		height = 1
+	},
+	braking_power = "200kW",
+	burner = {
+		effectivity = 1,
+		fuel_category = "chemical",
+		fuel_inventory_size = 0,
+		render_no_power_icon = false
+	},
+	consumption = "1W",
+	effectivity = 0.5,
+	weight = 1,
+	braking_force = 1,
+	friction_force = 1,
+	energy_per_hit_point = 1,
+	inventory_size = 0,
+	rotation_speed = 0,
+	max_health = 1,
+	icon = toweritem.icon,
+	icon_size = toweritem.icon_size,
+	collision_box = tower.collision_box,
+	selection_box = tower.selection_box,
+	selection_priority = 40,
+	minable = nil,
+	flags = {
+		"not-on-map",
+		"no-automated-item-removal",
+		"no-automated-item-insertion",
+		"hidden"
+	}
+}
+
+data:extend({tower,toweritem,towerrecipe,towerrecipe_undo,tower_vehicle})
