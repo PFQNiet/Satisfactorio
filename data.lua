@@ -1,4 +1,5 @@
 data:extend({
+	{type="ammo-category",name="infinite"},
 	{type="fuel-category",name="carbon"},
 	{type="resource-category",name="solid"},
 	{type="resource-category",name="crude-oil"},
@@ -56,6 +57,7 @@ require("prototypes.logistics")
 require("prototypes.organisation")
 require("prototypes.miners")
 require("prototypes.constructors")
+require("prototypes.weapons")
 require("prototypes.milestones")
 require("prototypes.technology")
 require("prototypes.map-tweaks")

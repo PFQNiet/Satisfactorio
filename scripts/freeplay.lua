@@ -2,6 +2,7 @@
 local function onInit()
 	if remote.interfaces.freeplay then
 		remote.call("freeplay","set_created_items",{
+			["xeno-zapper"] = 1,
 			-- TODO Remove this and spawn a drop pod at spawn instead
 			["hub-parts"] = 1
 		})
