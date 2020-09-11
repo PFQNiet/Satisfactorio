@@ -81,11 +81,25 @@ local function spawnNode(resource, surface, cx, cy)
 						if not global['queued-nodes'][chunkpos.y] then global['queued-nodes'][chunkpos.y] = {} end
 						if not global['queued-nodes'][chunkpos.y][chunkpos.x] then global['queued-nodes'][chunkpos.y][chunkpos.x] = {} end
 						table.insert(global['queued-nodes'][chunkpos.y][chunkpos.x], entity)
+						if dx == -1 and dy == -1 then
+							table.insert(global['queued-nodes'][chunkpos.y][chunkpos.x], {
+								name = "small-biter",
+								position = {tx,ty},
+								force = game.forces.enemy
+							})
+						end
 					else
 						if surface.get_tile(tx,ty).collides_with("water-tile") then
 							table.insert(landfill, {name="landfill",position={tx,ty}})
 						end
 						surface.create_entity(entity)
+						if dx == -1 and dy == -1 then
+							surface.create_entity({
+								name = "small-biter",
+								position = {tx,ty},
+								force = game.forces.enemy
+							})
+						end
 					end
 				end
 			end

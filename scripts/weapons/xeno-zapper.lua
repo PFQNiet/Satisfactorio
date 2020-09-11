@@ -7,7 +7,9 @@ local function fix_ammo(player)
 	if not ammo then return end
 	for i=1,#guns do
 		if guns[i].valid_for_read and guns[i].name == name then
-			ammo[i].set_stack({name=name.."-ammo",count=1})
+			if not ammo[i].valid_for_read or ammo[i].name ~= name.."-ammo" then
+				ammo[i].set_stack({name=name.."-ammo",count=1})
+			end
 		elseif ammo[i].valid_for_read and ammo[i].name == name.."-ammo" then
 			ammo[i].clear()
 		end
@@ -24,6 +26,11 @@ local function no_touching(player)
 	if cursor.name == name.."-ammo" then
 		cursor.clear()
 	end
+end
+local function clean_corpse(corpse)
+	local remains = corpse.get_inventory(defines.inventory.character_corpse)
+	if not remains then return end
+	remains.remove({name=name.."-ammo",count=1000000})
 end
 
 return {
@@ -42,6 +49,11 @@ return {
 			no_touching(player)
 			remove_ammo(player)
 			fix_ammo(player)
+		end,
+		[defines.events.on_post_entity_died] = function(event)
+			if event.prototype.name == "character" and event.corpses[1] then
+				clean_corpse(event.corpses[1])
+			end
 		end
 	}
 }
