@@ -6,7 +6,7 @@ local pm = {
 		filename = "__Satisfactorio__/graphics/placeholders/"..name..".png",
 		size = {32,32}
 	},
-	collision_box = {{-0.35,-0.35},{0.35,0.35}},
+	collision_box = {{-0.2,-0.2},{0.2,0.2}},
 	corpse = "small-remnants",
 	dying_explosion = "explosion",
 	energy_source = {type="void"},
@@ -33,7 +33,7 @@ local pm = {
 }
 
 local pmbox = {
-	collision_box = {{-0.35,-0.35},{0.35,0.35}},
+	collision_box = {{-0.2,-0.2},{0.2,0.2}},
 	corpse = "small-remnants",
 	dying_explosion = "explosion",
 	enable_inventory_bar = false,

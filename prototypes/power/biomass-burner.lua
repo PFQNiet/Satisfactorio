@@ -35,6 +35,28 @@ local burner = {
 	selection_box = {{-2,-2},{2,2}},
 	type = "burner-generator"
 }
+local accumulator = {
+	picture = {
+		filename = "__core__/graphics/empty.png",
+		size = {1,1}
+	},
+	energy_source = {
+		type = "electric",
+		buffer_capacity = "1J",
+		usage_priority = "tertiary"
+	},
+	charge_cooldown = 0,
+	discharge_cooldown = 0,
+	collision_box = burner.collision_box,
+	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon_size = 64,
+	max_health = 1,
+	minable = nil,
+	name = name.."-accumulator",
+	selection_box = burner.selection_box,
+	selection_priority = 30,
+	type = "accumulator"
+}
 
 local burneritem = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
@@ -87,4 +109,4 @@ local burnerrecipe_undo = {
 	enabled = false
 }
 
-data:extend({burner,burneritem,burnerrecipe,burnerrecipe_undo})
+data:extend({burner,accumulator,burneritem,burnerrecipe,burnerrecipe_undo})

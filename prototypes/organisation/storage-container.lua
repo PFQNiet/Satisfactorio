@@ -12,7 +12,7 @@ box.icon_mipmaps = 0
 box.max_health = 1
 box.enable_inventory_bar = false
 box.inventory_size = 24
-box.collision_box = {{-1.3,-1.3},{1.3,1.3}}
+box.collision_box = {{-1.2,-1.2},{1.2,1.2}}
 box.selection_box = {{-1.5,-1.5},{1.5,1.5}}
 box.picture = empty_sprite
 box.placeable_by = {item=basename, count=1}
@@ -47,7 +47,7 @@ local fakebox = {
 	max_health = 1,
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
-	collision_box = {{-1.3,-2.3},{1.3,2.3}},
+	collision_box = {{-1.2,-2.2},{1.2,2.2}},
 	corpse = "big-remnants",
 	dying_explosion = "big-explosion",
 	flags = {

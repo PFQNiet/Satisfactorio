@@ -18,7 +18,7 @@ local smelter = {
 			size = {160,96}
 		}
 	},
-	collision_box = {{-1.3,-2.3},{1.3,2.3}},
+	collision_box = {{-1.2,-2.2},{1.2,2.2}},
 	corpse = "big-remnants",
 	crafting_categories = {"smelter"},
 	crafting_speed = 1,

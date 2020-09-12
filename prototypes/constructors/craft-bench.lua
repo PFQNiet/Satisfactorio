@@ -18,7 +18,7 @@ local bench = {
 			size = {64,96}
 		}
 	},
-	collision_box = {{-1.2,-0.6},{1.2,0.6}},
+	collision_box = {{-1.2,-0.7},{1.2,0.7}},
 	corpse = "big-remnants",
 	crafting_categories = {"craft-bench"},
 	crafting_speed = 1,

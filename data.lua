@@ -59,6 +59,18 @@ require("prototypes.organisation")
 require("prototypes.miners")
 require("prototypes.constructors")
 require("prototypes.weapons")
-require("prototypes.milestones")
 require("prototypes.technology")
 require("prototypes.map-tweaks")
+
+data:extend({
+	{
+		type = "sound",
+		name = "power-startup",
+		filename = "__base__/sound/nightvision-on.ogg"
+	},
+	{
+		type = "sound",
+		name = "power-failure",
+		filename = "__base__/sound/nightvision-off.ogg"
+	}
+})

@@ -441,131 +441,135 @@ local function updateMilestoneGUI(force)
 	end
 
 	for _,player in pairs(force.players) do
-		local gui = mod_gui.get_frame_flow(player)
+		local gui = player.gui.left
 		local frame = gui['hub-milestone-tracking']
-		-- create the GUI if it doesn't exist yet (should only happen once per player)
-		if not frame then
-			frame = gui.add{
-				type = "frame",
-				name = "hub-milestone-tracking",
-				direction = "vertical",
-				caption = {"gui.hub-milestone-tracking-caption"},
-				style = mod_gui.frame_style
-			}
-			frame.style.use_header_filler = false
-			frame.add{
-				type = "label",
-				name = "hub-milestone-tracking-name",
-				caption = {"","[font=heading-2]",{"gui.hub-milestone-tracking-none-selected"},"[/font]"}
-			}
-			local inner = frame.add{
-				type = "frame",
-				name = "hub-milestone-tracking-content",
-				style = "inside_shallow_frame",
-				direction = "vertical"
-			}
-			inner.style.horizontally_stretchable = true
-			inner.style.top_margin = 4
-			inner.style.bottom_margin = 4
-			inner.add{
-				type = "table",
-				name = "hub-milestone-tracking-table",
-				style = "bordered_table",
-				column_count = 3
-			}
-			local cooldown = frame.add{
-				type = "label",
-				name = "hub-milestone-tracking-cooldown"
-			}
-			cooldown.visible = false
-			local bottom = frame.add{
-				type = "flow",
-				name = "hub-milestone-tracking-bottom"
-			}
-			local pusher = bottom.add{type="empty-widget"}
-			pusher.style.horizontally_stretchable = true
-			bottom.add{
-				type = "button",
-				style = "confirm_button",
-				name = "hub-milestone-tracking-submit",
-				caption = {"gui.hub-milestone-submit-caption"}
-			}
-		end
-
-		-- gather up GUI element references
-		local name = frame['hub-milestone-tracking-name']
-		local inner = frame['hub-milestone-tracking-content']
-		local table = inner['hub-milestone-tracking-table']
-		local cooldown = frame['hub-milestone-tracking-cooldown']
-		local bottom = frame['hub-milestone-tracking-bottom']
-		local button = bottom['hub-milestone-tracking-submit']
-
-		-- check if the selected milestone has been changed
-		if milestone.name ~= global['hub-milestone-gui'][force.index] then
-			global['hub-milestone-gui'][force.index] = milestone.name
-			inner.visible = milestone.name ~= "none"
-			bottom.visible = inner.visible
-			button.enabled = false
-			table.clear()
-			if milestone.name == "none" then
-				name.caption = {"","[font=heading-2]",{"gui.hub-milestone-tracking-none-selected"},"[/font]"}
-			else
-				-- if milestone is actually set then we know this is valid
-				name.caption = {"","[img=item/"..milestone.name.."] [font=heading-2]",milestone.localised_name,"[/font]"}
-				for _,ingredient in ipairs(recipe.ingredients) do
-					local sprite = table.add{
-						type = "sprite-button",
-						sprite = "item/"..ingredient.name,
-						style = "transparent_slot"
-					}
-					sprite.style.width = 20
-					sprite.style.height = 20
-					table.add{
-						type = "label",
-						caption = game.item_prototypes[ingredient.name].localised_name,
-						style = "bold_label"
-					}
-					local count_flow = table.add{
-						type = "flow",
-						name = "hub-milestone-tracking-ingredient-"..ingredient.name
-					}
-					local pusher = count_flow.add{type="empty-widget"}
-					pusher.style.horizontally_stretchable = true
-					count_flow.add{
-						type = "label",
-						name = "hub-milestone-tracking-ingredient-"..ingredient.name.."-count",
-						caption = {"gui.fraction", -1, -1} -- unset by default, will be populated in the next block
-					}
-				end
+		-- wait until the HUB has been built for the first time, as determined by the Omnilab being set up
+		if global['omnilab'] and global['omnilab'][player.force.index] then
+			-- create the GUI if it doesn't exist yet (should only happen once per player)
+			if not frame then
+				frame = gui.add{
+					type = "frame",
+					name = "hub-milestone-tracking",
+					direction = "vertical",
+					caption = {"gui.hub-milestone-tracking-caption"},
+					style = mod_gui.frame_style
+				}
+				frame.style.horizontally_stretchable = false
+				frame.style.use_header_filler = false
+				frame.add{
+					type = "label",
+					name = "hub-milestone-tracking-name",
+					caption = {"","[font=heading-2]",{"gui.hub-milestone-tracking-none-selected"},"[/font]"}
+				}
+				local inner = frame.add{
+					type = "frame",
+					name = "hub-milestone-tracking-content",
+					style = "inside_shallow_frame",
+					direction = "vertical"
+				}
+				inner.style.horizontally_stretchable = true
+				inner.style.top_margin = 4
+				inner.style.bottom_margin = 4
+				inner.add{
+					type = "table",
+					name = "hub-milestone-tracking-table",
+					style = "bordered_table",
+					column_count = 3
+				}
+				local cooldown = frame.add{
+					type = "label",
+					name = "hub-milestone-tracking-cooldown"
+				}
+				cooldown.visible = false
+				local bottom = frame.add{
+					type = "flow",
+					name = "hub-milestone-tracking-bottom"
+				}
+				local pusher = bottom.add{type="empty-widget"}
+				pusher.style.horizontally_stretchable = true
+				bottom.add{
+					type = "button",
+					style = "confirm_button",
+					name = "hub-milestone-tracking-submit",
+					caption = {"gui.hub-milestone-submit-caption"}
+				}
 			end
-		end
 
-		-- so now we've established the GUI exists, and is populated with a table for the currently selected milestone... if there is one, update the counts now
-		if milestone.name ~= "none" then
-			local ready = true
-			if global['hub-cooldown'] and global['hub-cooldown'][player.force.index] then
-				if global['hub-cooldown'][player.force.index] > game.tick then
-					ready = false
-					local ticks = global['hub-cooldown'][player.force.index] - game.tick
-					local tenths = math.floor(ticks/6)%10
-					local seconds = math.floor(ticks/60)
-					local minutes = math.floor(seconds/60)
-					seconds = seconds % 60
-					local seconds_padding = seconds < 10 and "0" or ""
-					cooldown.caption = {"gui.hub-milestone-cooldown", minutes, seconds_padding, seconds, tenths}
-					cooldown.visible = true
+			-- gather up GUI element references
+			local name = frame['hub-milestone-tracking-name']
+			local inner = frame['hub-milestone-tracking-content']
+			local table = inner['hub-milestone-tracking-table']
+			local cooldown = frame['hub-milestone-tracking-cooldown']
+			local bottom = frame['hub-milestone-tracking-bottom']
+			local button = bottom['hub-milestone-tracking-submit']
+
+			-- check if the selected milestone has been changed
+			if milestone.name ~= global['hub-milestone-gui'][force.index] then
+				global['hub-milestone-gui'][force.index] = milestone.name
+				inner.visible = milestone.name ~= "none"
+				bottom.visible = inner.visible
+				button.enabled = false
+				table.clear()
+				if milestone.name == "none" then
+					name.caption = {"","[font=heading-2]",{"gui.hub-milestone-tracking-none-selected"},"[/font]"}
 				else
-					cooldown.visible = false
+					-- if milestone is actually set then we know this is valid
+					name.caption = {"","[img=item/"..milestone.name.."] [font=heading-2]",milestone.localised_name,"[/font]"}
+					for _,ingredient in ipairs(recipe.ingredients) do
+						local sprite = table.add{
+							type = "sprite-button",
+							sprite = "item/"..ingredient.name,
+							style = "transparent_slot"
+						}
+						sprite.style.width = 20
+						sprite.style.height = 20
+						table.add{
+							type = "label",
+							caption = game.item_prototypes[ingredient.name].localised_name,
+							style = "bold_label"
+						}
+						local count_flow = table.add{
+							type = "flow",
+							name = "hub-milestone-tracking-ingredient-"..ingredient.name
+						}
+						local pusher = count_flow.add{type="empty-widget"}
+						pusher.style.horizontally_stretchable = true
+						count_flow.add{
+							type = "label",
+							name = "hub-milestone-tracking-ingredient-"..ingredient.name.."-count",
+							caption = {"gui.fraction", -1, -1} -- unset by default, will be populated in the next block
+						}
+					end
 				end
 			end
-			for _,ingredient in ipairs(recipe.ingredients) do
-				local label = table['hub-milestone-tracking-ingredient-'..ingredient.name]['hub-milestone-tracking-ingredient-'..ingredient.name..'-count']
-				label.caption = {"gui.fraction", util.format_number(submitted[ingredient.name] or 0), util.format_number(ingredient.amount)}
-				if (submitted[ingredient.name] or 0) < ingredient.amount then
-					ready = false
+
+			-- so now we've established the GUI exists, and is populated with a table for the currently selected milestone... if there is one, update the counts now
+			if milestone.name ~= "none" then
+				local ready = true
+				if global['hub-cooldown'] and global['hub-cooldown'][player.force.index] then
+					if global['hub-cooldown'][player.force.index] > game.tick then
+						ready = false
+						local ticks = global['hub-cooldown'][player.force.index] - game.tick
+						local tenths = math.floor(ticks/6)%10
+						local seconds = math.floor(ticks/60)
+						local minutes = math.floor(seconds/60)
+						seconds = seconds % 60
+						local seconds_padding = seconds < 10 and "0" or ""
+						cooldown.caption = {"gui.hub-milestone-cooldown", minutes, seconds_padding, seconds, tenths}
+						cooldown.visible = true
+					else
+						cooldown.visible = false
+					end
 				end
+				for _,ingredient in ipairs(recipe.ingredients) do
+					local label = table['hub-milestone-tracking-ingredient-'..ingredient.name]['hub-milestone-tracking-ingredient-'..ingredient.name..'-count']
+					label.caption = {"gui.fraction", util.format_number(submitted[ingredient.name] or 0), util.format_number(ingredient.amount)}
+					if (submitted[ingredient.name] or 0) < ingredient.amount then
+						ready = false
+					end
+				end
+				button.enabled = ready
 			end
-			button.enabled = ready
 		end
 	end
 end

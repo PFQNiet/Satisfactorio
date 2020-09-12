@@ -23,7 +23,7 @@ local miner = {
 			shift = {-2,0}
 		}
 	},
-	collision_box = {{-2.3,-6.3},{2.3,2.3}},
+	collision_box = {{-2.2,-6.2},{2.2,2.2}},
 	corpse = "big-remnants",
 	dying_explosion = "big-explosion",
 	energy_source = {
@@ -53,7 +53,7 @@ local miner = {
 }
 
 local minerbox = {
-	collision_box = {{-1.3,-1.3},{1.3,1.3}},
+	collision_box = {{-1.2,-1.2},{1.2,1.2}},
 	corpse = "big-remnants",
 	dying_explosion = "big-explosion",
 	enable_inventory_bar = false,
