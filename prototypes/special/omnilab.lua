@@ -1,25 +1,30 @@
--- a special, (TODO invisible) lab that accepts all of the "fake" items used to progress the game
-local lab = table.deepcopy(data.raw.lab.lab)
-lab.name = "omnilab"
-lab.collision_mask = {}
-lab.energy_usage = "1W"
-lab.energy_source = {type="void"}
-lab.allowed_effects = {}
-lab.module_specification = nil
-lab.minable.result = lab.name
-lab.max_health = 1
-lab.inputs = {
-	"hub-tier0-hub-upgrade-1",
-	"hub-tier0-hub-upgrade-2",
-	"hub-tier0-hub-upgrade-3",
-	"hub-tier0-hub-upgrade-4",
-	"hub-tier0-hub-upgrade-5",
-	"hub-tier0-hub-upgrade-6",
+-- a special invisible lab that accepts all of the "fake" items used to progress the game
+local name = "omnilab"
+
+local empty = {
+	filename = "__core__/graphics/empty.png",
+	size = {1,1}
+}
+local lab = {
+	off_animation = empty,
+	on_animation = empty,
+	collision_box = {{-1.3,-1.3},{1.3,1.3}},
+	collision_mask = {},
+	inputs = {},
+	researching_speed = 1,
+	corpse = "big-remnants",
+	dying_explosion = "big-explosion",
+	energy_source = {type="void"},
+	energy_usage = "1W",
+	flags = {"hidden"},
+	selectable_in_game = false,
+	icon = "__Satisfactorio__/graphics/icons/mam.png",
+	icon_size = 64,
+	max_health = 1,
+	minable = nil,
+	name = name,
+	selection_box = {{-1.5,-1.5},{1.5,1.5}},
+	type = "lab"
 }
 
-local labitem = table.deepcopy(data.raw.item.lab)
-labitem.name = lab.name
-labitem.place_result = lab.name
-labitem.flags = {"hidden"}
-
-data:extend({lab,labitem})
+data:extend({lab})

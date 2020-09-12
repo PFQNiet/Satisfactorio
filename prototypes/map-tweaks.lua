@@ -1,4 +1,4 @@
--- remove starting lake
+-- remove starting lake - expression is basically clamp(real_map, -math.huge, starting_lakes) so this replaces it with just real_map
 data.raw['noise-expression']['0_17-lakes-elevation'].expression = data.raw['noise-expression']['0_17-lakes-elevation'].expression.arguments[1]
 -- remove enemy base autoplacement (they will be spawned manually around places of interest)
 data.raw['unit-spawner']['biter-spawner'].autoplace = nil

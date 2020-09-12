@@ -13,5 +13,8 @@ require("prototypes.resources.flower-petals")
 require("prototypes.resources.mycelia")
 require("prototypes.resources.caterium-ore")
 
+-- loot
+require("prototypes.resources.alien-carapace")
+
 -- derived resources
 require("prototypes.resources.biomass")
