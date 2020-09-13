@@ -17,6 +17,15 @@ local burner = {
 		fuel_inventory_size = 1
 	},
 	max_power_output = "30MW",
+	open_sound = {
+		filename = "__base__/sound/machine-open.ogg",
+		volume = 0.5
+	},
+	close_sound = {
+		filename = "__base__/sound/machine-close.ogg",
+		volume = 0.5
+	},
+	working_sound = data.raw['furnace']['stone-furnace'].working_sound,
 	flags = {
 		"placeable-neutral",
 		"placeable-player",

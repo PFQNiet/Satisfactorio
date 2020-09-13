@@ -27,6 +27,14 @@ local beacon = {
 		"placeable-player",
 		"player-creation"
 	},
+	open_sound = {
+		filename = "__base__/sound/machine-open.ogg",
+		volume = 0.5
+	},
+	close_sound = {
+		filename = "__base__/sound/machine-close.ogg",
+		volume = 0.5
+	},
 	minable = {
 		mining_time = 1,
 		result = name

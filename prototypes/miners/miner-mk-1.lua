@@ -31,6 +31,7 @@ local miner = {
 		usage_priority = "secondary-input"
 	},
 	energy_usage = "5MW",
+	working_sound = data.raw['mining-drill']['electric-mining-drill'].working_sound,
 	flags = {
 		"placeable-neutral",
 		"placeable-player",
@@ -68,6 +69,14 @@ local minerbox = {
 	icon_size = miner.icon_size,
 	inventory_size = 1,
 	max_health = 1,
+	open_sound = {
+		filename = "__base__/sound/machine-open.ogg",
+		volume = 0.5
+	},
+	close_sound = {
+		filename = "__base__/sound/machine-close.ogg",
+		volume = 0.5
+	},
 	minable = {
 		mining_time = 1,
 		result = name,

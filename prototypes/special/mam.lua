@@ -26,6 +26,14 @@ local mam = {
 	dying_explosion = "big-explosion",
 	energy_source = {type="void"},
 	energy_usage = "1W",
+	open_sound = {
+		filename = "__base__/sound/machine-open.ogg",
+		volume = 0.5
+	},
+	close_sound = {
+		filename = "__base__/sound/machine-close.ogg",
+		volume = 0.5
+	},
 	flags = {
 		"placeable-neutral",
 		"placeable-player",

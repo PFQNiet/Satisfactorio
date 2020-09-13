@@ -29,6 +29,15 @@ local constructor = {
 		drain = "0W"
 	},
 	energy_usage = "4MW",
+	open_sound = {
+		filename = "__base__/sound/machine-open.ogg",
+		volume = 0.5
+	},
+	close_sound = {
+		filename = "__base__/sound/machine-close.ogg",
+		volume = 0.5
+	},
+	working_sound = data.raw['assembling-machine']['assembling-machine-1'].working_sound,
 	flags = {
 		"placeable-neutral",
 		"placeable-player",

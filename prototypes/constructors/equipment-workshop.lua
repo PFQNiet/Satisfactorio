@@ -25,6 +25,15 @@ local workshop = {
 	dying_explosion = "big-explosion",
 	energy_source = {type="void"},
 	energy_usage = "1W",
+	open_sound = {
+		filename = "__base__/sound/machine-open.ogg",
+		volume = 0.5
+	},
+	close_sound = {
+		filename = "__base__/sound/machine-close.ogg",
+		volume = 0.5
+	},
+	working_sound = table.deepcopy(data.raw['assembling-machine']['assembling-machine-1'].working_sound),
 	flags = {
 		"placeable-neutral",
 		"placeable-player",
@@ -43,6 +52,7 @@ local workshop = {
 	selection_box = {{-2.5,-1.5},{2.5,1.5}},
 	type = "assembling-machine"
 }
+workshop.working_sound.sound[1].filename = "__base__/sound/manual-repair-simple.ogg"
 
 local workshopitem = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",

@@ -29,6 +29,15 @@ local smelter = {
 		drain = "0W"
 	},
 	energy_usage = "4MW",
+	open_sound = {
+		filename = "__base__/sound/machine-open.ogg",
+		volume = 0.5
+	},
+	close_sound = {
+		filename = "__base__/sound/machine-close.ogg",
+		volume = 0.5
+	},
+	working_sound = data.raw['furnace']['electric-furnace'].working_sound,
 	flags = {
 		"placeable-neutral",
 		"placeable-player",
