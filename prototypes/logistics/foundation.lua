@@ -21,6 +21,7 @@ local foundation = {
 	},
 	name = name,
 	selection_box = {{-2,-2},{2,2}},
+	selection_priority = 20,
 	render_layer = "lower-radius-visualization",
 	collision_mask = {"layer-12"},
 	max_health = 1,

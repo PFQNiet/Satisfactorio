@@ -30,12 +30,17 @@ local function onRemoved(event)
 	end
 end
 
--- uses global['lookout-tower-climbed'] to track that a player has climbed a lookout tower, so it can reset zoom level here
 local function onVehicle(event)
 	local player = game.players[event.player_index]
 	local entity = event.entity
 	if entity and entity.valid and entity.name == car then
-		player.zoom = player.driving and 0.1 or 1
+		if player.driving then
+			player.zoom = 0.1
+			player.character_build_distance_bonus = player.character_build_distance_bonus + 100
+		else
+			player.zoom = 1
+			player.character_build_distance_bonus = math.max(0,player.character_build_distance_bonus - 100)
+		end
 	end
 end
 

@@ -120,7 +120,7 @@ local function onGuiClosed(event)
 end
 local function onGuiClick(event)
 	local player = game.players[event.player_index]
-	if event.element.name == "power-trip-reset-fuse-submit" then
+	if event.element and event.element.valid and event.element.name == "power-trip-reset-fuse-submit" then
 		-- get electric network ID of opened GUI
 		if not player.opened then return end
 		if not generator_data[player.opened.name] then return end
