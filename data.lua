@@ -1,5 +1,6 @@
 data:extend({
 	{type="ammo-category",name="infinite"},
+	{type="ammo-category",name="solid-biofuel"}, -- for the Chainsaw
 	{type="fuel-category",name="carbon"},
 	{type="resource-category",name="solid"},
 	{type="resource-category",name="crude-oil"},
@@ -32,6 +33,8 @@ data:extend({
 	{type="item-subgroup",group="production",name="production-workstation",order="s-a-f"},
 	{type="item-subgroup",group="production",name="production-undo",order="s-undo"},
 	{type="item-subgroup",group="intermediate-products",name="organic-resource",order="a"},
+	{type="item-subgroup",group="intermediate-products",name="components",order="g"},
+	{type="item-subgroup",group="intermediate-products",name="space-parts",order="q"},
 	{type="item-subgroup",group="milestones",name="hub-tier0",order="a"},
 	{type="item-subgroup",group="milestones",name="hub-tier1",order="b"},
 	{type="item-subgroup",group="milestones",name="hub-tier2",order="c"},

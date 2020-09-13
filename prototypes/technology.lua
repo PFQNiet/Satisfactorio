@@ -143,7 +143,7 @@ addTech("hub-tier1-base-building", "foundation", "hub-progressing", "hub-tier1",
 	{type="unlock-recipe",recipe="foundation"},
 	{type="unlock-recipe",recipe="stone-wall"}
 })
-addTech("hub-tier1-logistics", "conveyor-splitter", "hub-progressing", "hub-tier1", "a-1-2", 240, {"hub-tier0-hub-upgrade-6"}, {
+addTech("hub-tier1-logistics-mk-1", "conveyor-splitter", "hub-progressing", "hub-tier1", "a-1-2", 240, {"hub-tier0-hub-upgrade-6"}, {
 	{"iron-plate",150},
 	{"iron-stick",150},
 	{"wire",300}
@@ -163,3 +163,52 @@ addTech("hub-tier1-field-research", "mam", "hub-progressing", "hub-tier1", "a-1-
 	{type="character-inventory-slots-bonus",modifier=5}
 })
 
+addTech("hub-tier2-part-assembly", "assembler", "hub-progressing", "hub-tier2", "a-2-1", 360, {"hub-tier0-hub-upgrade-6"}, {
+	{"iron-plate",300},
+	{"iron-stick",200},
+	{"screw",500},
+	{"copper-cable",200}
+}, {
+	{type="unlock-recipe",recipe="assembler"},
+	{type="unlock-recipe",recipe="copper-plate"},
+	{type="unlock-recipe",recipe="rotor"},
+	{type="unlock-recipe",recipe="modular-frame"},
+	{type="unlock-recipe",recipe="smart-plating"}
+})
+addTech("hub-tier2-obstacle-clearing", "chainsaw", "hub-progressing", "hub-tier2", "a-2-2", 180, {"hub-tier0-hub-upgrade-6"}, {
+	{"screw",500},
+	{"copper-cable",100},
+	{"concrete",100}
+}, {
+	{type="unlock-recipe",recipe="solid-biofuel"},
+	{type="unlock-recipe",recipe="chainsaw"},
+	{type="character-inventory-slots-bonus",modifier=5}
+})
+--[[
+addTech("hub-tier2-jump-pads", "jump-pad", "hub-progressing", "hub-tier2", "a-2-3", 240, {"hub-tier0-hub-upgrade-6"}, {
+	{"rotor",50},
+	{"iron-plate",300},
+	{"copper-cable",150}
+}, {
+	{type="unlock-recipe",recipe="jump-pad"},
+	{type="unlock-recipe",recipe="u-jelly-landing-pad"}
+})
+addTech("hub-tier2-resource-sink-bonus-program", "awesome-shop", "hub-progressing", "hub-tier2", "a-2-4", 300, {"hub-tier0-hub-upgrade-6"}, {
+	{"concrete",400},
+	{"wire",500},
+	{"iron-stick",200},
+	{"iron-plate",200}
+}, {
+	{type="unlock-recipe",recipe="awesome-sink"},
+	{type="unlock-recipe",recipe="awesome-shop"}
+})
+]]
+addTech("hub-tier2-logistics-mk-2", "conveyor-belt-mk-2", "hub-progressing", "hub-tier2", "a-2-5", 360, {"hub-tier0-hub-upgrade-6"}, {
+	{"reinforced-iron-plate",50},
+	{"concrete",200},
+	{"iron-stick",300},
+	{"iron-plate",300}
+}, {
+	{type="unlock-recipe",recipe="fast-transport-belt"},
+	{type="unlock-recipe",recipe="fast-underground-belt"}
+})

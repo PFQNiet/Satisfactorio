@@ -37,9 +37,11 @@ local function onVehicle(event)
 		if player.driving then
 			player.zoom = 0.1
 			player.character_build_distance_bonus = player.character_build_distance_bonus + 100
+			player.character_reach_distance_bonus = player.character_reach_distance_bonus + 100
 		else
 			player.zoom = 1
 			player.character_build_distance_bonus = math.max(0,player.character_build_distance_bonus - 100)
+			player.character_reach_distance_bonus = math.max(0,player.character_reach_distance_bonus - 100)
 		end
 	end
 end

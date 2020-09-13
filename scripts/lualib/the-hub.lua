@@ -301,10 +301,14 @@ local upgrades = {
 		end
 	},
 	["hub-tier0-hub-upgrade-6"] = {
-		-- Tier 1 & 2 turn-in items
 		"hub-tier1-base-building",
-		"hub-tier1-logistics",
+		"hub-tier1-logistics-mk-1",
 		"hub-tier1-field-research",
+		"hub-tier2-part-assembly",
+		"hub-tier2-obstacle-clearing",
+		-- "hub-tier2-jump-pads",
+		-- "hub-tier2-resource-sink-bonus-program",
+		"hub-tier2-logistics-mk-2",
 		-- "space-elevator-undo",
 		"biomass-burner-undo",
 		"biomass-from-wood-manual",
@@ -322,7 +326,7 @@ local upgrades = {
 		"foundation-undo",
 		"stone-wall-undo"
 	},
-	["hub-tier1-logistics"] = {
+	["hub-tier1-logistics-mk-1"] = {
 		"conveyor-splitter-undo",
 		"conveyor-merger-undo",
 		"underground-belt-undo"
@@ -330,6 +334,22 @@ local upgrades = {
 	["hub-tier1-field-research"] = {
 		"mam-undo",
 		"wooden-chest-undo"
+	},
+	["hub-tier2-part-assembly"] = {
+		"assembler-undo"
+	},
+	["hub-tier2-obstacle-clearing"] = {},
+	["hub-tier2-jump-pads"] = {
+		"jump-pad-undo",
+		"u-jelly-landing-pad-undo"
+	},
+	["hub-tier2-resource-sink-bonus-program"] = {
+		"awesome-sink-undo",
+		"awesome-shop-undo"
+	},
+	["hub-tier2-logistics-mk-2"] = {
+		"fast-transport-belt-undo",
+		"fast-underground-belt-undo"
 	}
 }
 local function completeMilestone(technology)

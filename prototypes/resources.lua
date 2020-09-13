@@ -18,3 +18,4 @@ require("prototypes.resources.alien-carapace")
 
 -- derived resources
 require("prototypes.resources.biomass")
+require("prototypes.resources.solid-biofuel")

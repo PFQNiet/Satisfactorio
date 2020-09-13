@@ -1,25 +1,23 @@
--- it's just a standard underground belt :D
-local name = "conveyor-lift-mk-1"
-local basename = "underground-belt"
-local belt = data.raw['underground-belt'][basename]
+local name = "conveyor-belt-mk-2"
+local basename = "fast-transport-belt"
+local belt = data.raw['transport-belt'][basename]
 belt.icon = "__Satisfactorio__/graphics/icons/"..name..".png"
 belt.icon_mipmaps = 0
 belt.max_health = 1
-belt.speed = 1/256
+belt.speed = 2/256
 
 local beltitem = data.raw.item[basename]
 beltitem.icon = belt.icon
 beltitem.icon_mipmaps = 0
-beltitem.stack_size = 20
+beltitem.stack_size = 50
 
-local ingredients = {{"iron-plate",8}}
+local ingredients = {{"reinforced-iron-plate",1}}
 local beltrecipe = {
 	name = basename,
 	type = "recipe",
 	ingredients = ingredients,
 	result = basename,
-	result_count = 2,
-	energy_required = 0.5,
+	energy_required = 0.1,
 	category = "building",
 	allow_intermediates = false,
 	allow_as_intermediate = false,
@@ -32,10 +30,10 @@ local beltrecipe_undo = {
 	localised_name = {"recipe-name."..basename.."-undo"},
 	type = "recipe",
 	ingredients = {
-		{basename,2}
+		{basename,1}
 	},
 	results = ingredients,
-	energy_required = 0.5,
+	energy_required = 0.1,
 	category = "unbuilding",
 	subgroup = _group.group .. "-undo",
 	order = _group.order .. "-" .. beltitem.order,

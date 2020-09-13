@@ -1,18 +1,18 @@
--- it's just a standard underground belt :D
-local name = "conveyor-lift-mk-1"
-local basename = "underground-belt"
+local name = "conveyor-lift-mk-2"
+local basename = "fast-underground-belt"
 local belt = data.raw['underground-belt'][basename]
 belt.icon = "__Satisfactorio__/graphics/icons/"..name..".png"
 belt.icon_mipmaps = 0
 belt.max_health = 1
-belt.speed = 1/256
+belt.speed = 2/256
+belt.max_distance = 5
 
 local beltitem = data.raw.item[basename]
 beltitem.icon = belt.icon
 beltitem.icon_mipmaps = 0
 beltitem.stack_size = 20
 
-local ingredients = {{"iron-plate",8}}
+local ingredients = {{"reinforced-iron-plate",8}}
 local beltrecipe = {
 	name = basename,
 	type = "recipe",
