@@ -1,6 +1,7 @@
 local name = "miner-mk-1"
 local miner = {
 	allowed_effects = {"speed","consumption"},
+	module_specification = {module_slots = 3},
 	animations = {
 		north = {
 			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-n.png",
@@ -93,7 +94,7 @@ local mineritem = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	name = name,
-	order = "b["..name.."]",
+	order = "c["..name.."]",
 	place_result = name,
 	stack_size = 1,
 	subgroup = "production-miner",

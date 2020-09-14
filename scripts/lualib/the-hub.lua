@@ -353,6 +353,14 @@ local upgrades = {
 	["hub-tier2-logistics-mk-2"] = {
 		"fast-transport-belt-undo",
 		"fast-underground-belt-undo"
+	},
+	["hub-tier3-coal-power"] = {
+		-- "coal-generator-undo",
+		"water-extractor-undo",
+		"pipe-undo",
+		"pipe-to-ground-undo",
+		"pump-undo",
+		"fluid-buffer-undo"
 	}
 }
 local function completeMilestone(technology)

@@ -1,5 +1,7 @@
 local name = "assembler"
 local assembler = {
+	allowed_effects = {"speed","consumption"},
+	module_specification = {module_slots = 3},
 	animation = {
 		north = {
 			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-n.png",

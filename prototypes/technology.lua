@@ -213,9 +213,24 @@ addTech("hub-tier2-logistics-mk-2", "conveyor-belt-mk-2", "hub-progressing", "hu
 	{type="unlock-recipe",recipe="fast-underground-belt"}
 })
 
+addTech("hub-tier3-coal-power", "coal-generator", "hub-progressing", "hub-tier3", "a-3-1", 480, {"space-elevator-phase1"}, {
+	{"reinforced-iron-plate",150},
+	{"rotor",50},
+	{"copper-cable",300}
+}, {
+	{type="unlock-recipe",recipe="coal-generator"},
+	{type="unlock-recipe",recipe="water-extractor"},
+	{type="unlock-recipe",recipe="pipe"},
+	{type="unlock-recipe",recipe="pipe-to-ground"},
+	{type="unlock-recipe",recipe="pump"},
+	{type="unlock-recipe",recipe="fluid-buffer"},
+	{type="unlock-recipe",recipe="scanner-coal"}
+})
+
 --[[ SPACE ELEVATOR ]]--
 addTech("space-elevator-phase1", "smart-plating", "space-elevator", "space-parts", "e-1", 1, {"hub-tier0-hub-upgrade-6"}, {
 	{"smart-plating",50}
 }, {
+	{type="unlock-recipe",recipe="hub-tier3-coal-power"}
 	-- TODO Tier 3&4 tech items here
 })

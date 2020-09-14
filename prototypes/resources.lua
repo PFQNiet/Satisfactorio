@@ -8,6 +8,7 @@ require("prototypes.resources.uranium-ore")
 require("prototypes.resources.crude-oil")
 
 -- custom resources
+require("prototypes.resources.water")
 require("prototypes.resources.leaves")
 require("prototypes.resources.flower-petals")
 require("prototypes.resources.mycelia")

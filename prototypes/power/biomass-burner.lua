@@ -4,7 +4,7 @@ local burner = {
 		filename = "__Satisfactorio__/graphics/placeholders/"..name..".png",
 		size = {128,128},
 	},
-	collision_box = {{-1.8,-1.8},{1.8,1.8}},
+	collision_box = {{-1.7,-1.7},{1.7,1.7}},
 	corpse = "big-remnants",
 	dying_explosion = "big-explosion",
 	energy_source = {
