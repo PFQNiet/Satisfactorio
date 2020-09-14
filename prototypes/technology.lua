@@ -127,7 +127,7 @@ addTech("hub-tier0-hub-upgrade-6", "biomass-burner", "hub-progressing", "hub-tie
 	{"wire",100},
 	{"concrete",50}
 }, {
-	--{type="unlock-recipe",recipe="space-elevator"},
+	{type="unlock-recipe",recipe="space-elevator"},
 	{type="unlock-recipe",recipe="biomass-burner"},
 	{type="unlock-recipe",recipe="biomass-from-leaves"},
 	{type="unlock-recipe",recipe="biomass-from-wood"},
@@ -211,4 +211,11 @@ addTech("hub-tier2-logistics-mk-2", "conveyor-belt-mk-2", "hub-progressing", "hu
 }, {
 	{type="unlock-recipe",recipe="fast-transport-belt"},
 	{type="unlock-recipe",recipe="fast-underground-belt"}
+})
+
+--[[ SPACE ELEVATOR ]]--
+addTech("space-elevator-phase1", "smart-plating", "space-elevator", "space-parts", "e-1", 1, {"hub-tier0-hub-upgrade-6"}, {
+	{"smart-plating",50}
+}, {
+	-- TODO Tier 3&4 tech items here
 })

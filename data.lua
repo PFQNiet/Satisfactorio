@@ -16,6 +16,7 @@ data:extend({
 	{type="recipe-category",name="refining"},
 	{type="recipe-category",name="resource-scanner"},
 	{type="recipe-category",name="hub-progressing"},
+	{type="recipe-category",name="space-elevator"},
 	{type="recipe-category",name="mam-research"},
 	{type="item-group",name="special",order="a",icon="__base__/graphics/item-group/effects.png",icon_size=64},
 	{type="item-group",name="milestones",order="h",icon="__Satisfactorio__/graphics/icons/the-hub.png",icon_size=64},

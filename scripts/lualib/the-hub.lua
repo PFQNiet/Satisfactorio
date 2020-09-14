@@ -309,7 +309,8 @@ local upgrades = {
 		-- "hub-tier2-jump-pads",
 		-- "hub-tier2-resource-sink-bonus-program",
 		"hub-tier2-logistics-mk-2",
-		-- "space-elevator-undo",
+		"space-elevator-phase1",
+		"space-elevator-undo",
 		"biomass-burner-undo",
 		"biomass-from-wood-manual",
 		"biomass-from-leaves-manual",
@@ -338,7 +339,9 @@ local upgrades = {
 	["hub-tier2-part-assembly"] = {
 		"assembler-undo"
 	},
-	["hub-tier2-obstacle-clearing"] = {},
+	["hub-tier2-obstacle-clearing"] = {
+		"solid-biofuel-manual"
+	},
 	["hub-tier2-jump-pads"] = {
 		"jump-pad-undo",
 		"u-jelly-landing-pad-undo"
@@ -564,23 +567,23 @@ local function updateMilestoneGUI(force)
 			end
 
 			-- so now we've established the GUI exists, and is populated with a table for the currently selected milestone... if there is one, update the counts now
-			if milestone.name ~= "none" then
-				local ready = true
-				if global['hub-cooldown'] and global['hub-cooldown'][player.force.index] then
-					if global['hub-cooldown'][player.force.index] > game.tick then
-						ready = false
-						local ticks = global['hub-cooldown'][player.force.index] - game.tick
-						local tenths = math.floor(ticks/6)%10
-						local seconds = math.floor(ticks/60)
-						local minutes = math.floor(seconds/60)
-						seconds = seconds % 60
-						local seconds_padding = seconds < 10 and "0" or ""
-						cooldown.caption = {"gui.hub-milestone-cooldown", minutes, seconds_padding, seconds, tenths}
-						cooldown.visible = true
-					else
-						cooldown.visible = false
-					end
+			local ready = true
+			if global['hub-cooldown'] and global['hub-cooldown'][player.force.index] then
+				if global['hub-cooldown'][player.force.index] > game.tick then
+					ready = false
+					local ticks = global['hub-cooldown'][player.force.index] - game.tick
+					local tenths = math.floor(ticks/6)%10
+					local seconds = math.floor(ticks/60)
+					local minutes = math.floor(seconds/60)
+					seconds = seconds % 60
+					local seconds_padding = seconds < 10 and "0" or ""
+					cooldown.caption = {"gui.hub-milestone-cooldown", minutes, seconds_padding, seconds, tenths}
+					cooldown.visible = true
+				else
+					cooldown.visible = false
 				end
+			end
+			if milestone.name ~= "none" then
 				for _,ingredient in ipairs(recipe.ingredients) do
 					local label = table['hub-milestone-tracking-ingredient-'..ingredient.name]['hub-milestone-tracking-ingredient-'..ingredient.name..'-count']
 					label.caption = {"gui.fraction", util.format_number(submitted[ingredient.name] or 0), util.format_number(ingredient.amount)}
@@ -605,7 +608,7 @@ local function submitMilestone(force)
 	for _,ingredient in pairs(recipe.ingredients) do
 		if not submitted[ingredient.name] or submitted[ingredient.name] < ingredient.amount then return end
 	end
-	-- now that we've established that a recipe is set, it hasn't already been researched, and the maching contains enough items...
+	-- now that we've established that a recipe is set, it hasn't already been researched, and the machine contains enough items...
 	for _,ingredient in pairs(recipe.ingredients) do
 		inventory.remove{
 			name = ingredient.name,
