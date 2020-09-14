@@ -6,14 +6,12 @@
 -- uses global['last-power-trip'] to track per-force when the last power outage was, to de-duplicate FX
 local gui = require("mod-gui")
 
-local function registerGenerator(entity, accumulator_name, fuel_burner, components)
+local function registerGenerator(burner, generator, accumulator_name)
 	-- components, if passed, should always start with the entity that takes the fuel (for Fusebox use)
-	local burner = components and components[1] or entity
-	local generator = components and components[#components] or entity
-	local accumulator = entity.surface.create_entity{
+	local accumulator = generator.surface.create_entity{
 		name = accumulator_name,
 		position = generator.position,
-		force = entity.force,
+		force = generator.force,
 		raise_built = true
 	}
 	accumulator.energy = 1
@@ -22,29 +20,26 @@ local function registerGenerator(entity, accumulator_name, fuel_burner, componen
 	accumulator.destructible = false
 	if not global['accumulators'] then global['accumulators'] = {} end
 	if not global['accumulators'][burner.surface.index] then global['accumulators'][burner.surface.index] = {} end
-	if not global['accumulators'][burner.surface.index][entity.position.y] then global['accumulators'][burner.surface.index][burner.position.y] = {} end
+	if not global['accumulators'][burner.surface.index][burner.position.y] then global['accumulators'][burner.surface.index][burner.position.y] = {} end
 	global['accumulators'][burner.surface.index][burner.position.y][burner.position.x] = {
-		components = components or {entity},
+		burner = burner,
 		generator = generator,
-		accumulator = accumulator,
-		fuel = fuel_burner,
-		force = entity.force,
-		active = true
+		accumulator = accumulator
 	}
 end
-local function unregisterGenerator(entity)
-	local row = global['accumulators'][entity.surface.index][entity.position.y]
-	local entry = row[entity.position.x]
+local function unregisterGenerator(burner)
+	local row = global['accumulators'][burner.surface.index][burner.position.y]
+	local entry = row[burner.position.x]
 	if entry then
-		row[entity.position.x] = nil
+		row[burner.position.x] = nil
 		entry.accumulator.destroy()
 	end
 end
-local function isRegistered(entity)
+local function isRegistered(burner)
 	if not global['accumulators'] then return false end
-	if not global['accumulators'][entity.surface.index] then return false end
-	if not global['accumulators'][entity.surface.index][entity.position.y] then return false end
-	if not global['accumulators'][entity.surface.index][entity.position.y][entity.position.x] then return false end
+	if not global['accumulators'][burner.surface.index] then return false end
+	if not global['accumulators'][burner.surface.index][burner.position.y] then return false end
+	if not global['accumulators'][burner.surface.index][burner.position.y][burner.position.x] then return false end
 	return true
 end
 
@@ -72,10 +67,8 @@ local function createFusebox(player)
 	end
 end
 local function toggle(entry, enabled)
-	for _,entity in pairs(entry.components) do
-		entity.active = enabled
-	end
-	entry.active = enabled
+	entry.burner.active = enabled
+	entry.generator.active = enabled
 end
 local function onTick(event)
 	if not global['accumulators'] then return end
@@ -83,23 +76,23 @@ local function onTick(event)
 		for y, row in pairs(rows) do
 			for x, entry in pairs(row) do
 				-- don't count running out of fuel as a power trip
-				if entry.active and (not entry.fuel or entry.fuel.remaining_burning_fuel > 0) and entry.accumulator.energy == 0 then
+				if entry.burner.active and entry.burner.burner.remaining_burning_fuel > 0 and entry.accumulator.energy == 0 then
 					-- power failure!
 					toggle(entry,false)
 					if not global['last-power-trip'] then global['last-power-trip'] = {} end
-					if not global['last-power-trip'][entry.force.index] then global['last-power-trip'][entry.force.index] = -5000 end
-					if global['last-power-trip'][entry.force.index]+60 < event.tick then
+					if not global['last-power-trip'][entry.burner.force.index] then global['last-power-trip'][entry.burner.force.index] = -5000 end
+					if global['last-power-trip'][entry.burner.force.index]+60 < event.tick then
 						-- only play sound at most once a second
-						entry.force.play_sound{path="power-failure"}
+						entry.burner.force.play_sound{path="power-failure"}
 					end
-					if global['last-power-trip'][entry.force.index]+3600 < event.tick then
+					if global['last-power-trip'][entry.burner.force.index]+3600 < event.tick then
 						-- only show console message at most once a minute
-						entry.force.print({"message.power-failure"})
+						entry.burner.force.print({"message.power-failure"})
 					end
-					global['last-power-trip'][entry.force.index] = event.tick
+					global['last-power-trip'][entry.burner.force.index] = event.tick
 					-- see if any player on this entity's force has this generator opened
-					for _,player in pairs(entry.force.players) do
-						if player.opened and player.opened == entry.components[1] then
+					for _,player in pairs(entry.burner.force.players) do
+						if player.opened and player.opened == entry.burner then
 							createFusebox(player)
 						end
 					end

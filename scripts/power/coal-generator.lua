@@ -42,7 +42,7 @@ local function onBuilt(event)
 			raise_built = true
 		}
 		io.addInput(entity, {1,5.5}, boil)
-		powertrip.registerGenerator(entity, accumulator[entity.direction], boil.burner, {boil, gen})
+		powertrip.registerGenerator(boil, gen, accumulator[entity.direction])
 		-- make the base intangible
 		entity.operable = false
 		entity.minable = false
@@ -61,9 +61,9 @@ local function onRemoved(event)
 			game.print("Couldn't find the floor")
 			return
 		end
-		powertrip.unregisterGenerator(floor)
 		local boil = entity.surface.find_entity(boiler, math2d.position.add(floor.position, math2d.position.rotate_vector(boiler_pos, floor.direction*45)))
 		local gen = entity.surface.find_entity(generator[entity.direction], math2d.position.add(floor.position, math2d.position.rotate_vector(generator_pos, floor.direction*45)))
+		powertrip.unregisterGenerator(boil)
 		if entity.name ~= boiler then
 			-- safely get items from the boiler
 			getitems.burner(boil, event and event.buffer or nil)

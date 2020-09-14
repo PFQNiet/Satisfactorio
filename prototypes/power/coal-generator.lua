@@ -224,6 +224,7 @@ local generator_ne = {
 		mining_time = 1,
 		result = name
 	},
+	placeable_by = {item=name,count=1},
 	name = name.."-generator-ne",
 	selection_box = {{-2.5,-4},{2.5,4}},
 	type = "generator"
