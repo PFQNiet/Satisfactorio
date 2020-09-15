@@ -79,5 +79,27 @@ data:extend({
 		type = "sound",
 		name = "power-failure",
 		filename = "__base__/sound/nightvision-off.ogg"
+	},
+	{
+		filename = "__base__/graphics/icons/tooltips/tooltip-category-chemical.png",
+		flags = {"gui-icon"},
+		height = 40,
+		mipmap_count = 2,
+		name = "tooltip-category-carbon",
+		priority = "extra-high-no-scale",
+		scale = 0.5,
+		type = "sprite",
+		width = 40
+	},
+	{
+		filename = "__base__/graphics/icons/tooltips/tooltip-category-chemical.png",
+		flags = {"gui-icon"},
+		height = 40,
+		mipmap_count = 2,
+		name = "tooltip-category-solid-biofuel",
+		priority = "extra-high-no-scale",
+		scale = 0.5,
+		type = "sprite",
+		width = 40
 	}
 })
