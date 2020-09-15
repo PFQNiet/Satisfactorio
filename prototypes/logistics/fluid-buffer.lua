@@ -87,7 +87,8 @@ local tankrecipe = {
 	category = "building",
 	allow_intermediates = false,
 	allow_as_intermediate = false,
-	hide_from_stats = true
+	hide_from_stats = true,
+	enabled = false
 }
 local _group = data.raw['item-subgroup'][tankitem.subgroup]
 local tankrecipe_undo = {
@@ -105,6 +106,7 @@ local tankrecipe_undo = {
 	allow_intermediates = false,
 	allow_as_intermediate = false,
 	hide_from_stats = true,
+	enabled = false,
 	icons = {
 		{icon = "__base__/graphics/icons/deconstruction-planner.png", icon_size = 64},
 		{icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64}

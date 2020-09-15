@@ -90,5 +90,15 @@ return {
 		"pipe-to-ground-undo",
 		"pump-undo",
 		"fluid-buffer-undo"
+	},
+	["hub-tier3-vehicular-transport"] = {
+		"truck-station-undo",
+		"tractor-undo"
+	},
+	["hub-tier3-basic-steel-production"] = {
+		"foundry-undo",
+		"steel-ingot-manual",
+		"steel-plate-manual",
+		"steel-pipe-manual"
 	}
 }

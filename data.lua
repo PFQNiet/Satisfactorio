@@ -11,6 +11,7 @@ data:extend({
 	{type="recipe-category",name="unbuilding"},
 	{type="recipe-category",name="equipment"},
 	{type="recipe-category",name="smelter"},
+	{type="recipe-category",name="foundry"},
 	{type="recipe-category",name="constructing"},
 	{type="recipe-category",name="assembling"},
 	{type="recipe-category",name="manufacturing"},
@@ -103,3 +104,10 @@ data:extend({
 		width = 40
 	}
 })
+
+--[[ example tractor values
+data.raw.car.car.consumption = "55MW"
+data.raw.car.car.weight = 750000
+data.raw.car.car.braking_power = "55MW"
+data.raw.car.car.energy_per_hit_point = 1000
+]]
