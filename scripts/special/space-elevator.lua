@@ -23,16 +23,18 @@ local function onBuilt(event)
 		silo.destructible = false
 		silo.auto_launch = true
 
-		local inserter = hub.surface.create_entity{
+		local inserter = silo.surface.create_entity{
 			name = "loader-inserter",
-			position = entity.position,
-			force = hub.force,
+			position = silo.position,
+			force = silo.force,
 			raise_built = true
 		}
 		inserter.drop_position = silo.position
 		inserter.operable = false
 		inserter.minable = false
 		inserter.destructible = false
+
+		entity.active = false
 	end
 end
 
