@@ -91,7 +91,6 @@ local elevatorrecipe_undo = {
 data:extend({elevator,elevatoritem,elevatorrecipe,elevatorrecipe_undo})
 
 local silo = table.deepcopy(data.raw['rocket-silo']['rocket-silo'])
-
 silo.name = "space-elevator-silo"
 silo.energy_source = {type="void"}
 silo.rocket_parts_required = 1
