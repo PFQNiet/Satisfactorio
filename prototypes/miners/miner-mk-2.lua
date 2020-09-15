@@ -1,4 +1,4 @@
-local name = "miner-mk-1"
+local name = "miner-mk-2"
 local miner = {
 	allowed_effects = {"speed","consumption"},
 	module_specification = {module_slots = 3},
@@ -31,7 +31,7 @@ local miner = {
 		type = "electric",
 		usage_priority = "secondary-input"
 	},
-	energy_usage = "5MW",
+	energy_usage = "12MW",
 	working_sound = data.raw['mining-drill']['electric-mining-drill'].working_sound,
 	flags = {
 		"placeable-neutral",
@@ -46,14 +46,14 @@ local miner = {
 		mining_time = 1,
 		result = name
 	},
-	mining_speed = 1/2, -- base 30/min
+	mining_speed = 1, -- base 60/min
 	name = name,
 	resource_categories = {"solid"},
 	resource_searching_radius = 0.49,
 	selection_box = {{-2.5,-6.5},{2.5,2.5}},
 	type = "mining-drill",
 	fast_replaceable_group = "miner",
-	next_upgrade = "miner-mk-2",
+	-- next_upgrade = "miner-mk-3",
 	vector_to_place_result = {0,0}
 }
 
@@ -98,7 +98,7 @@ local mineritem = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	name = name,
-	order = "c["..name.."]",
+	order = "d["..name.."]",
 	place_result = name,
 	stack_size = 1,
 	subgroup = "production-miner",
@@ -106,9 +106,10 @@ local mineritem = {
 }
 
 local ingredients = {
-	{"portable-miner",1},
-	{"iron-plate",10},
-	{"concrete",10}
+	{"portable-miner",2},
+	{"encased-industrial-beam",10},
+	{"steel-pipe",20},
+	{"modular-frame",10}
 }
 local minerrecipe = {
 	name = name,

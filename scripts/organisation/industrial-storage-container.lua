@@ -1,38 +1,46 @@
 local io = require("scripts.lualib.input-output")
-local getitems = require("scripts.lualib.get-items-from")
 
-local miner = "miner-mk-1"
-local box = "miner-mk-1-box"
+local box = "steel-chest"
+local fakebox = "industrial-storage-container-placeholder"
 
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not entity or not entity.valid then return end
-	if entity.name == miner then
-		-- spawn a box for this drill
-		local store = entity.surface.create_entity{
+	if entity.name == fakebox then
+		-- add the "real" box
+		local realbox = entity.surface.create_entity{
 			name = box,
 			position = entity.position,
 			force = entity.force,
 			raise_built = true
 		}
-		io.addOutput(entity, {0,-6})
+		io.addInput(entity, {-1,2}, realbox)
+		io.addInput(entity, {1,2}, realbox)
+		io.addOutput(entity, {-1,-2}, realbox)
+		io.addOutput(entity, {1,-2}, realbox)
+		entity.operable = false
 		entity.rotatable = false
+		entity.minable = false -- mine the box!
+		entity.destructible = false
 	end
 end
 
 local function onRemoved(event)
 	local entity = event.entity
 	if not entity or not entity.valid then return end
-	if entity.name == miner then
-		local store = entity.surface.find_entity(box,entity.position)
-		getitems.storage(store, event and event.buffer or nil)
-		store.destroy()
-		io.removeOutput(entity, {0,-6}, event)
-	end
 	if entity.name == box then
-		local drill = entity.surface.find_entity(miner,entity.position)
-		io.removeOutput(drill, {0,-6}, event)
-		drill.destroy()
+		-- remove the fakebox graphic
+		local fake = entity.surface.find_entity(fakebox, entity.position)
+		if fake and fake.valid then
+			-- remove the input/output
+			io.removeInput(fake, {-1,2}, event)
+			io.removeInput(fake, {1,2}, event)
+			io.removeOutput(fake, {-1,-2}, event)
+			io.removeOutput(fake, {1,-2}, event)
+			fake.destroy()
+		else
+			game.print("Could not find the box graphic")
+		end
 	end
 end
 

@@ -1,8 +1,8 @@
 local io = require("scripts.lualib.input-output")
 local getitems = require("scripts.lualib.get-items-from")
 
-local miner = "miner-mk-1"
-local box = "miner-mk-1-box"
+local miner = "miner-mk-2"
+local box = "miner-mk-2-box"
 
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
