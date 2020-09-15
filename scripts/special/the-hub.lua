@@ -501,6 +501,7 @@ local function updateMilestoneGUI(force)
 						ready = false
 					end
 				end
+				button.visible = player.opened and player.opened == hub
 				button.enabled = ready
 			end
 		end
