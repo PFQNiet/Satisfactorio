@@ -1,6 +1,6 @@
 -- uses global['hub-terminal'] as table of Force index -> {surface, position} of the HUB terminal
--- uses global['hub-milestones'] as table of Force index -> milestone[]
--- uses global['hub-milestone-gui'] as table of Force index -> milestone shown in GUI - if different to current selection then GUI needs refresh, otherwise just update counts
+-- uses global['hub-milestones'] as table of Force index -> completed milestone[]
+-- uses global['hub-milestone-selected'] as table of Force index -> milestone shown in GUI - if different to current selection then GUI needs refresh, otherwise just update counts
 -- uses global['hub-cooldown'] as table of Force index -> tick at which the Freighter returns
 
 local mod_gui = require("mod-gui")
@@ -95,7 +95,7 @@ local function buildTerminal(hub)
 	}
 	terminal.active = false -- "crafting" is faked :D
 	if not global['hub-terminal'] then global['hub-terminal'] = {} end
-	global['hub-terminal'][terminal.force.index] = {terminal.surface.name, terminal.position}
+	global['hub-terminal'][terminal.force.index] = {terminal.surface.index, terminal.position}
 	hub.force.set_spawn_position(position(spawn_pos,hub), hub.surface)
 	return terminal
 end
@@ -323,7 +323,7 @@ local function updateMilestoneGUI(force)
 		return
 	end
 
-	if not global['hub-milestone-gui'] then global['hub-milestone-gui'] = {} end
+	if not global['hub-milestone-selected'] then global['hub-milestone-selected'] = {} end
 
 	local hub = findHubForForce(force)
 	local milestone = {name="none"}
@@ -437,8 +437,8 @@ local function updateMilestoneGUI(force)
 			local button = bottom['hub-milestone-tracking-submit']
 
 			-- check if the selected milestone has been changed
-			if milestone.name ~= global['hub-milestone-gui'][force.index] then
-				global['hub-milestone-gui'][force.index] = milestone.name
+			if milestone.name ~= global['hub-milestone-selected'][force.index] then
+				global['hub-milestone-selected'][force.index] = milestone.name
 				inner.visible = milestone.name ~= "none"
 				bottom.visible = inner.visible
 				button.enabled = false
