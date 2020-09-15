@@ -79,6 +79,7 @@ local function findElevatorForForce(force)
 	return game.get_surface(pos[1]).find_entity(elevator,pos[2])
 end
 local function launchFreighter(hub, item)
+	if not hub then return end
 	local silo = hub.surface.find_entity(elevator.."-silo",hub.position)
 	if not (silo and silo.valid) then
 		game.print("Could not find Freighter")

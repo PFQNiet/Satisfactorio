@@ -15,6 +15,7 @@ box.inventory_size = 48
 box.collision_box = {{-1.2,-1.2},{1.2,1.2}}
 box.selection_box = {{-1.5,-1.5},{1.5,1.5}}
 box.picture = empty_sprite
+box.minable.mining_time = 1
 box.placeable_by = {item=basename, count=1}
 
 -- but in order to allow rotation of the box, we need a rotatable entity
@@ -85,7 +86,7 @@ local boxrecipe = {
 local _group = data.raw['item-subgroup'][boxitem.subgroup]
 local boxrecipe_undo = {
 	name = basename.."-undo",
-	localised_name = {"recipe-name."..basename.."-undo"},
+	localised_name = {"recipe-name.dismantle",{"item-name."..basename}},
 	type = "recipe",
 	ingredients = {
 		{basename,1}

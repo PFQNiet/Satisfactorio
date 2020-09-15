@@ -68,7 +68,7 @@ local towerrecipe = {
 local _group = data.raw['item-subgroup'][toweritem.subgroup]
 local towerrecipe_undo = {
 	name = name.."-undo",
-	localised_name = {"recipe-name."..name.."-undo"},
+	localised_name = {"recipe-name.dismantle",{"item-name."..name}},
 	type = "recipe",
 	ingredients = {
 		{name,1}

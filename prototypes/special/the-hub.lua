@@ -169,7 +169,7 @@ local hubrecipe = {
 local _group = data.raw['item-subgroup'][hubitem.subgroup]
 local hubrecipe_undo = {
 	name = name.."-undo",
-	localised_name = {"recipe-name."..name.."-undo"},
+	localised_name = {"recipe-name.dismantle",{"item-name."..name}},
 	type = "recipe",
 	ingredients = {
 		{name,1}

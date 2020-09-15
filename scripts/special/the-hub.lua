@@ -241,6 +241,7 @@ local function removeFreighter(hub, buffer)
 	end
 end
 local function launchFreighter(hub, item)
+	if not hub then return end
 	local silo = hub.surface.find_entity(freighter,position(freighter_pos,hub))
 	if not (silo and silo.valid) then
 		game.print("Could not find Freighter")

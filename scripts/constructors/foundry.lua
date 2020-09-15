@@ -19,7 +19,7 @@ local function onRemoved(event)
 		-- remove the input/output
 		io.removeInput(entity, {-1,1.5}, event)
 		io.removeInput(entity, {1,1.5}, event)
-		io.removeOutput(entity, {-1,-1.5}, event)
+		io.removeOutput(entity, {1,-1.5}, event)
 	end
 end
 

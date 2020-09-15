@@ -34,7 +34,8 @@ local piperecipe = {
 local _group = data.raw['item-subgroup'][pipeitem.subgroup]
 local piperecipe_undo = {
 	name = basename.."-undo",
-	localised_name = {"recipe-name."..basename.."-undo"},
+	localised_name = {"recipe-name.dismantle",{"item-name."..basename}},
+	show_amount_in_title = false,
 	type = "recipe",
 	ingredients = {
 		{basename,2}

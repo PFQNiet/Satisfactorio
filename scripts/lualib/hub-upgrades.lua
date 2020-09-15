@@ -66,7 +66,10 @@ return {
 		"wooden-chest-undo"
 	},
 	["hub-tier2-part-assembly"] = {
-		"assembler-undo"
+		"assembler-undo",
+		"copper-plate-manual",
+		"rotor-manual",
+		"modular-frame-manual"
 	},
 	["hub-tier2-obstacle-clearing"] = {
 		"solid-biofuel-manual"
@@ -100,5 +103,23 @@ return {
 		"steel-ingot-manual",
 		"steel-plate-manual",
 		"steel-pipe-manual"
+	},
+	["hub-tier4-advanced-steel-production"] = {
+		"miner-mk-2-undo",
+		"encased-industrial-beam-manual",
+		"stator-manual",
+		"motor-manual",
+		"heavy-modular-frame-manual"
+	},
+	["hub-tier4-improved-melee-combat"] = {},
+	["hub-tier4-hyper-tubes"] = {
+		"hyper-tube-entrance-undo",
+		"hyper-tube-undo",
+		"underground-hyper-tube-undo"
+	},
+	["hub-tier4-logistics-mk-3"] = {
+		"steel-chest-undo",
+		"express-transport-belt-undo",
+		"express-underground-belt-undo"
 	}
 }

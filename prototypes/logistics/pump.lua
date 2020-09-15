@@ -32,7 +32,7 @@ local pumprecipe = {
 local _group = data.raw['item-subgroup'][pumpitem.subgroup]
 local pumprecipe_undo = {
 	name = basename.."-undo",
-	localised_name = {"recipe-name."..basename.."-undo"},
+	localised_name = {"recipe-name.dismantle",{"item-name."..basename}},
 	type = "recipe",
 	ingredients = {
 		{basename,1}

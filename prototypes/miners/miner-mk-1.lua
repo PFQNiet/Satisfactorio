@@ -125,6 +125,7 @@ local minerrecipe = {
 local _group = data.raw['item-subgroup'][mineritem.subgroup]
 local minerrecipe_undo = {
 	name = name.."-undo",
+	localised_name = {"recipe-name.dismantle",{"item-name."..name}},
 	type = "recipe",
 	ingredients = {
 		{name,1}

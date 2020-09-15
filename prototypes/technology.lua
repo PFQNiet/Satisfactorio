@@ -250,6 +250,48 @@ addTech("hub-tier3-basic-steel-production", "steel-ingot", "hub-progressing", "h
 	{type="unlock-recipe",recipe="steel-pipe"},
 	{type="unlock-recipe",recipe="versatile-framework"}
 })
+addTech("hub-tier4-advanced-steel-production", "miner-mk-2", "hub-progressing", "hub-tier4", "a-4-1", 600, {"space-elevator-phase1"}, {
+	{"steel-pipe",200},
+	{"rotor",200},
+	{"wire",1500},
+	{"concrete",300}
+}, {
+	{type="unlock-recipe",recipe="miner-mk-2"},
+	{type="unlock-recipe",recipe="encased-industrial-beam"},
+	{type="unlock-recipe",recipe="stator"},
+	{type="unlock-recipe",recipe="motor"},
+	{type="unlock-recipe",recipe="automated-wiring"},
+	{type="unlock-recipe",recipe="heavy-modular-frame"}
+})
+addTech("hub-tier4-improved-melee-combat", "xeno-basher", "hub-progressing", "hub-tier4", "a-4-2", 180, {"space-elevator-phase1"}, {
+	{"rotor",25},
+	{"reinforced-iron-plate",50},
+	{"wire",1500},
+	{"copper-cable",200}
+}, {
+	{type="unlock-recipe",recipe="xeno-basher"},
+	{type="character-inventory-slots-bonus",modifier=5}
+})
+--[[
+addTech("hub-tier4-hyper-tubes", "hyper-tube", "hub-progressing", "hub-tier4", "a-4-3", 600, {"space-elevator-phase1"}, {
+	{"copper-plate",300},
+	{"steel-pipe",300},
+	{"encased-industrial-beam",50}
+}, {
+	{type="unlock-recipe",recipe="hyper-tube-entrance"},
+	{type="unlock-recipe",recipe="hyper-tube"},
+	{type="unlock-recipe",recipe="underground-hyper-tube"}
+})
+]]
+addTech("hub-tier4-logistics-mk-3", "conveyor-belt-mk-3", "hub-progressing", "hub-tier4", "a-4-4", 300, {"space-elevator-phase1"}, {
+	{"steel-plate",200},
+	{"steel-pipe",100},
+	{"concrete",500}
+}, {
+	{type="unlock-recipe",recipe="steel-chest"},
+	{type="unlock-recipe",recipe="express-transport-belt"},
+	{type="unlock-recipe",recipe="express-underground-belt"}
+})
 
 --[[ SPACE ELEVATOR ]]--
 addTech("space-elevator-phase1", "smart-plating", "space-elevator", "space-parts", "e-1", 1, {"hub-tier0-hub-upgrade-6"}, {

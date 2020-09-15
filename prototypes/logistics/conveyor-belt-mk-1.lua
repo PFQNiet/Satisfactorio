@@ -28,7 +28,8 @@ local beltrecipe = {
 local _group = data.raw['item-subgroup'][beltitem.subgroup]
 local beltrecipe_undo = {
 	name = basename.."-undo",
-	localised_name = {"recipe-name."..basename.."-undo"},
+	localised_name = {"recipe-name.dismantle",{"item-name."..basename}},
+	show_amount_in_title = false,
 	type = "recipe",
 	ingredients = {
 		{basename,1}

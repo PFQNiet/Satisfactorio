@@ -21,7 +21,7 @@ local polerecipe = {
 	type = "recipe",
 	ingredients = ingredients,
 	result = basename,
-	energy_required = 0.1,
+	energy_required = 0.5,
 	category = "building",
 	allow_intermediates = false,
 	allow_as_intermediate = false,
@@ -31,12 +31,13 @@ local polerecipe = {
 local _group = data.raw['item-subgroup'][poleitem.subgroup]
 local polerecipe_undo = {
 	name = basename.."-undo",
+	localised_name = {"recipe-name.dismantle",{"item-name."..basename}},
 	type = "recipe",
 	ingredients = {
 		{basename,1}
 	},
 	results = ingredients,
-	energy_required = 0.1,
+	energy_required = 0.5,
 	category = "unbuilding",
 	subgroup = _group.group .. "-undo",
 	order = _group.order .. "-" .. poleitem.order,
