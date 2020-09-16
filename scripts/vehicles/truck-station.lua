@@ -26,13 +26,10 @@ local function onBuilt(event)
 			raise_built = true
 		}
 		io.addInput(entity, {-4,3.5}, fuel)
-		io.addInput(entity, {-2,3.5}, store)
 		io.addInput(entity, {0,3.5}, store)
 		io.addOutput(entity, {2,3.5}, store, defines.direction.south)
-		io.addOutput(entity, {4,3.5}, store, defines.direction.south)
 		-- default to Input mode
 		io.toggleOutput(entity, {2,3.5}, false)
-		io.toggleOutput(entity, {4,3.5}, false)
 		entity.rotatable = false
 	end
 end
@@ -54,10 +51,8 @@ local function onRemoved(event)
 			fuel.destroy()
 		end
 		io.removeInput(floor, {-4,3.5}, event)
-		io.removeInput(floor, {-2,3.5}, event)
 		io.removeInput(floor, {0,3.5}, event)
 		io.removeOutput(floor, {2,3.5}, event)
-		io.removeOutput(floor, {4,3.5}, event)
 		if entity.name ~= base then
 			floor.destroy()
 		end
@@ -99,10 +94,8 @@ local function onGuiSwitch(event)
 		local player = game.players[event.player_index]
 		local floor = player.opened.surface.find_entity(base, player.opened.position)
 		local unload = event.element.switch_state == "right"
-		io.toggleInput(floor,{-2,3.5},not unload)
 		io.toggleInput(floor,{0,3.5},not unload)
 		io.toggleOutput(floor,{2,3.5},unload)
-		io.toggleOutput(floor,{4,3.5},unload)
 	end
 end
 local function onGuiClosed(event)
