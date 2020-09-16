@@ -16,13 +16,16 @@ local empty_sprite = {
 }
 
 local base = {
-	type = "constant-combinator",
+	type = "electric-energy-interface",
 	name = name,
-	activity_led_light_offsets = {{0,0},{0,0},{0,0},{0,0}},
-	activity_led_sprites = empty_sprite,
-	circuit_wire_connection_points = data.raw['constant-combinator']['constant-combinator'].circuit_wire_connection_points,
-	item_slot_count = 0,
-	sprites = {
+	energy_source = {
+		type = "electric",
+		buffer_capacity = "20MJ",
+		usage_priority = "secondary-input",
+		drain = "0W",
+		input_flow_limit = "20MW"
+	},
+	pictures = {
 		north = {
 			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-n.png",
 			size = {352,256}
@@ -79,6 +82,14 @@ local storage = {
 		"not-blueprintable",
 		"no-copy-paste"
 	},
+	open_sound = {
+		filename = "__base__/sound/metallic-chest-open.ogg",
+		volume = 0.5
+	},
+	close_sound = {
+		filename = "__base__/sound/metallic-chest-close.ogg",
+		volume = 0.5
+	},
 	icon = base.icon,
 	icon_size = base.icon_size,
 	inventory_size = 48,
@@ -105,6 +116,14 @@ local fuelbox = {
 		"not-blueprintable",
 		"no-copy-paste"
 	},
+	open_sound = {
+		filename = "__base__/sound/wooden-chest-open.ogg",
+		volume = 0.5
+	},
+	close_sound = {
+		filename = "__base__/sound/wooden-chest-close.ogg",
+		volume = 0.5
+	},
 	icon = base.icon,
 	icon_size = base.icon_size,
 	inventory_size = 1,
@@ -118,25 +137,6 @@ local fuelbox = {
 	placeable_by = {item=name,count=1},
 	selection_box = {{-0.5,-0.5},{0.5,0.5}},
 	type = "container"
-}
-
-local energy = {
-	energy_source = {
-		type = "electric",
-		buffer_capacity = "20MJ",
-		usage_priority = "secondary-input",
-		drain = "0W",
-		input_flow_limit = "20MW"
-	},
-	picture = empty_sprite,
-	icon = base.icon,
-	icon_size = base.icon_size,
-	name = name.."-energy",
-	type = "electric-energy-interface",
-	collision_box = {{-5.2,-3.7},{5.2,3.7}},
-	selection_box = {{-5.5,-4},{5.5,4}},
-	max_health = 1,
-	selection_priority = 30
 }
 
 local stationitem = {
@@ -191,4 +191,4 @@ local stationrecipe_undo = {
 	enabled = false
 }
 
-data:extend({base,storage,fuelbox,energy,stationitem,stationrecipe,stationrecipe_undo})
+data:extend({base,storage,fuelbox,stationitem,stationrecipe,stationrecipe_undo})

@@ -65,6 +65,12 @@ local function toggleInput(entity, offset, enable)
 		i.active = enable
 	end
 end
+local function isInputEnabled(entity, offset)
+	offset = math2d.position.rotate_vector(offset, entity.direction/8*360)
+	local position = math2d.position.add(entity.position, offset)
+	local inserter = entity.surface.find_entity("loader-inserter",position)
+	return inserter.active
+end
 local function removeInput(entity, offset, event)
 	offset = math2d.position.rotate_vector(offset, entity.direction/8*360)
 	local position = math2d.position.add(entity.position, offset)
@@ -147,8 +153,10 @@ end
 return {
 	addInput = addInput,
 	toggleInput = toggleInput,
+	isInputEnabled = isInputEnabled,
 	removeInput = removeInput,
 	addOutput = addOutput,
 	toggleOutput = toggleInput,
+	isOutputEnabled = isInputEnabled,
 	removeOutput = removeInput -- it's actually the same!
 }
