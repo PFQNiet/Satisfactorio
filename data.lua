@@ -2,8 +2,9 @@ data:extend({
 	{type="ammo-category",name="infinite"},
 	{type="ammo-category",name="solid-biofuel"}, -- for the Chainsaw
 	{type="fuel-category",name="carbon"}, -- coal, compacted coal, coke
-	{type="fuel-category",name="fuel"}, -- liquid biofuel, fuel, turbofuel
-	{type="fuel-category",name="packaged-fuel"}, -- packaged fuel, packaged turbofuel, packaged heavy oil residue, packaged oil, battery
+	{type="fuel-category",name="liquid-fuel"}, -- liquid biofuel, fuel, turbofuel
+	{type="fuel-category",name="packaged-fuel"}, -- packaged fuel
+	{type="fuel-category",name="packaged-alt-fuel"}, -- packaged turbofuel, packaged heavy oil residue, packaged oil, battery
 	{type="resource-category",name="solid"},
 	{type="resource-category",name="water"},
 	{type="resource-category",name="crude-oil"},
@@ -68,6 +69,7 @@ require("prototypes.logistics")
 require("prototypes.organisation")
 require("prototypes.miners")
 require("prototypes.constructors")
+require("prototypes.vehicles")
 require("prototypes.weapons")
 require("prototypes.technology")
 require("prototypes.map-tweaks")
@@ -110,7 +112,7 @@ data:extend({
 		flags = {"gui-icon"},
 		height = 40,
 		mipmap_count = 2,
-		name = "tooltip-category-fuel",
+		name = "tooltip-category-liquid-fuel",
 		priority = "extra-high-no-scale",
 		scale = 0.5,
 		type = "sprite",
@@ -126,14 +128,16 @@ data:extend({
 		scale = 0.5,
 		type = "sprite",
 		width = 40
+	},
+	{
+		filename = "__Satisfactorio__/graphics/icons/tooltip-category-packaged-fuel.png",
+		flags = {"gui-icon"},
+		height = 40,
+		mipmap_count = 2,
+		name = "tooltip-category-packaged-alt-fuel",
+		priority = "extra-high-no-scale",
+		scale = 0.5,
+		type = "sprite",
+		width = 40
 	}
 })
-
---[[ example tractor values
-data.raw.car.car.consumption = "55MW"
-data.raw.car.car.weight = 750000
-data.raw.car.car.braking_power = "75MW"
-data.raw.car.car.energy_per_hit_point = 1000
-data.raw.car.car.burner.fuel_category = nil
-data.raw.car.car.burner.fuel_categories = {"chemical","carbon","packaged-fuel","nuclear"}
-]]

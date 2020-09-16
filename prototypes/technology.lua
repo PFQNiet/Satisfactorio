@@ -227,17 +227,15 @@ addTech("hub-tier3-coal-power", "coal-generator", "hub-progressing", "hub-tier3"
 	{type="unlock-recipe",recipe="fluid-buffer"},
 	{type="unlock-recipe",recipe="scanner-coal"}
 })
---[[
 addTech("hub-tier3-vehicular-transport", "tractor", "hub-progressing", "hub-tier3", "a-3-2", 240, {"space-elevator-phase1"}, {
 	{"modular-frame",25},
 	{"rotor",100},
 	{"copper-cable",200},
-	{"iron-rod",400}
+	{"iron-stick",400}
 }, {
 	{type="unlock-recipe",recipe="truck-station"},
 	{type="unlock-recipe",recipe="tractor"}
 })
-]]
 addTech("hub-tier3-basic-steel-production", "steel-ingot", "hub-progressing", "hub-tier3", "a-3-3", 480, {"space-elevator-phase1"}, {
 	{"modular-frame",50},
 	{"rotor",150},

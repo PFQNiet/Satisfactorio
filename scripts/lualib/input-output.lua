@@ -54,6 +54,17 @@ local function addInput(entity, offset, target, direction)
 	}
 	return belt, inserter_left, inserter_right, visual
 end
+local function toggleInput(entity, offset, enable)
+	offset = math2d.position.rotate_vector(offset, entity.direction/8*360)
+	local position = math2d.position.add(entity.position, offset)
+	local inserters = entity.surface.find_entities_filtered{
+		position = position,
+		name = "loader-inserter"
+	}
+	for _,i in pairs(inserters) do
+		i.active = enable
+	end
+end
 local function removeInput(entity, offset, event)
 	offset = math2d.position.rotate_vector(offset, entity.direction/8*360)
 	local position = math2d.position.add(entity.position, offset)
@@ -117,7 +128,7 @@ local function addOutput(entity, offset, target, direction)
 		raise_built = true
 	}
 	inserter_right.pickup_position = (target or entity).position
-	inserter_right.drop_position = math2d.position.add(position, math2d.position.rotate_vector({0.25,-0.49},entity.direction/8*360))
+	inserter_right.drop_position = math2d.position.add(position, math2d.position.rotate_vector({0.25,-0.49},((entity.direction+direction)%8)/8*360))
 	--inserter_right.operable = false
 	inserter_right.minable = false
 	inserter_right.destructible = false
@@ -135,7 +146,9 @@ end
 
 return {
 	addInput = addInput,
+	toggleInput = toggleInput,
 	removeInput = removeInput,
 	addOutput = addOutput,
+	toggleOutput = toggleInput,
 	removeOutput = removeInput -- it's actually the same!
 }
