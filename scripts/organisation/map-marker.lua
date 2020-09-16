@@ -129,7 +129,7 @@ return {
 		[defines.events.on_gui_opened] = onGuiOpened,
 		[defines.events.on_gui_click] = onGuiClick,
 		[defines.events.on_gui_closed] = function(event)
-			if event.gui_type == defines.gui_type.custom and event.element.valid and event.element.name == "beacon-naming" then
+			if event.gui_type == defines.gui_type.custom and event.element and event.element.valid and event.element.name == "beacon-naming" then
 				closeBeaconGUI(game.players[event.player_index])
 			end
 		end

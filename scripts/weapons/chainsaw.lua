@@ -5,7 +5,7 @@ local function onKill(event)
 	if not event.entity or not event.entity.valid then return end
 	if event.entity.type ~= "tree" then return end
 	if not event.cause then return end
-	if not event.cause.type ~= "character" then return end
+	if event.cause.type ~= "character" then return end
 	if not event.damage_type then return end
 	if event.damage_type.name ~= "chainsaw" then return end
 	-- tree was killed by a chainsaw!

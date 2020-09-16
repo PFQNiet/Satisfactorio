@@ -22,7 +22,8 @@ local base = {
 		buffer_capacity = "20MJ",
 		usage_priority = "secondary-input",
 		drain = "0W",
-		input_flow_limit = "20MW"
+		input_flow_limit = "20MW",
+		output_flow_limit = "0W"
 	},
 	pictures = {
 		north = {

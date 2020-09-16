@@ -32,7 +32,8 @@ local recipe = {
 	result = name,
 	energy_required = 20/4,
 	category = "equipment",
-	hide_from_stats = true
+	hide_from_stats = true,
+	enabled = false
 }
 
 local stun = {

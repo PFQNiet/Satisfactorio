@@ -12,12 +12,13 @@ local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not entity or not entity.valid then return end
 	if entity.name == elevator then
-		io.addInput(entity, {-10,13})
-		io.addInput(entity, {-8,13})
-		io.addInput(entity, {-6,13})
-		io.addInput(entity, {-10,-13}, nil, defines.direction.south)
-		io.addInput(entity, {-8,-13}, nil, defines.direction.south)
-		io.addInput(entity, {-6,-13}, nil, defines.direction.south)
+		-- position hack to avoid it trying to drop stuff in the rocket silo
+		io.addInput(entity, {-10,13}, {position={entity.position.x-8,entity.position.y}})
+		io.addInput(entity, {-8,13}, {position={entity.position.x-8,entity.position.y}})
+		io.addInput(entity, {-6,13}, {position={entity.position.x-8,entity.position.y}})
+		io.addInput(entity, {-10,-13}, {position={entity.position.x-8,entity.position.y}}, defines.direction.south)
+		io.addInput(entity, {-8,-13}, {position={entity.position.x-8,entity.position.y}}, defines.direction.south)
+		io.addInput(entity, {-6,-13}, {position={entity.position.x-8,entity.position.y}}, defines.direction.south)
 		local silo = entity.surface.create_entity{
 			name = elevator.."-silo",
 			position = entity.position,
@@ -67,6 +68,7 @@ local function onRemoved(event)
 		if not silo then
 			game.print("Could not find Space Elevator inserter")
 		else
+			inserter.destroy()
 			silo.destroy()
 		end
 		global['space-elevator'][entity.force.index] = nil

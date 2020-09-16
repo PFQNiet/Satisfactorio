@@ -151,7 +151,8 @@ local function onTick(event)
 				if target and not from.is_empty() then
 					for name,_ in pairs(from.get_contents()) do
 						local source = from.find_item_stack(name)
-						target.transfer_stack(source)
+						-- since there is an empty stack, an insert will always succeed
+						from.remove({name=name,count=to.insert(source)})
 						break
 					end
 				end

@@ -1,8 +1,8 @@
 {
 	"name": "Satisfactorio",
 	"version": "0.0.1",
-	"title": "Satisfactorio",
-	"description": "Love Factorio? Love Satisfactory? Want to play both at once? Well all right then! This overhaul mod reworks Factorio to play more like Satisfactory, with belts connecting directly to machines, Milestones, ore nodes and more!",
+	"title": "Satisfactorio [ALPHA]",
+	"description": "[font=heading-1]WARNING[/font]\n[font=default-semibold]This is an ALPHA BUILD.[/font] Although efforts have been made to test thoroughly, there may well be bugs and of course features that straight-up don't exist yet.\n\nAlso, there is no guarantee that save files from one Alpha build will work on any other Alpha build, so expect progress to be lost when updating!\n\nThank you for your interest, I look forward to hearing your feedback!\n\n-----\n\nLove Factorio? Love Satisfactory? Want to play both at once? Well all right then! This overhaul mod reworks Factorio to play more like Satisfactory, with belts connecting directly to machines, Milestones, ore nodes and more!",
 	"author": "Niet",
 	"contact": "Dicord: Niet#9801",
 	"factorio_version": "1.0",
