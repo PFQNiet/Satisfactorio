@@ -1,7 +1,6 @@
--- base entity is a constant combinator just so it can be rotated and stuff without any extra shenanigans
--- an electric-energy-interface manages power consumption
--- station itself is a pair of storage chests: one with a single slot and single input for fuel, and one with 48 slots, two inputs and two outputs
--- building itself is 8x11 so the layout can be |F-I-I-O-O|
+-- base entity is an electric-energy-interface to manage power consumption
+-- station itself is a pair of storage chests: one with a single slot and single input for fuel, and one with 48 slots, one input and one output
+-- building itself is 8x11 so the layout can be |F---I-O--|
 -- docking area is 8x8
 -- entity.get_inventory(defines.inventory.fuel).can_insert(itemstack) to see if it's insertable at all
 -- entity.get_inventory(defines.inventory.fuel).get_insertable_count(itemname) to determine how many can be inserted

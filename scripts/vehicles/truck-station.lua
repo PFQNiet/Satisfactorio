@@ -1,3 +1,4 @@
+-- uses global['truck-stations'] to list all truck stations
 local io = require("scripts.lualib.input-output")
 local getitems = require("scripts.lualib.get-items-from")
 local math2d = require("math2d")
@@ -31,6 +32,8 @@ local function onBuilt(event)
 		-- default to Input mode
 		io.toggleOutput(entity, {2,3.5}, false)
 		entity.rotatable = false
+		if not global['truck-stations'] then global['truck-stations'] = {} end
+		table.insert(global['truck-stations'], entity)
 	end
 end
 
@@ -53,6 +56,13 @@ local function onRemoved(event)
 		io.removeInput(floor, {-4,3.5}, event)
 		io.removeInput(floor, {0,3.5}, event)
 		io.removeOutput(floor, {2,3.5}, event)
+		-- remove from global table
+		for i,x in ipairs(global['truck-stations']) do
+			if x == floor then
+				table.remove(global['truck-stations'], i)
+				break
+			end
+		end
 		if entity.name ~= base then
 			floor.destroy()
 		end
@@ -106,6 +116,52 @@ local function onGuiClosed(event)
 	end
 end
 
+local function onTick(event)
+	if not global['truck-stations'] then return end
+	local modulo = event.tick % 30
+	for i,station in ipairs(global['truck-stations']) do
+		if i%30 == modulo and station.energy >= 10*1000*1000 then
+			-- each station will "tick" once every 30 in-game ticks, ie. every half-second
+			-- power consumption is 20MW, so each "tick" consumes 10MJ if a vehicle is present
+			local centre = math2d.position.add(station.position, math2d.position.rotate_vector({-0.5,-8}, station.direction*45))
+			local vehicle = station.surface.find_entities_filtered{
+				name = {"tractor"}, -- "truck", "explorer"
+				area = {{centre.x-4,centre.y-4}, {centre.x+4,centre.y+4}},
+				limit = 1
+			}
+			if #vehicle == 1 then
+				vehicle = vehicle[1]
+				local is_output = io.isOutputEnabled(station,{2,3.5})
+				local vehicleinventory = vehicle.get_inventory(defines.inventory.car_trunk)
+				local store = station.surface.find_entity(storage, math2d.position.add(station.position, math2d.position.rotate_vector(storage_pos, station.direction*45)))
+				local storeinventory = store.get_inventory(defines.inventory.chest)
+				local fuel = station.surface.find_entity(fuelbox, math2d.position.add(station.position, math2d.position.rotate_vector(fuelbox_pos, station.direction*45)))
+				-- always load fuel if possible
+				local fuelinventory = vehicle.get_inventory(defines.inventory.fuel)
+				local fuelstore = fuel.get_inventory(defines.inventory.chest)
+				if not fuelstore.is_empty() then
+					if fuelinventory.can_insert(fuelstore[1]) then
+						fuelstore.remove({name=fuelstore[1].name, count=fuelinventory.insert(fuelstore[1])})
+					end
+				end
+				-- transfer one item stack
+				local from = is_output and vehicleinventory or storeinventory
+				local to = is_output and storeinventory or vehicleinventory
+				local target = to.find_empty_stack()
+				if target and not from.is_empty() then
+					for name,_ in pairs(from.get_contents()) do
+						local source = from.find_item_stack(name)
+						target.transfer_stack(source)
+						break
+					end
+				end
+				-- drain 10MJ
+				station.energy = station.energy - 10*1000*1000
+			end
+		end
+	end
+end
+
 return {
 	events = {
 		[defines.events.on_built_entity] = onBuilt,
@@ -120,6 +176,8 @@ return {
 
 		[defines.events.on_gui_opened] = onGuiOpened,
 		[defines.events.on_gui_closed] = onGuiClosed,
-		[defines.events.on_gui_switch_state_changed] = onGuiSwitch
+		[defines.events.on_gui_switch_state_changed] = onGuiSwitch,
+
+		[defines.events.on_tick] = onTick
 	}
 }

@@ -13,6 +13,7 @@ handler.add_libraries(require("scripts.weapons"))
 handler.add_lib(require("scripts.lualib.resource-spawner"))
 handler.add_lib(require("scripts.lualib.resource-scanner"))
 handler.add_lib(require("scripts.lualib.power-trip").lib)
+handler.add_lib(require("scripts.lualib.self-driving"))
 handler.add_lib(require("scripts.map-tweaks"))
 
 handler.add_lib({
