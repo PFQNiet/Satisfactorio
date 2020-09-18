@@ -103,7 +103,9 @@ local function onTick(event)
 	if not global['cars'] then return end
 	local modulo = event.tick%30
 	for i,car in pairs(global['cars']) do
-		if car.autopilot and car.wait_until < event.tick and #car.waypoints > 1 and (i%30 == modulo or car.car.speed < 15) then
+		if not (car.car and car.car.valid) then
+			table.remove(global['cars'],i)
+		elseif car.autopilot and car.wait_until < event.tick and #car.waypoints > 1 and (i%30 == modulo or car.car.speed < 15) then
 			-- slow cars should update more often - if we have speed then chances are we're happily on our way
 			if car.waypoint_index > #car.waypoints then
 				-- list was edited and no longer valid

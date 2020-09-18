@@ -12,6 +12,7 @@ car.burner.fuel_categories = {"chemical","carbon","packaged-fuel","packaged-alt-
 car.inventory_size = 25
 car.fuel_inventory_size = 1
 car.guns = {}
+car.minable.result = name
 
 local caritem = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
