@@ -12,3 +12,4 @@ biter.loot = {
 		count_max = 1
 	}
 }
+biter.ai_settings.destroy_when_commands_fail = false

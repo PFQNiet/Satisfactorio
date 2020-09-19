@@ -3,12 +3,13 @@ Factorio overhaul mod that brings Satisfactory mechanics into the game.
 
 Being an overhaul mod, compatibility with QoL mods is probably fine but it obviously won't work with other overhaul mods.
 
+**Please support the original devs by purchasing a copy of Satisfactory before downloading this mod.**
+
 ## Core gameplay changes
 ### Mining
 - Ore patches are replaced with nodes. Nodes appear in small clusters and provide infinite resources at a slow rate.
 - Nodes can be Impure, Normal or Pure. In Factorio this is represented as 100%, 200% and 400% yield respectively.
 - The types of resources you can find vary the further away from spawn you are, with basic resources close by and more advanced ones further away.
-- With increased distance also comes better chances at nodes with higher purity.
 - You can also find resource deposits scattered around, which can be mined for extra resources.
 - At the start you will be hand-mining resources, then using a Portable Miner (which cannot be pulled from automatically), then automated Miners.
 
