@@ -6,6 +6,8 @@ Date: 2020.09.16
 ---------------------------------------------------------------------------------------------------
 Version: 0.0.2
 Date: 2020.??.??
+  Graphics:
+    - Resource Scanner pings update in real time
   Bugfixes:
     - Mining the Tractor gave you a vanilla Car
     - Mining vehicles crashed due to auto-pilot looking for vehicles that no longer exist

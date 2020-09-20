@@ -175,18 +175,42 @@ local function updatePings()
 		else
 			local dx = ping.position[1] - ping.player.position.x
 			local dy = ping.player.position.y - ping.position[2]
+			local dist = 7 -- ping distance around the player
+			local ring = 3 -- thickness of "transition" ring between pointing away and pointing at target
+			local distance = math.sqrt(dx*dx+dy*dy)+1
 			local direction = math.atan2(dy,dx)
-			local distance = math.floor(math.sqrt(dx*dx+dy*dy)+1)
-			local offset = {
-				math.cos(direction),
-				-math.sin(direction)
-			}
-			rendering.set_target(ping.graphics.background, ping.player.character, {offset[1]*3,offset[2]*3})
-			rendering.set_target(ping.graphics.item, ping.player.character, {offset[1]*3,offset[2]*3})
-			rendering.set_target(ping.graphics.arrow, ping.player.character, {offset[1]*4,offset[2]*4})
-			rendering.set_orientation(ping.graphics.arrow, 0.25 - direction / math.pi/2)
-			rendering.set_target(ping.graphics.label, ping.player.character, {offset[1]*3,offset[2]*3+0.25})
-			rendering.set_text(ping.graphics.label, {"gui.resource-scanner-distance", util.format_number(distance)})
+			if distance < dist-ring+2 then
+				rendering.set_target(ping.graphics.background, {ping.position[1], ping.position[2]-1})
+				rendering.set_target(ping.graphics.item, {ping.position[1], ping.position[2]-1})
+				rendering.set_target(ping.graphics.arrow, ping.position)
+				rendering.set_orientation(ping.graphics.arrow, 0.5)
+				rendering.set_target(ping.graphics.label, {ping.position[1], ping.position[2]-0.75})
+			elseif distance < dist+2 then
+				-- point at target but interpolate angle
+				local lerp = ((dist+2)-distance)/ring -- at 1 it's pointing straight down, at 0 it's pointing in "direction"
+				local target = direction > math.pi/2 and 3*math.pi/2 or -math.pi/2 -- top-left quadrant needs to go the other way
+				local angle = direction + (target-direction)*lerp
+				local offset = {
+					math.cos(angle),
+					-math.sin(angle)
+				}
+				rendering.set_target(ping.graphics.background, {ping.position[1]-offset[1], ping.position[2]-offset[2]})
+				rendering.set_target(ping.graphics.item, {ping.position[1]-offset[1], ping.position[2]-offset[2]})
+				rendering.set_target(ping.graphics.arrow, ping.position)
+				rendering.set_orientation(ping.graphics.arrow, 0.25 - angle / math.pi/2)
+				rendering.set_target(ping.graphics.label, {ping.position[1]-offset[1], ping.position[2]-offset[2]+0.25})
+			else
+				local offset = {
+					math.cos(direction),
+					-math.sin(direction)
+				}
+				rendering.set_target(ping.graphics.background, ping.player.character, {offset[1]*dist,offset[2]*dist})
+				rendering.set_target(ping.graphics.item, ping.player.character, {offset[1]*dist,offset[2]*dist})
+				rendering.set_target(ping.graphics.arrow, ping.player.character, {offset[1]*(dist+1),offset[2]*(dist+1)})
+				rendering.set_orientation(ping.graphics.arrow, 0.25 - direction / math.pi/2)
+				rendering.set_target(ping.graphics.label, ping.player.character, {offset[1]*dist,offset[2]*dist+0.25})
+			end
+			rendering.set_text(ping.graphics.label, {"gui.resource-scanner-distance", util.format_number(math.floor(distance))})
 		end
 	end
 end
