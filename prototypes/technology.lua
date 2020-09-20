@@ -8,7 +8,7 @@ local function addTech(name, icon, category, subgroup, order, time, prerequisite
 			name = name,
 			subgroup = subgroup,
 			order = order,
-			icon = "__Satisfactorio__/graphics/icons/"..icon..".png",
+			icon = "__Satisfactorio__/graphics/technology/"..icon..".png",
 			icon_size = 64,
 			stack_size = 1,
 			durability = 1,
@@ -25,14 +25,56 @@ local function addTech(name, icon, category, subgroup, order, time, prerequisite
 			allow_as_intermediate = false,
 			hide_from_stats = true,
 			hide_from_player_crafting = true,
-			enabled = false
+			enabled = false,
+			icon_size = 64,
+			icons = {
+				{
+					icon = "__base__/graphics/icons/blueprint.png"
+				},
+				{
+					icon = "__Satisfactorio__/graphics/technology/"..icon..".png",
+					icon_size = 256,
+					scale = 0.1
+				}
+			}
+		},
+		{
+			type = "recipe",
+			name = name.."-done",
+			ingredients = ingredients,
+			result = name,
+			energy_required = time,
+			category = category,
+			allow_intermediates = false,
+			allow_as_intermediate = false,
+			hide_from_stats = true,
+			hide_from_player_crafting = true,
+			enabled = false,
+			icon_size = 64,
+			icons = {
+				{
+					icon = "__base__/graphics/icons/upgrade-planner.png"
+				},
+				{
+					icon = "__Satisfactorio__/graphics/technology/"..icon..".png",
+					icon_size = 256,
+					scale = 0.1
+				},
+				{
+					icon = "__base__/graphics/icons/checked-green.png",
+					icon_size = 64,
+					icon_mipmaps = 4,
+					scale = 0.25,
+					shift = {8,-8}
+				}
+			}
 		},
 		{
 			type = "technology",
 			name = name,
 			order = order,
-			icon = "__Satisfactorio__/graphics/icons/"..icon..".png",
-			icon_size = 64,
+			icon = "__Satisfactorio__/graphics/technology/"..icon..".png",
+			icon_size = 256,
 			prerequisites = prerequisites,
 			unit = {
 				count = 1,
@@ -49,8 +91,8 @@ data:extend({
 		type = "technology",
 		name = "the-hub",
 		order = "a",
-		icon = "__Satisfactorio__/graphics/icons/the-hub.png",
-		icon_size = 64,
+		icon = "__Satisfactorio__/graphics/technology/hub/the-hub.png",
+		icon_size = 256,
 		unit = {
 			count = 1,
 			time = 1,
@@ -72,7 +114,7 @@ data:extend({
 })
 
 
-addTech("hub-tier0-hub-upgrade-1", "portable-miner", "hub-progressing", "hub-tier0", "a-0-1", 1, {"the-hub"}, {
+addTech("hub-tier0-hub-upgrade-1", "hub/hub-upgrade-1-2", "hub-progressing", "hub-tier0", "a-0-1", 1, {"the-hub"}, {
 	{"iron-stick",10}
 }, {
 	{type="unlock-recipe",recipe="equipment-workshop"},
@@ -81,7 +123,7 @@ addTech("hub-tier0-hub-upgrade-1", "portable-miner", "hub-progressing", "hub-tie
 	{type="nothing",effect_description={"technology-effect.add-storage-to-hub"}}
 })
 data.raw.recipe['hub-tier0-hub-upgrade-1'].enabled = true
-addTech("hub-tier0-hub-upgrade-2", "copper-ingot", "hub-progressing", "hub-tier0", "a-0-2", 1, {"hub-tier0-hub-upgrade-1"}, {
+addTech("hub-tier0-hub-upgrade-2", "hub/hub-upgrade-1-2", "hub-progressing", "hub-tier0", "a-0-2", 1, {"hub-tier0-hub-upgrade-1"}, {
 	{"iron-stick",20},
 	{"iron-plate",10}
 }, {
@@ -92,7 +134,7 @@ addTech("hub-tier0-hub-upgrade-2", "copper-ingot", "hub-progressing", "hub-tier0
 	{type="unlock-recipe",recipe="scanner-copper-ore"},
 	{type="nothing",effect_description={"technology-effect.add-biomass-burner-to-hub"}}
 })
-addTech("hub-tier0-hub-upgrade-3", "concrete", "hub-progressing", "hub-tier0", "a-0-3", 1, {"hub-tier0-hub-upgrade-2"}, {
+addTech("hub-tier0-hub-upgrade-3", "hub/hub-upgrade-3", "hub-progressing", "hub-tier0", "a-0-3", 1, {"hub-tier0-hub-upgrade-2"}, {
 	{"iron-plate",20},
 	{"iron-stick",20},
 	{"wire",20}
@@ -104,7 +146,7 @@ addTech("hub-tier0-hub-upgrade-3", "concrete", "hub-progressing", "hub-tier0", "
 	{type="unlock-recipe",recipe="reinforced-iron-plate"},
 	{type="unlock-recipe",recipe="scanner-stone"}
 })
-addTech("hub-tier0-hub-upgrade-4", "conveyor-belt-mk-1", "hub-progressing", "hub-tier0", "a-0-4", 1, {"hub-tier0-hub-upgrade-3"}, {
+addTech("hub-tier0-hub-upgrade-4", "hub/hub-upgrade-4", "hub-progressing", "hub-tier0", "a-0-4", 1, {"hub-tier0-hub-upgrade-3"}, {
 	{"iron-plate",75},
 	{"copper-cable",20},
 	{"concrete",10}
@@ -112,7 +154,7 @@ addTech("hub-tier0-hub-upgrade-4", "conveyor-belt-mk-1", "hub-progressing", "hub
 	{type="unlock-recipe",recipe="transport-belt"},
 	{type="character-inventory-slots-bonus",modifier=3}
 })
-addTech("hub-tier0-hub-upgrade-5", "miner-mk-1", "hub-progressing", "hub-tier0", "a-0-5", 1, {"hub-tier0-hub-upgrade-4"}, {
+addTech("hub-tier0-hub-upgrade-5", "hub/hub-upgrade-5", "hub-progressing", "hub-tier0", "a-0-5", 1, {"hub-tier0-hub-upgrade-4"}, {
 	{"iron-stick",75},
 	{"copper-cable",50},
 	{"concrete",20}
@@ -121,7 +163,7 @@ addTech("hub-tier0-hub-upgrade-5", "miner-mk-1", "hub-progressing", "hub-tier0",
 	{type="unlock-recipe",recipe="iron-chest"},
 	{type="nothing",effect_description={"technology-effect.add-biomass-burner-to-hub"}}
 })
-addTech("hub-tier0-hub-upgrade-6", "biomass-burner", "hub-progressing", "hub-tier0", "a-0-6", 1, {"hub-tier0-hub-upgrade-5"}, {
+addTech("hub-tier0-hub-upgrade-6", "hub/hub-upgrade-6", "hub-progressing", "hub-tier0", "a-0-6", 1, {"hub-tier0-hub-upgrade-5"}, {
 	{"iron-stick",100},
 	{"iron-plate",100},
 	{"wire",100},
@@ -134,7 +176,7 @@ addTech("hub-tier0-hub-upgrade-6", "biomass-burner", "hub-progressing", "hub-tie
 	{type="nothing",effect_description={"technology-effect.add-ficsit-freighter-to-hub"}}
 })
 
-addTech("hub-tier1-base-building", "foundation", "hub-progressing", "hub-tier1", "a-1-1", 120, {"hub-tier0-hub-upgrade-6"}, {
+addTech("hub-tier1-base-building", "hub/structure", "hub-progressing", "hub-tier1", "a-1-1", 120, {"hub-tier0-hub-upgrade-6"}, {
 	{"concrete",200},
 	{"iron-plate",100},
 	{"iron-stick",100}
@@ -143,7 +185,7 @@ addTech("hub-tier1-base-building", "foundation", "hub-progressing", "hub-tier1",
 	{type="unlock-recipe",recipe="foundation"},
 	{type="unlock-recipe",recipe="stone-wall"}
 })
-addTech("hub-tier1-logistics-mk-1", "conveyor-splitter", "hub-progressing", "hub-tier1", "a-1-2", 240, {"hub-tier0-hub-upgrade-6"}, {
+addTech("hub-tier1-logistics-mk-1", "hub/logistics", "hub-progressing", "hub-tier1", "a-1-2", 240, {"hub-tier0-hub-upgrade-6"}, {
 	{"iron-plate",150},
 	{"iron-stick",150},
 	{"wire",300}
@@ -152,7 +194,7 @@ addTech("hub-tier1-logistics-mk-1", "conveyor-splitter", "hub-progressing", "hub
 	{type="unlock-recipe",recipe="conveyor-merger"},
 	{type="unlock-recipe",recipe="underground-belt"}
 })
-addTech("hub-tier1-field-research", "mam", "hub-progressing", "hub-tier1", "a-1-3", 180, {"hub-tier0-hub-upgrade-6"}, {
+addTech("hub-tier1-field-research", "hub/equipment", "hub-progressing", "hub-tier1", "a-1-3", 180, {"hub-tier0-hub-upgrade-6"}, {
 	{"wire",300},
 	{"screw",300},
 	{"iron-plate",100}
@@ -164,7 +206,7 @@ addTech("hub-tier1-field-research", "mam", "hub-progressing", "hub-tier1", "a-1-
 	{type="character-inventory-slots-bonus",modifier=5}
 })
 
-addTech("hub-tier2-part-assembly", "assembler", "hub-progressing", "hub-tier2", "a-2-1", 360, {"hub-tier0-hub-upgrade-6"}, {
+addTech("hub-tier2-part-assembly", "hub/factory", "hub-progressing", "hub-tier2", "a-2-1", 360, {"hub-tier0-hub-upgrade-6"}, {
 	{"iron-plate",300},
 	{"iron-stick",200},
 	{"screw",500},
@@ -176,7 +218,7 @@ addTech("hub-tier2-part-assembly", "assembler", "hub-progressing", "hub-tier2", 
 	{type="unlock-recipe",recipe="modular-frame"},
 	{type="unlock-recipe",recipe="smart-plating"}
 })
-addTech("hub-tier2-obstacle-clearing", "chainsaw", "hub-progressing", "hub-tier2", "a-2-2", 180, {"hub-tier0-hub-upgrade-6"}, {
+addTech("hub-tier2-obstacle-clearing", "hub/equipment", "hub-progressing", "hub-tier2", "a-2-2", 180, {"hub-tier0-hub-upgrade-6"}, {
 	{"screw",500},
 	{"copper-cable",100},
 	{"concrete",100}
@@ -186,7 +228,7 @@ addTech("hub-tier2-obstacle-clearing", "chainsaw", "hub-progressing", "hub-tier2
 	{type="character-inventory-slots-bonus",modifier=5}
 })
 --[[
-addTech("hub-tier2-jump-pads", "jump-pad", "hub-progressing", "hub-tier2", "a-2-3", 240, {"hub-tier0-hub-upgrade-6"}, {
+addTech("hub-tier2-jump-pads", "hub/structure", "hub-progressing", "hub-tier2", "a-2-3", 240, {"hub-tier0-hub-upgrade-6"}, {
 	{"rotor",50},
 	{"iron-plate",300},
 	{"copper-cable",150}
@@ -194,7 +236,7 @@ addTech("hub-tier2-jump-pads", "jump-pad", "hub-progressing", "hub-tier2", "a-2-
 	{type="unlock-recipe",recipe="jump-pad"},
 	{type="unlock-recipe",recipe="u-jelly-landing-pad"}
 })
-addTech("hub-tier2-resource-sink-bonus-program", "awesome-shop", "hub-progressing", "hub-tier2", "a-2-4", 300, {"hub-tier0-hub-upgrade-6"}, {
+addTech("hub-tier2-resource-sink-bonus-program", "hub/factory", "hub-progressing", "hub-tier2", "a-2-4", 300, {"hub-tier0-hub-upgrade-6"}, {
 	{"concrete",400},
 	{"wire",500},
 	{"iron-stick",200},
@@ -204,7 +246,7 @@ addTech("hub-tier2-resource-sink-bonus-program", "awesome-shop", "hub-progressin
 	{type="unlock-recipe",recipe="awesome-shop"}
 })
 ]]
-addTech("hub-tier2-logistics-mk-2", "conveyor-belt-mk-2", "hub-progressing", "hub-tier2", "a-2-5", 360, {"hub-tier0-hub-upgrade-6"}, {
+addTech("hub-tier2-logistics-mk-2", "hub/logistics", "hub-progressing", "hub-tier2", "a-2-5", 360, {"hub-tier0-hub-upgrade-6"}, {
 	{"reinforced-iron-plate",50},
 	{"concrete",200},
 	{"iron-stick",300},
@@ -214,7 +256,7 @@ addTech("hub-tier2-logistics-mk-2", "conveyor-belt-mk-2", "hub-progressing", "hu
 	{type="unlock-recipe",recipe="fast-underground-belt"}
 })
 
-addTech("hub-tier3-coal-power", "coal-generator", "hub-progressing", "hub-tier3", "a-3-1", 480, {"space-elevator-phase1"}, {
+addTech("hub-tier3-coal-power", "hub/factory", "hub-progressing", "hub-tier3", "a-3-1", 480, {"space-elevator-phase1"}, {
 	{"reinforced-iron-plate",150},
 	{"rotor",50},
 	{"copper-cable",300}
@@ -227,7 +269,7 @@ addTech("hub-tier3-coal-power", "coal-generator", "hub-progressing", "hub-tier3"
 	{type="unlock-recipe",recipe="fluid-buffer"},
 	{type="unlock-recipe",recipe="scanner-coal"}
 })
-addTech("hub-tier3-vehicular-transport", "tractor", "hub-progressing", "hub-tier3", "a-3-2", 240, {"space-elevator-phase1"}, {
+addTech("hub-tier3-vehicular-transport", "hub/vehicle", "hub-progressing", "hub-tier3", "a-3-2", 240, {"space-elevator-phase1"}, {
 	{"modular-frame",25},
 	{"rotor",100},
 	{"copper-cable",200},
@@ -236,7 +278,7 @@ addTech("hub-tier3-vehicular-transport", "tractor", "hub-progressing", "hub-tier
 	{type="unlock-recipe",recipe="truck-station"},
 	{type="unlock-recipe",recipe="tractor"}
 })
-addTech("hub-tier3-basic-steel-production", "steel-ingot", "hub-progressing", "hub-tier3", "a-3-3", 480, {"space-elevator-phase1"}, {
+addTech("hub-tier3-basic-steel-production", "hub/factory", "hub-progressing", "hub-tier3", "a-3-3", 480, {"space-elevator-phase1"}, {
 	{"modular-frame",50},
 	{"rotor",150},
 	{"concrete",300},
@@ -248,7 +290,7 @@ addTech("hub-tier3-basic-steel-production", "steel-ingot", "hub-progressing", "h
 	{type="unlock-recipe",recipe="steel-pipe"},
 	{type="unlock-recipe",recipe="versatile-framework"}
 })
-addTech("hub-tier4-advanced-steel-production", "miner-mk-2", "hub-progressing", "hub-tier4", "a-4-1", 600, {"space-elevator-phase1"}, {
+addTech("hub-tier4-advanced-steel-production", "hub/factory", "hub-progressing", "hub-tier4", "a-4-1", 600, {"space-elevator-phase1"}, {
 	{"steel-pipe",200},
 	{"rotor",200},
 	{"wire",1500},
@@ -261,7 +303,7 @@ addTech("hub-tier4-advanced-steel-production", "miner-mk-2", "hub-progressing", 
 	{type="unlock-recipe",recipe="automated-wiring"},
 	{type="unlock-recipe",recipe="heavy-modular-frame"}
 })
-addTech("hub-tier4-improved-melee-combat", "xeno-basher", "hub-progressing", "hub-tier4", "a-4-2", 180, {"space-elevator-phase1"}, {
+addTech("hub-tier4-improved-melee-combat", "hub/equipment", "hub-progressing", "hub-tier4", "a-4-2", 180, {"space-elevator-phase1"}, {
 	{"rotor",25},
 	{"reinforced-iron-plate",50},
 	{"wire",1500},
@@ -271,7 +313,7 @@ addTech("hub-tier4-improved-melee-combat", "xeno-basher", "hub-progressing", "hu
 	{type="character-inventory-slots-bonus",modifier=5}
 })
 --[[
-addTech("hub-tier4-hyper-tubes", "hyper-tube", "hub-progressing", "hub-tier4", "a-4-3", 600, {"space-elevator-phase1"}, {
+addTech("hub-tier4-hyper-tubes", "hub/structure", "hub-progressing", "hub-tier4", "a-4-3", 600, {"space-elevator-phase1"}, {
 	{"copper-plate",300},
 	{"steel-pipe",300},
 	{"encased-industrial-beam",50}
@@ -281,7 +323,7 @@ addTech("hub-tier4-hyper-tubes", "hyper-tube", "hub-progressing", "hub-tier4", "
 	{type="unlock-recipe",recipe="underground-hyper-tube"}
 })
 ]]
-addTech("hub-tier4-logistics-mk-3", "conveyor-belt-mk-3", "hub-progressing", "hub-tier4", "a-4-4", 300, {"space-elevator-phase1"}, {
+addTech("hub-tier4-logistics-mk-3", "hub/logistics", "hub-progressing", "hub-tier4", "a-4-4", 300, {"space-elevator-phase1"}, {
 	{"steel-plate",200},
 	{"steel-pipe",100},
 	{"concrete",500}
@@ -292,7 +334,7 @@ addTech("hub-tier4-logistics-mk-3", "conveyor-belt-mk-3", "hub-progressing", "hu
 })
 
 --[[ SPACE ELEVATOR ]]--
-addTech("space-elevator-phase1", "smart-plating", "space-elevator", "space-parts", "e-1", 1, {"hub-tier0-hub-upgrade-6"}, {
+addTech("space-elevator-phase1", "space/smart-plating", "space-elevator", "space-parts", "e-1", 1, {"hub-tier0-hub-upgrade-6"}, {
 	{"smart-plating",50}
 }, {
 	{type="unlock-recipe",recipe="hub-tier3-coal-power"}

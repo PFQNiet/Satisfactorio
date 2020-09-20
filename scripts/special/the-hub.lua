@@ -286,6 +286,9 @@ local function completeMilestone(technology)
 				technology.force.recipes[effect].enabled = true
 			end
 		end
+		-- disable the recipe and enable the "-done" recipe
+		technology.force.recipes[technology.name].enabled = false
+		technology.force.recipes[technology.name.."-done"].enabled = true
 
 		local message = {"", {"message.milestone-reached",technology.name,technology.localised_name}}
 		-- use "real" technology effects for console message

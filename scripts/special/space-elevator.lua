@@ -123,6 +123,9 @@ local function completeElevator(technology)
 		for _,effect in pairs(upgrades[technology.name]) do
 			technology.force.recipes[effect].enabled = true
 		end
+		-- disable the recipe and enable the "-done" recipe
+		technology.force.recipes[technology.name].enabled = false
+		technology.force.recipes[technology.name.."-done"].enabled = true
 
 		local message = {"message.space-elevator-complete",technology.name,technology.localised_name}
 		technology.force.print(message)
