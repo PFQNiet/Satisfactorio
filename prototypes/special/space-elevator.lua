@@ -1,8 +1,22 @@
 local name = "space-elevator"
 local elevator = {
 	animation = {
-		filename = "__Satisfactorio__/graphics/placeholders/"..name..".png",
-		size = {864,864}
+		north = {
+			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-n.png",
+			size = {864,864}
+		},
+		east = {
+			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-e.png",
+			size = {864,864}
+		},
+		south = {
+			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-s.png",
+			size = {864,864}
+		},
+		west = {
+			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-w.png",
+			size = {864,864}
+		}
 	},
 	collision_box = {{-13.21,-13.2},{13.21,13.2}},
 	corpse = "big-remnants",
