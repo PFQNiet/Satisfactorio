@@ -4,7 +4,7 @@ local elevator = {
 		filename = "__Satisfactorio__/graphics/placeholders/"..name..".png",
 		size = {864,864}
 	},
-	collision_box = {{-13.2,-13.2},{13.2,13.2}},
+	collision_box = {{-13.21,-13.2},{13.21,13.2}},
 	corpse = "big-remnants",
 	crafting_categories = {"space-elevator"},
 	crafting_speed = 1,

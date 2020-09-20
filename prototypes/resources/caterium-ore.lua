@@ -27,20 +27,22 @@ data:extend(
 		{
 			sheet =
 			{
-				filename = "__base__/graphics/entity/stone/stone.png",
+				filename = "__base__/graphics/entity/iron-ore/iron-ore.png",
 				priority = "extra-high",
 				width = 64,
 				height = 64,
 				frame_count = 8,
 				variation_count = 8,
+				tint = {0.8,0.8,0.2},
 				hr_version =
 				{
-					filename = "__base__/graphics/entity/stone/hr-stone.png",
+					filename = "__base__/graphics/entity/iron-ore/hr-iron-ore.png",
 					priority = "extra-high",
 					width = 128,
 					height = 128,
 					frame_count = 8,
 					variation_count = 8,
+					tint = {0.8,0.8,0.2},
 					scale = 0.5
 				}
 			}

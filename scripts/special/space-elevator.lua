@@ -293,6 +293,7 @@ local function updateElevatorGUI(force)
 			-- so now we've established the GUI exists, and is populated with a table for the currently selected phase... if there is one, update the counts now
 			local ready = true
 			if phase.name ~= "none" then
+				frame.visible = true
 				for _,ingredient in ipairs(recipe.ingredients) do
 					local label = table['space-elevator-tracking-ingredient-'..ingredient.name]['space-elevator-tracking-ingredient-'..ingredient.name..'-count']
 					label.caption = {"gui.fraction", util.format_number(submitted[ingredient.name] or 0), util.format_number(ingredient.amount)}
@@ -302,6 +303,8 @@ local function updateElevatorGUI(force)
 				end
 				button.visible = player.opened and player.opened == hub
 				button.enabled = ready
+			else
+				frame.visible = false
 			end
 		end
 	end
