@@ -11,6 +11,7 @@ belt.max_health = 1
 belt.speed = 4/256
 belt.belt_animation_set.animation_set.filename = "__Satisfactorio__/graphics/entities/"..basename.."/"..basename..".png"
 belt.belt_animation_set.animation_set.hr_version.filename = "__Satisfactorio__/graphics/entities/"..basename.."/hr-"..basename..".png"
+belt.minable.result = basename
 
 local beltitem = table.deepcopy(data.raw.item[sourcename])
 beltitem.name = basename

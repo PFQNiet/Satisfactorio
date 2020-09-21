@@ -1,4 +1,5 @@
 local name = "conveyor-lift-mk-5"
+local beltname = "ultimate-transport-belt"
 local basename = "ultimate-underground-belt"
 local sourcename = "express-underground-belt"
 local belt = table.deepcopy(data.raw['underground-belt'][sourcename])
@@ -9,12 +10,21 @@ belt.icon_mipmaps = 0
 belt.max_health = 1
 belt.speed = 7/256
 belt.max_distance = 5
+belt.belt_animation_set.animation_set.filename = "__Satisfactorio__/graphics/entities/"..beltname.."/"..beltname..".png"
+belt.belt_animation_set.animation_set.hr_version.filename = "__Satisfactorio__/graphics/entities/"..beltname.."/hr-"..beltname..".png"
 belt.structure.direction_in.sheet.filename = "__Satisfactorio__/graphics/entities/"..basename.."/"..basename.."-structure.png"
+belt.structure.direction_in.sheet.hr_version.filename = "__Satisfactorio__/graphics/entities/"..basename.."/hr-"..basename.."-structure.png"
 belt.structure.direction_in_side_loading.sheet.filename = "__Satisfactorio__/graphics/entities/"..basename.."/"..basename.."-structure.png"
+belt.structure.direction_in_side_loading.sheet.hr_version.filename = "__Satisfactorio__/graphics/entities/"..basename.."/hr-"..basename.."-structure.png"
 belt.structure.direction_out.sheet.filename = "__Satisfactorio__/graphics/entities/"..basename.."/"..basename.."-structure.png"
+belt.structure.direction_out.sheet.hr_version.filename = "__Satisfactorio__/graphics/entities/"..basename.."/hr-"..basename.."-structure.png"
 belt.structure.direction_out_side_loading.sheet.filename = "__Satisfactorio__/graphics/entities/"..basename.."/"..basename.."-structure.png"
+belt.structure.direction_out_side_loading.sheet.hr_version.filename = "__Satisfactorio__/graphics/entities/"..basename.."/hr-"..basename.."-structure.png"
 belt.structure.back_patch.sheet.filename = "__Satisfactorio__/graphics/entities/"..basename.."/"..basename.."-structure-back-patch.png"
+belt.structure.back_patch.sheet.hr_version.filename = "__Satisfactorio__/graphics/entities/"..basename.."/hr-"..basename.."-structure-back-patch.png"
 belt.structure.front_patch.sheet.filename = "__Satisfactorio__/graphics/entities/"..basename.."/"..basename.."-structure-front-patch.png"
+belt.structure.front_patch.sheet.hr_version.filename = "__Satisfactorio__/graphics/entities/"..basename.."/hr-"..basename.."-structure-front-patch.png"
+belt.minable.result = basename
 
 local beltitem = table.deepcopy(data.raw.item[sourcename])
 beltitem.name = basename

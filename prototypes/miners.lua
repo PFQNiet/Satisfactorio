@@ -1,6 +1,6 @@
 require("prototypes.miners.portable-miner")
 require("prototypes.miners.miner-mk-1")
 require("prototypes.miners.miner-mk-2")
--- require("prototypes.miners.miner-mk-3")
+require("prototypes.miners.miner-mk-3")
 require("prototypes.miners.water-extractor")
 require("prototypes.miners.oil-extractor")

@@ -9,8 +9,8 @@ car.energy_per_hit_point = 1000
 car.max_health = 1
 car.burner.fuel_category = nil
 car.burner.fuel_categories = {"chemical","carbon","packaged-fuel","packaged-alt-fuel","nuclear"}
+car.burner.fuel_inventory_size = 1
 car.inventory_size = 25
-car.fuel_inventory_size = 1
 car.guns = {}
 car.minable.result = name
 

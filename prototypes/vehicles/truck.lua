@@ -3,14 +3,14 @@ local car = table.deepcopy(data.raw.car.tank)
 
 car.name = name
 car.consumption = "75MW"
-car.weight = 720000
-car.braking_power = "90MW"
+car.weight = 1100000
+car.braking_power = "100MW"
 car.energy_per_hit_point = 1000
 car.max_health = 1
 car.burner.fuel_category = nil
 car.burner.fuel_categories = {"chemical","carbon","packaged-fuel","packaged-alt-fuel","nuclear"}
+car.burner.fuel_inventory_size = 1
 car.inventory_size = 48
-car.fuel_inventory_size = 1
 car.guns = {}
 car.minable.result = name
 

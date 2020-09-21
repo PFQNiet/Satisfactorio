@@ -20,8 +20,8 @@ return {
 		"space-elevator-phase3"
 	},
 	["space-elevator-phase3"] = {
-		-- "hub-tier7-bauxite-refinement",
-		-- "hub-tier7-advanced-aluminium-production",
+		"hub-tier7-bauxite-refinement",
+		"hub-tier7-advanced-aluminium-production",
 		-- "hub-tier7-hazmat-suit",
 		-- "hub-tier7-nuclear-power"
 	}

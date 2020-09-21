@@ -425,6 +425,7 @@ addTech("hub-tier6-monorail-train-technology", "hub/vehicle", "hub-progressing",
 	{type="unlock-recipe",recipe="cargo-wagon"},
 	{type="unlock-recipe",recipe="fluid-wagon"}
 })
+]]
 
 addTech("hub-tier7-bauxite-refinement", "hub/factory", "hub-progressing", "hub-tier7", "a-7-1", 900, {"space-elevator-phase3"}, {
 	{"motor",200},
@@ -440,7 +441,7 @@ addTech("hub-tier7-bauxite-refinement", "hub/factory", "hub-progressing", "hub-t
 	{type="unlock-recipe",recipe="scanner-bauxite"},
 	{type="unlock-recipe",recipe="scanner-raw-quartz"}
 })
-addTech("hub-tier7-advanced-aluminium-production", "hub/factory", "hub-progressing", "tier7", "a-7-2", 900, {"space-elevator-phase3"}, {
+addTech("hub-tier7-advanced-aluminium-production", "hub/factory", "hub-progressing", "hub-tier7", "a-7-2", 900, {"space-elevator-phase3"}, {
 	{"alclad-aluminium-sheet",200},
 	{"motor",300},
 	{"heavy-modular-frame",150},
@@ -452,7 +453,7 @@ addTech("hub-tier7-advanced-aluminium-production", "hub/factory", "hub-progressi
 	{type="unlock-recipe",recipe="battery"}
 })
 --[[
-addTech("hub-tier7-hazmat-suit", "hub/equipment", "hub-progressing", "tier7", "a-7-3", 300, {"space-elevator-phase3"}, {
+addTech("hub-tier7-hazmat-suit", "hub/equipment", "hub-progressing", "hub-tier7", "a-7-3", 300, {"space-elevator-phase3"}, {
 	{"alclad-aluminium-sheet",100},
 	{"quickwire",100},
 	{"rubber",500}
@@ -460,8 +461,9 @@ addTech("hub-tier7-hazmat-suit", "hub/equipment", "hub-progressing", "tier7", "a
 	{type="unlock-recipe",recipe="hazmat-suit"},
 	{type="unlock-recipe",recipe="iodine-infused-filter"}
 })
-]\]
-addTech("hub-tier7-nuclear-power", "hub/factory", "hub-progressing", "tier7", "a-7-4", 1200, {"space-elevator-phase3"}, {
+]]
+--[[
+addTech("hub-tier7-nuclear-power", "hub/factory", "hub-progressing", "hub-tier7", "a-7-4", 1200, {"space-elevator-phase3"}, {
 	{"ai-limiter",50},
 	{"high-speed-connector",50},
 	{"heavy-modular-frame",200},

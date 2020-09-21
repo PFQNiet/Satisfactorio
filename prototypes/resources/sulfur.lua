@@ -64,14 +64,14 @@ data:extend(
 	{
 		type = "noise-layer",
 		name = name
-	},
-	{
-		type = "item",
-		name = name,
-		icon = "__Satisfactorio__/graphics/icons/"..name..".png",
-		icon_size = 64,
-		subgroup = "raw-resource",
-		order = "n["..name.."]",
-		stack_size = 100
 	}
 })
+data.raw.item['sulfur'] = {
+	type = "item",
+	name = name,
+	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon_size = 64,
+	subgroup = "raw-resource",
+	order = "n["..name.."]",
+	stack_size = 100
+}

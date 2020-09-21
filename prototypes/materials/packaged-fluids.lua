@@ -17,6 +17,9 @@ data:extend({
 		result_count = 4,
 		energy_required = 2/4,
 		category = "craft-bench",
+		allow_decomposition = false,
+		allow_intermediates = false,
+		allow_as_intermediate = false,
 		enabled = false
 	},
 	{
@@ -28,6 +31,9 @@ data:extend({
 		energy_required = 4,
 		category = "constructing",
 		hide_from_player_crafting = true,
+		allow_decomposition = false,
+		allow_intermediates = false,
+		allow_as_intermediate = false,
 		enabled = false
 	},
 	-- water
@@ -48,6 +54,9 @@ data:extend({
 		result_count = 2,
 		energy_required = 2,
 		category = "refining",
+		allow_decomposition = false,
+		allow_intermediates = false,
+		allow_as_intermediate = false,
 		enabled = false
 	},
 	{
@@ -58,7 +67,11 @@ data:extend({
 		main_product = "water",
 		energy_required = 1,
 		category = "refining",
+		subgroup = "empty-barrel",
 		hide_from_player_crafting = true,
+		allow_decomposition = false,
+		allow_intermediates = false,
+		allow_as_intermediate = false,
 		enabled = false
 	},
 	-- crude oil
@@ -81,6 +94,9 @@ data:extend({
 		result_count = 2,
 		energy_required = 4,
 		category = "refining",
+		allow_decomposition = false,
+		allow_intermediates = false,
+		allow_as_intermediate = false,
 		enabled = false
 	},
 	{
@@ -93,6 +109,9 @@ data:extend({
 		category = "refining",
 		subgroup = "empty-barrel",
 		hide_from_player_crafting = true,
+		allow_decomposition = false,
+		allow_intermediates = false,
+		allow_as_intermediate = false,
 		enabled = false
 	},
 	-- heavy oil residue
@@ -115,6 +134,9 @@ data:extend({
 		result_count = 2,
 		energy_required = 4,
 		category = "refining",
+		allow_decomposition = false,
+		allow_intermediates = false,
+		allow_as_intermediate = false,
 		enabled = false
 	},
 	{
@@ -127,6 +149,9 @@ data:extend({
 		category = "refining",
 		subgroup = "empty-barrel",
 		hide_from_player_crafting = true,
+		allow_decomposition = false,
+		allow_intermediates = false,
+		allow_as_intermediate = false,
 		enabled = false
 	},
 	-- fuel
@@ -149,6 +174,9 @@ data:extend({
 		result_count = 2,
 		energy_required = 3,
 		category = "refining",
+		allow_decomposition = false,
+		allow_intermediates = false,
+		allow_as_intermediate = false,
 		enabled = false
 	},
 	{
@@ -161,6 +189,9 @@ data:extend({
 		category = "refining",
 		subgroup = "empty-barrel",
 		hide_from_player_crafting = true,
+		allow_decomposition = false,
+		allow_intermediates = false,
+		allow_as_intermediate = false,
 		enabled = false
 	},
 	-- liquid biofuel
@@ -183,6 +214,9 @@ data:extend({
 		result_count = 2,
 		energy_required = 3,
 		category = "refining",
+		allow_decomposition = false,
+		allow_intermediates = false,
+		allow_as_intermediate = false,
 		enabled = false
 	},
 	{
@@ -195,6 +229,9 @@ data:extend({
 		category = "refining",
 		subgroup = "empty-barrel",
 		hide_from_player_crafting = true,
+		allow_decomposition = false,
+		allow_intermediates = false,
+		allow_as_intermediate = false,
 		enabled = false
 	},
 	-- turbofuel
@@ -217,6 +254,9 @@ data:extend({
 		result_count = 2,
 		energy_required = 6,
 		category = "refining",
+		allow_decomposition = false,
+		allow_intermediates = false,
+		allow_as_intermediate = false,
 		enabled = false
 	},
 	{
@@ -229,6 +269,9 @@ data:extend({
 		category = "refining",
 		subgroup = "empty-barrel",
 		hide_from_player_crafting = true,
+		allow_decomposition = false,
+		allow_intermediates = false,
+		allow_as_intermediate = false,
 		enabled = false
 	}
 })
