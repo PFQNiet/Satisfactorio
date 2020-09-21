@@ -1,4 +1,3 @@
--- Caterium Ore
 local name = "caterium-ore"
 data:extend(
 {

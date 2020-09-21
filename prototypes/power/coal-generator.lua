@@ -76,7 +76,9 @@ local boiler = {
 	flags = {
 		"placeable-neutral",
 		"placeable-player",
-		"player-creation"
+		"player-creation",
+		"not-blueprintable",
+		"no-copy-paste"
 	},
 	fluid_boxes = {
 		{
@@ -215,7 +217,9 @@ local generator_ne = {
 	working_sound = data.raw['generator']['steam-engine'].working_sound,
 	flags = {
 		"placeable-player",
-		"player-creation"
+		"player-creation",
+		"not-blueprintable",
+		"no-copy-paste"
 	},
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,

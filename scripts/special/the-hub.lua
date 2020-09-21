@@ -297,7 +297,7 @@ local function completeMilestone(technology)
 				-- if it has an associated "undo" recipe, it's a Building, otherwise it's an Equipment
 				local subtype = "equipment"
 				if technology.force.recipes[effect.recipe.."-undo"] then subtype = "building" end
-				if not game.item_prototypes[technology.force.recipes[effect.recipe].products[1].name].place_result then subtype = "material" end
+				if technology.force.recipes[effect.recipe].products[1].type == "fluid" or not game.item_prototypes[technology.force.recipes[effect.recipe].products[1].name].place_result then subtype = "material" end
 				if technology.force.recipes[effect.recipe].category == "resource-scanner" then subtype = "resource" end
 				table.insert(message, {"message.milestone-effect-unlock-"..subtype, effect.recipe, game.recipe_prototypes[effect.recipe].localised_name})
 			elseif effect.type == "character-inventory-slots-bonus" then

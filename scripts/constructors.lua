@@ -5,5 +5,6 @@ return {
 	require("scripts.constructors.foundry"),
 	require("scripts.constructors.constructor"),
 	require("scripts.constructors.assembler"),
-	require("scripts.constructors.water-extractor")
+	require("scripts.constructors.manufacturer"),
+	require("scripts.constructors.refinery")
 }

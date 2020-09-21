@@ -68,7 +68,8 @@ local function openResourceScanner(player)
 	if index == 0 then index = 1 end
 	menu.clear_items()
 	for _,recipe in ipairs(getUnlockedScans(player.force)) do
-		menu.add_item({"","[img=item."..recipe.products[1].name.."] ",game.item_prototypes[recipe.products[1].name].localised_name})
+		local product = recipe.products[1]
+		menu.add_item({"","[img="..product.type.."."..product.name.."] ",game[product.type.."_prototypes"][product.name].localised_name})
 	end
 	menu.selected_index = index
 
@@ -151,7 +152,6 @@ local function onGuiClick(event)
 		end)
 		-- get nearest 3
 		local closest = {table.unpack(nodes, 1, math.min(3,#nodes))}
-		-- for now just insta-ping them
 		for _,pos in pairs(closest) do
 			local dx = pos[1] - player.position.x
 			local dy = pos[2] - player.position.y
@@ -239,7 +239,7 @@ local function onTick(event)
 							players = {effect.player}
 						},
 						item = rendering.draw_sprite{
-							sprite = "item/"..effect.resource,
+							sprite = (effect.resource == "crude-oil" and "fluid" or "item").."/"..effect.resource,
 							target = effect.player.character,
 							target_offset = {0,0},
 							surface = effect.player.surface,

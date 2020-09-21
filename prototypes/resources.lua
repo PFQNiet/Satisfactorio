@@ -13,6 +13,9 @@ require("prototypes.resources.leaves")
 require("prototypes.resources.flower-petals")
 require("prototypes.resources.mycelia")
 require("prototypes.resources.caterium-ore")
+require("prototypes.resources.bauxite")
+require("prototypes.resources.raw-quartz")
+require("prototypes.resources.sulphur")
 
 -- loot
 require("prototypes.resources.alien-carapace")
@@ -20,3 +23,8 @@ require("prototypes.resources.alien-carapace")
 -- derived resources
 require("prototypes.resources.biomass")
 require("prototypes.resources.solid-biofuel")
+require("prototypes.resources.liquid-biofuel")
+require("prototypes.resources.heavy-oil-residue")
+require("prototypes.resources.fuel")
+require("prototypes.resources.turbofuel")
+require("prototypes.resources.petroleum-coke")

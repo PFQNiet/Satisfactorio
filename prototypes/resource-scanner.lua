@@ -2,6 +2,12 @@ require("prototypes.resource-scanner.scanner-iron-ore")
 require("prototypes.resource-scanner.scanner-copper-ore")
 require("prototypes.resource-scanner.scanner-stone")
 require("prototypes.resource-scanner.scanner-coal")
+require("prototypes.resource-scanner.scanner-crude-oil")
+require("prototypes.resource-scanner.scanner-caterium-ore")
+require("prototypes.resource-scanner.scanner-bauxite")
+require("prototypes.resource-scanner.scanner-raw-quartz")
+require("prototypes.resource-scanner.scanner-uranium-ore")
+require("prototypes.resource-scanner.scanner-sulphur")
 
 data:extend({
 	{
@@ -30,7 +36,7 @@ data:extend({
 			filename = "__Satisfactorio__/graphics/icons/resource-scanner.png",
 			size = {64,64}
 		},
-		collision_box = {{-0.8,-0.7},{0.7,0.7}},
+		collision_box = {{-0.7,-0.7},{0.7,0.7}},
 		corpse = "big-remnants",
 		crafting_categories = {"resource-scanner"},
 		crafting_speed = 1,
@@ -38,6 +44,7 @@ data:extend({
 		energy_source = {type="void"},
 		energy_usage = "1W",
 		flags = {},
+		fluid_boxes = {{production_type="output",pipe_connections={{position={0,-1.5},type="output"}}}},
 		icon = "__Satisfactorio__/graphics/icons/resource-scanner-white.png",
 		icon_size = 64,
 		max_health = 1,

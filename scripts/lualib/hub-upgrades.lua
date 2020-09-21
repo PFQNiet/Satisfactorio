@@ -121,5 +121,58 @@ return {
 		"steel-chest-undo",
 		"express-transport-belt-undo",
 		"express-underground-belt-undo"
+	},
+	["hub-tier5-oil-processing"] = {
+		"oil-extractor-undo",
+		"refinery-undo",
+		"electronic-circuit-manual"
+	},
+	["hub-tier5-industrial-manufacturing"] = {
+		"manufacturer-undo",
+		"truck-undo",
+		"computer-manual"
+	},
+	["hub-tier5-alternative-fluid-transport"] = {
+		"industrial-fluid-buffer-undo",
+		"empty-canister-manual",
+		"unpack-water",
+		"unpack-oil",
+		"unpack-fuel",
+		"unpack-heavy-oil",
+		"unpack-liquid-biofuel"
+	},
+	["hub-tier5-gas-mask"] = {},
+	["hub-tier6-expanded-power-infrastructure"] = {
+		"fuel-generator-undo",
+		"turbo-transport-belt-undo",
+		"turbo-underground-belt-undo"
+	},
+	["hub-tier6-jetpack"] = {},
+	["hub-tier6-monorail-train-technology"] = {
+		"rail-undo",
+		"train-station-undo",
+		"freight-platform-undo",
+		"fluid-fright-platform-undo",
+		"empty-platform-undo",
+		"locomotive-undo",
+		"cargon-wagon-undo",
+		"fluid-wagon-undo"
+	},
+	["hub-tier7-bauxite-refinement"] = {
+		"ultimate-transport-belt-undo",
+		"ultimate-underground-belt-undo",
+		"alclad-aluminium-sheet-manual",
+		"aluminium-ingot-manual"
+	},
+	["hub-tier7-advanced-aluminium-production"] = {
+		"miner-mk-3-undo",
+		"heat-sink-manual",
+		"turbo-motor-manual",
+		"battery-manual"
+	},
+	["hub-tier7-hazmat-suit"] = {},
+	["hub-tier7-nuclear-power"] = {
+		"nuclear-power-plant-undo"
+		-- radioactive items cannot be hand-crafted
 	}
 }

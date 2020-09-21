@@ -69,31 +69,38 @@ end
 local function toggle(entry, enabled)
 	entry.burner.active = enabled
 	entry.generator.active = enabled
+
 end
 local function onTick(event)
 	if not global['accumulators'] then return end
 	for surface, rows in pairs(global['accumulators']) do
 		for y, row in pairs(rows) do
 			for x, entry in pairs(row) do
-				-- don't count running out of fuel as a power trip
-				if entry.burner.active and entry.burner.burner.remaining_burning_fuel > 0 and entry.accumulator.energy == 0 then
-					-- power failure!
-					toggle(entry,false)
-					if not global['last-power-trip'] then global['last-power-trip'] = {} end
-					if not global['last-power-trip'][entry.burner.force.index] then global['last-power-trip'][entry.burner.force.index] = -5000 end
-					if global['last-power-trip'][entry.burner.force.index]+60 < event.tick then
-						-- only play sound at most once a second
-						entry.burner.force.play_sound{path="power-failure"}
-					end
-					if global['last-power-trip'][entry.burner.force.index]+3600 < event.tick then
-						-- only show console message at most once a minute
-						entry.burner.force.print({"message.power-failure"})
-					end
-					global['last-power-trip'][entry.burner.force.index] = event.tick
-					-- see if any player on this entity's force has this generator opened
-					for _,player in pairs(entry.burner.force.players) do
-						if player.opened and player.opened == entry.burner then
-							createFusebox(player)
+				if entry.generator.active and entry.accumulator.energy == 0 then
+					-- don't count running out of fuel as a power trip
+					if entry.burner.burner and entry.burner.burner.remaining_burning_fuel == 0 then
+						-- just ran out of fuel
+					elseif entry.burner.type == "storage-tank" and entry.burner.get_fluid_count() == 0 then
+						-- likewise, ran out of fuel
+					else
+						-- power failure!
+						toggle(entry,false)
+						if not global['last-power-trip'] then global['last-power-trip'] = {} end
+						if not global['last-power-trip'][entry.burner.force.index] then global['last-power-trip'][entry.burner.force.index] = -5000 end
+						if global['last-power-trip'][entry.burner.force.index]+60 < event.tick then
+							-- only play sound at most once a second
+							entry.burner.force.play_sound{path="power-failure"}
+						end
+						if global['last-power-trip'][entry.burner.force.index]+3600 < event.tick then
+							-- only show console message at most once a minute
+							entry.burner.force.print({"message.power-failure"})
+						end
+						global['last-power-trip'][entry.burner.force.index] = event.tick
+						-- see if any player on this entity's force has this generator opened
+						for _,player in pairs(entry.burner.force.players) do
+							if player.opened and (player.opened == entry.burner or player.opened == entry.generator) then
+								createFusebox(player)
+							end
 						end
 					end
 				end
@@ -129,6 +136,21 @@ local function onGuiClick(event)
 				for x, entry in pairs(row) do
 					if entry.generator.electric_network_id == network then
 						toggle(entry, true)
+						if entry.burner.type == "storage-tank" then
+							-- immediately perform a fuel transfer
+							local fluid_type, fluid_amount = next(entry.burner.get_fluid_contents())
+							if fluid_type and fluid_amount > 0 then
+								local fuel_value = game.fluid_prototypes[fluid_type].fuel_value
+								if fuel_value > 0 then
+									local energy_to_full_charge = entry.generator.electric_buffer_size - entry.generator.energy
+									local fuel_to_full_charge = energy_to_full_charge / fuel_value
+									-- attempt to remove the full amount - if it's limited by the amount actually present then the return value will reflect that
+									local fuel_consumed_this_tick = entry.burner.remove_fluid{name=fluid_type, amount=fuel_to_full_charge}
+									local energy_gained_this_tick = fuel_consumed_this_tick * fuel_value
+									entry.generator.energy = entry.generator.energy + energy_gained_this_tick
+								end
+							end
+						end
 						entry.accumulator.energy = 1
 					end
 				end

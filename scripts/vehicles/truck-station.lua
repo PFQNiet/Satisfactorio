@@ -125,7 +125,7 @@ local function onTick(event)
 			-- power consumption is 20MW, so each "tick" consumes 10MJ if a vehicle is present
 			local centre = math2d.position.add(station.position, math2d.position.rotate_vector({-0.5,-8}, station.direction*45))
 			local vehicle = station.surface.find_entities_filtered{
-				name = {"tractor"}, -- "truck", "explorer"
+				name = {"tractor","truck"}, -- "explorer"
 				area = {{centre.x-4,centre.y-4}, {centre.x+4,centre.y+4}},
 				limit = 1
 			}

@@ -8,8 +8,11 @@ local function addTech(name, icon, category, subgroup, order, time, prerequisite
 			name = name,
 			subgroup = subgroup,
 			order = order,
-			icon = "__Satisfactorio__/graphics/technology/"..icon..".png",
-			icon_size = 64,
+			icons = {{
+				icon = "__Satisfactorio__/graphics/technology/"..icon..".png",
+				icon_size = 256,
+				scale = 0.25
+			}},
 			stack_size = 1,
 			durability = 1,
 			flags = {"hidden"}
@@ -26,6 +29,7 @@ local function addTech(name, icon, category, subgroup, order, time, prerequisite
 			hide_from_stats = true,
 			hide_from_player_crafting = true,
 			enabled = false,
+			overload_multiplier = 1,
 			icon_size = 64,
 			icons = {
 				{
@@ -112,7 +116,6 @@ data:extend({
 		flags = {"hidden"}
 	}
 })
-
 
 addTech("hub-tier0-hub-upgrade-1", "hub/hub-upgrade-1-2", "hub-progressing", "hub-tier0", "a-0-1", 1, {"the-hub"}, {
 	{"iron-stick",10}
@@ -333,10 +336,161 @@ addTech("hub-tier4-logistics-mk-3", "hub/logistics", "hub-progressing", "hub-tie
 	{type="unlock-recipe",recipe="express-underground-belt"}
 })
 
+addTech("hub-tier5-oil-processing", "hub/factory", "hub-progressing", "hub-tier5", "a-5-1", 720, {"space-elevator-phase2"}, {
+	{"motor",50},
+	{"encased-industrial-beam",100},
+	{"steel-pipe",500},
+	{"copper-plate",500}
+}, {
+	{type="unlock-recipe",recipe="oil-extractor"},
+	{type="unlock-recipe",recipe="refinery"},
+	{type="unlock-recipe",recipe="plastic-bar"},
+	{type="unlock-recipe",recipe="rubber"},
+	{type="unlock-recipe",recipe="fuel"},
+	{type="unlock-recipe",recipe="petroleum-coke"},
+	{type="unlock-recipe",recipe="electronic-circuit"},
+	{type="unlock-recipe",recipe="scanner-crude-oil"}
+})
+addTech("hub-tier5-industrial-manufacturing", "hub/factory", "hub-progressing", "hub-tier5", "a-5-2", 720, {"space-elevator-phase2"}, {
+	{"motor",100},
+	{"plastic-bar",200},
+	{"rubber",200},
+	{"copper-cable",1000}
+}, {
+	{type="unlock-recipe",recipe="manufacturer"},
+	{type="unlock-recipe",recipe="truck"},
+	{type="unlock-recipe",recipe="computer"},
+	{type="unlock-recipe",recipe="modular-engine"},
+	{type="unlock-recipe",recipe="adaptive-control-unit"}
+})
+addTech("hub-tier5-alternative-fluid-transport", "hub/logistics", "hub-progressing", "hub-tier5", "a-5-3", 480, {"space-elevator-phase2"}, {
+	{"heavy-modular-frame",25},
+	{"motor",100},
+	{"plastic-bar",200},
+	{"wire",3000}
+}, {
+	{type="unlock-recipe",recipe="empty-canister"},
+	{type="unlock-recipe",recipe="packaged-water"},
+	{type="unlock-recipe",recipe="packaged-oil"},
+	{type="unlock-recipe",recipe="packaged-heavy-oil"},
+	{type="unlock-recipe",recipe="packaged-fuel"},
+	{type="unlock-recipe",recipe="packaged-liquid-biofuel"},
+	{type="unlock-recipe",recipe="liquid-biofuel"}
+})
+--[[
+addTech("hub-tier5-gas-mask", "hub/equipment", "hub-progressing", "hub-tier5", "a-5-4", 300, {"space-elevator-phase2"}, {
+	{"rubber",200},
+	{"plastic-bar",100},
+	{"fabric",50}
+}, {
+	{type="unlock-recipe",recipe="gas-mask"},
+	{type="unlock-recipe",recipe="gas-filter"}
+})
+]]
+addTech("hub-tier6-expanded-power-infrastructure", "hub/logistics", "hub-progressing", "hub-tier6", "a-6-1", 900, {"space-elevator-phase2"}, {
+	{"heavy-modular-frame",50},
+	{"computer",100},
+	{"encased-industrial-beam",200},
+	{"rubber",400}
+}, {
+	{type="unlock-recipe",recipe="fuel-generator"},
+	{type="unlock-recipe",recipe="turbo-transport-belt"},
+	{type="unlock-recipe",recipe="turbo-underground-belt"},
+	{type="unlock-recipe",recipe="scanner-caterium-ore"}
+})
+--[[
+addTech("hub-tier6-jetpack", "hub/equipment", "hub-progressing", "hub-tier6", "a-6-2", 300, {"space-elevator-phase2"}, {
+	{"computer",25},
+	{"motor",100},
+	{"plastic-bar",200},
+	{"rubber",200}
+}, {
+	{type="unlock-recipe",recipe="jetpack"},
+	{type="character-inventory-slots-bonus",modifier=5}
+})
+]]
+--[[
+addTech("hub-tier6-monorail-train-technology", "hub/vehicle", "hub-progressing", "hub-tier6", "a-6-3", 900, {"space-elevator-phase2"}, {
+	{"computer",50},
+	{"heavy-modular-frame",100},
+	{"steel-plate",500},
+	{"steel-pipe",600}
+}, {
+	{type="unlock-recipe",recipe="rail"},
+	{type="unlock-recipe",recipe="train-station"},
+	{type="unlock-recipe",recipe="freight-platform"},
+	{type="unlock-recipe",recipe="fluid-freight-platform"},
+	{type="unlock-recipe",recipe="empty-platform"},
+	{type="unlock-recipe",recipe="locomotive"},
+	{type="unlock-recipe",recipe="cargo-wagon"},
+	{type="unlock-recipe",recipe="fluid-wagon"}
+})
+
+addTech("hub-tier7-bauxite-refinement", "hub/factory", "hub-progressing", "hub-tier7", "a-7-1", 900, {"space-elevator-phase3"}, {
+	{"motor",200},
+	{"computer",100},
+	{"heavy-modular-frame",100}
+}, {
+	{type="unlock-recipe",recipe="ultimate-transport-belt"},
+	{type="unlock-recipe",recipe="ultimate-underground-belt"},
+	{type="unlock-recipe",recipe="alumina-solution"},
+	{type="unlock-recipe",recipe="aluminium-scrap"},
+	{type="unlock-recipe",recipe="aluminium-ingot"},
+	{type="unlock-recipe",recipe="alclad-aluminium-sheet"},
+	{type="unlock-recipe",recipe="scanner-bauxite"},
+	{type="unlock-recipe",recipe="scanner-raw-quartz"}
+})
+addTech("hub-tier7-advanced-aluminium-production", "hub/factory", "hub-progressing", "tier7", "a-7-2", 900, {"space-elevator-phase3"}, {
+	{"alclad-aluminium-sheet",200},
+	{"motor",300},
+	{"heavy-modular-frame",150},
+	{"computer",150}
+}, {
+	{type="unlock-recipe",recipe="miner-mk-3"},
+	{type="unlock-recipe",recipe="heat-sink"},
+	{type="unlock-recipe",recipe="turbo-motor"},
+	{type="unlock-recipe",recipe="battery"}
+})
+--[[
+addTech("hub-tier7-hazmat-suit", "hub/equipment", "hub-progressing", "tier7", "a-7-3", 300, {"space-elevator-phase3"}, {
+	{"alclad-aluminium-sheet",100},
+	{"quickwire",100},
+	{"rubber",500}
+}, {
+	{type="unlock-recipe",recipe="hazmat-suit"},
+	{type="unlock-recipe",recipe="iodine-infused-filter"}
+})
+]\]
+addTech("hub-tier7-nuclear-power", "hub/factory", "hub-progressing", "tier7", "a-7-4", 1200, {"space-elevator-phase3"}, {
+	{"ai-limiter",50},
+	{"high-speed-connector",50},
+	{"heavy-modular-frame",200},
+	{"computer",200}
+}, {
+	{type="unlock-recipe",recipe="nuclear-power-plant"},
+	{type="unlock-recipe",recipe="sulfuric-acid"},
+	{type="unlock-recipe",recipe="uranium-pellet"},
+	{type="unlock-recipe",recipe="encased-uranium-cell"},
+	{type="unlock-recipe",recipe="electromagnetic-control-rod"},
+	{type="unlock-recipe",recipe="nuclear-fuel-rod"},
+	{type="unlock-recipe",recipe="scanner-uranium-ore"},
+	{type="unlock-recipe",recipe="scanner-sulphur"}
+})
+]]
+
 --[[ SPACE ELEVATOR ]]--
 addTech("space-elevator-phase1", "space/smart-plating", "space-elevator", "space-parts", "e-1", 1, {"hub-tier0-hub-upgrade-6"}, {
 	{"smart-plating",50}
 }, {
-	{type="unlock-recipe",recipe="hub-tier3-coal-power"}
-	-- TODO Tier 3&4 tech items here
+	-- HUB recipes are handled separately
+})
+addTech("space-elevator-phase2", "space/versatile-framework", "space-elevator", "space-parts", "e-2", 1, {"space-elevator-phase1"}, {
+	{"smart-plating",500},
+	{"versatile-framework",500},
+	{"automated-wiring",100}
+}, {})
+addTech("space-elevator-phase3", "space/adaptive-control-unit", "space-elevator", "space-parts", "e-3", 1, {"space-elevator-phase2"}, {
+	{"versatile-framework",2500},
+	{"modular-engine",500},
+	{"adaptive-control-unit",100}
 })
