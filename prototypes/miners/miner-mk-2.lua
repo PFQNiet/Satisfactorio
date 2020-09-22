@@ -53,7 +53,7 @@ local miner = {
 	selection_box = {{-2.5,-6.5},{2.5,2.5}},
 	type = "mining-drill",
 	fast_replaceable_group = "miner",
-	-- next_upgrade = "miner-mk-3",
+	next_upgrade = "miner-mk-3",
 	vector_to_place_result = {0,0}
 }
 

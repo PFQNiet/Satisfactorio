@@ -6,6 +6,8 @@ Date: 2020.09.16
 ---------------------------------------------------------------------------------------------------
 Version: 0.0.2
 Date: 2020.??.??
+  Features:
+    - More content :D
   Graphics:
     - Resource Scanner pings update in real time
   Bugfixes:

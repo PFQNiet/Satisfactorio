@@ -6,6 +6,7 @@ belt.icon_mipmaps = 0
 belt.max_health = 1
 belt.speed = 3/256
 belt.max_distance = 5
+belt.next_upgrade = "turbo-underground-belt"
 
 local beltitem = data.raw.item[basename]
 beltitem.icon = belt.icon

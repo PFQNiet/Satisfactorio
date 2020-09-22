@@ -25,6 +25,7 @@ belt.structure.back_patch.sheet.hr_version.filename = "__Satisfactorio__/graphic
 belt.structure.front_patch.sheet.filename = "__Satisfactorio__/graphics/entities/"..basename.."/"..basename.."-structure-front-patch.png"
 belt.structure.front_patch.sheet.hr_version.filename = "__Satisfactorio__/graphics/entities/"..basename.."/hr-"..basename.."-structure-front-patch.png"
 belt.minable.result = basename
+belt.next_upgrade = "ultimate-underground-belt"
 
 local beltitem = table.deepcopy(data.raw.item[sourcename])
 beltitem.name = basename
