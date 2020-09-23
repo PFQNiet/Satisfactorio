@@ -6,9 +6,9 @@ local cable = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	name = basename,
-	order = "c[copper]-b["..basename.."]",
+	order = "b[copper]-b["..basename.."]",
 	stack_size = 100,
-	subgroup = "intermediate-product",
+	subgroup = "parts",
 	type = "item"
 }
 

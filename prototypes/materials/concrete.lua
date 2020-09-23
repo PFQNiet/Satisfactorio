@@ -5,9 +5,9 @@ local plate = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	name = name,
-	order = "d[stone]-a["..name.."]",
+	order = "c[stone]-a["..name.."]",
 	stack_size = 100,
-	subgroup = "intermediate-product",
+	subgroup = "ingots",
 	type = "item"
 }
 

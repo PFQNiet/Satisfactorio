@@ -6,9 +6,9 @@ local rod = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	name = basename,
-	order = "b[iron]-b["..name.."]",
+	order = "a[iron]-b["..name.."]",
 	stack_size = 100,
-	subgroup = "intermediate-product",
+	subgroup = "parts",
 	type = "item"
 }
 

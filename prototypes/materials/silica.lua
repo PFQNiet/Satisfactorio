@@ -5,7 +5,7 @@ local ingot = {
 	name = name,
 	order = "i[quartz]-b["..name.."]",
 	stack_size = 500,
-	subgroup = "intermediate-product",
+	subgroup = "ingots",
 	type = "item"
 }
 

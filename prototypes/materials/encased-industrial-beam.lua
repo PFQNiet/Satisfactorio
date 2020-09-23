@@ -5,7 +5,7 @@ local beam = {
 	name = name,
 	order = "d[steel]-c["..name.."]",
 	stack_size = 100,
-	subgroup = "intermediate-product",
+	subgroup = "parts",
 	type = "item"
 }
 

@@ -8,7 +8,7 @@ local plate = {
 	name = basename,
 	order = "d[steel]-a["..basename.."]",
 	stack_size = 100,
-	subgroup = "intermediate-product",
+	subgroup = "parts",
 	type = "item"
 }
 

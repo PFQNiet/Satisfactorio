@@ -6,7 +6,7 @@ data:extend({
 		icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 		icon_size = 64,
 		subgroup = "organic-resource",
-		order = "t["..name.."]",
+		order = "f["..name.."]",
 		stack_size = 200,
 		fuel_category = "chemical",
 		fuel_value = "180MJ"

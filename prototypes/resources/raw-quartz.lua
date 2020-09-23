@@ -7,7 +7,7 @@ data:extend(
 		icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 		icon_size = 64,
 		flags = {"placeable-neutral","not-on-map"},
-		order="a-b-h",
+		order = "i",
 		category = "solid",
 		tree_removal_probability = 0,
 		tree_removal_max_distance = 0,
@@ -57,7 +57,7 @@ data:extend(
 	{
 		type = "autoplace-control",
 		name = name,
-		order = "k-c",
+		order = "i",
 		richness = true,
 		category = "resource"
 	},
@@ -70,8 +70,8 @@ data:extend(
 		name = name,
 		icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 		icon_size = 64,
-		subgroup = "raw-resource",
-		order = "m["..name.."]",
+		subgroup = "mineral-resource",
+		order = "i["..name.."]",
 		stack_size = 100
 	}
 })

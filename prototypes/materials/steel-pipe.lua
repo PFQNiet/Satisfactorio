@@ -5,7 +5,7 @@ local pipe = {
 	name = name,
 	order = "d[steel]-b["..name.."]",
 	stack_size = 100,
-	subgroup = "intermediate-product",
+	subgroup = "parts",
 	type = "item"
 }
 

@@ -3,9 +3,9 @@ local sink = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	name = name,
-	order = "r["..name.."]",
+	order = "h[bauxite]-b["..name.."]",
 	stack_size = 100,
-	subgroup = "components",
+	subgroup = "parts",
 	type = "item"
 }
 

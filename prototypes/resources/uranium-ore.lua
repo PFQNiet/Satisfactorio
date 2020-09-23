@@ -17,6 +17,7 @@ mining.fluid_amount = 0
 mining.mining_time = 1
 ore.category = "solid"
 ore.resource_patch_search_radius = 0
+ore.order = "k"
 if not ore.flags then ore.flags = {} end
 table.insert(ore.flags,"not-on-map")
 
@@ -25,3 +26,8 @@ item.icon = ore.icon
 item.icon_mipmaps = 0
 item.stack_size = 100
 item.pictures = nil
+item.subgroup = "mineral-resource"
+item.order = "k"
+
+local autoplace = data.raw['autoplace-control'][name]
+autoplace.order = "k"

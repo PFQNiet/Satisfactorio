@@ -13,6 +13,7 @@ ore.map_grid = false
 ore.resource_patch_search_radius = 1
 ore.category = "solid"
 ore.resource_patch_search_radius = 0
+ore.order = "e"
 if not ore.flags then ore.flags = {} end
 table.insert(ore.flags,"not-on-map")
 
@@ -23,3 +24,8 @@ item.stack_size = 100
 item.fuel_category = "carbon"
 item.fuel_value = "300MJ"
 item.pictures = nil
+item.subgroup = "mineral-resource"
+item.order = "e"
+
+local autoplace = data.raw['autoplace-control'][name]
+autoplace.order = "e"

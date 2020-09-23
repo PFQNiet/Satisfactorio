@@ -6,9 +6,9 @@ local ingot = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	name = basename,
-	order = "c["..basename.."]",
+	order = "b[copper]-c["..basename.."]",
 	stack_size = 100,
-	subgroup = "intermediate-product",
+	subgroup = "parts",
 	type = "item"
 }
 

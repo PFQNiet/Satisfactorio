@@ -7,7 +7,7 @@ data:extend(
 		icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 		icon_size = 64,
 		flags = {"placeable-neutral","not-on-map"},
-		order="a-b-i",
+		order = "j",
 		category = "solid",
 		tree_removal_probability = 0,
 		tree_removal_max_distance = 0,
@@ -57,7 +57,7 @@ data:extend(
 	{
 		type = "autoplace-control",
 		name = name,
-		order = "k-d",
+		order = "j",
 		richness = true,
 		category = "resource"
 	},
@@ -71,7 +71,7 @@ data.raw.item['sulfur'] = {
 	name = name,
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
-	subgroup = "raw-resource",
-	order = "n["..name.."]",
+	subgroup = "mineral-resource",
+	order = "j["..name.."]",
 	stack_size = 100
 }

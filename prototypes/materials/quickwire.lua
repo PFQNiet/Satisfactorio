@@ -5,7 +5,7 @@ local wire = {
 	name = name,
 	order = "g[caterium]-a["..name.."]",
 	stack_size = 500,
-	subgroup = "intermediate-product",
+	subgroup = "parts",
 	type = "item"
 }
 

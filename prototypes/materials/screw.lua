@@ -3,9 +3,9 @@ local screw = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	name = name,
-	order = "b[iron]-c["..name.."]",
+	order = "a[iron]-c["..name.."]",
 	stack_size = 500,
-	subgroup = "intermediate-product",
+	subgroup = "parts",
 	type = "item"
 }
 

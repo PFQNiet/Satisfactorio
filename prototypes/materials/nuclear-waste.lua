@@ -3,9 +3,9 @@ local ingot = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	name = name,
-	order = "u[uranium]-x["..name.."]",
+	order = "k[uranium]-e["..name.."]",
 	stack_size = 500,
-	subgroup = "intermediate-product",
+	subgroup = "nuclear",
 	type = "item"
 }
 

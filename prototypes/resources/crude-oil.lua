@@ -21,9 +21,15 @@ ore.minable.results = {{
 }}
 ore.category = "crude-oil"
 ore.resource_patch_search_radius = 0
+ore.order = "f"
 if not ore.flags then ore.flags = {} end
 table.insert(ore.flags,"not-on-map")
 
 local fluid = data.raw.fluid[name]
 fluid.icon = ore.icon
 fluid.icon_mipmaps = 0
+fluid.subgroup = "mineral-resource"
+fluid.order = "f"
+
+local autoplace = data.raw['autoplace-control'][name]
+autoplace.order = "f"

@@ -3,9 +3,9 @@ local wire = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	name = name,
-	order = "c[copper]-a["..name.."]",
+	order = "b[copper]-a["..name.."]",
 	stack_size = 500,
-	subgroup = "intermediate-product",
+	subgroup = "parts",
 	type = "item"
 }
 
