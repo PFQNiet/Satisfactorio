@@ -1,4 +1,4 @@
-local name = "sulphur"
+local name = "sulfur"
 data:extend(
 {
 	{

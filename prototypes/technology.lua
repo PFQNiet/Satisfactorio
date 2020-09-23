@@ -462,23 +462,21 @@ addTech("hub-tier7-hazmat-suit", "hub/equipment", "hub-progressing", "hub-tier7"
 	{type="unlock-recipe",recipe="iodine-infused-filter"}
 })
 ]]
---[[
 addTech("hub-tier7-nuclear-power", "hub/factory", "hub-progressing", "hub-tier7", "a-7-4", 1200, {"space-elevator-phase3"}, {
-	{"ai-limiter",50},
-	{"high-speed-connector",50},
+	{"processing-unit",50},
+	{"advanced-circuit",50},
 	{"heavy-modular-frame",200},
 	{"computer",200}
 }, {
 	{type="unlock-recipe",recipe="nuclear-power-plant"},
 	{type="unlock-recipe",recipe="sulfuric-acid"},
 	{type="unlock-recipe",recipe="uranium-pellet"},
-	{type="unlock-recipe",recipe="encased-uranium-cell"},
+	{type="unlock-recipe",recipe="uranium-fuel-cell"},
 	{type="unlock-recipe",recipe="electromagnetic-control-rod"},
-	{type="unlock-recipe",recipe="nuclear-fuel-rod"},
+	{type="unlock-recipe",recipe="nuclear-fuel"},
 	{type="unlock-recipe",recipe="scanner-uranium-ore"},
-	{type="unlock-recipe",recipe="scanner-sulphur"}
+	{type="unlock-recipe",recipe="scanner-sulfur"}
 })
-]]
 
 --[[ SPACE ELEVATOR ]]--
 addTech("space-elevator-phase1", "space/smart-plating", "space-elevator", "space-parts", "e-1", 1, {"hub-tier0-hub-upgrade-6"}, {

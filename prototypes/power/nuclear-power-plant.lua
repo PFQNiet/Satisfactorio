@@ -1,7 +1,7 @@
 --[[ GENERATOR SHAPE
-Total is 5x12
-Boiler is 5x4
-Generator is 5x8
+Total is 19x21
+Boiler is 19x2
+Generator is 19x19
 ]]
 
 local empty_sprite = {
@@ -9,40 +9,36 @@ local empty_sprite = {
 	size = {1,1}
 }
 
-local name = "coal-generator"
+local name = "nuclear-power-plant"
 local placeholder = {
 	type = "constant-combinator",
 	name = name,
 	activity_led_light_offsets = {{0,0},{0,0},{0,0},{0,0}},
-	activity_led_sprites = {
-		filename = "__core__/graphics/empty.png",
-		width = 1,
-		height = 1
-	},
+	activity_led_sprites = empty_sprite,
 	circuit_wire_connection_points = data.raw['constant-combinator']['constant-combinator'].circuit_wire_connection_points,
 	item_slot_count = 0,
 	sprites = {
 		north = {
 			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-n.png",
-			size = {160,384}
+			size = {608,672}
 		},
 		east = {
 			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-e.png",
-			size = {384,160}
+			size = {672,608}
 		},
 		south = {
 			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-s.png",
-			size = {160,384}
+			size = {608,672}
 		},
 		west = {
 			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-w.png",
-			size = {384,160}
+			size = {672,608}
 		}
 	},
 	max_health = 1,
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
-	collision_box = {{-2.2,-5.7},{2.2,5.7}},
+	collision_box = {{-9.2,-10.2},{9.2,10.2}},
 	corpse = "big-remnants",
 	dying_explosion = "big-explosion",
 	flags = {
@@ -50,20 +46,20 @@ local placeholder = {
 		"player-creation"
 	},
 	minable = nil, -- mine either the boiler or the generator
-	selection_box = {{-2.5,-6},{2.5,6}},
+	selection_box = {{-9.5,-10.5},{9.5,10.5}},
 	selection_priority = 40
 }
 local boiler = {
 	animation = empty_sprite,
-	collision_box = {{-2.2,-1.7},{2.2,1.7}},
+	collision_box = {{-9.2,-0.7},{9.2,0.7}},
 	corpse = "big-remnants",
 	dying_explosion = "big-explosion",
 	energy_source = {
 		type = "burner",
-		fuel_category = "carbon",
+		fuel_category = "nuclear",
 		fuel_inventory_size = 1
 	},
-	energy_usage = "75MW",
+	energy_usage = "2.5GW",
 	open_sound = {
 		filename = "__base__/sound/machine-open.ogg",
 		volume = 0.5
@@ -82,12 +78,12 @@ local boiler = {
 	},
 	fluid_boxes = {
 		{
-			base_area = 0.1,
+			base_area = 1,
 			base_level = -1,
 			filter = "water",
 			pipe_connections = {
 				{
-					position = {-1,2.5},
+					position = {0,1.5},
 					type = "input"
 				}
 			},
@@ -95,12 +91,12 @@ local boiler = {
 			production_type = "input"
 		},
 		{
-			base_area = 0.1,
+			base_area = 1,
 			base_level = 1,
 			filter = "steam",
 			pipe_connections = {
 				{
-					position = {0,-2.5},
+					position = {0,-1.5},
 					type = "output"
 				}
 			},
@@ -117,25 +113,13 @@ local boiler = {
 	},
 	placeable_by = {item=name,count=1},
 	name = name.."-boiler",
-	selection_box = {{-2.5,-2},{2.5,2}},
+	selection_box = {{-9.5,-1},{9.5,1}},
 	type = "assembling-machine",
-	crafting_speed = 0.75,
-	crafting_categories = {"coal-generator"},
-	fixed_recipe = name.."-steam"
+	crafting_speed = 1,
+	crafting_categories = {"nuclear-power"},
+	fixed_recipe = "nuclear-waste"
 }
-local steaming = {
-	name = name.."-steam",
-	type = "recipe",
-	ingredients = {{type="fluid", name="water", amount=1}},
-	results = {{type="fluid", name="steam", amount=1, temperature=115}},
-	energy_required = 1,
-	category = "coal-generator",
-	allow_intermediates = false,
-	allow_as_intermediate = false,
-	hide_from_player_crafting = true,
-	hide_from_stats = true
-}
-local accumulator_ns = {
+local accumulator = {
 	picture = {
 		filename = "__core__/graphics/empty.png",
 		size = {1,1}
@@ -147,42 +131,20 @@ local accumulator_ns = {
 	},
 	charge_cooldown = 0,
 	discharge_cooldown = 0,
-	collision_box = {{-2.2,-3.7},{2.2,3.7}},
+	collision_box = {{-9.2,-9.2},{9.2,9.2}},
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	max_health = 1,
 	minable = nil,
-	name = name.."-accumulator-ns",
-	selection_box = {{-2.5,-4},{2.5,4}},
-	selection_priority = 30,
-	type = "accumulator"
-}
-local accumulator_ew = {
-	picture = {
-		filename = "__core__/graphics/empty.png",
-		size = {1,1}
-	},
-	energy_source = {
-		type = "electric",
-		buffer_capacity = "1J",
-		usage_priority = "tertiary"
-	},
-	charge_cooldown = 0,
-	discharge_cooldown = 0,
-	collision_box = {{-3.7,-2.2},{3.7,2.2}},
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
-	icon_size = 64,
-	max_health = 1,
-	minable = nil,
-	name = name.."-accumulator-ew",
-	selection_box = {{-4,-2.5},{4,2.5}},
+	name = name.."-accumulator",
+	selection_box = {{-9.5,-9.5},{9.5,9.5}},
 	selection_priority = 30,
 	type = "accumulator"
 }
 local generator_ne = {
 	horizontal_animation = empty_sprite,
 	vertical_animation = empty_sprite,
-	collision_box = {{-2.2,-3.7},{2.2,3.7}},
+	collision_box = {{-9.2,-9.2},{9.2,9.2}},
 	corpse = "big-remnants",
 	dying_explosion = "big-explosion",
 	energy_source = {
@@ -190,22 +152,22 @@ local generator_ne = {
 		usage_priority = "secondary-output"
 	},
 	effectivity = 1,
-	maximum_temperature = 115,
+	maximum_temperature = 515,
 	fluid_box = {
 		base_area = 0.1,
 		base_level = -1,
 		filter = "steam",
-		minimum_temperature = 115,
+		minimum_temperature = 515,
 		pipe_connections = {
 			{
-				position = {0,4.5},
+				position = {0,10},
 				type = "input"
 			}
 		},
 		pipe_covers = table.deepcopy(data.raw.generator['steam-engine'].fluid_box.pipe_covers),
 		production_type = "input"
 	},
-	fluid_usage_per_tick = 45/60/60,
+	fluid_usage_per_tick = 300/60/60,
 	open_sound = {
 		filename = "__base__/sound/machine-open.ogg",
 		volume = 0.5
@@ -214,7 +176,7 @@ local generator_ne = {
 		filename = "__base__/sound/machine-close.ogg",
 		volume = 0.5
 	},
-	working_sound = data.raw['generator']['steam-engine'].working_sound,
+	working_sound = data.raw['reactor']['nuclear-reactor'].working_sound,
 	flags = {
 		"placeable-player",
 		"player-creation",
@@ -230,18 +192,18 @@ local generator_ne = {
 	},
 	placeable_by = {item=name,count=1},
 	name = name.."-generator-ne",
-	selection_box = {{-2.5,-4},{2.5,4}},
+	selection_box = {{-9.5,-9.5},{9.5,9.5}},
 	type = "generator"
 }
 local generator_sw = table.deepcopy(generator_ne)
-generator_sw.fluid_box.pipe_connections[1].position = {0,-4.5}
+generator_sw.fluid_box.pipe_connections[1].position = {0,-10}
 generator_sw.name = name.."-generator-sw"
 
 local generatoritem = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	name = name,
-	order = "b["..name.."]",
+	order = "d["..name.."]",
 	place_result = name,
 	stack_size = 1,
 	subgroup = "production-power",
@@ -249,9 +211,11 @@ local generatoritem = {
 }
 
 local ingredients = {
-	{"reinforced-iron-plate",20},
-	{"rotor",10},
-	{"copper-cable",30}
+	{"concrete",150},
+	{"heavy-modular-frame",10},
+	{"supercomputer",5},
+	{"copper-cable",50},
+	{"advanced-circuit",15}
 }
 local generatorrecipe = {
 	name = name,
@@ -289,4 +253,4 @@ local generatorrecipe_undo = {
 	enabled = false
 }
 
-data:extend({placeholder, boiler, steaming, accumulator_ns, accumulator_ew, generator_ne, generator_sw, generatoritem, generatorrecipe, generatorrecipe_undo})
+data:extend({placeholder, boiler, accumulator, generator_ne, generator_sw, generatoritem, generatorrecipe, generatorrecipe_undo})

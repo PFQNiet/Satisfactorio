@@ -7,7 +7,7 @@ require("prototypes.resource-scanner.scanner-caterium-ore")
 require("prototypes.resource-scanner.scanner-bauxite")
 require("prototypes.resource-scanner.scanner-raw-quartz")
 require("prototypes.resource-scanner.scanner-uranium-ore")
-require("prototypes.resource-scanner.scanner-sulphur")
+require("prototypes.resource-scanner.scanner-sulfur")
 
 data:extend({
 	{

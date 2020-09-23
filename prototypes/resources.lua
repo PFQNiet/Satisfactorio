@@ -15,7 +15,7 @@ require("prototypes.resources.mycelia")
 require("prototypes.resources.caterium-ore")
 require("prototypes.resources.bauxite")
 require("prototypes.resources.raw-quartz")
-require("prototypes.resources.sulphur")
+require("prototypes.resources.sulfur")
 
 -- loot
 require("prototypes.resources.alien-carapace")

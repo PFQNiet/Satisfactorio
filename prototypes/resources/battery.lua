@@ -14,7 +14,7 @@ local item = {
 local ingredients = {
 	{"alclad-aluminium-sheet",8},
 	{"wire",16},
-	{"sulphur",20},
+	{"sulfur",20},
 	{"plastic-bar",8}
 }
 local recipe1 = { -- by hand in Craft Bench
