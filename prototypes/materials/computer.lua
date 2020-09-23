@@ -22,6 +22,7 @@ local computerrecipe1 = { -- by hand in Craft Bench
 	result = name,
 	energy_required = 18/4,
 	category = "craft-bench",
+	hide_from_player_crafting = true,
 	enabled = false
 }
 local computerrecipe2 = { -- in Manufacturer
@@ -31,7 +32,6 @@ local computerrecipe2 = { -- in Manufacturer
 	result = name,
 	energy_required = 24,
 	category = "manufacturing",
-	hide_from_player_crafting = true,
 	enabled = false
 }
 

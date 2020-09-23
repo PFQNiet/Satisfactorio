@@ -21,6 +21,7 @@ local ingotrecipe1 = { -- by hand in Craft Bench
 	result_count = 3,
 	energy_required = 6/4,
 	category = "craft-bench",
+	hide_from_player_crafting = true,
 	enabled = false
 }
 local ingotrecipe2 = { -- in Foundry
@@ -31,7 +32,6 @@ local ingotrecipe2 = { -- in Foundry
 	result_count = 3,
 	energy_required = 4,
 	category = "foundry",
-	hide_from_player_crafting = true,
 	enabled = false
 }
 

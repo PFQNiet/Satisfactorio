@@ -20,6 +20,7 @@ local beamrecipe1 = { -- by hand in Craft Bench
 	result = name,
 	energy_required = 5/4,
 	category = "craft-bench",
+	hide_from_player_crafting = true,
 	enabled = false
 }
 local beamrecipe2 = { -- in Assembler
@@ -29,7 +30,6 @@ local beamrecipe2 = { -- in Assembler
 	result = name,
 	energy_required = 10,
 	category = "assembling",
-	hide_from_player_crafting = true,
 	enabled = false
 }
 

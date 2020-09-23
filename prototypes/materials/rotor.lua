@@ -20,6 +20,7 @@ local rotorrecipe1 = { -- by hand in Craft Bench
 	result = name,
 	energy_required = 6/4,
 	category = "craft-bench",
+	hide_from_player_crafting = true,
 	enabled = false
 }
 local rotorrecipe2 = { -- in Assembler
@@ -29,7 +30,6 @@ local rotorrecipe2 = { -- in Assembler
 	result = name,
 	energy_required = 15,
 	category = "assembling",
-	hide_from_player_crafting = true,
 	enabled = false
 }
 

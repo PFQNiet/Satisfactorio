@@ -21,6 +21,7 @@ local platerecipe1 = { -- by hand in Craft Bench
 	result = name,
 	energy_required = 2/4,
 	category = "craft-bench",
+	hide_from_player_crafting = true,
 	enabled = false
 }
 local platerecipe2 = { -- in Constructor
@@ -30,7 +31,6 @@ local platerecipe2 = { -- in Constructor
 	result = name,
 	energy_required = 4,
 	category = "constructing",
-	hide_from_player_crafting = true,
 	enabled = false
 }
 

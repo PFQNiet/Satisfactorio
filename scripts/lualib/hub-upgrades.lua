@@ -172,7 +172,8 @@ return {
 	},
 	["hub-tier7-hazmat-suit"] = {},
 	["hub-tier7-nuclear-power"] = {
-		"nuclear-power-plant-undo"
+		"nuclear-power-plant-undo",
+		"electromagnetic-control-rod-manual"
 		-- radioactive items cannot be hand-crafted
 	}
 }

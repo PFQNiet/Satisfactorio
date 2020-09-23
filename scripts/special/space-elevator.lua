@@ -254,7 +254,7 @@ local function updateElevatorGUI(force)
 				else
 					frame.visible = true
 					-- if milestone is actually set then we know this is valid
-					name.caption = {"","[img=item/"..phase.name.."] [font=heading-2]",phase.localised_name,"[/font]"}
+					name.caption = {"","[img=recipe/"..phase.name.."] [font=heading-2]",phase.localised_name,"[/font]"}
 					for _,ingredient in ipairs(recipe.ingredients) do
 						local sprite = table.add{
 							type = "sprite-button",

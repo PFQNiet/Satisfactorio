@@ -21,7 +21,8 @@ local rodrecipe1 = { -- by hand in Craft Bench
 	ingredients = ingredients,
 	result = basename,
 	energy_required = 1/4,
-	category = "craft-bench"
+	category = "craft-bench",
+	hide_from_player_crafting = true
 }
 local rodrecipe2 = { -- in Smelter
 	name = basename,
@@ -29,8 +30,7 @@ local rodrecipe2 = { -- in Smelter
 	ingredients = ingredients,
 	result = basename,
 	energy_required = 4,
-	category = "constructing",
-	hide_from_player_crafting = true
+	category = "constructing"
 }
 
 data:extend({rodrecipe1})

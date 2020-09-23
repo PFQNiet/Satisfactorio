@@ -451,7 +451,7 @@ local function updateMilestoneGUI(force)
 					name.caption = {"","[font=heading-2]",{"gui.hub-milestone-tracking-none-selected"},"[/font]"}
 				else
 					-- if milestone is actually set then we know this is valid
-					name.caption = {"","[img=item/"..milestone.name.."] [font=heading-2]",milestone.localised_name,"[/font]"}
+					name.caption = {"","[img=recipe/"..milestone.name.."] [font=heading-2]",milestone.localised_name,"[/font]"}
 					for _,ingredient in ipairs(recipe.ingredients) do
 						local sprite = table.add{
 							type = "sprite-button",

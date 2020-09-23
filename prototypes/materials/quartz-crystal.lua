@@ -20,6 +20,7 @@ local crystalrecipe1 = { -- by hand in Craft Bench
 	result_count = 3,
 	energy_required = 8/4,
 	category = "craft-bench",
+	hide_from_player_crafting = true,
 	enabled = false
 }
 local crystalrecipe2 = { -- in Constructor
@@ -30,7 +31,6 @@ local crystalrecipe2 = { -- in Constructor
 	result_count = 3,
 	energy_required = 8,
 	category = "constructing",
-	hide_from_player_crafting = true,
 	enabled = false
 }
 

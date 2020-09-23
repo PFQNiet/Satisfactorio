@@ -20,6 +20,7 @@ local piperecipe1 = { -- by hand in Craft Bench
 	result_count = 2,
 	energy_required = 3/4,
 	category = "craft-bench",
+	hide_from_player_crafting = true,
 	enabled = false
 }
 local piperecipe2 = { -- in Constructor
@@ -30,7 +31,6 @@ local piperecipe2 = { -- in Constructor
 	result_count = 2,
 	energy_required = 6,
 	category = "constructing",
-	hide_from_player_crafting = true,
 	enabled = false
 }
 

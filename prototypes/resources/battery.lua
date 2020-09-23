@@ -27,6 +27,7 @@ local recipe1 = { -- by hand in Craft Bench
 	result_count = 3,
 	energy_required = 16/4,
 	category = "craft-bench",
+	hide_from_player_crafting = true,
 	enabled = false
 }
 local recipe2 = { -- in Manufacturer
@@ -39,7 +40,6 @@ local recipe2 = { -- in Manufacturer
 	result_count = 3,
 	energy_required = 32,
 	category = "manufacturing",
-	hide_from_player_crafting = true,
 	enabled = false
 }
 data:extend({item,recipe1,recipe2})

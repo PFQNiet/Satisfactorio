@@ -22,6 +22,7 @@ local circuitrecipe1 = { -- by hand in Craft Bench
 	result = basename,
 	energy_required = 8/4,
 	category = "craft-bench",
+	hide_from_player_crafting = true,
 	enabled = false
 }
 local circuitrecipe2 = { -- in Manufacturer
@@ -31,7 +32,6 @@ local circuitrecipe2 = { -- in Manufacturer
 	result = basename,
 	energy_required = 16,
 	category = "manufacturing",
-	hide_from_player_crafting = true,
 	enabled = false
 }
 

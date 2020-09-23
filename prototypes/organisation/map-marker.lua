@@ -59,7 +59,20 @@ local ingredients = {
 	{"wire",15},
 	{"copper-cable",2}
 }
-local beaconrecipe = {
+local beaconrecipe1 = { -- by hand in Equipment Workshop
+	name = name.."-manual",
+	type = "recipe",
+	ingredients = ingredients,
+	result = name,
+	energy_required = 1,
+	category = "equipment",
+	allow_intermediates = false,
+	allow_as_intermediate = false,
+	hide_from_stats = true,
+	hide_from_player_crafting = true,
+	enabled = false
+}
+local beaconrecipe2 = { -- in Manufaturer
 	name = name,
 	type = "recipe",
 	ingredients = ingredients,
@@ -72,4 +85,4 @@ local beaconrecipe = {
 	enabled = false
 }
 
-data:extend({beacon,beaconitem,beaconrecipe})
+data:extend({beacon,beaconitem,beaconrecipe1,beaconrecipe2})

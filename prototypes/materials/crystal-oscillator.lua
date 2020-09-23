@@ -22,6 +22,7 @@ local oscillatorrecipe1 = { -- by hand in Craft Bench
 	result_count = 2,
 	energy_required = 18/4,
 	category = "craft-bench",
+	hide_from_player_crafting = true,
 	enabled = false
 }
 local oscillatorrecipe2 = { -- in Manufacturer
@@ -32,7 +33,6 @@ local oscillatorrecipe2 = { -- in Manufacturer
 	result_count = 2,
 	energy_required = 120,
 	category = "assembling",
-	hide_from_player_crafting = true,
 	enabled = false
 }
 

@@ -21,7 +21,8 @@ local platerecipe1 = { -- by hand in Craft Bench
 	result = name,
 	result_count = 2,
 	energy_required = 3/4,
-	category = "craft-bench"
+	category = "craft-bench",
+	hide_from_player_crafting = true
 }
 local platerecipe2 = { -- in Constructor
 	name = name,
@@ -30,8 +31,7 @@ local platerecipe2 = { -- in Constructor
 	result = name,
 	result_count = 2,
 	energy_required = 6,
-	category = "constructing",
-	hide_from_player_crafting = true
+	category = "constructing"
 }
 
 data:extend({platerecipe1})

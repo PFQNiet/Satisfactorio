@@ -20,6 +20,7 @@ local ingotrecipe1 = {
 	result_count = 5,
 	energy_required = 8/4,
 	category = "craft-bench",
+	hide_from_player_crafting = true,
 	enabled = false
 }
 local ingotrecipe2 = { -- in Constructor
@@ -30,7 +31,6 @@ local ingotrecipe2 = { -- in Constructor
 	result_count = 5,
 	energy_required = 8,
 	category = "constructing",
-	hide_from_player_crafting = true,
 	enabled = false
 }
 

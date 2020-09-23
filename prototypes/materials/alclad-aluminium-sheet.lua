@@ -21,6 +21,7 @@ local ingotrecipe1 = {
 	result_count = 4,
 	energy_required = 8/4,
 	category = "craft-bench",
+	hide_from_player_crafting = true,
 	enabled = false
 }
 local ingotrecipe2 = { -- in Assembler
@@ -31,7 +32,6 @@ local ingotrecipe2 = { -- in Assembler
 	result_count = 4,
 	energy_required = 8,
 	category = "assembling",
-	hide_from_player_crafting = true,
 	enabled = false
 }
 

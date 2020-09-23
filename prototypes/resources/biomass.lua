@@ -29,6 +29,7 @@ local recipe1 = { -- by hand in Craft Bench
 	result_count = 5,
 	energy_required = 1/4,
 	category = "craft-bench",
+	hide_from_player_crafting = true,
 	enabled = false
 }
 local recipe2 = { -- in Constructor
@@ -41,7 +42,6 @@ local recipe2 = { -- in Constructor
 	result_count = 5,
 	energy_required = 5,
 	category = "constructing",
-	hide_from_player_crafting = true,
 	enabled = false
 }
 data:extend({recipe1,recipe2})
@@ -62,6 +62,7 @@ recipe1 = { -- by hand in Craft Bench
 	result_count = 20,
 	energy_required = 2/4,
 	category = "craft-bench",
+	hide_from_player_crafting = true,
 	enabled = false
 }
 recipe2 = { -- in Constructor
@@ -74,7 +75,6 @@ recipe2 = { -- in Constructor
 	result_count = 20,
 	energy_required = 4,
 	category = "constructing",
-	hide_from_player_crafting = true,
 	enabled = false
 }
 data:extend({recipe1,recipe2})
@@ -95,6 +95,7 @@ recipe1 = { -- by hand in Craft Bench
 	result_count = 100,
 	energy_required = 2/4,
 	category = "craft-bench",
+	hide_from_player_crafting = true,
 	enabled = false
 }
 recipe2 = { -- in Constructor
@@ -107,7 +108,6 @@ recipe2 = { -- in Constructor
 	result_count = 100,
 	energy_required = 4,
 	category = "constructing",
-	hide_from_player_crafting = true,
 	enabled = false
 }
 data:extend({recipe1,recipe2})
