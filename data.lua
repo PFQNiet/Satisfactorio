@@ -22,12 +22,13 @@ data:extend({
 	{type="recipe-category",name="resource-scanner"},
 	{type="recipe-category",name="hub-progressing"},
 	{type="recipe-category",name="space-elevator"},
-	{type="recipe-category",name="mam-research"},
+	{type="recipe-category",name="mam"},
 	{type="recipe-category",name="coal-generator"},
 	{type="recipe-category",name="nuclear-power"},
 	{type="item-group",name="special",order="a",icon="__base__/graphics/item-group/effects.png",icon_size=64},
 	{type="item-group",name="milestones",order="h",icon="__Satisfactorio__/graphics/icons/the-hub.png",icon_size=64},
 	{type="item-group",name="space-elevator",order="i",icon="__Satisfactorio__/graphics/icons/space-elevator.png",icon_size=64},
+	{type="item-group",name="mam-research",order="j",icon="__Satisfactorio__/graphics/icons/mam.png",icon_size=64},
 	{type="item-subgroup",group="special",name="special",order="s-a"},
 	{type="item-subgroup",group="special",name="special-undo",order="s-undo"},
 	{type="item-subgroup",group="logistics",name="logistics-balancing",order="s-a"},
@@ -57,7 +58,8 @@ data:extend({
 	{type="item-subgroup",group="milestones",name="hub-tier5",order="f"},
 	{type="item-subgroup",group="milestones",name="hub-tier6",order="g"},
 	{type="item-subgroup",group="milestones",name="hub-tier7",order="h"},
-	{type="item-subgroup",group="space-elevator",name="space-parts",order="a"}
+	{type="item-subgroup",group="space-elevator",name="space-parts",order="a"},
+	{type="item-subgroup",group="mam-research",name="mam-research",order="a"}
 })
 table.insert(data.raw['god-controller'].default.crafting_categories, "building")
 table.insert(data.raw['god-controller'].default.crafting_categories, "unbuilding")

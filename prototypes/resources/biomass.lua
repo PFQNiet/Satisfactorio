@@ -80,11 +80,44 @@ recipe2 = { -- in Constructor
 data:extend({recipe1,recipe2})
 
 ingredients = {
+	{"mycelia",10}
+}
+recipe1 = { -- by hand in Craft Bench
+	name = name.."-from-"..ingredients[1][1].."-manual",
+	localised_name = {"recipe-name."..name.."-from-"..ingredients[1][1]},
+	type = "recipe",
+	icons = {
+		{ icon = "__Satisfactorio__/graphics/icons/biomass.png", icon_size = 64 },
+		{ icon = "__Satisfactorio__/graphics/icons/"..ingredients[1][1]..".png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
+	},
+	ingredients = ingredients,
+	result = name,
+	result_count = 10,
+	energy_required = 1/4,
+	category = "craft-bench",
+	hide_from_player_crafting = true,
+	enabled = false
+}
+recipe2 = { -- in Constructor
+	name = name.."-from-"..ingredients[1][1],
+	localised_name = {"recipe-name."..name.."-from-"..ingredients[1][1]},
+	type = "recipe",
+	icons = recipe1.icons,
+	ingredients = ingredients,
+	result = name,
+	result_count = 10,
+	energy_required = 4,
+	category = "constructing",
+	enabled = false
+}
+data:extend({recipe1,recipe2})
+
+ingredients = {
 	{"alien-carapace",1}
 }
 recipe1 = { -- by hand in Craft Bench
-	name = name.."-from-alien-carapace-manual",
-	localised_name = {"recipe-name."..name.."-from-alien-carapace"},
+	name = name.."-from-"..ingredients[1][1].."-manual",
+	localised_name = {"recipe-name."..name.."-from-"..ingredients[1][1]},
 	type = "recipe",
 	icons = {
 		{ icon = "__Satisfactorio__/graphics/icons/biomass.png", icon_size = 64 },
@@ -107,6 +140,39 @@ recipe2 = { -- in Constructor
 	result = name,
 	result_count = 100,
 	energy_required = 4,
+	category = "constructing",
+	enabled = false
+}
+data:extend({recipe1,recipe2})
+
+ingredients = {
+	{"alien-organs",1}
+}
+recipe1 = { -- by hand in Craft Bench
+	name = name.."-from-"..ingredients[1][1].."-manual",
+	localised_name = {"recipe-name."..name.."-from-"..ingredients[1][1]},
+	type = "recipe",
+	icons = {
+		{ icon = "__Satisfactorio__/graphics/icons/biomass.png", icon_size = 64 },
+		{ icon = "__Satisfactorio__/graphics/icons/"..ingredients[1][1]..".png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
+	},
+	ingredients = ingredients,
+	result = name,
+	result_count = 200,
+	energy_required = 4/4,
+	category = "craft-bench",
+	hide_from_player_crafting = true,
+	enabled = false
+}
+recipe2 = { -- in Constructor
+	name = name.."-from-"..ingredients[1][1],
+	localised_name = {"recipe-name."..name.."-from-"..ingredients[1][1]},
+	type = "recipe",
+	icons = recipe1.icons,
+	ingredients = ingredients,
+	result = name,
+	result_count = 200,
+	energy_required = 8,
 	category = "constructing",
 	enabled = false
 }
