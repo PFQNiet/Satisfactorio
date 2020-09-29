@@ -7,7 +7,9 @@ Date: 2020.09.16
 Version: 0.0.2
 Date: 2020.??.??
   Features:
-    - More content :D
+    - More content! Tiers 5-7 are mostly done
+    - M.A.M. research and endgame resources
+    - Harvestable plants
   Graphics:
     - Resource Scanner pings update in real time
   Bugfixes:

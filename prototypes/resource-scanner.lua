@@ -9,6 +9,11 @@ require("prototypes.resource-scanner.scanner-raw-quartz")
 require("prototypes.resource-scanner.scanner-uranium-ore")
 require("prototypes.resource-scanner.scanner-sulfur")
 
+require("prototypes.resource-scanner.scanner-beryl-nut")
+require("prototypes.resource-scanner.scanner-paleberry")
+require("prototypes.resource-scanner.scanner-bacon-agaric")
+require("prototypes.resource-scanner.scanner-power-slugs")
+
 data:extend({
 	{
 		type = "custom-input",
@@ -50,6 +55,28 @@ data:extend({
 		max_health = 1,
 		minable = nil,
 		name = "resource-scanner",
+		selection_box = {{-1,-1},{1,1}},
+		type = "assembling-machine"
+	},
+	{ -- dummy entity so that "made in..." shows correctly for object-scanner recipes
+		animation = {
+			filename = "__Satisfactorio__/graphics/icons/object-scanner.png",
+			size = {64,64}
+		},
+		collision_box = {{-0.7,-0.7},{0.7,0.7}},
+		corpse = "big-remnants",
+		crafting_categories = {"object-scanner"},
+		crafting_speed = 1,
+		dying_explosion = "big-explosion",
+		energy_source = {type="void"},
+		energy_usage = "1W",
+		flags = {},
+		fluid_boxes = {{production_type="output",pipe_connections={{position={0,-1.5},type="output"}}}},
+		icon = "__Satisfactorio__/graphics/icons/object-scanner.png",
+		icon_size = 64,
+		max_health = 1,
+		minable = nil,
+		name = "object-scanner",
 		selection_box = {{-1,-1},{1,1}},
 		type = "assembling-machine"
 	},

@@ -23,6 +23,7 @@ require("prototypes.resources.alien-organs")
 require("prototypes.resources.beryl-nut")
 require("prototypes.resources.paleberry")
 require("prototypes.resources.bacon-agaric")
+require("prototypes.resources.medicinal-inhaler")
 
 -- derived resources
 require("prototypes.resources.biomass")

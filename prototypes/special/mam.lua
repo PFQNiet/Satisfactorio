@@ -41,6 +41,7 @@ local mam = {
 		"no-automated-item-removal",
 		"no-automated-item-insertion"
 	},
+	draw_entity_info_icon_background = false,
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	max_health = 1,

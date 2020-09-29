@@ -84,6 +84,26 @@ local function spawnNode(resource, surface, cx, cy)
 				else
 					surface.create_entity(entity)
 				end
+			elseif resource.type == "x-powerslug" then
+				pval = purity -- always just a single slug, purity value affects rarity of slug
+				local tiers = {"green","green","green","green","green","green","yellow","yellow","yellow","purple"}
+				local slug = tiers[pval].."-power-slug"
+				local tx = cx+x+0.5
+				local ty = cy+y+0.5
+				local chunkpos = {x=math.floor(tx/32), y=math.floor(ty/32)}
+				local entity = {
+					name = slug,
+					position = {tx,ty},
+					force = game.forces.neutral
+				}
+				if not surface.is_chunk_generated({chunkpos.x, chunkpos.y}) then
+					if not global['queued-nodes'] then global['queued-nodes'] = {} end
+					if not global['queued-nodes'][chunkpos.y] then global['queued-nodes'][chunkpos.y] = {} end
+					if not global['queued-nodes'][chunkpos.y][chunkpos.x] then global['queued-nodes'][chunkpos.y][chunkpos.x] = {} end
+					table.insert(global['queued-nodes'][chunkpos.y][chunkpos.x], entity)
+				else
+					surface.create_entity(entity)
+				end
 			else
 				for dx=-1,1 do
 					for dy=-1,1 do
@@ -226,9 +246,11 @@ local function onChunkCharted(event)
 		-- move all sleeping nodes to open nodes
 		for _,data in pairs(global['resources']) do
 			for k,v in pairs(data.sleep[surface.index]) do
-				table.insert(data.nodes[surface.index],v)
+				if v[1] >= bbox[1][1] and v[1] <= bbox[2][1] and v[2] >= bbox[1][2] and v[2] <= bbox[2][2] then
+					table.remove(data.sleep[surface.index],k)
+					table.insert(data.nodes[surface.index],v)
+				end
 			end
-			data.sleep[surface.index] = {}
 		end
 	end
 end
@@ -264,6 +286,7 @@ local function onInit()
 	registerResource("uranium-ore", 1400, 2, 2)
 
 	registerResource("x-plant", 100, 1, 3)
+	registerResource("x-powerslug", 400, 1, 10)
 end
 local function onTick()
 	-- check for open nodes and process one

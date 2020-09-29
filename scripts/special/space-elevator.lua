@@ -1,5 +1,4 @@
 -- uses global['space-elevator'] as table of Force index -> {surface, position} of the elevator
--- uses global['space-elevator-done'] as table of Force index -> phases done
 -- uses global['space-elevator-phase'] as table of Force index -> phase shown in GUI - if different to current selection then GUI needs refresh, otherwise just update counts
 local mod_gui = require("mod-gui")
 local util = require("util")
@@ -12,6 +11,7 @@ local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not entity or not entity.valid then return end
 	if entity.name == elevator then
+		-- TODO check if one already exists and cancel construction if so
 		-- position hack to avoid it trying to drop stuff in the rocket silo
 		io.addInput(entity, {-10,13}, {position={entity.position.x-8,entity.position.y}})
 		io.addInput(entity, {-8,13}, {position={entity.position.x-8,entity.position.y}})
@@ -96,26 +96,19 @@ local function launchFreighter(hub, item)
 	silo.rocket_parts = 1
 end
 
-local upgrades = require("scripts.lualib.space-elevator-upgrades")
 local function completeElevator(technology)
 	if string.starts_with(technology.name, "space-elevator") then
-		if not upgrades[technology.name] then
-			technology.force.print("Phase had no associated upgrade data")
-			return
-		end
-		if not global['space-elevator-done'] then global['space-elevator-done'] = {} end
-		if not global['space-elevator-done'][technology.force.index] then global['space-elevator-done'][technology.force.index] = {} end
-		if global['space-elevator-done'][technology.force.index][technology.name] then
-			technology.force.print("Phase already completed")
-			return
-		end
-		global['space-elevator-done'][technology.force.index][technology.name] = true
-		for _,effect in pairs(upgrades[technology.name]) do
-			technology.force.recipes[effect].enabled = true
-		end
 		-- disable the recipe and enable the "-done" recipe
 		technology.force.recipes[technology.name].enabled = false
 		technology.force.recipes[technology.name.."-done"].enabled = true
+		-- find techs that depend on the tech we just did, and unlock their associated recipe items
+		for _,tech in pairs(technology.force.technologies) do
+			for _,req in pairs(tech.prerequisites) do
+				if req.name == technology.name then
+					technology.force.recipes[tech.name].enabled = true
+				end
+			end
+		end
 
 		local message = {"message.space-elevator-complete",technology.name,technology.localised_name}
 		technology.force.print(message)
@@ -141,7 +134,7 @@ local function updateElevatorGUI(force)
 		recipe = hub.get_recipe()
 		if recipe then
 			phase = game.item_prototypes[recipe.products[1].name]
-			if global['space-elevator-done'] and global['space-elevator-done'][force.index] and global['space-elevator-done'][force.index][phase.name] then
+			if not force.recipes[phase.name].enabled then
 				-- phase already completed, so reject it
 				local spill = hub.set_recipe(nil)
 				for name,count in pairs(spill) do
@@ -308,7 +301,7 @@ local function submitElevator(force)
 	local recipe = hub.get_recipe()
 	if not recipe then return end
 	local phase = recipe.products[1].name
-	if global['space-elevator-done'] and global['space-elevator-done'][force.index] and global['space-elevator-done'][force.index][phase] then return end
+	if not force.recipes[phase].enabled then return end
 	local inventory = hub.get_inventory(defines.inventory.assembling_machine_input)
 	local submitted = inventory.get_contents()
 	for _,ingredient in pairs(recipe.ingredients) do

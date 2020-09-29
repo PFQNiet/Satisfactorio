@@ -20,6 +20,7 @@ data:extend({
 	{type="recipe-category",name="manufacturing"},
 	{type="recipe-category",name="refining"},
 	{type="recipe-category",name="resource-scanner"},
+	{type="recipe-category",name="object-scanner"},
 	{type="recipe-category",name="hub-progressing"},
 	{type="recipe-category",name="space-elevator"},
 	{type="recipe-category",name="mam"},
@@ -41,6 +42,7 @@ data:extend({
 	{type="item-subgroup",group="production",name="production-miner",order="s-d"},
 	{type="item-subgroup",group="production",name="production-smelter",order="s-e"},
 	{type="item-subgroup",group="production",name="production-workstation",order="s-f"},
+	{type="item-subgroup",group="production",name="production-powerslugs",order="s-g"},
 	{type="item-subgroup",group="production",name="production-undo",order="s-undo"},
 	{type="item-subgroup",group="intermediate-products",name="organic-resource",order="s-a"},
 	{type="item-subgroup",group="intermediate-products",name="mineral-resource",order="s-b"},
@@ -59,7 +61,15 @@ data:extend({
 	{type="item-subgroup",group="milestones",name="hub-tier6",order="g"},
 	{type="item-subgroup",group="milestones",name="hub-tier7",order="h"},
 	{type="item-subgroup",group="space-elevator",name="space-parts",order="a"},
-	{type="item-subgroup",group="mam-research",name="mam-research",order="a"}
+	{type="item-subgroup",group="mam-research",name="mam-hard-drive",order="a"},
+	{type="item-subgroup",group="mam-research",name="mam-alien-organisms",order="b"},
+	{type="item-subgroup",group="mam-research",name="mam-caterium",order="c"},
+	{type="item-subgroup",group="mam-research",name="mam-flower-petals",order="d"},
+	{type="item-subgroup",group="mam-research",name="mam-mycelia",order="e"},
+	{type="item-subgroup",group="mam-research",name="mam-nutrients",order="f"},
+	{type="item-subgroup",group="mam-research",name="mam-power-slugs",order="g"},
+	{type="item-subgroup",group="mam-research",name="mam-quartz",order="h"},
+	{type="item-subgroup",group="mam-research",name="mam-sulfur",order="i"}
 })
 table.insert(data.raw['god-controller'].default.crafting_categories, "building")
 table.insert(data.raw['god-controller'].default.crafting_categories, "unbuilding")

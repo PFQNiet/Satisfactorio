@@ -1,5 +1,4 @@
 -- uses global['hub-terminal'] as table of Force index -> {surface, position} of the HUB terminal
--- uses global['hub-milestones'] as table of Force index -> completed milestone[]
 -- uses global['hub-milestone-selected'] as table of Force index -> milestone shown in GUI - if different to current selection then GUI needs refresh, otherwise just update counts
 -- uses global['hub-cooldown'] as table of Force index -> tick at which the Freighter returns
 
@@ -125,7 +124,7 @@ end
 
 local function buildStorageChest(hub)
 	-- only if HUB Upgrade 1 is done
-	if not (global['hub-milestones'] and global['hub-milestones'][hub.force.index] and global['hub-milestones'][hub.force.index]['hub-tier0-hub-upgrade-1']) then
+	if not hub.force.technologies['hub-tier0-hub-upgrade-1'].researched then
 		return
 	end
 	local box = hub.surface.create_entity{
@@ -149,7 +148,7 @@ end
 
 local function buildBiomassBurner1(hub)
 	-- only if HUB Upgrade 2 is done
-	if not (global['hub-milestones'] and global['hub-milestones'][hub.force.index] and global['hub-milestones'][hub.force.index]['hub-tier0-hub-upgrade-2']) then
+	if not hub.force.technologies['hub-tier0-hub-upgrade-2'].researched then
 		return
 	end
 	local burner = hub.surface.create_entity{
@@ -183,7 +182,7 @@ local function removeBiomassBurner1(hub, buffer) -- only if it exists
 end
 local function buildBiomassBurner2(hub)
 	-- only if HUB Upgrade 5 is done
-	if not (global['hub-milestones'] and global['hub-milestones'][hub.force.index] and global['hub-milestones'][hub.force.index]['hub-tier0-hub-upgrade-5']) then
+	if not hub.force.technologies['hub-tier0-hub-upgrade-5'].researched then
 		return
 	end
 	local burner = hub.surface.create_entity{
@@ -206,7 +205,7 @@ local function removeBiomassBurner2(hub, buffer) -- only if it exists
 end
 local function buildFreighter(hub)
 	-- only if HUB Upgrade 6 is done
-	if not (global['hub-milestones'] and global['hub-milestones'][hub.force.index] and global['hub-milestones'][hub.force.index]['hub-tier0-hub-upgrade-6']) then
+	if not hub.force.technologies['hub-tier0-hub-upgrade-6'].researched then
 		return
 	end
 	local silo = hub.surface.create_entity{
@@ -256,39 +255,31 @@ local function launchFreighter(hub, item)
 	silo.rocket_parts = 1
 end
 
-local upgrades = require("scripts.lualib.hub-upgrades")
+local upgrades = {
+	["hub-tier0-hub-upgrade-1"] = buildStorageChest,
+	["hub-tier0-hub-upgrade-2"] = buildBiomassBurner1,
+	["hub-tier0-hub-upgrade-5"] = buildBiomassBurner2,
+	["hub-tier0-hub-upgrade-6"] = buildFreighter
+}
 local function completeMilestone(technology)
 	if string.starts_with(technology.name, "hub-tier") then
-		if not upgrades[technology.name] then
-			technology.force.print("Milestone had no associated upgrade data")
-			return
-		end
-		if not global['hub-milestones'] then global['hub-milestones'] = {} end
-		if not global['hub-milestones'][technology.force.index] then global['hub-milestones'][technology.force.index] = {} end
-		if global['hub-milestones'][technology.force.index][technology.name] then
-			technology.force.print("Milestone already researched")
-			return
-		end
-		global['hub-milestones'][technology.force.index][technology.name] = true
-		for _,effect in pairs(upgrades[technology.name]) do
-			if type(effect) == "table" then
-				local hub = findHubForForce(technology.force)
-				local upgrades = {
-					storage = buildStorageChest,
-					burner1 = buildBiomassBurner1,
-					burner2 = buildBiomassBurner2,
-					freight = buildFreighter
-				}
-				if hub and hub.valid then
-					upgrades[effect[1]](hub)
-				end
-			else
-				technology.force.recipes[effect].enabled = true
+		if upgrades[technology.name] then
+			local hub = findHubForForce(technology.force)
+			if hub and hub.valid then
+				upgrades[technology.name](hub)
 			end
 		end
 		-- disable the recipe and enable the "-done" recipe
 		technology.force.recipes[technology.name].enabled = false
 		technology.force.recipes[technology.name.."-done"].enabled = true
+		-- find techs that depend on the tech we just did, and unlock their associated recipe items
+		for _,tech in pairs(technology.force.technologies) do
+			for _,req in pairs(tech.prerequisites) do
+				if req.name == technology.name then
+					technology.force.recipes[tech.name].enabled = true
+				end
+			end
+		end
 
 		local message = {"", {"message.milestone-reached",technology.name,technology.localised_name}}
 		-- use "real" technology effects for console message
@@ -300,6 +291,12 @@ local function completeMilestone(technology)
 				if technology.force.recipes[effect.recipe].products[1].type == "fluid" or not game.item_prototypes[technology.force.recipes[effect.recipe].products[1].name].place_result then subtype = "material" end
 				if technology.force.recipes[effect.recipe].category == "resource-scanner" then subtype = "resource" end
 				table.insert(message, {"message.milestone-effect-unlock-"..subtype, effect.recipe, game.recipe_prototypes[effect.recipe].localised_name})
+				if technology.force.recipes[effect.recipe.."-undo"] then
+					technology.force.recipes[effect.recipe.."-undo"].enabled = true
+				end
+				if technology.force.recipes[effect.recipe.."-manual"] then
+					technology.force.recipes[effect.recipe.."-manual"].enabled = true
+				end
 			elseif effect.type == "character-inventory-slots-bonus" then
 				table.insert(message, {"message.milestone-effect-inventory-bonus",effect.modifier})
 			elseif effect.type == "nothing" then
@@ -338,7 +335,7 @@ local function updateMilestoneGUI(force)
 		recipe = hub.get_recipe()
 		if recipe then
 			milestone = game.item_prototypes[recipe.products[1].name]
-			if global['hub-milestones'] and global['hub-milestones'][force.index] and global['hub-milestones'][force.index][milestone.name] then
+			if not force.recipes[milestone.name].enabled then
 				-- milestone already completed, so reject it
 				local spill = hub.set_recipe(nil)
 				for name,count in pairs(spill) do
@@ -517,7 +514,7 @@ local function submitMilestone(force)
 	local recipe = hub.get_recipe()
 	if not recipe then return end
 	local milestone = recipe.products[1].name
-	if global['hub-milestones'] and global['hub-milestones'][force.index] and global['hub-milestones'][force.index][milestone] then return end
+	if not force.recipes[milestone].enabled then return end
 	local inventory = hub.get_inventory(defines.inventory.assembling_machine_input)
 	local submitted = inventory.get_contents()
 	for _,ingredient in pairs(recipe.ingredients) do

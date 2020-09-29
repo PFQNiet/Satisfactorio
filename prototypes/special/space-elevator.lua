@@ -38,6 +38,7 @@ local elevator = {
 		"placeable-player",
 		"player-creation"
 	},
+	draw_entity_info_icon_background = false,
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	max_health = 1,

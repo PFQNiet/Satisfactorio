@@ -15,13 +15,20 @@ local function setupOmnilab(force)
 	omnilab.operable = false
 	omnilab.minable = false
 	omnilab.destructible = false
-	global[lab][force.index] = {omnilab.surface.name, omnilab.position}
+	global[lab][force.index] = {omnilab.surface.index, omnilab.position}
 	force.research_queue = {"the-hub"}
 	force.technologies['the-hub'].researched = true
 	force.play_sound{path="utility/research_completed"}
 	return omnilab
 end
+local function getOmnilab(force)
+	if not global['omnilab'] then return nil end
+	local pointer = global['omnilab'][force.index]
+	if not pointer then return nil end
+	return game.surfaces[pointer[1]].find_entity(lab,pointer[2])
+end
 
 return {
-	setupOmnilab = setupOmnilab
+	setupOmnilab = setupOmnilab,
+	getOmnilab = getOmnilab
 }
