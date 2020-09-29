@@ -20,6 +20,9 @@ require("prototypes.resources.sulfur")
 -- loot
 require("prototypes.resources.alien-carapace")
 require("prototypes.resources.alien-organs")
+require("prototypes.resources.beryl-nut")
+require("prototypes.resources.paleberry")
+require("prototypes.resources.bacon-agaric")
 
 -- derived resources
 require("prototypes.resources.biomass")

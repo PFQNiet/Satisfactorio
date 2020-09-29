@@ -33,12 +33,6 @@ local function registerResource(name, radius, min, max)
 	}
 end
 
-local function _array_contains(arr, find)
-	for _,v in ipairs(arr) do
-		if v == find then return true end
-	end
-	return false
-end
 local function spawnNode(resource, surface, cx, cy)
 	-- scatter a cluster of nodes, of total purity value between the bounds defined on the resource data, within a radius of 4-8 using a mini-poisson distribution
 	local purity = math.random(resource.size[1], resource.size[2])
@@ -63,42 +57,69 @@ local function spawnNode(resource, surface, cx, cy)
 			local pval = math.random(1,4)
 			if pval > purity then pval = purity end
 			if pval == 3 then pval = 2 end
-			purity = purity - pval
 			local landfill = {}
-			for dx=-1,1 do
-				for dy=-1,1 do
-					local tx = cx+dx+math.floor(x+0.5)
-					local ty = cy+dy+math.floor(y+0.5)
-					local chunkpos = {x=math.floor(tx/32), y=math.floor(ty/32)}
-					local entity = {
-						name = resource.type,
-						position = {tx,ty},
-						force = game.forces.neutral,
-						amount = 60*pval
-					}
-					if not surface.is_chunk_generated({chunkpos.x, chunkpos.y}) then
-						if not global['queued-nodes'] then global['queued-nodes'] = {} end
-						if not global['queued-nodes'][chunkpos.y] then global['queued-nodes'][chunkpos.y] = {} end
-						if not global['queued-nodes'][chunkpos.y][chunkpos.x] then global['queued-nodes'][chunkpos.y][chunkpos.x] = {} end
-						table.insert(global['queued-nodes'][chunkpos.y][chunkpos.x], entity)
-						if dx == -1 and dy == -1 then
-							table.insert(global['queued-nodes'][chunkpos.y][chunkpos.x], {
-								name = "small-biter",
-								position = {tx,ty},
-								force = game.forces.enemy
-							})
-						end
-					else
-						if surface.get_tile(tx,ty).collides_with("water-tile") then
-							table.insert(landfill, {name="landfill",position={tx,ty}})
-						end
-						surface.create_entity(entity)
-						if dx == -1 and dy == -1 then
-							surface.create_entity({
-								name = "small-biter",
-								position = {tx,ty},
-								force = game.forces.enemy
-							})
+			if resource.type == "x-plant" then
+				pval = 1 -- "purity" is just the number of plants
+				-- "plant" spawns bacon agaric where elevation is near or below 0, paleberry when moisture is >50% and beryl nut otherwise
+				local tx = cx+math.floor(x+0.5)
+				local ty = cy+math.floor(y+0.5)
+				local chunkpos = {x=math.floor(tx/32), y=math.floor(ty/32)}
+				local tiledata = surface.calculate_tile_properties({"elevation","moisture"},{{tx,ty}})
+				local elevation = tiledata.elevation[1]
+				local moisture = tiledata.moisture[1]
+				local plant = "bacon-agaric"
+				if elevation > 5 then
+					plant = moisture < 0.5 and "beryl-nut" or "paleberry"
+				end
+				local entity = {
+					name = plant,
+					position = {tx,ty},
+					force = game.forces.neutral
+				}
+				if not surface.is_chunk_generated({chunkpos.x, chunkpos.y}) then
+					if not global['queued-nodes'] then global['queued-nodes'] = {} end
+					if not global['queued-nodes'][chunkpos.y] then global['queued-nodes'][chunkpos.y] = {} end
+					if not global['queued-nodes'][chunkpos.y][chunkpos.x] then global['queued-nodes'][chunkpos.y][chunkpos.x] = {} end
+					table.insert(global['queued-nodes'][chunkpos.y][chunkpos.x], entity)
+				else
+					surface.create_entity(entity)
+				end
+			else
+				for dx=-1,1 do
+					for dy=-1,1 do
+						local tx = cx+dx+math.floor(x+0.5)
+						local ty = cy+dy+math.floor(y+0.5)
+						local chunkpos = {x=math.floor(tx/32), y=math.floor(ty/32)}
+						local entity = {
+							name = resource.type,
+							position = {tx,ty},
+							force = game.forces.neutral,
+							amount = 60*pval
+						}
+						if not surface.is_chunk_generated({chunkpos.x, chunkpos.y}) then
+							if not global['queued-nodes'] then global['queued-nodes'] = {} end
+							if not global['queued-nodes'][chunkpos.y] then global['queued-nodes'][chunkpos.y] = {} end
+							if not global['queued-nodes'][chunkpos.y][chunkpos.x] then global['queued-nodes'][chunkpos.y][chunkpos.x] = {} end
+							table.insert(global['queued-nodes'][chunkpos.y][chunkpos.x], entity)
+							if dx == -1 and dy == -1 then
+								table.insert(global['queued-nodes'][chunkpos.y][chunkpos.x], {
+									name = "small-biter",
+									position = {tx,ty},
+									force = game.forces.enemy
+								})
+							end
+						else
+							if surface.get_tile(tx,ty).collides_with("water-tile") then
+								table.insert(landfill, {name="landfill",position={tx,ty}})
+							end
+							surface.create_entity(entity)
+							if dx == -1 and dy == -1 then
+								surface.create_entity({
+									name = "small-biter",
+									position = {tx,ty},
+									force = game.forces.enemy
+								})
+							end
 						end
 					end
 				end
@@ -106,6 +127,7 @@ local function spawnNode(resource, surface, cx, cy)
 			if #landfill > 0 then
 				surface.set_tiles(landfill, true, false, false, false)
 			end
+			purity = purity - pval
 		end
 		if purity <= 0 then break end
 	end
@@ -125,7 +147,7 @@ local function existsNear(mytype, surface, x, y)
 	for type,resource in pairs(global['resources']) do
 		local gx = math.floor(x/resource.gridsize);
 		local gy = math.floor(y/resource.gridsize);
-		local r = type == mytype and resource.r or 10
+		local r = type == mytype and resource.r or 15
 		for dy=-2,2 do
 			for dx=-2,2 do
 				local node = resource.grid[surface.index][gy+dy] and resource.grid[surface.index][gy+dy][gx+dx] or nil
@@ -235,7 +257,13 @@ local function onInit()
 	registerResource("stone", 175, 3, 7)
 	registerResource("coal", 250, 2, 6)
 	registerResource("crude-oil", 500, 3, 7)
-	registerResource("uranium-ore", 1000, 2, 2)
+	registerResource("caterium-ore", 600, 2, 4)
+	registerResource("sulfur", 750, 1, 4)
+	registerResource("raw-quartz", 800, 1, 6)
+	registerResource("bauxite", 1000, 2, 6)
+	registerResource("uranium-ore", 1400, 2, 2)
+
+	registerResource("x-plant", 100, 1, 3)
 end
 local function onTick()
 	-- check for open nodes and process one
