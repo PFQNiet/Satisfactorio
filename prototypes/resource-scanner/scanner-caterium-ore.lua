@@ -1,7 +1,7 @@
 local name = "caterium-ore"
 data:extend({{
 	name = "scanner-"..name,
-	localised_name = {"recipe-name.scanner-"..name},
+	localised_name = {"recipe-name.scanner",{"item-name."..name}},
 	type = "recipe",
 	ingredients = {},
 	result = name,

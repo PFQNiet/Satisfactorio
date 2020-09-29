@@ -18,7 +18,7 @@ local ingredients = {
 }
 local recipe1 = { -- by hand in Craft Bench
 	name = name.."-from-"..ingredients[1][1].."-manual",
-	localised_name = {"recipe-name."..name.."-from-"..ingredients[1][1]},
+	localised_name = {"recipe-name.x-from-y",{"item-name."..name}, {"item-name."..ingredients[1][1]}},
 	type = "recipe",
 	icons = {
 		{ icon = "__Satisfactorio__/graphics/icons/biomass.png", icon_size = 64 },
@@ -34,7 +34,7 @@ local recipe1 = { -- by hand in Craft Bench
 }
 local recipe2 = { -- in Constructor
 	name = name.."-from-"..ingredients[1][1],
-	localised_name = {"recipe-name."..name.."-from-"..ingredients[1][1]},
+	localised_name = {"recipe-name.x-from-y",{"item-name."..name}, {"item-name."..ingredients[1][1]}},
 	type = "recipe",
 	icons = recipe1.icons,
 	ingredients = ingredients,
@@ -51,7 +51,7 @@ ingredients = {
 }
 recipe1 = { -- by hand in Craft Bench
 	name = name.."-from-"..ingredients[1][1].."-manual",
-	localised_name = {"recipe-name."..name.."-from-"..ingredients[1][1]},
+	localised_name = {"recipe-name.x-from-y",{"item-name."..name}, {"item-name."..ingredients[1][1]}},
 	type = "recipe",
 	icons = {
 		{ icon = "__Satisfactorio__/graphics/icons/biomass.png", icon_size = 64 },
@@ -67,7 +67,7 @@ recipe1 = { -- by hand in Craft Bench
 }
 recipe2 = { -- in Constructor
 	name = name.."-from-"..ingredients[1][1],
-	localised_name = {"recipe-name."..name.."-from-"..ingredients[1][1]},
+	localised_name = {"recipe-name.x-from-y",{"item-name."..name}, {"item-name."..ingredients[1][1]}},
 	type = "recipe",
 	icons = recipe1.icons,
 	ingredients = ingredients,
@@ -84,7 +84,7 @@ ingredients = {
 }
 recipe1 = { -- by hand in Craft Bench
 	name = name.."-from-"..ingredients[1][1].."-manual",
-	localised_name = {"recipe-name."..name.."-from-"..ingredients[1][1]},
+	localised_name = {"recipe-name.x-from-y",{"item-name."..name}, {"item-name."..ingredients[1][1]}},
 	type = "recipe",
 	icons = {
 		{ icon = "__Satisfactorio__/graphics/icons/biomass.png", icon_size = 64 },
@@ -100,7 +100,7 @@ recipe1 = { -- by hand in Craft Bench
 }
 recipe2 = { -- in Constructor
 	name = name.."-from-"..ingredients[1][1],
-	localised_name = {"recipe-name."..name.."-from-"..ingredients[1][1]},
+	localised_name = {"recipe-name.x-from-y",{"item-name."..name}, {"item-name."..ingredients[1][1]}},
 	type = "recipe",
 	icons = recipe1.icons,
 	ingredients = ingredients,
@@ -117,7 +117,7 @@ ingredients = {
 }
 recipe1 = { -- by hand in Craft Bench
 	name = name.."-from-"..ingredients[1][1].."-manual",
-	localised_name = {"recipe-name."..name.."-from-"..ingredients[1][1]},
+	localised_name = {"recipe-name.x-from-y",{"item-name."..name}, {"item-name."..ingredients[1][1]}},
 	type = "recipe",
 	icons = {
 		{ icon = "__Satisfactorio__/graphics/icons/biomass.png", icon_size = 64 },
@@ -133,7 +133,7 @@ recipe1 = { -- by hand in Craft Bench
 }
 recipe2 = { -- in Constructor
 	name = name.."-from-"..ingredients[1][1],
-	localised_name = {"recipe-name."..name.."-from-"..ingredients[1][1]},
+	localised_name = {"recipe-name.x-from-y",{"item-name."..name}, {"item-name."..ingredients[1][1]}},
 	type = "recipe",
 	icons = recipe1.icons,
 	ingredients = ingredients,
@@ -150,7 +150,7 @@ ingredients = {
 }
 recipe1 = { -- by hand in Craft Bench
 	name = name.."-from-"..ingredients[1][1].."-manual",
-	localised_name = {"recipe-name."..name.."-from-"..ingredients[1][1]},
+	localised_name = {"recipe-name.x-from-y",{"item-name."..name}, {"item-name."..ingredients[1][1]}},
 	type = "recipe",
 	icons = {
 		{ icon = "__Satisfactorio__/graphics/icons/biomass.png", icon_size = 64 },
@@ -166,7 +166,7 @@ recipe1 = { -- by hand in Craft Bench
 }
 recipe2 = { -- in Constructor
 	name = name.."-from-"..ingredients[1][1],
-	localised_name = {"recipe-name."..name.."-from-"..ingredients[1][1]},
+	localised_name = {"recipe-name.x-from-y",{"item-name."..name}, {"item-name."..ingredients[1][1]}},
 	type = "recipe",
 	icons = recipe1.icons,
 	ingredients = ingredients,

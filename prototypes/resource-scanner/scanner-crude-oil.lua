@@ -1,7 +1,7 @@
 local name = "crude-oil"
 data:extend({{
 	name = "scanner-"..name,
-	localised_name = {"recipe-name.scanner-"..name},
+	localised_name = {"recipe-name.scanner",{"fluid-name."..name}},
 	type = "recipe",
 	ingredients = {},
 	results = {{type="fluid",name=name,amount=1}},
