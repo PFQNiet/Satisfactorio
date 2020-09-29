@@ -61,15 +61,20 @@ local function manageMamGUI(player)
 	local entity = player.opened
 	local gui = player.gui.left
 	local frame = gui['mam-tracking']
-	if frame then frame.destroy() end
-	if not (entity and entity.valid and entity.name == mam) then return end
+	if not (entity and entity.valid and entity.name == mam) then
+		if frame then frame.destroy() end
+		return
+	end
 	
 	-- check its recipe and inventory
 	local recipe = entity.get_recipe()
-	if recipe then
+	if not recipe then
+		if frame then frame.destroy() end
+	else
 		local research = game.item_prototypes[recipe.products[1].name]
 		if not entity.force.recipes[research.name].enabled then
 			-- research already completed, so reject it
+			if frame then frame.destroy() end
 			local spill = entity.set_recipe(nil)
 			for name,count in pairs(spill) do
 				entity.surface.spill_item_stack(
@@ -83,33 +88,40 @@ local function manageMamGUI(player)
 			end
 			entity.force.print({"message.mam-already-done",research.name,research.localised_name})
 		else
-			-- create GUI -- since this is only really running when a MAM is open, it's not as big a deal to keep re-making it
-			frame = gui.add{
-				type = "frame",
-				name = "mam-tracking",
-				direction = "vertical",
-				caption = {"gui.mam-tracking-caption"},
-				style = mod_gui.frame_style
-			}
-			frame.style.horizontally_stretchable = false
-			frame.style.use_header_filler = false
-			frame.add{
-				type = "label",
-				name = "mam-tracking-name",
-				caption = {"","[img=recipe/"..research.name.."] [font=heading-2]",research.localised_name,"[/font]"}
-			}
-			local bottom = frame.add{
-				type = "flow",
-				name = "mam-tracking-bottom"
-			}
-			local pusher = bottom.add{type="empty-widget"}
-			pusher.style.horizontally_stretchable = true
-			local button = bottom.add{
-				type = "button",
-				style = "confirm_button",
-				name = "mam-tracking-submit",
-				caption = {"gui.mam-submit-caption"}
-			}
+			if frame and frame['mam-tracking-name'..research.name] then
+				-- research has changed, re-create GUI
+				frame.destroy()
+				frame = nil
+			end
+			if not frame then
+				frame = gui.add{
+					type = "frame",
+					name = "mam-tracking",
+					direction = "vertical",
+					caption = {"gui.mam-tracking-caption"},
+					style = mod_gui.frame_style
+				}
+				frame.style.horizontally_stretchable = false
+				frame.style.use_header_filler = false
+				frame.add{
+					type = "label",
+					name = "mam-tracking-name-"..research.name,
+					caption = {"","[img=recipe/"..research.name.."] [font=heading-2]",research.localised_name,"[/font]"}
+				}
+				local bottom = frame.add{
+					type = "flow",
+					name = "mam-tracking-bottom"
+				}
+				local pusher = bottom.add{type="empty-widget"}
+				pusher.style.horizontally_stretchable = true
+				local button = bottom.add{
+					type = "button",
+					style = "confirm_button",
+					name = "mam-tracking-submit",
+					caption = {"gui.mam-submit-caption"}
+				}
+				button.style.top_margin = 8
+			end
 
 			local inventory = entity.get_inventory(defines.inventory.assembling_machine_input)
 			submitted = inventory.get_contents()
@@ -119,7 +131,7 @@ local function manageMamGUI(player)
 					ready = false
 				end
 			end
-			button.enabled = ready
+			frame['mam-tracking-bottom']['mam-tracking-submit'].enabled = ready
 		end
 	end
 end

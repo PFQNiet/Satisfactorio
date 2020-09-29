@@ -57,7 +57,7 @@ local recipe1 = {
 }
 local recipe2 = {
 	name = name.."-from-alien-organs",
-	localised_name = {"recipe-name.x-from-y",name,{"item-name.alien-organs"}},
+	localised_name = {"recipe-name.x-from-y",{"item-name."..name},{"item-name.alien-organs"}},
 	type = "recipe",
 	ingredients = {
 		{"alien-organs",3},
@@ -70,6 +70,7 @@ local recipe2 = {
 }
 local recipe3 = {
 	name = "nutritional-inhaler",
+	localised_name = {"nutritional-inhaler"},
 	type = "recipe",
 	ingredients = {
 		{"bacon-agaric",1},
