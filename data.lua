@@ -24,6 +24,7 @@ data:extend({
 	{type="recipe-category",name="hub-progressing"},
 	{type="recipe-category",name="space-elevator"},
 	{type="recipe-category",name="mam"},
+	{type="recipe-category",name="awesome-shop"},
 	{type="recipe-category",name="coal-generator"},
 	{type="recipe-category",name="nuclear-power"},
 	{type="item-group",name="special",order="a",icon="__base__/graphics/item-group/effects.png",icon_size=64},

@@ -15,8 +15,8 @@ ore.highlight = false
 ore.minable.results = {{
 	type = "fluid",
 	name = name,
-	amount_min = 0.5, -- originally 10
-	amount_max = 0.5, -- originally 10
+	amount_min = 1, -- originally 10
+	amount_max = 1, -- originally 10
 	probability = 1
 }}
 ore.category = "crude-oil"

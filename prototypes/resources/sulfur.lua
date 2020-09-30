@@ -32,7 +32,7 @@ data:extend(
 				height = 64,
 				frame_count = 8,
 				variation_count = 8,
-				tint = {0.8,0.2,0.8},
+				tint = {0.8,0.8,0.2},
 				hr_version =
 				{
 					filename = "__base__/graphics/entity/stone/hr-stone.png",
@@ -41,7 +41,7 @@ data:extend(
 					height = 128,
 					frame_count = 8,
 					variation_count = 8,
-					tint = {0.8,0.2,0.8},
+					tint = {0.8,0.8,0.2},
 					scale = 0.5
 				}
 			}

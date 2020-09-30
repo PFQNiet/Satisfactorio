@@ -291,12 +291,6 @@ local function completeMilestone(technology)
 				if technology.force.recipes[effect.recipe].products[1].type == "fluid" or not game.item_prototypes[technology.force.recipes[effect.recipe].products[1].name].place_result then subtype = "material" end
 				if technology.force.recipes[effect.recipe].category == "resource-scanner" then subtype = "resource" end
 				table.insert(message, {"message.milestone-effect-unlock-"..subtype, effect.recipe, game.recipe_prototypes[effect.recipe].localised_name})
-				if technology.force.recipes[effect.recipe.."-undo"] then
-					technology.force.recipes[effect.recipe.."-undo"].enabled = true
-				end
-				if technology.force.recipes[effect.recipe.."-manual"] then
-					technology.force.recipes[effect.recipe.."-manual"].enabled = true
-				end
 			elseif effect.type == "character-inventory-slots-bonus" then
 				table.insert(message, {"message.milestone-effect-inventory-bonus",effect.modifier})
 			elseif effect.type == "nothing" then

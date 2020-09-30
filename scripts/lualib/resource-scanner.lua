@@ -226,6 +226,7 @@ local function onTick(event)
 				local ttl = 20*60
 				if not global['resource-scanner-pings'] then global['resource-scanner-pings'] = {} end
 				-- graphics are created with no offset and placeholder text, as they are immediately updated in updatePings()
+				-- TODO make it compatible with Sandbox, where there is no effect.player.character
 				table.insert(global['resource-scanner-pings'], {
 					player = effect.player,
 					position = effect.position,

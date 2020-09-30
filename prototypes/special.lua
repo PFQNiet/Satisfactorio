@@ -1,4 +1,6 @@
 require("prototypes.special.the-hub")
 require("prototypes.special.mam")
 require("prototypes.special.space-elevator")
+require("prototypes.special.awesome-sink")
+require("prototypes.special.awesome-shop")
 require("prototypes.special.omnilab")

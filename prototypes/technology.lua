@@ -239,6 +239,7 @@ addTech("hub-tier2-jump-pads", "hub/structure", "hub-progressing", "hub-tier2", 
 	{type="unlock-recipe",recipe="jump-pad"},
 	{type="unlock-recipe",recipe="u-jelly-landing-pad"}
 })
+]]
 addTech("hub-tier2-resource-sink-bonus-program", "hub/factory", "hub-progressing", "hub-tier2", "a-2-4", 300, {"hub-tier0-hub-upgrade-6"}, {
 	{"concrete",400},
 	{"wire",500},
@@ -248,7 +249,6 @@ addTech("hub-tier2-resource-sink-bonus-program", "hub/factory", "hub-progressing
 	{type="unlock-recipe",recipe="awesome-sink"},
 	{type="unlock-recipe",recipe="awesome-shop"}
 })
-]]
 addTech("hub-tier2-logistics-mk-2", "hub/logistics", "hub-progressing", "hub-tier2", "a-2-5", 360, {"hub-tier0-hub-upgrade-6"}, {
 	{"reinforced-iron-plate",50},
 	{"concrete",200},
