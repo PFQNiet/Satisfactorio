@@ -12,6 +12,7 @@ local function gainPoints(force, points)
 	if not global['awesome-coupons'][force.index] then global['awesome-coupons'][force.index] = {0,0,0} end
 	local entry = global['awesome-coupons'][force.index]
 	entry[3] = entry[3] + points
+	force.item_production_statistics.on_flow("awesome-points",points)
 	local tonext = pointsToNext(entry[1])
 	while entry[3] > tonext do
 		entry[1] = entry[1] + 1

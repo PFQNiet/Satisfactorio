@@ -146,6 +146,19 @@ local sinkrecipe_undo = {
 
 data:extend({base,storage,sinkitem,sinkrecipe,sinkrecipe_undo})
 
+-- pseudo "points" item for stat purposes
+data:extend({
+	{
+		type = "item",
+		flags = {"hidden"},
+		name = "awesome-points",
+		icon = "__Satisfactorio__/graphics/icons/coupon.png",
+		icon_size = 64,
+		subgroup = "special",
+		order = "z",
+		stack_size = 1000000
+	}
+})
 -- change vanilla "coin" to be a Coupon
 local coupon = data.raw.item.coin
 coupon.flags = nil
