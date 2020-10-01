@@ -67,6 +67,9 @@ end
 
 local function onGuiOpened(event)
 	local player = game.players[event.player_index]
+	if event.gui_type == defines.gui_type.entity and event.entity.valid and event.entity.name == base then
+		player.opened = event.entity.surface.find_entity(storage, event.entity.position)
+	end
 	if event.gui_type == defines.gui_type.entity and event.entity.valid and event.entity.name == storage then
 		local floor = event.entity.surface.find_entity(base, event.entity.position)
 		-- create additional GUI for switching input/output mode

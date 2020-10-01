@@ -70,7 +70,7 @@ local recipe2 = {
 }
 local recipe3 = {
 	name = "nutritional-inhaler",
-	localised_name = {"nutritional-inhaler"},
+	localised_name = {"recipe-name.nutritional-inhaler"},
 	type = "recipe",
 	ingredients = {
 		{"bacon-agaric",1},

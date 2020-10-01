@@ -56,7 +56,10 @@ local fakebox = {
 		"placeable-player",
 		"player-creation"
 	},
-	minable = nil, -- mine the container itself
+	minable = {
+		mining_time = 1,
+		result = basename
+	},
 	selection_box = {{-2.5,-2.5},{2.5,2.5}},
 	selection_priority = 40
 }

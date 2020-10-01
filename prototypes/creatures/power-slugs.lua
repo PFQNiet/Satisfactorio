@@ -56,11 +56,16 @@ local greenrecipe1 = {
 	type = "recipe",
 	name = shardname.."-from-"..name.."-manual",
 	localised_name = {"recipe-name.x-from-y",{"item-name."..shardname},{"item-name."..name}},
+	order = "p-1",
 	ingredients = {{name,1}},
 	result = shardname,
 	result_count = 1,
 	energy_required = 4/4,
 	category = "craft-bench",
+	icons = {
+		{icon = "__Satisfactorio__/graphics/icons/"..shardname..".png", icon_size = 64},
+		{icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
+	},
 	hide_from_stats = true,
 	enabled = false
 }
@@ -68,11 +73,16 @@ local greenrecipe2 = {
 	type = "recipe",
 	name = shardname.."-from-"..name,
 	localised_name = {"recipe-name.x-from-y",{"item-name."..shardname},{"item-name."..name}},
+	order = "p-1",
 	ingredients = {{name,1}},
 	result = shardname,
 	result_count = 1,
 	energy_required = 8,
 	category = "constructing",
+	icons = {
+		{icon = "__Satisfactorio__/graphics/icons/"..shardname..".png", icon_size = 64},
+		{icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
+	},
 	hide_from_stats = true,
 	hide_from_player_crafting = true,
 	enabled = false
@@ -119,11 +129,16 @@ local yellowrecipe1 = {
 	type = "recipe",
 	name = shardname.."-from-"..name.."-manual",
 	localised_name = {"recipe-name.x-from-y",{"item-name."..shardname},{"item-name."..name}},
+	order = "p-2",
 	ingredients = {{name,1}},
 	result = shardname,
 	result_count = 2,
 	energy_required = 6/4,
 	category = "craft-bench",
+	icons = {
+		{icon = "__Satisfactorio__/graphics/icons/"..shardname..".png", icon_size = 64},
+		{icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
+	},
 	hide_from_stats = true,
 	enabled = false
 }
@@ -131,11 +146,16 @@ local yellowrecipe2 = {
 	type = "recipe",
 	name = shardname.."-from-"..name,
 	localised_name = {"recipe-name.x-from-y",{"item-name."..shardname},{"item-name."..name}},
+	order = "p-2",
 	ingredients = {{name,1}},
 	result = shardname,
 	result_count = 2,
 	energy_required = 12,
 	category = "constructing",
+	icons = {
+		{icon = "__Satisfactorio__/graphics/icons/"..shardname..".png", icon_size = 64},
+		{icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
+	},
 	hide_from_stats = true,
 	hide_from_player_crafting = true,
 	enabled = false
@@ -182,11 +202,16 @@ local purplerecipe1 = {
 	type = "recipe",
 	name = shardname.."-from-"..name.."-manual",
 	localised_name = {"recipe-name.x-from-y",{"item-name."..shardname},{"item-name."..name}},
+	order = "p-3",
 	ingredients = {{name,1}},
 	result = shardname,
 	result_count = 5,
 	energy_required = 12/4,
 	category = "craft-bench",
+	icons = {
+		{icon = "__Satisfactorio__/graphics/icons/"..shardname..".png", icon_size = 64},
+		{icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
+	},
 	hide_from_stats = true,
 	enabled = false
 }
@@ -194,11 +219,16 @@ local purplerecipe2 = {
 	type = "recipe",
 	name = shardname.."-from-"..name,
 	localised_name = {"recipe-name.x-from-y",{"item-name."..shardname},{"item-name."..name}},
+	order = "p-3",
 	ingredients = {{name,1}},
 	result = shardname,
 	result_count = 5,
 	energy_required = 24,
 	category = "constructing",
+	icons = {
+		{icon = "__Satisfactorio__/graphics/icons/"..shardname..".png", icon_size = 64},
+		{icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
+	},
 	hide_from_stats = true,
 	hide_from_player_crafting = true,
 	enabled = false

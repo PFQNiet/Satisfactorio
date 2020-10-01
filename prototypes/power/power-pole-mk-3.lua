@@ -1,10 +1,13 @@
--- tweak the Small Electric Pole
-local name = "power-pole-mk-1"
-local basename = "small-electric-pole"
+-- tweak the Big Electric Pole
+local name = "power-pole-mk-3"
+local basename = "big-electric-pole"
 local pole = data.raw['electric-pole'][basename]
 pole.icon = "__Satisfactorio__/graphics/icons/"..name..".png"
 pole.icon_mipmaps = 0
 pole.max_health = 1
+pole.selection_box = data.raw['electric-pole']['medium-electric-pole'].selection_box
+pole.collision_box = data.raw['electric-pole']['medium-electric-pole'].collision_box
+pole.supply_area_distance = 1.5
 
 local poleitem = data.raw.item[basename]
 poleitem.icon = pole.icon
@@ -12,9 +15,9 @@ poleitem.icon_mipmaps = 0
 poleitem.stack_size = 50
 
 local ingredients = {
-	{"wire",3},
-	{"iron-stick",1},
-	{"concrete",1}
+	{"advanced-circuit",2},
+	{"steel-pipe",2},
+	{"concrete",3}
 }
 local polerecipe = {
 	name = basename,

@@ -1,6 +1,6 @@
--- tweak the Small Electric Pole
-local name = "power-pole-mk-1"
-local basename = "small-electric-pole"
+-- tweak the Medium Electric Pole
+local name = "power-pole-mk-2"
+local basename = "medium-electric-pole"
 local pole = data.raw['electric-pole'][basename]
 pole.icon = "__Satisfactorio__/graphics/icons/"..name..".png"
 pole.icon_mipmaps = 0
@@ -12,9 +12,9 @@ poleitem.icon_mipmaps = 0
 poleitem.stack_size = 50
 
 local ingredients = {
-	{"wire",3},
-	{"iron-stick",1},
-	{"concrete",1}
+	{"quickwire",6},
+	{"iron-stick",2},
+	{"concrete",2}
 }
 local polerecipe = {
 	name = basename,

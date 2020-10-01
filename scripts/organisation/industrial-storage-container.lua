@@ -18,29 +18,33 @@ local function onBuilt(event)
 		io.addInput(entity, {1,2}, realbox)
 		io.addOutput(entity, {-1,-2}, realbox)
 		io.addOutput(entity, {1,-2}, realbox)
-		entity.operable = false
 		entity.rotatable = false
-		entity.minable = false -- mine the box!
-		entity.destructible = false
 	end
 end
 
 local function onRemoved(event)
 	local entity = event.entity
 	if not entity or not entity.valid then return end
-	if entity.name == box then
-		-- remove the fakebox graphic
-		local fake = entity.surface.find_entity(fakebox, entity.position)
-		if fake and fake.valid then
-			-- remove the input/output
-			io.removeInput(fake, {-1,2}, event)
-			io.removeInput(fake, {1,2}, event)
-			io.removeOutput(fake, {-1,-2}, event)
-			io.removeOutput(fake, {1,-2}, event)
+	if entity.name == fakebox or entity.name == box then
+		local fake = entity.name == fakebox and entity or entity.surface.find_entity(fakebox, entity.position)
+		local real = entity.name == box and entity or entity.surface.find_entity(box, entity.position)
+		-- remove the input/output
+		io.removeInput(fake, {-1,2}, event)
+		io.removeInput(fake, {1,2}, event)
+		io.removeOutput(fake, {-1,-2}, event)
+		io.removeOutput(fake, {1,-2}, event)
+		if entity ~= fake then
 			fake.destroy()
-		else
-			game.print("Could not find the box graphic")
 		end
+		if entity ~= real then
+			real.destroy()
+		end
+	end
+end
+
+local function onGuiOpened(event)
+	if event.entity and event.entity.valid and event.entity.name == fakebox then
+		game.players[event.player_index].opened = event.entity.surface.find_entity(box, event.entity.position)
 	end
 end
 
@@ -54,6 +58,8 @@ return {
 		[defines.events.on_player_mined_entity] = onRemoved,
 		[defines.events.on_robot_mined_entity] = onRemoved,
 		[defines.events.on_entity_died] = onRemoved,
-		[defines.events.script_raised_destroy] = onRemoved
+		[defines.events.script_raised_destroy] = onRemoved,
+
+		[defines.events.on_gui_opened] = onGuiOpened
 	}
 }

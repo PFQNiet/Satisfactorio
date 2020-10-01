@@ -7,6 +7,10 @@ box.icon_mipmaps = 0
 box.max_health = 1
 box.enable_inventory_bar = false
 box.inventory_size = 25
+box.picture = {
+	filename = "__Satisfactorio__/graphics/placeholders/"..name..".png",
+	size = {32,32}
+}
 table.insert(box.flags,"no-automated-item-insertion")
 table.insert(box.flags,"no-automated-item-removal")
 
