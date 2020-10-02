@@ -794,3 +794,51 @@ addTech("mam-quartz-radio-control-unit", "mam/radio-control-unit", "mam", "mam-q
 }, {
 	{type="unlock-recipe",recipe="radio-control-unit"}
 })
+
+addTech("mam-sulfur-sulfur", "mam/sulfur", "mam", "mam-sulfur", "m-8-1", 3, {"hub-tier1-field-research"}, {
+	{"sulfur",10}
+}, {
+	{type="unlock-recipe",recipe="scanner-sulfur"}
+})
+addTech("mam-sulfur-black-powder", "mam/black-powder", "mam", "mam-sulfur", "m-8-2", 3, {"mam-sulfur-sulfur"}, {
+	{"sulfur",50},
+	{"coal",25}
+}, {
+	{type="unlock-recipe",recipe="black-powder"}
+})
+addTech("mam-sulfur-volatile-applications", "mam/key", "mam", "mam-sulfur", "m-8-3", 3, {"mam-sulfur-black-powder"}, {
+	{"black-powder",50}
+}, {})
+addTech("mam-sulfur-nobelisk-detonator", "mam/nobelisk-detonator", "mam", "mam-sulfur", "m-8-4", 180, {"mam-sulfur-volatile-applications"}, {
+	{"encased-industrial-beam",10},
+	{"copper-cable",100},
+	{"object-scanner",5}
+}, {
+	-- {type="unlock-recipe",recipe="nobelisk-detonator"}
+})
+addTech("mam-sulfur-nobelisk", "mam/nobelisk", "mam", "mam-sulfur", "m-8-5", 3, {"mam-sulfur-nobelisk-detonator"}, {
+	{"black-powder",100},
+	{"steel-pipe",100}
+}, {
+	-- {type="unlock-recipe",recipe="nobelisk"}
+})
+addTech("mam-sulfur-rifle", "mam/rifle", "mam", "mam-sulfur", "m-8-6", 180, {"mam-sulfur-volatile-applications"}, {
+	{"steel-pipe",100},
+	{"electronic-circuit",100},
+	{"heavy-modular-frame",5}
+}, {
+	{type="unlock-recipe",recipe="submachine-gun"}
+})
+addTech("mam-sulfur-rifle-cartridges", "mam/rifle-cartridge", "mam", "mam-sulfur", "m-8-7", 3, {"mam-sulfur-rifle"}, {
+	{"black-powder",200},
+	{"steel-pipe",200},
+	{"rubber",200}
+}, {
+	{type="unlock-recipe",recipe="firearm-magazine"}
+})
+addTech("mam-sulfur-inflated-pocket-dimension", "mam/thumbsup", "mam", "mam-sulfur", "m-8-8", 180, {"mam-sulfur-nobelisk","mam-sulfur-rifle-cartridges"}, {
+	{"black-powder",50},
+	{"steel-plate",100}
+}, {
+	{type="character-inventory-slots-bonus",modifier=5}
+})

@@ -15,6 +15,25 @@ function onResearch(event)
 			end
 		end
 	end
+	-- find techs that depend on the tech we just did, and unlock their associated recipe items
+	for _,tech in pairs(technology.force.technologies) do
+		if technology.force.recipes[tech.name] then
+			local match = false
+			local alldone = true
+			for _,req in pairs(tech.prerequisites) do
+				if not req.researched then
+					alldone = false
+					break
+				end
+				if req.name == technology.name then
+					match = true
+				end
+			end
+			if match and alldone then
+				technology.force.recipes[tech.name].enabled = true
+			end
+		end
+	end
 end
 
 return {

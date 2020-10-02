@@ -101,14 +101,6 @@ local function completeElevator(technology)
 		-- disable the recipe and enable the "-done" recipe
 		technology.force.recipes[technology.name].enabled = false
 		technology.force.recipes[technology.name.."-done"].enabled = true
-		-- find techs that depend on the tech we just did, and unlock their associated recipe items
-		for _,tech in pairs(technology.force.technologies) do
-			for _,req in pairs(tech.prerequisites) do
-				if req.name == technology.name then
-					technology.force.recipes[tech.name].enabled = true
-				end
-			end
-		end
 
 		local message = {"message.space-elevator-complete",technology.name,technology.localised_name}
 		technology.force.print(message)

@@ -15,15 +15,6 @@ end
 
 local function completeMam(technology)
 	if string.starts_with(technology.name, "mam") then
-		-- find techs that depend on the tech we just did, and unlock their associated recipe items
-		for _,tech in pairs(technology.force.technologies) do
-			for _,req in pairs(tech.prerequisites) do
-				if req.name == technology.name then
-					technology.force.recipes[tech.name].enabled = true
-				end
-			end
-		end
-
 		local message = {"", {"message.mam-research-complete",technology.name,technology.localised_name}}
 		-- use technology effects for console message
 		for _,effect in pairs(technology.effects) do
