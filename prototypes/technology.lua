@@ -505,12 +505,6 @@ addTech("mam-alien-organisms-structural-analysis", "mam/biomass", "mam", "mam-al
 }, {
 	{type="unlock-recipe",recipe="biomass-from-alien-carapace"}
 })
-addTech("mam-alien-organisms-expanded-toolbelt", "mam/thumbsup", "mam", "mam-alien-organisms", "m-1-3", 300, {"mam-alien-organisms-structural-analysis"}, {
-	{"alien-carapace",5},
-	{"wire",1000}
-}, {
-	{type="character-inventory-slots-bonus",modifier=2}
-})
 addTech("mam-alien-organisms-alien-organs", "mam/alien-organs", "mam", "mam-alien-organisms", "m-1-4", 3, {"hub-tier1-field-research"}, {
 	{"alien-organs",1}
 }, {})
@@ -524,13 +518,13 @@ addTech("mam-alien-organisms-rebar-gun", "mam/rebar-gun", "mam", "mam-alien-orga
 	{"rotor",25},
 	{"screw",500}
 }, {
-	-- {type="unlock-recipe",recipe="rebar-gun"}
+	{type="unlock-recipe",recipe="pistol"}
 })
 addTech("mam-alien-organisms-spiked-rebars", "mam/spiked-rebar", "mam", "mam-alien-organisms", "m-1-7", 3, {"mam-alien-organisms-rebar-gun"}, {
 	{"rotor",25},
 	{"iron-stick",200}
 }, {
-	-- {type="unlock-recipe",recipe="spiked-rebar"}
+	{type="unlock-recipe",recipe="spiked-rebar"}
 })
 addTech("mam-alien-organisms-object-scanner-improvements", "mam/key", "mam", "mam-alien-organisms", "m-1-8", 3, {"mam-alien-organisms-structural-analysis","mam-alien-organisms-organic-properties"}, {
 	{"crystal-oscillator",5},
@@ -550,11 +544,12 @@ addTech("mam-alien-organisms-medicinal-inhaler", "mam/medicinal-inhaler", "mam",
 }, {
 	{type="unlock-recipe",recipe="medicinal-inhaler-from-alien-organs"}
 })
-addTech("mam-alien-organisms-inflated-pocket-dimension", "mam/thumbsup", "mam", "mam-alien-organisms", "m-1-b", 300, {"mam-alien-organisms-organic-properties"}, {
+addTech("mam-alien-organisms-inflated-pocket-dimension", "mam/thumbsup", "mam", "mam-alien-organisms", "m-1-b", 300, {"mam-alien-organisms-structural-analysis","mam-alien-organisms-organic-properties"}, {
+	{"alien-carapace",5},
 	{"alien-organs",5},
-	{"wire",2000}
+	{"wire",3000}
 }, {
-	{type="character-inventory-slots-bonus",modifier=3}
+	{type="character-inventory-slots-bonus",modifier=5}
 })
 
 addTech("mam-caterium-caterium", "mam/caterium-ore", "mam", "mam-caterium", "m-2-1", 3, {"hub-tier1-field-research"}, {

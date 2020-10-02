@@ -1,4 +1,5 @@
 data:extend({
+	{type="ammo-category",name="rebar"},
 	{type="ammo-category",name="infinite"},
 	{type="ammo-category",name="solid-biofuel"}, -- for the Chainsaw
 	{type="fuel-category",name="carbon"}, -- coal, compacted coal, coke
