@@ -581,7 +581,7 @@ addTech("mam-caterium-blade-runners", "mam/blade-runners", "mam", "mam-caterium"
 	{"quickwire",100},
 	{"modular-frame",10}
 }, {
-	-- {type="unlock-recipe",recipe="blade-runners"}
+	{type="unlock-recipe",recipe="blade-runners"}
 })
 addTech("mam-caterium-ai-limiter", "mam/ai-limiter", "mam", "mam-caterium", "m-2-7", 3, {"mam-caterium-caterium-electronics"}, {
 	{"quickwire",200},

@@ -92,6 +92,7 @@ require("prototypes.miners")
 require("prototypes.constructors")
 require("prototypes.vehicles")
 require("prototypes.weapons")
+require("prototypes.equipment")
 require("prototypes.technology")
 require("prototypes.map-tweaks")
 
