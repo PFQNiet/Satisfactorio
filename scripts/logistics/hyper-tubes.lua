@@ -7,6 +7,9 @@ local tube = "hyper-tube"
 local underground = "underground-hyper-tube"
 local entrance = "hyper-tube-entrance"
 local car = entrance.."-car"
+local function isHyperTube(entity)
+	return entity.name == tube or entity.name == underground or entity.name == entrance
+end
 
 local function getUndergroundPipeExit(entrance)
 	if entrance.name ~= underground then return nil end
@@ -18,19 +21,28 @@ local function getUndergroundPipeExit(entrance)
 	end
 	return nil
 end
+local function _array_filter(array, test)
+	local ret = {}
+	for _,item in pairs(array) do
+		if test(item) then
+			table.insert(ret,item)
+		end
+	end
+	return ret
+end
 local function isValidHyperTube(entity)
 	-- ensure this entity, and its neighbours, have fewer than 3 neighbours
-	local neighbours = entity.neighbours
-	if #neighbours[1] > 2 then return false end
-	for _,other in pairs(neighbours[1]) do
-		if #other.neighbours[1] > 2 then return false end
+	local neighbours = _array_filter(entity.neighbours[1], isHyperTube)
+	if #neighbours > 2 then return false end
+	for _,other in pairs(neighbours) do
+		if #_array_filter(other.neighbours[1], isHyperTube) > 2 then return false end
 	end
 	return true
 end
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not entity or not entity.valid then return end
-	if entity.name == tube or entity.name == underground or entity.name == entrance then
+	if isHyperTube(entity) then
 		if not isValidHyperTube(entity) then
 			local player = entity.last_user
 			player.insert{name=entity.name,count=1}
@@ -75,7 +87,7 @@ end
 local function onRotated(event)
 	local entity = event.entity
 	if not entity or not entity.valid then return end
-	if entity.name == tube or entity.name == underground or entity.name == entrance then
+	if isHyperTube(entity) then
 		if not isValidHyperTube(entity) then
 			event.entity.direction = event.previous_direction
 			local player = game.players[event.player_index]
@@ -159,7 +171,7 @@ local function onTick(event)
 				if data.entity.name ~= underground then
 					data.direction = nil
 					for _,neighbour in pairs(data.entity.neighbours[1]) do
-						if neighbour ~= data.entity_last then
+						if neighbour ~= data.entity_last and isHyperTube(neighbour) then
 							-- there can be only one so if we find one then assume it's valid
 							if data.entity.position.y > neighbour.position.y then data.direction = defines.direction.north
 							elseif data.entity.position.x < neighbour.position.x then data.direction = defines.direction.east
