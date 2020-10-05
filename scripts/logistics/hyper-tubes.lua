@@ -1,6 +1,7 @@
 -- hypertube travel is initiated by entering the pseudo-vehicle
 -- this should set control to ghost, spectator to true, and pan the view along the path of the hyper tube until it reaches an exit, ie. an entity with only one connection
 -- uses global['hyper-tube-travel'] to track player -> movement data
+-- uses global['hyper-tube-error-debounce'] to track force -> last error tick to de-duplicate placement errors
 
 local tube = "hyper-tube"
 local underground = "underground-hyper-tube"
@@ -33,15 +34,19 @@ local function onBuilt(event)
 		if not isValidHyperTube(entity) then
 			local player = entity.last_user
 			player.insert{name=entity.name,count=1}
-			player.surface.create_entity{
-				name = "flying-text",
-				position = entity.position,
-				text = {"message.hyper-tube-no-junction"},
-				render_player_index = player.index
-			}
-			player.play_sound{
-				path = "utility/cannot_build"
-			}
+			if not global['hyper-tube-error-debounce'] then global['hyper-tube-error-debounce'] = {} end
+			if not global['hyper-tube-error-debounce'][player.force.index] or global['hyper-tube-error-debounce'][player.force.index] < event.tick then
+				player.surface.create_entity{
+					name = "flying-text",
+					position = entity.position,
+					text = {"message.hyper-tube-no-junction"},
+					render_player_index = player.index
+				}
+				player.play_sound{
+					path = "utility/cannot_build"
+				}
+				global['hyper-tube-error-debounce'][player.force.index] = event.tick + 60
+			end
 			entity.destroy()
 			return
 		end
