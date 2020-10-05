@@ -318,9 +318,9 @@ addTech("hub-tier4-hyper-tubes", "hub/structure", "hub-progressing", "hub-tier4"
 	{"steel-pipe",300},
 	{"encased-industrial-beam",50}
 }, {
-	-- {type="unlock-recipe",recipe="hyper-tube-entrance"},
-	-- {type="unlock-recipe",recipe="hyper-tube"},
-	-- {type="unlock-recipe",recipe="underground-hyper-tube"}
+	{type="unlock-recipe",recipe="hyper-tube-entrance"},
+	{type="unlock-recipe",recipe="hyper-tube"},
+	{type="unlock-recipe",recipe="underground-hyper-tube"}
 })
 addTech("hub-tier4-logistics-mk-3", "hub/logistics", "hub-progressing", "hub-tier4", "a-4-4", 300, {"space-elevator-phase1"}, {
 	{"steel-plate",200},
