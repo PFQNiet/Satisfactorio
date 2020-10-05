@@ -23,6 +23,19 @@ local category = {
 	name = name
 }
 -- adjust Exoskeleton
+data.raw.recipe['exoskeleton-equipment'] = {
+	name = "exoskeleton-equipment",
+	type = "recipe",
+	ingredients = {
+		{"quickwire",50},
+		{"modular-frame",3},
+		{"rotor",3}
+	},
+	result = name,
+	energy_required = 20/4,
+	category = "equipment",
+	enabled = false
+}
 local exoitem = data.raw.item['exoskeleton-equipment']
 exoitem.icon = "__Satisfactorio__/graphics/icons/"..name..".png"
 exoitem.icon_mipmaps = 0
