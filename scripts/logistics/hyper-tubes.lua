@@ -1,5 +1,5 @@
 -- hypertube travel is initiated by entering the pseudo-vehicle
--- this should set control to ghost, spectator to true, and pan the view along the path of the hyper tube until it reaches an exit, ie. an entity with only one connection
+-- this auto-drives the car along the path of the hyper tube until it reaches an exit, ie. an entity with only one connection
 -- uses global['hyper-tube-travel'] to track player -> movement data
 -- uses global['hyper-tube-error-debounce'] to track force -> last error tick to de-duplicate placement errors
 
@@ -127,7 +127,6 @@ local function onVehicle(event)
 			else
 				-- initiate transport
 				local character = player.character
-				player.disassociate_character(character)
 				if not global['hyper-tube-travel'] then global['hyper-tube-travel'] = {} end
 				global['hyper-tube-travel'][player.index] = {
 					car = entity,

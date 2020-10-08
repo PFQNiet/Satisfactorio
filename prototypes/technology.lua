@@ -235,8 +235,8 @@ addTech("hub-tier2-jump-pads", "hub/structure", "hub-progressing", "hub-tier2", 
 	{"iron-plate",300},
 	{"copper-cable",150}
 }, {
-	-- {type="unlock-recipe",recipe="jump-pad"},
-	-- {type="unlock-recipe",recipe="u-jelly-landing-pad"}
+	{type="unlock-recipe",recipe="jump-pad"},
+	{type="unlock-recipe",recipe="u-jelly-landing-pad"}
 })
 addTech("hub-tier2-resource-sink-bonus-program", "hub/factory", "hub-progressing", "hub-tier2", "a-2-4", 300, {"hub-tier0-hub-upgrade-6"}, {
 	{"concrete",400},

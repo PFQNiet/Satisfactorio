@@ -37,7 +37,7 @@ data:extend({
 	{type="item-subgroup",group="logistics",name="logistics-balancing",order="s-a"},
 	{type="item-subgroup",group="logistics",name="logistics-observation",order="s-b"},
 	{type="item-subgroup",group="logistics",name="logistics-wall",order="s-c"},
-	{type="item-subgroup",group="logistics",name="transport-hypertube",order="s-h"},
+	{type="item-subgroup",group="logistics",name="transport-player",order="s-h"},
 	{type="item-subgroup",group="logistics",name="logistics-undo",order="s-undo"},
 	{type="item-subgroup",group="production",name="production-power",order="s-a"},
 	{type="item-subgroup",group="production",name="production-fluid",order="s-b"},

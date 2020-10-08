@@ -39,8 +39,8 @@ local item = {
 	icon = entity.icon,
 	icon_size = 64,
 	stack_size = 50,
-	subgroup = "transport-hypertube",
-	order = "b",
+	subgroup = "transport-player",
+	order = "b[hypertube]-b["..name.."]",
 	place_result = name
 }
 local ingredients = {
@@ -110,8 +110,8 @@ local item = {
 	icon = entity.icon,
 	icon_size = 64,
 	stack_size = 20,
-	subgroup = "transport-hypertube",
-	order = "c",
+	subgroup = "transport-player",
+	order = "b[hypertube]-c["..name.."]",
 	place_result = name
 }
 local ingredients = {
@@ -210,8 +210,8 @@ local item = {
 	icon = entity.icon,
 	icon_size = 64,
 	stack_size = 20,
-	subgroup = "transport-hypertube",
-	order = "a",
+	subgroup = "transport-player",
+	order = "b[hypertube]-a["..name.."]",
 	place_result = name
 }
 local ingredients = {
