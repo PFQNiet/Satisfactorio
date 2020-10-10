@@ -39,7 +39,7 @@ local function onBuilt(event)
 			force = entity.force,
 			raise_built = true
 		}
-		io.addInput(entity, {-1,2.5}, store)
+		io.addInput(entity, {-0.5,3}, store)
 		entity.rotatable = false
 		if not global['awesome-sinks'] then global['awesome-sinks'] = {} end
 		table.insert(global['awesome-sinks'], entity)
@@ -53,7 +53,7 @@ local function onRemoved(event)
 		-- find components
 		local floor = entity.name == base and entity or entity.surface.find_entity(base, entity.position)
 		local store = entity.name == storage and entity or entity.surface.find_entity(storage, entity.position)
-		io.removeInput(floor, {-1,2.5}, event)
+		io.removeInput(floor, {-0.5,3}, event)
 		-- remove from global table
 		for i,x in ipairs(global['awesome-sinks']) do
 			if x == floor then

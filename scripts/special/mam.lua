@@ -43,7 +43,12 @@ local function manageMamGUI(player)
 		end
 		return
 	end
-	if player.opened_gui_type ~= defines.gui_type.entity then return end
+	if player.opened_gui_type ~= defines.gui_type.entity then
+		if player.gui.left['mam-tracking'] then
+			player.gui.left['mam-tracking'].destroy()
+		end
+		return
+	end
 	local entity = player.opened
 	local gui = player.gui.left
 	local frame = gui['mam-tracking']

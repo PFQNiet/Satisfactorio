@@ -9,4 +9,6 @@ belt.fast_replaceable_group = nil
 belt.minable = nil
 belt.selection_priority = 30
 belt.collision_mask = {}
+if not belt.flags then belt.flags = {} end
+table.insert(belt.flags, "not-on-map")
 data:extend({belt})

@@ -200,6 +200,7 @@ silo.selection_box = {{-1.5,-1.5},{1.5,1.5}}
 silo.energy_source = {type="void"}
 silo.rocket_parts_required = 1
 silo.max_health = 1
+silo.fixed_recipe = nil
 
 local siloitem = {
 	icon = "__Satisfactorio__/graphics/icons/the-hub.png",

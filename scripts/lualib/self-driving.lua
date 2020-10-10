@@ -257,7 +257,7 @@ local function onGuiClick(event)
 		local car = getCar(player.vehicle)
 		local list = gui['self-driving-waypoints']
 		local index = list.selected_index
-		if index <= #car.waypoints then
+		if index > 0 and index <= #car.waypoints then
 			table.remove(car.waypoints, index)
 			list.remove_item(index)
 		end

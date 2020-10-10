@@ -1,6 +1,6 @@
 return {
 	["iron-ore"] = 1,
-	["limestone"] = 2,
+	["stone"] = 2,
 	["iron-ingot"] = 2,
 	["screw"] = 2,
 	["coal"] = 3,

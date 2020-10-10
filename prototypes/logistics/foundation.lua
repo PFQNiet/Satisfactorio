@@ -10,7 +10,8 @@ local foundation = {
 	flags = {
 		"placeable-neutral",
 		"placeable-player",
-		"player-creation"
+		"player-creation",
+		"not-on-map"
 	},
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,

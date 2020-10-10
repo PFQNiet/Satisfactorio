@@ -7,7 +7,6 @@
 local gui = require("mod-gui")
 
 local function registerGenerator(burner, generator, accumulator_name)
-	-- components, if passed, should always start with the entity that takes the fuel (for Fusebox use)
 	local accumulator = generator.surface.create_entity{
 		name = accumulator_name,
 		position = generator.position,

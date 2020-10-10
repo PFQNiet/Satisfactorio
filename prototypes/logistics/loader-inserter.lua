@@ -16,6 +16,9 @@ local inserter = {
 	collision_mask = {},
 	selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
 	selection_priority = 30,
+	flags = {
+		"not-on-map"
+	},
 	allow_custom_vectors = true,
 	energy_per_movement = "1W",
 	energy_per_rotation = "1W",
