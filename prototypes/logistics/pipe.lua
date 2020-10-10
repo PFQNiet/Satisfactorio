@@ -8,6 +8,7 @@ pipe.icon = "__Satisfactorio__/graphics/icons/"..name..".png"
 pipe.icon_size = 64
 pipe.icon_mipmaps = 0
 pipe.max_health = 1
+pipe.collision_mask = {"object-layer","train-layer"}
 box.height = 0.0065
 box.base_area = 0.01/box.height
 
