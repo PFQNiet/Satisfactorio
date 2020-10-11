@@ -1,7 +1,6 @@
 --[[
 	Resources are spawned using a poisson-disc distribution, with the small change that nodes outside the bounding box of the generated map are "asleep"
 	Sleeping nodes won't be considered for expansion until the bounding box of generated chunks contains them
-	Uses global['surface-bboxes'] to store bounding box of generated area
 	Uses global['queued-nodes'] to track nodes that should have spawned, but whose location wasn't generated yet
 	Uses global['resources'] to store data relating to resource generation
 	Each resource is a table: {
@@ -155,6 +154,7 @@ local function spawnNode(resource, surface, cx, cy)
 end
 
 local function addNode(resource, surface, x, y)
+	log("- Create "..resource.type.." at "..x..","..y)
 	local gx = math.floor(x/resource.gridsize);
 	local gy = math.floor(y/resource.gridsize);
 	if not resource.grid[surface.index][gy] then resource.grid[surface.index][gy] = {} end
@@ -185,15 +185,16 @@ local function existsNear(mytype, surface, x, y)
 	end
 	return false
 end
-local function scanForResources(surface, bbox, nodecount)
+local function scanForResources(surface, nodecount)
 	-- pick a random number and iterate the groups again until that many have passed
 	local rand = math.random(1,nodecount)
 	for name,data in pairs(global['resources']) do
 		if rand <= #data.nodes[surface.index] then
 			-- found it!
 			local node = data.nodes[surface.index][rand]
-			-- but if the node is outside the bounding box of the surface, put it to sleep
-			if node[1] < bbox[1][1] or node[1] > bbox[2][1] or node[2] < bbox[1][2] or node[2] > bbox[2][2] then
+			log("- "..serpent.line(node))
+			-- but if the node is outside the generated surface, put it to sleep
+			if not surface.is_chunk_generated{x=math.floor(node[1]/32), y=math.floor(node[2]/32)} then
 				table.insert(data.sleep[surface.index], node)
 				table.remove(data.nodes[surface.index], rand)
 			else
@@ -220,41 +221,6 @@ local function scanForResources(surface, bbox, nodecount)
 	end
 end
 
-local function onChunkCharted(event)
-	local surface = game.surfaces[event.surface_index]
-	if not global['surface-bboxes'] then global['surface-bboxes'] = {} end
-	if not global['surface-bboxes'][surface.index] then global['surface-bboxes'][surface.index] = {{-100,-100},{100,100}} end
-	local bbox = global['surface-bboxes'][surface.index]
-	local changed = false
-	if event.area.left_top.x < bbox[1][1] then
-		bbox[1][1] = event.area.left_top.x
-		changed = true
-	end
-	if event.area.left_top.y < bbox[1][2] then
-		bbox[1][2] = event.area.left_top.y
-		changed = true
-	end
-	if event.area.right_bottom.x > bbox[2][1] then
-		bbox[2][1] = event.area.right_bottom.x
-		changed = true
-	end
-	if event.area.right_bottom.y > bbox[2][2] then
-		bbox[2][2] = event.area.right_bottom.y
-		changed = true
-	end
-
-	if changed then
-		-- move all sleeping nodes to open nodes
-		for _,data in pairs(global['resources']) do
-			for k,v in pairs(data.sleep[surface.index]) do
-				if v[1] >= bbox[1][1] and v[1] <= bbox[2][1] and v[2] >= bbox[1][2] and v[2] <= bbox[2][2] then
-					table.remove(data.sleep[surface.index],k)
-					table.insert(data.nodes[surface.index],v)
-				end
-			end
-		end
-	end
-end
 local function onChunkGenerated(event)
 	-- check if this chunk has queued nodes on it and spawn them if so
 	local pos = event.position
@@ -270,6 +236,24 @@ local function onChunkGenerated(event)
 			event.surface.set_tiles(landfill, true, false, false, false)
 		end
 		global['queued-nodes'][pos.y][pos.x] = nil
+	end
+	-- move all sleeping nodes to open nodes
+	local bbox = {event.area.left_top or event.area[1], event.area.right_bottom or event.area[2]}
+	bbox[1] = {bbox[1].x or bbox[1][1], bbox[1].y or bbox[1][2]}
+	bbox[2] = {bbox[2].x or bbox[2][1], bbox[2].y or bbox[2][2]}
+	log("Generated chunk "..serpent.line(bbox))
+	if global['resources'] then
+		for _,data in pairs(global['resources']) do
+			for surfid,nodes in pairs(data.sleep) do
+				for k,v in pairs(nodes) do
+					if v[1] >= bbox[1][1] and v[1] <= bbox[2][1] and v[2] >= bbox[1][2] and v[2] <= bbox[2][2] then
+						log("- Node awoken: "..serpent.line(v))
+						table.remove(data.sleep[surfid],k)
+						table.insert(data.nodes[surfid],v)
+					end
+				end
+			end
+		end
 	end
 end
 
@@ -291,10 +275,7 @@ local function onInit()
 end
 local function onTick()
 	-- check for open nodes and process one
-	if not global['surface-bboxes'] then global['surface-bboxes'] = {} end
 	for _,surface in pairs(game.surfaces) do
-		if not global['surface-bboxes'][surface.index] then global['surface-bboxes'][surface.index] = {{-100,-100},{100,100}} end
-		local bbox = global['surface-bboxes'][surface.index]
 		local total = 0
 		for name,data in pairs(global['resources']) do
 			if not data.nodes[surface.index] then data.nodes[surface.index] = {{0,0}} end
@@ -303,7 +284,8 @@ local function onTick()
 			total = total + #data.nodes[surface.index]
 		end
 		if total > 0 then
-			scanForResources(surface, bbox, total)
+			log(total.." nodes, processing one...")
+			scanForResources(surface, total)
 		end
 	end
 end
@@ -314,7 +296,6 @@ return {
 		[10] = onTick
 	},
 	events = {
-		[defines.events.on_chunk_charted] = onChunkCharted,
 		[defines.events.on_chunk_generated] = onChunkGenerated
 	}
 }

@@ -2,7 +2,8 @@
 local name = "loader-conveyor"
 local belt = table.deepcopy(data.raw['transport-belt']['transport-belt'])
 belt.name = name
-belt.speed = 1
+belt.speed = 8/256
+belt.animation_speed_coefficient = 0
 belt.max_health = 1
 belt.next_upgrade = nil
 belt.fast_replaceable_group = nil
