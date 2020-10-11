@@ -39,7 +39,7 @@ return {
 	["empty-canister"] = 60,
 	["rubber"] = 60,
 	["portable-miner"] = 60,
-	["steel-beam"] = 64,
+	["steel-plate"] = 64,
 	["medicinal-inhaler"] = 67,
 	["plastic-bar"] = 75,
 	["uranium-pellet"] = 112,

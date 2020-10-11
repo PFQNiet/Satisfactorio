@@ -16,3 +16,9 @@ data:extend({
 		action = "lua"
 	}
 })
+-- delete some unused controls
+data.raw['custom-input']['toggle-equipment-movement-bonus'] = nil
+data.raw['custom-input']['toggle-personal-logistic-requests'] = nil
+data.raw['custom-input']['toggle-personal-roboport'] = nil
+data.raw['shortcut']['toggle-equipment-movement-bonus'] = nil
+data.raw['shortcut']['toggle-personal-roboport'] = nil

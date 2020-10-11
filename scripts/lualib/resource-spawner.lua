@@ -94,7 +94,8 @@ local function spawnNode(resource, surface, cx, cy)
 				local entity = {
 					name = slug,
 					position = {tx,ty},
-					force = game.forces.neutral
+					force = game.forces.neutral,
+					raise_built = true
 				}
 				if not surface.is_chunk_generated({chunkpos.x, chunkpos.y}) then
 					if not global['queued-nodes'] then global['queued-nodes'] = {} end
@@ -286,7 +287,7 @@ local function onInit()
 	registerResource("uranium-ore", 1400, 2, 2)
 
 	registerResource("x-plant", 100, 1, 3)
-	registerResource("x-powerslug", 400, 1, 10)
+	registerResource("x-powerslug", 200, 1, 10)
 end
 local function onTick()
 	-- check for open nodes and process one

@@ -29,7 +29,7 @@ local wirerecipe2 = { -- in Constructor
 	ingredients = ingredients,
 	result = name,
 	result_count = 2,
-	energy_required = 3,
+	energy_required = 4,
 	category = "constructing",
 	enabled = false
 }
