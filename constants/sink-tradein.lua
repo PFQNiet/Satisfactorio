@@ -20,7 +20,7 @@ return {
 	["sulfur"] = 11,
 	["concrete"] = 12,
 	["biomass"] = 12,
-	-- ["polymer-resin"] = 12,
+	["polymer-resin"] = 12,
 	["raw-quartz"] = 15,
 	["quickwire"] = 17,
 	["silica"] = 20,

@@ -341,8 +341,11 @@ addTech("hub-tier5-oil-processing", "hub/factory", "hub-progressing", "hub-tier5
 	{type="unlock-recipe",recipe="oil-extractor"},
 	{type="unlock-recipe",recipe="refinery"},
 	{type="unlock-recipe",recipe="plastic-bar"},
+	{type="unlock-recipe",recipe="residual-plastic"},
 	{type="unlock-recipe",recipe="rubber"},
+	{type="unlock-recipe",recipe="residual-rubber"},
 	{type="unlock-recipe",recipe="fuel"},
+	{type="unlock-recipe",recipe="residual-fuel"},
 	{type="unlock-recipe",recipe="petroleum-coke"},
 	{type="unlock-recipe",recipe="electronic-circuit"},
 	{type="unlock-recipe",recipe="scanner-crude-oil"}

@@ -23,7 +23,26 @@ local rubberrecipe = { -- in Refinery
 	main_product = name,
 	energy_required = 6,
 	category = "refining",
+	order = rubber.order.."-a",
+	enabled = false
+}
+local residualrecipe = {
+	name = "residual-"..name,
+	localised_name = {"recipe-name.residual-"..name},
+	type = "recipe",
+	ingredients = {
+		{"polymer-resin",4},
+		{type="fluid",name="water",amount=4}
+	},
+	results = {{name,2}},
+	energy_required = 6,
+	category = "refining",
+	icons = {
+		{ icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64 },
+		{ icon = "__Satisfactorio__/graphics/icons/polymer-resin.png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
+	},
+	order = rubber.order.."-b",
 	enabled = false
 }
 
-data:extend({rubber,rubberrecipe})
+data:extend({rubber,rubberrecipe,residualrecipe})

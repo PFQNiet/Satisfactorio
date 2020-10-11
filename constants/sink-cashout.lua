@@ -57,5 +57,5 @@ return { -- ["item"] = {cost, stack}
 	["plastic-bar"] = {1,100},
 	["rubber"] = {1,100},
 	["packaged-fuel"] = {3,100},
-	-- ["polymer-resin"] = {1,200}
+	["polymer-resin"] = {1,200}
 }

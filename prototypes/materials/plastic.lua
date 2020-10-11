@@ -26,8 +26,28 @@ local platerecipe = { -- in Refinery
 	main_product = basename,
 	energy_required = 6,
 	category = "refining",
+	order = plate.order.."-a",
+	enabled = false
+}
+local residualrecipe = {
+	name = "residual-"..name,
+	localised_name = {"recipe-name.residual-"..name},
+	type = "recipe",
+	ingredients = {
+		{"polymer-resin",6},
+		{type="fluid",name="water",amount=2}
+	},
+	results = {{basename,2}},
+	energy_required = 6,
+	category = "refining",
+	icons = {
+		{ icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64 },
+		{ icon = "__Satisfactorio__/graphics/icons/polymer-resin.png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
+	},
+	order = plate.order.."-b",
 	enabled = false
 }
 
 data.raw.item[basename] = plate
 data.raw.recipe[basename] = platerecipe
+data:extend{residualrecipe}
