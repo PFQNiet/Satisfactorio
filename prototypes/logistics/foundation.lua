@@ -109,6 +109,14 @@ data:extend({
 		}
 	},
 	{
+		type = "custom-input",
+		name = "deconstruct-foundation",
+		key_sequence = "ALT + F",
+		consuming = "game-only",
+		action = "create-blueprint-item",
+		item_to_create = "deconstruct-foundation"
+	},
+	{
 		type = "shortcut",
 		name = "deconstruct-foundation",
 		action = "create-blueprint-item",
