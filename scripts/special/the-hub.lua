@@ -27,15 +27,6 @@ local function findHubForForce(force)
 	if not pos then return nil end
 	return game.get_surface(pos[1]).find_entity(terminal,pos[2])
 end
-local function retrieveItemsFromCraftBench(bench, target)
-	getitems.assembler(bench, target)
-end
-local function retrieveItemsFromStorage(box, target)
-	getitems.storage(box, target)
-end
-local function retrieveItemsFromBurner(burner, target)
-	getitems.burner(burner, target)
-end
 
 local rotations = {
 	[defines.direction.north] = {0,-1},
@@ -140,7 +131,7 @@ local function removeStorageChest(hub, buffer) -- only if it exists
 	local box = hub.surface.find_entity(storage,position(storage_pos,hub))
 	if box and box.valid then
 		if buffer then
-			getitems.storage(box, target)
+			getitems.storage(box, buffer)
 		end
 		box.destroy()
 	end
@@ -171,9 +162,9 @@ local function removeBiomassBurner1(hub, buffer) -- only if it exists
 	local burner = hub.surface.find_entity(biomassburner,position(burner_1_pos,hub))
 	if burner and burner.valid then
 		if buffer then
-			getitems.burner(burner, target)
+			getitems.burner(burner, buffer)
 		end
-		burner.destroy()
+		burner.destroy{raise_destroy=true}
 	end
 	local pole = hub.surface.find_entity(powerpole,position(powerpole_pos,hub))
 	if pole and pole.valid then
@@ -198,9 +189,9 @@ local function removeBiomassBurner2(hub, buffer) -- only if it exists
 	local burner = hub.surface.find_entity(biomassburner,position(burner_2_pos,hub))
 	if burner and burner.valid then
 		if buffer then
-			getitems.burner(burner, target)
+			getitems.burner(burner, buffer)
 		end
-		burner.destroy()
+		burner.destroy{raise_destroy=true}
 	end
 end
 local function buildFreighter(hub)

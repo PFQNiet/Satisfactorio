@@ -153,7 +153,7 @@ local function onVehicle(event)
 		end
 	end
 end
-local SPEED = 0.25 -- tiles per tick, so 0.25 = 15 tiles per second
+local SPEED = 24/60 -- tiles per tick, so 0.25 = 15 tiles per second
 local function onTick(event)
 	if not global['hyper-tube-travel'] then return end
 	for pid,data in pairs(global['hyper-tube-travel']) do

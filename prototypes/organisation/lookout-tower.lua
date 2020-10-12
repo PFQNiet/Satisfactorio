@@ -1,21 +1,24 @@
 local name = "lookout-tower"
 local tower = {
-	type = "radar",
+	type = "constant-combinator",
 	name = name,
+	activity_led_light_offsets = {{0,0},{0,0},{0,0},{0,0}},
+	activity_led_sprites = {
+		filename = "__core__/graphics/empty.png",
+		width = 1,
+		height = 1
+	},
+	circuit_wire_connection_points = data.raw['constant-combinator']['constant-combinator'].circuit_wire_connection_points,
+	item_slot_count = 0,
 	collision_box = {{-1.7,-1.7},{1.7,1.7}},
 	collision_mask = {"item-layer", "object-layer", "water-tile"},
 	selection_box = {{-2,-2},{2,2}},
 	corpse = "big-remnants",
 	dying_explosion = "big-explosion",
-	energy_per_nearby_scan = "1J",
-	max_distance_of_nearby_sector_revealed = 3,
-	energy_per_sector = "1J",
-	max_distance_of_sector_revealed = 0,
-	energy_source = {type="void"},
-	energy_usage = "1W",
 	flags = {
 		"placeable-player",
-		"player-creation"
+		"player-creation",
+		"not-rotatable"
 	},
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
@@ -24,17 +27,10 @@ local tower = {
 		mining_time = 1,
 		result = name
 	},
-	pictures = {
-		direction_count = 1,
+	sprites = {
 		filename = "__Satisfactorio__/graphics/placeholders/"..name..".png",
 		width = 128,
 		height = 128
-	},
-	radius_minimap_visualisation_color = {
-		r = 0.059,
-		g = 0.092,
-		b = 0.235,
-		a = 0.275
 	}
 }
 
