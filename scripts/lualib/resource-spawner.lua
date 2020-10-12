@@ -32,6 +32,25 @@ local function registerResource(name, radius, min, max)
 	}
 end
 
+local function queueEntity(entity, surface, chunkpos)
+	if not global['queued-nodes'] then global['queued-nodes'] = {} end
+	if not global['queued-nodes'][surface.index] then global['queued-nodes'][surface.index] = {} end
+	if not global['queued-nodes'][surface.index][chunkpos.y] then global['queued-nodes'][surface.index][chunkpos.y] = {} end
+	if not global['queued-nodes'][surface.index][chunkpos.y][chunkpos.x] then global['queued-nodes'][surface.index][chunkpos.y][chunkpos.x] = {} end
+	table.insert(global['queued-nodes'][surface.index][chunkpos.y][chunkpos.x], entity)
+end
+local function getQueuedEntities(surface, chunkpos)
+	return global['queued-nodes']
+		and global['queued-nodes'][surface.index]
+		and global['queued-nodes'][surface.index][chunkpos.y]
+		and global['queued-nodes'][surface.index][chunkpos.y][chunkpos.x]
+		or nil
+end
+local function clearQueuedEntities(surface, chunkpos)
+	-- only called if it has been processed, therefore indices must exist already
+	global['queued-nodes'][surface.index][chunkpos.y][chunkpos.x] = nil
+end
+
 local function spawnNode(resource, surface, cx, cy)
 	-- scatter a cluster of nodes, of total purity value between the bounds defined on the resource data, within a radius of 4-8 using a mini-poisson distribution
 	local purity = math.random(resource.size[1], resource.size[2])
@@ -56,7 +75,6 @@ local function spawnNode(resource, surface, cx, cy)
 			local pval = math.random(1,4)
 			if pval > purity then pval = purity end
 			if pval == 3 then pval = 2 end
-			local landfill = {}
 			if resource.type == "x-plant" then
 				pval = 1 -- "purity" is just the number of plants
 				-- "plant" spawns bacon agaric where elevation is near or below 0, paleberry when moisture is >50% and beryl nut otherwise
@@ -76,10 +94,7 @@ local function spawnNode(resource, surface, cx, cy)
 					force = game.forces.neutral
 				}
 				if not surface.is_chunk_generated({chunkpos.x, chunkpos.y}) then
-					if not global['queued-nodes'] then global['queued-nodes'] = {} end
-					if not global['queued-nodes'][chunkpos.y] then global['queued-nodes'][chunkpos.y] = {} end
-					if not global['queued-nodes'][chunkpos.y][chunkpos.x] then global['queued-nodes'][chunkpos.y][chunkpos.x] = {} end
-					table.insert(global['queued-nodes'][chunkpos.y][chunkpos.x], entity)
+					queueEntity(entity, surface, chunkpos)
 				else
 					surface.create_entity(entity)
 				end
@@ -97,55 +112,35 @@ local function spawnNode(resource, surface, cx, cy)
 					raise_built = true
 				}
 				if not surface.is_chunk_generated({chunkpos.x, chunkpos.y}) then
-					if not global['queued-nodes'] then global['queued-nodes'] = {} end
-					if not global['queued-nodes'][chunkpos.y] then global['queued-nodes'][chunkpos.y] = {} end
-					if not global['queued-nodes'][chunkpos.y][chunkpos.x] then global['queued-nodes'][chunkpos.y][chunkpos.x] = {} end
-					table.insert(global['queued-nodes'][chunkpos.y][chunkpos.x], entity)
+					queueEntity(entity, surface, chunkpos)
 				else
 					surface.create_entity(entity)
 				end
 			else
-				for dx=-1,1 do
-					for dy=-1,1 do
-						local tx = cx+dx+math.floor(x+0.5)
-						local ty = cy+dy+math.floor(y+0.5)
-						local chunkpos = {x=math.floor(tx/32), y=math.floor(ty/32)}
-						local entity = {
-							name = resource.type,
-							position = {tx,ty},
-							force = game.forces.neutral,
-							amount = 60*pval
-						}
-						if not surface.is_chunk_generated({chunkpos.x, chunkpos.y}) then
-							if not global['queued-nodes'] then global['queued-nodes'] = {} end
-							if not global['queued-nodes'][chunkpos.y] then global['queued-nodes'][chunkpos.y] = {} end
-							if not global['queued-nodes'][chunkpos.y][chunkpos.x] then global['queued-nodes'][chunkpos.y][chunkpos.x] = {} end
-							table.insert(global['queued-nodes'][chunkpos.y][chunkpos.x], entity)
-							if dx == -1 and dy == -1 then
-								table.insert(global['queued-nodes'][chunkpos.y][chunkpos.x], {
-									name = "small-biter",
-									position = {tx,ty},
-									force = game.forces.enemy
-								})
-							end
-						else
-							if surface.get_tile(tx,ty).collides_with("water-tile") then
-								table.insert(landfill, {name="landfill",position={tx,ty}})
-							end
-							surface.create_entity(entity)
-							if dx == -1 and dy == -1 then
-								surface.create_entity({
-									name = "small-biter",
-									position = {tx,ty},
-									force = game.forces.enemy
-								})
-							end
-						end
-					end
+				local tx = cx+math.floor(x+0.5)
+				local ty = cy+math.floor(y+0.5)
+				local chunkpos = {x=math.floor(tx/32), y=math.floor(ty/32)}
+				local entity = {
+					name = resource.type,
+					position = {tx,ty},
+					force = game.forces.neutral,
+					amount = 60*pval
+				}
+				if not surface.is_chunk_generated({chunkpos.x, chunkpos.y}) then
+					queueEntity(entity, surface, chunkpos)
+					queueEntity({
+						name = "small-biter",
+						position = {tx,ty},
+						force = game.forces.enemy
+					}, surface, chunkpos)
+				else
+					surface.create_entity(entity)
+					surface.create_entity({
+						name = "small-biter",
+						position = {tx,ty},
+						force = game.forces.enemy
+					})
 				end
-			end
-			if #landfill > 0 then
-				surface.set_tiles(landfill, true, false, false, false)
 			end
 			purity = purity - pval
 		end
@@ -154,7 +149,6 @@ local function spawnNode(resource, surface, cx, cy)
 end
 
 local function addNode(resource, surface, x, y)
-	log("- Create "..resource.type.." at "..x..","..y)
 	local gx = math.floor(x/resource.gridsize);
 	local gy = math.floor(y/resource.gridsize);
 	if not resource.grid[surface.index][gy] then resource.grid[surface.index][gy] = {} end
@@ -192,7 +186,6 @@ local function scanForResources(surface, nodecount)
 		if rand <= #data.nodes[surface.index] then
 			-- found it!
 			local node = data.nodes[surface.index][rand]
-			log("- "..serpent.line(node))
 			-- but if the node is outside the generated surface, put it to sleep
 			if not surface.is_chunk_generated{x=math.floor(node[1]/32), y=math.floor(node[2]/32)} then
 				table.insert(data.sleep[surface.index], node)
@@ -224,30 +217,23 @@ end
 local function onChunkGenerated(event)
 	-- check if this chunk has queued nodes on it and spawn them if so
 	local pos = event.position
-	if global['queued-nodes'] and global['queued-nodes'][pos.y] and global['queued-nodes'][pos.y][pos.x] and #global['queued-nodes'][pos.y][pos.x] > 0 then
-		local landfill = {}
-		for _,node in pairs(global['queued-nodes'][pos.y][pos.x]) do
-			if event.surface.get_tile(node.position[1],node.position[2]).collides_with("water-tile") then
-				table.insert(landfill, {name="landfill",position={node.position[1],node.position[2]}})
-			end
+	local surface = event.surface
+	local queued = getQueuedEntities(surface, pos)
+	if queued and #queued > 0 then
+		for _,node in pairs(queued) do
 			event.surface.create_entity(node)
 		end
-		if #landfill > 0 then
-			event.surface.set_tiles(landfill, true, false, false, false)
-		end
-		global['queued-nodes'][pos.y][pos.x] = nil
+		clearQueuedEntities(surface, pos)
 	end
-	-- move all sleeping nodes to open nodes
+	-- move sleeping nodes in this chunk to open nodes
 	local bbox = {event.area.left_top or event.area[1], event.area.right_bottom or event.area[2]}
 	bbox[1] = {bbox[1].x or bbox[1][1], bbox[1].y or bbox[1][2]}
 	bbox[2] = {bbox[2].x or bbox[2][1], bbox[2].y or bbox[2][2]}
-	log("Generated chunk "..serpent.line(bbox))
 	if global['resources'] then
 		for _,data in pairs(global['resources']) do
 			for surfid,nodes in pairs(data.sleep) do
 				for k,v in pairs(nodes) do
 					if v[1] >= bbox[1][1] and v[1] <= bbox[2][1] and v[2] >= bbox[1][2] and v[2] <= bbox[2][2] then
-						log("- Node awoken: "..serpent.line(v))
 						table.remove(data.sleep[surfid],k)
 						table.insert(data.nodes[surfid],v)
 					end
@@ -284,7 +270,6 @@ local function onTick()
 			total = total + #data.nodes[surface.index]
 		end
 		if total > 0 then
-			log(total.." nodes, processing one...")
 			scanForResources(surface, total)
 		end
 	end

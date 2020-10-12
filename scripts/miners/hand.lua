@@ -45,7 +45,7 @@ local function onMined(event)
 				buffer.insert{name="mycelia",count=count}
 			end
 		end
-		if string.starts_with(tile,"red-desert") then
+		if string.starts_with(tile,"red-desert") or tile == "dry-dirt" then
 			local count = math.floor(math.random(1,5)*math.random(1,5)/5) -- 0-5
 			if count > 0 then
 				buffer.insert{name="silica",count=count}

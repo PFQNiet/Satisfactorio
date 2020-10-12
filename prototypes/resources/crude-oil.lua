@@ -10,7 +10,6 @@ ore.minimum = 1
 ore.normal = 60
 ore.map_grid = false
 ore.resource_patch_search_radius = 1
-ore.collision_box = {{-0.1,-0.1},{0.1,0.1}}
 ore.highlight = false
 ore.minable.results = {{
 	type = "fluid",
@@ -24,6 +23,10 @@ ore.resource_patch_search_radius = 0
 ore.order = "f"
 if not ore.flags then ore.flags = {} end
 table.insert(ore.flags,"not-on-map")
+ore.collision_box = {{-0.6,-0.6},{0.6,0.6}}
+ore.selection_box = {{-1.5,-1.5},{1.5,1.5}}
+-- ore.stages.sheet.scale = 3 -- crude oil was already meant to be 3x3
+-- ore.stages.sheet.hr_version.scale = 1.5
 
 local fluid = data.raw.fluid[name]
 fluid.icon = ore.icon

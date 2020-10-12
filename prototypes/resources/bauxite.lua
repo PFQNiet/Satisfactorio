@@ -18,8 +18,8 @@ data:extend(
 			mining_time = 1,
 			result = name
 		},
-		collision_box = {{ -0.1, -0.1}, {0.1, 0.1}},
-		selection_box = {{ -0.5, -0.5}, {0.5, 0.5}},
+		collision_box = {{ -0.6, -0.6}, {0.6, 0.6}},
+		selection_box = {{ -1.5, -1.5}, {1.5, 1.5}},
 		autoplace = nil,
 		stage_counts = {240,200,120,80,60,0,0,0},
 		stages =
@@ -33,6 +33,7 @@ data:extend(
 				frame_count = 8,
 				variation_count = 8,
 				tint = {0.8,0.2,0.2},
+				scale = 3,
 				hr_version =
 				{
 					filename = "__base__/graphics/entity/iron-ore/hr-iron-ore.png",
@@ -42,7 +43,7 @@ data:extend(
 					frame_count = 8,
 					variation_count = 8,
 					tint = {0.8,0.2,0.2},
-					scale = 0.5
+					scale = 1.5
 				}
 			}
 		},

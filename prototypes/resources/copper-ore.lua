@@ -16,6 +16,10 @@ ore.resource_patch_search_radius = 0
 ore.order = "e"
 if not ore.flags then ore.flags = {} end
 table.insert(ore.flags,"not-on-map")
+ore.collision_box = {{-0.6,-0.6},{0.6,0.6}}
+ore.selection_box = {{-1.5,-1.5},{1.5,1.5}}
+ore.stages.sheet.scale = 3
+ore.stages.sheet.hr_version.scale = 1.5
 
 local item = data.raw.item[name]
 item.icon = ore.icon
