@@ -82,3 +82,44 @@ local foundationrecipe_undo = {
 }
 
 data:extend({foundation,foundationitem,foundationrecipe,foundationrecipe_undo})
+
+-- custom deconstruction planner for foundation only
+data:extend({
+	{
+		type = "selection-tool",
+		name = "deconstruct-foundation",
+		subgroup = "tool",
+		stack_size = 1,
+		icons = {
+			{icon = "__base__/graphics/icons/deconstruction-planner.png", icon_size = 64},
+			{icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64}
+		},
+		selection_mode = "any-entity",
+		selection_color = {1,0,0},
+		selection_cursor_box_type = "not-allowed",
+		entity_filters = {name},
+		alt_selection_mode = "any-entity",
+		alt_selection_color = {0,0,1},
+		alt_selection_cursor_box_type = "not-allowed",
+		alt_entity_filters = {name},
+		flags = {
+			"only-in-cursor",
+			"hidden",
+			"not-stackable"
+		}
+	},
+	{
+		type = "shortcut",
+		name = "deconstruct-foundation",
+		action = "create-blueprint-item",
+		item_to_create = "deconstruct-foundation",
+		style = "red",
+		technology_to_unlock = "hub-tier1-base-building",
+		icon = {
+			layers = {
+				{filename = "__base__/graphics/icons/deconstruction-planner.png", width=64, height=64},
+				{filename = "__Satisfactorio__/graphics/icons/"..name..".png", width=64, height=64}
+			}
+		}
+	}
+})

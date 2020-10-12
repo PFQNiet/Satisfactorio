@@ -12,7 +12,19 @@ local function onBuilt(event)
 				table.insert(tiles,{name=tile,position={entity.position.x+dx,entity.position.y+dy}})
 			end
 		end
-		entity.surface.set_tiles(tiles, true, false, false, true)
+		entity.surface.set_tiles(tiles, true, false, true, true)
+		local fish = entity.surface_find_entities_filtered{area=entity.selection_box, type="fish"}
+		for _,f in pairs(fish) do
+			f.destroy()
+		end
+		entity.minable = false
+	else
+		-- if the building is placed on foundation, then prevent that foundation from being deconstructed if it's marked that way
+		local foundations = entity.surface.find_entities_filtered{area=entity.bounding_box, name=foundation}
+		for _,f in pairs(foundations) do
+			f.cancel_deconstruction(f.force)
+			f.minable = false
+		end
 	end
 end
 
@@ -32,6 +44,45 @@ local function onRemoved(event)
 	end
 end
 
+local function onSelectedArea(event)
+	if event.item == "deconstruct-foundation" then
+		local player = game.players[event.player_index]
+		local blocked = 0
+		for _,f in pairs(event.entities) do
+			if f.force == player.force then
+				if #f.surface.find_entities_filtered{area=f.selection_box, force="neutral", invert=true} == 1 then
+					f.minable = true
+					f.order_deconstruction(player.force, player)
+				else
+					blocked = blocked + 1
+				end
+			end
+		end
+		if blocked > 0 then
+			player.print({"message.foundation-blocked",blocked})
+		end
+	end
+end
+local function onDeselectedArea(event)
+	if event.item == "deconstruct-foundation" then
+		local player = game.players[event.player_index]
+		for _,f in pairs(event.entities) do
+			f.cancel_deconstruction(player.force, player)
+			f.minable = false
+		end
+	end
+end
+local function onDeconstruct(event)
+	if event.entity.type == "deconstructible-tile-proxy" then
+		event.entity.cancel_deconstruction(event.entity.force, event.player_index and game.players[event.player_index] or nil)
+	end
+end
+local function onUndoDeconstruct(event)
+	if event.entity.name == foundation then
+		event.entity.minable = false
+	end
+end
+
 return {
 	events = {
 		[defines.events.on_built_entity] = onBuilt,
@@ -42,6 +93,11 @@ return {
 		[defines.events.on_player_mined_entity] = onRemoved,
 		[defines.events.on_robot_mined_entity] = onRemoved,
 		[defines.events.on_entity_died] = onRemoved,
-		[defines.events.script_raised_destroy] = onRemoved
+		[defines.events.script_raised_destroy] = onRemoved,
+
+		[defines.events.on_player_selected_area] = onSelectedArea,
+		[defines.events.on_player_alt_selected_area] = onDeselectedArea,
+		[defines.events.on_marked_for_deconstruction] = onDeconstruct,
+		[defines.events.on_cancelled_deconstruction] = onUndoDeconstruct
 	}
 }
