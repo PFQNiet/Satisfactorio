@@ -4,7 +4,7 @@ local basename = "turbo-underground-belt"
 local sourcename = "express-underground-belt"
 local belt = table.deepcopy(data.raw['underground-belt'][sourcename])
 belt.name = basename
-belt.order = "b[underground-belt]-d["..basename.."]"
+belt.order = "z-b[underground-belt]-d["..basename.."]"
 belt.icon = "__Satisfactorio__/graphics/icons/"..name..".png"
 belt.icon_mipmaps = 0
 belt.max_health = 1
@@ -33,6 +33,7 @@ beltitem.icon = belt.icon
 beltitem.icon_mipmaps = 0
 beltitem.stack_size = 20
 beltitem.place_result = basename
+beltitem.order = belt.order
 
 local ingredients = {{"encased-industrial-beam",8}}
 local beltrecipe = {

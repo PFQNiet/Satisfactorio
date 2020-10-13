@@ -8,6 +8,7 @@ pole.max_health = 1
 pole.selection_box = data.raw['electric-pole']['medium-electric-pole'].selection_box
 pole.collision_box = data.raw['electric-pole']['medium-electric-pole'].collision_box
 pole.supply_area_distance = 1.5
+pole.fast_replaceable_group = data.raw['electric-pole']['medium-electric-pole'].fast_replaceable_group
 
 local poleitem = data.raw.item[basename]
 poleitem.icon = pole.icon

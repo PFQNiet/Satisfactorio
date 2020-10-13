@@ -77,10 +77,10 @@ local splitteritem = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	name = name,
-	order = "b["..name.."]",
+	order = "c[splitter]-b["..name.."]",
 	place_result = name,
 	stack_size = 20,
-	subgroup = "logistics-balancing",
+	subgroup = "belt",
 	type = "item"
 }
 

@@ -5,6 +5,7 @@ local pole = data.raw['electric-pole'][basename]
 pole.icon = "__Satisfactorio__/graphics/icons/"..name..".png"
 pole.icon_mipmaps = 0
 pole.max_health = 1
+pole.next_upgrade = "big-electric-pole"
 
 local poleitem = data.raw.item[basename]
 poleitem.icon = pole.icon

@@ -3,8 +3,8 @@ data:extend({
 	{
 		type = "tool",
 		name = "hard-drive",
-		subgroup = "mam-hard-drive",
-		order = "m-x[hard-drive]",
+		subgroup = "special",
+		order = "z[hard-drive]",
 		stack_size = 100,
 		icon = "__Satisfactorio__/graphics/icons/hard-drive.png",
 		icon_size = 64,

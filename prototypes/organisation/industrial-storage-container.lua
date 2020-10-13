@@ -17,6 +17,7 @@ box.selection_box = {{-1.5,-1.5},{1.5,1.5}}
 box.picture = empty_sprite
 box.minable.mining_time = 1
 box.placeable_by = {item=basename, count=1}
+box.fast_replaceable_group = ""
 
 -- but in order to allow rotation of the box, we need a rotatable entity
 -- apparently constant combinator is the item of choice for that, so...

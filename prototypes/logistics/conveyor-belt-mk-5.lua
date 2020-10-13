@@ -4,7 +4,7 @@ local sourcename = "express-transport-belt"
 local basename = "ultimate-transport-belt"
 local belt = table.deepcopy(data.raw['transport-belt'][sourcename])
 belt.name = basename
-belt.order = "a[transport-belt]-e["..basename.."]"
+belt.order = "z-a[transport-belt]-e["..basename.."]"
 belt.icon = "__Satisfactorio__/graphics/icons/"..name..".png"
 belt.icon_mipmaps = 0
 belt.max_health = 1
@@ -19,6 +19,7 @@ beltitem.icon = belt.icon
 beltitem.icon_mipmaps = 0
 beltitem.stack_size = 50
 beltitem.place_result = basename
+beltitem.order = belt.order
 
 local ingredients = {{"alclad-aluminium-sheet",1}}
 local beltrecipe = {

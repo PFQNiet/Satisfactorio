@@ -77,10 +77,10 @@ local mergeritem = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	name = name,
-	order = "a["..name.."]",
+	order = "c[splitter]-a["..name.."]",
 	place_result = name,
 	stack_size = 20,
-	subgroup = "logistics-balancing",
+	subgroup = "belt",
 	type = "item"
 }
 

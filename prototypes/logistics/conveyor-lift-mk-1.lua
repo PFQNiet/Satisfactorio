@@ -6,6 +6,7 @@ belt.icon = "__Satisfactorio__/graphics/icons/"..name..".png"
 belt.icon_mipmaps = 0
 belt.max_health = 1
 belt.speed = 1/256
+belt.next_upgrade = "fast-underground-belt"
 
 local beltitem = data.raw.item[basename]
 beltitem.icon = belt.icon

@@ -28,7 +28,7 @@ data:extend({
 	{type="recipe-category",name="awesome-shop"},
 	{type="recipe-category",name="coal-generator"},
 	{type="recipe-category",name="nuclear-power"},
-	{type="item-group",name="special",order="a1",icon="__base__/graphics/item-group/effects.png",icon_size=64},
+	{type="item-group",name="special",order="a1",icon="__Satisfactorio__/graphics/item-group/special.png",icon_size=64},
 	{type="item-group",name="milestones",order="a2",icon="__Satisfactorio__/graphics/icons/the-hub.png",icon_size=64},
 	{type="item-group",name="space-elevator",order="a3",icon="__Satisfactorio__/graphics/icons/space-elevator.png",icon_size=64},
 	{type="item-group",name="mam-research",order="a4",icon="__Satisfactorio__/graphics/icons/mam.png",icon_size=64},
@@ -73,6 +73,10 @@ data:extend({
 	{type="item-subgroup",group="mam-research",name="mam-quartz",order="h"},
 	{type="item-subgroup",group="mam-research",name="mam-sulfur",order="i"}
 })
+data.raw['item-group']['logistics'].icon = "__Satisfactorio__/graphics/item-group/logistics.png"
+data.raw['item-group']['production'].icon = "__Satisfactorio__/graphics/item-group/production.png"
+data.raw['item-group']['intermediate-products'].icon = "__Satisfactorio__/graphics/item-group/intermediate-products.png"
+data.raw['item-group']['combat'].icon = "__Satisfactorio__/graphics/item-group/combat.png"
 table.insert(data.raw['god-controller'].default.crafting_categories, "building")
 table.insert(data.raw['god-controller'].default.crafting_categories, "unbuilding")
 table.insert(data.raw['god-controller'].default.mining_categories, "solid")
