@@ -5,7 +5,7 @@ data:extend({
 		name = "hard-drive",
 		subgroup = "mam-hard-drive",
 		order = "m-x[hard-drive]",
-		stack_size = 50,
+		stack_size = 100,
 		icon = "__Satisfactorio__/graphics/icons/hard-drive.png",
 		icon_size = 64,
 		infinite = true
@@ -22,7 +22,8 @@ local recipes = {
 		result = "copper-ingot",
 		result_count = 20,
 		energy_required = 12,
-		category = "foundry"
+		category = "foundry",
+		icons = {"iron-ore"}
 	},
 	{
 		name = "fine-black-powder",
@@ -33,7 +34,8 @@ local recipes = {
 		result = "black-powder",
 		result_count = 4,
 		energy_required = 16,
-		category = "assembling"
+		category = "assembling",
+		icons = {"compacted-coal"}
 	},
 	{
 		name = "caterium-wire",
@@ -43,7 +45,8 @@ local recipes = {
 		result = "wire",
 		result_count = 8,
 		energy_required = 4,
-		category = "constructing"
+		category = "constructing",
+		icons = {"caterium-ingot"}
 	},
 	{
 		name = "fused-quickwire",
@@ -54,7 +57,8 @@ local recipes = {
 		result = "quickwire",
 		result_count = 12,
 		energy_required = 8,
-		category = "assembling"
+		category = "assembling",
+		icons = {"copper-ingot"}
 	},
 	{
 		name = "fused-wire",
@@ -65,7 +69,8 @@ local recipes = {
 		result = "wire",
 		result_count = 30,
 		energy_required = 20,
-		category = "assembling"
+		category = "assembling",
+		icons = {"copper-ingot","caterium-ingot"}
 	},
 	{
 		name = "fine-concrete",
@@ -76,7 +81,8 @@ local recipes = {
 		result = "concrete",
 		result_count = 10,
 		energy_required = 24,
-		category = "assembling"
+		category = "assembling",
+		icons = {"water"}
 	},
 	{
 		name = "radio-control-system",
@@ -88,7 +94,8 @@ local recipes = {
 		result = "radio-control-unit",
 		result_count = 3,
 		energy_required = 48,
-		category = "manufacturing"
+		category = "manufacturing",
+		icons = {"supercomputer"}
 	},
 	{
 		name = "cheap-silica",
@@ -99,7 +106,8 @@ local recipes = {
 		result = "silica",
 		result_count = 7,
 		energy_required = 16,
-		category = "assembling"
+		category = "assembling",
+		icons = {"limestone"}
 	},
 	--[[{
 		name = "seismic-nobelisk",
@@ -111,7 +119,8 @@ local recipes = {
 		result = "nobelisk",
 		result_count = 4,
 		energy_required = 40,
-		category = "manufacturing"
+		category = "manufacturing",
+		icons = {"crystal-oscillator"}
 	},]]
 	{
 		name = "casted-screw",
@@ -121,7 +130,8 @@ local recipes = {
 		result = "screw",
 		result_count = 20,
 		energy_required = 24,
-		category = "constructing"
+		category = "constructing",
+		icons = {"iron-ingot"}
 	},
 	{
 		name = "iron-wire",
@@ -131,7 +141,8 @@ local recipes = {
 		result = "wire",
 		result_count = 9,
 		energy_required = 24,
-		category = "constructing"
+		category = "constructing",
+		icons = {"iron-ingot"}
 	},
 	{
 		name = "iron-alloy-ingot",
@@ -142,7 +153,8 @@ local recipes = {
 		result = "iron-ingot",
 		result_count = 5,
 		energy_required = 6,
-		category = "foundry"
+		category = "foundry",
+		icons = {"copper-ore"}
 	},
 	{
 		name = "bolted-iron-plate",
@@ -153,7 +165,8 @@ local recipes = {
 		result = "reinforced-iron-plate",
 		result_count = 3,
 		energy_required = 12,
-		category = "assembling"
+		category = "assembling",
+		icons = {"screw"}
 	},
 	{
 		name = "stitched-iron-plate",
@@ -164,7 +177,8 @@ local recipes = {
 		result = "reinforced-iron-plate",
 		result_count = 3,
 		energy_required = 32,
-		category = "assembling"
+		category = "assembling",
+		icons = {"wire"}
 	},
 	{
 		name = "bolted-frame",
@@ -175,7 +189,8 @@ local recipes = {
 		result = "modular-frame",
 		result_count = 2,
 		energy_required = 24,
-		category = "assembling"
+		category = "assembling",
+		icons = {"screw"}
 	},
 	{
 		name = "copper-rotor",
@@ -186,7 +201,8 @@ local recipes = {
 		result = "rotor",
 		result_count = 3,
 		energy_required = 16,
-		category = "assembling"
+		category = "assembling",
+		icons = {"copper-sheet"}
 	},
 	{
 		name = "steel-rod",
@@ -196,7 +212,8 @@ local recipes = {
 		result = "iron-stick",
 		result_count = 4,
 		energy_required = 5,
-		category = "constructing"
+		category = "constructing",
+		icons = {"steel-ingot"}
 	},
 	{
 		name = "steeled-frame",
@@ -207,7 +224,8 @@ local recipes = {
 		result = "modular-frame",
 		result_count = 3,
 		energy_required = 60,
-		category = "assembling"
+		category = "assembling",
+		icons = {"steel-pipe"}
 	},
 	{
 		name = "steel-rotor",
@@ -218,7 +236,8 @@ local recipes = {
 		result = "rotor",
 		result_count = 1,
 		energy_required = 12,
-		category = "assembling"
+		category = "assembling",
+		icons = {"steel-pipe"}
 	},
 	{
 		name = "steel-screw",
@@ -228,7 +247,8 @@ local recipes = {
 		result = "screw",
 		result_count = 52,
 		energy_required = 12,
-		category = "constructing"
+		category = "constructing",
+		icons = {"steel-beam"}
 	},
 	{
 		name = "solid-steel-ingot",
@@ -239,7 +259,8 @@ local recipes = {
 		result = "steel-ingot",
 		result_count = 3,
 		energy_required = 3,
-		category = "foundry"
+		category = "foundry",
+		icons = {"iron-ingot"}
 	},
 	{
 		name = "compacted-steel-ingot",
@@ -250,7 +271,8 @@ local recipes = {
 		result = "steel-ingot",
 		result_count = 10,
 		energy_required = 16,
-		category = "foundry"
+		category = "foundry",
+		icons = {"compacted-coal"}
 	},
 	{
 		name = "signal-beacon",
@@ -262,7 +284,8 @@ local recipes = {
 		result = "map-marker",
 		result_count = 20,
 		energy_required = 120,
-		category = "manufacturing"
+		category = "manufacturing",
+		icons = {"crystal-oscillator"}
 	},
 	{
 		name = "biocoal",
@@ -272,7 +295,8 @@ local recipes = {
 		result = "coal",
 		result_count = 6,
 		energy_required = 8,
-		category = "constructing"
+		category = "constructing",
+		icons = {"biomass"}
 	},
 	{
 		name = "charcoal",
@@ -282,7 +306,8 @@ local recipes = {
 		result = "coal",
 		result_count = 10,
 		energy_required = 4,
-		category = "constructing"
+		category = "constructing",
+		icons = {"wood"}
 	},
 	{
 		name = "wet-concrete",
@@ -293,7 +318,8 @@ local recipes = {
 		result = "concrete",
 		result_count = 4,
 		energy_required = 3,
-		category = "refining"
+		category = "refining",
+		icons = {"water"}
 	},
 	{
 		name = "pure-copper-ingot",
@@ -304,7 +330,8 @@ local recipes = {
 		result = "copper-ingot",
 		result_count = 15,
 		energy_required = 24,
-		category = "refining"
+		category = "refining",
+		icons = {"water"}
 	},
 	{
 		name = "steamed-copper-sheet",
@@ -315,7 +342,8 @@ local recipes = {
 		result = "copper-plate",
 		result_count = 3,
 		energy_required = 8,
-		category = "refining"
+		category = "refining",
+		icons = {"water"}
 	},
 	{
 		name = "pure-iron-ingot",
@@ -326,7 +354,8 @@ local recipes = {
 		result = "iron-ingot",
 		result_count = 13,
 		energy_required = 12,
-		category = "refining"
+		category = "refining",
+		icons = {"water"}
 	},
 	{
 		name = "pure-caterium-ingot",
@@ -337,7 +366,8 @@ local recipes = {
 		result = "caterium-ingot",
 		result_count = 1,
 		energy_required = 5,
-		category = "refining"
+		category = "refining",
+		icons = {"water"}
 	},
 	{
 		name = "pure-quartz-crystal",
@@ -348,7 +378,8 @@ local recipes = {
 		result = "quartz-crystal",
 		result_count = 7,
 		energy_required = 8,
-		category = "refining"
+		category = "refining",
+		icons = {"water"}
 	},
 	{
 		name = "compacted-coal",
@@ -359,7 +390,8 @@ local recipes = {
 		result = "compacted-coal",
 		result_count = 5,
 		energy_required = 12,
-		category = "assembling"
+		category = "assembling",
+		icons = {}
 	},
 	{
 		name = "encased-industrial-pipe",
@@ -370,7 +402,8 @@ local recipes = {
 		result = "encased-industrial-beam",
 		result_count = 1,
 		energy_required = 15,
-		category = "assembling"
+		category = "assembling",
+		icons = {"steel-pipe"}
 	},
 	{
 		name = "high-speed-wiring",
@@ -382,7 +415,8 @@ local recipes = {
 		result = "automated-wiring",
 		result_count = 4,
 		energy_required = 32,
-		category = "manufacturing"
+		category = "manufacturing",
+		icons = {"high-speed-connector"}
 	},
 	{
 		name = "quickwire-stator",
@@ -393,7 +427,8 @@ local recipes = {
 		result = "stator",
 		result_count = 2,
 		energy_required = 15,
-		category = "assembling"
+		category = "assembling",
+		icons = {"quickwire"}
 	},
 	{
 		name = "rigour-motor",
@@ -405,7 +440,8 @@ local recipes = {
 		result = "motor",
 		result_count = 6,
 		energy_required = 48,
-		category = "manufacturing"
+		category = "manufacturing",
+		icons = {"crystal-oscillator"}
 	},
 	{
 		name = "heavy-encased-frame",
@@ -418,7 +454,8 @@ local recipes = {
 		result = "heavy-modular-frame",
 		result_count = 3,
 		energy_required = 64,
-		category = "manufacturing"
+		category = "manufacturing",
+		icons = {"concrete"}
 	},
 	{
 		name = "heavy-flexible-frame",
@@ -431,7 +468,8 @@ local recipes = {
 		result = "heavy-modular-frame",
 		result_count = 1,
 		energy_required = 16,
-		category = "manufacturing"
+		category = "manufacturing",
+		icons = {"rubber"}
 	},
 	{
 		name = "caterium-computer",
@@ -443,7 +481,8 @@ local recipes = {
 		result = "computer",
 		result_count = 1,
 		energy_required = 16,
-		category = "manufacturing"
+		category = "manufacturing",
+		icons = {"quickwire"}
 	},
 	{
 		name = "crystal-computer",
@@ -454,7 +493,8 @@ local recipes = {
 		result = "computer",
 		result_count = 3,
 		energy_required = 64,
-		category = "assembling"
+		category = "assembling",
+		icons = {"crystal-oscillator"}
 	},
 	{
 		name = "coated-cable",
@@ -465,7 +505,8 @@ local recipes = {
 		result = "copper-cable",
 		result_count = 9,
 		energy_required = 8,
-		category = "refining"
+		category = "refining",
+		icons = {"heavy-oil-residue"}
 	},
 	{
 		name = "rubber-cable",
@@ -476,7 +517,8 @@ local recipes = {
 		result = "copper-cable",
 		result_count = 20,
 		energy_required = 12,
-		category = "assembling"
+		category = "assembling",
+		icons = {"rubber"}
 	},
 	{
 		name = "electrode-circuit-board",
@@ -487,7 +529,8 @@ local recipes = {
 		result = "electronic-circuit",
 		result_count = 1,
 		energy_required = 12,
-		category = "assembling"
+		category = "assembling",
+		icons = {"petroleum-coke"}
 	},
 	{
 		name = "rubber-concrete",
@@ -498,7 +541,8 @@ local recipes = {
 		result = "concrete",
 		result_count = 9,
 		energy_required = 12,
-		category = "assembling"
+		category = "assembling",
+		icons = {"rubber"}
 	},
 	{
 		name = "heavy-oil-residue",
@@ -511,7 +555,8 @@ local recipes = {
 		},
 		main_product = "heavy-oil",
 		energy_required = 6,
-		category = "refining"
+		category = "refining",
+		icons = {}
 	},
 	{
 		name = "coated-iron-plate",
@@ -522,7 +567,8 @@ local recipes = {
 		result = "iron-plate",
 		result_count = 15,
 		energy_required = 12,
-		category = "assembling"
+		category = "assembling",
+		icons = {"plastic"}
 	},
 	{
 		name = "steel-coated-plate",
@@ -533,7 +579,8 @@ local recipes = {
 		result = "iron-plate",
 		result_count = 18,
 		energy_required = 24,
-		category = "assembling"
+		category = "assembling",
+		icons = {"steel-ingot"}
 	},
 	{
 		name = "diluted-packaged-fuel",
@@ -544,7 +591,8 @@ local recipes = {
 		result = "packaged-fuel",
 		result_count = 2,
 		energy_required = 2,
-		category = "refining"
+		category = "refining",
+		icons = {"packaged-water"}
 	},
 	{
 		name = "recycled-plastic",
@@ -555,7 +603,8 @@ local recipes = {
 		result = "plastic-bar",
 		result_count = 12,
 		energy_required = 12,
-		category = "refining"
+		category = "refining",
+		icons = {"rubber"}
 	},
 	{
 		name = "polymer-resin",
@@ -568,7 +617,8 @@ local recipes = {
 		},
 		main_product = "polymer-resin",
 		energy_required = 6,
-		category = "refining"
+		category = "refining",
+		icons = {}
 	},
 	{
 		name = "adhered-iron-plate",
@@ -579,7 +629,8 @@ local recipes = {
 		result = "reinforced-iron-plate",
 		result_count = 1,
 		energy_required = 16,
-		category = "assembling"
+		category = "assembling",
+		icons = {"rubber"}
 	},
 	{
 		name = "recycled-rubber",
@@ -590,7 +641,8 @@ local recipes = {
 		result = "rubber",
 		result_count = 12,
 		energy_required = 12,
-		category = "refining"
+		category = "refining",
+		icons = {"plastic"}
 	},
 	{
 		name = "plastic-smart-plating",
@@ -602,7 +654,8 @@ local recipes = {
 		result = "smart-plating",
 		result_count = 2,
 		energy_required = 24,
-		category = "manufacturing"
+		category = "manufacturing",
+		icons = {"plastic"}
 	},
 	{
 		name = "coke-steel-ingot",
@@ -613,7 +666,8 @@ local recipes = {
 		result = "steel-ingot",
 		result_count = 20,
 		energy_required = 12,
-		category = "foundry"
+		category = "foundry",
+		icons = {"petroleum-coke"}
 	},
 	{
 		name = "flexible-framework",
@@ -625,7 +679,8 @@ local recipes = {
 		result = "versatile-framework",
 		result_count = 2,
 		energy_required = 16,
-		category = "manufacturing"
+		category = "manufacturing",
+		icons = {"rubber"}
 	},
 	{
 		name = "turbofuel",
@@ -636,7 +691,8 @@ local recipes = {
 		results = {{type="fluid",name="turbofuel",amount=5}},
 		main_product = "turbofuel",
 		energy_required = 16,
-		category = "refining"
+		category = "refining",
+		icons = {}
 	},
 	{
 		name = "turbo-heavy-fuel",
@@ -647,7 +703,8 @@ local recipes = {
 		results = {{type="fluid",name="turbofuel",amount=4}},
 		main_product = "turbofuel",
 		energy_required = 8,
-		category = "refining"
+		category = "refining",
+		icons = {"heavy-oil-residue"}
 	},
 	{
 		name = "quickwire-cable",
@@ -658,7 +715,8 @@ local recipes = {
 		result = "copper-cable",
 		result_count = 11,
 		energy_required = 24,
-		category = "assembling"
+		category = "assembling",
+		icons = {"quickwire"}
 	},
 	{
 		name = "caterium-circuit-board",
@@ -669,7 +727,8 @@ local recipes = {
 		result = "electronic-circuit",
 		result_count = 7,
 		energy_required = 48,
-		category = "assembling"
+		category = "assembling",
+		icons = {"quickwire"}
 	},
 	{
 		name = "silicone-high-speed-connector",
@@ -681,7 +740,8 @@ local recipes = {
 		result = "advanced-circuit",
 		result_count = 2,
 		energy_required = 40,
-		category = "manufacturing"
+		category = "manufacturing",
+		icons = {"silica"}
 	},
 	{
 		name = "polyester-fabric",
@@ -692,7 +752,8 @@ local recipes = {
 		result = "fabric",
 		result_count = 1,
 		energy_required = 12,
-		category = "refining"
+		category = "refining",
+		icons = {"polymer-resin"}
 	},
 	{
 		name = "insulated-crystal-oscillator",
@@ -704,7 +765,8 @@ local recipes = {
 		result = "crystal-oscillator",
 		result_count = 1,
 		energy_required = 32,
-		category = "manufacturing"
+		category = "manufacturing",
+		icons = {"rubber"}
 	},
 	{
 		name = "silicone-circuit-board",
@@ -715,7 +777,8 @@ local recipes = {
 		result = "electronic-circuit",
 		result_count = 5,
 		energy_required = 24,
-		category = "assembling"
+		category = "assembling",
+		icons = {"silica"}
 	},
 	{
 		name = "heat-exchanger",
@@ -726,7 +789,8 @@ local recipes = {
 		result = "heat-sink",
 		result_count = 7,
 		energy_required = 32,
-		category = "assembling"
+		category = "assembling",
+		icons = {"copper-sheet"}
 	},
 	{
 		name = "turbo-rigour-motor",
@@ -739,7 +803,8 @@ local recipes = {
 		result = "turbo-motor",
 		result_count = 3,
 		energy_required = 64,
-		category = "manufacturing"
+		category = "manufacturing",
+		icons = {"ai-limiter"}
 	},
 	{
 		name = "pure-aluminium-ingot",
@@ -749,7 +814,8 @@ local recipes = {
 		result = "aluminium-ingot",
 		result_count = 3,
 		energy_required = 5,
-		category = "smelter"
+		category = "smelter",
+		icons = {}
 	},
 	{
 		name = "electrode-aluminium-scrap",
@@ -763,7 +829,8 @@ local recipes = {
 		},
 		main_product = "aluminium-scrap",
 		energy_required = 2,
-		category = "refining"
+		category = "refining",
+		icons = {"coal"}
 	},
 	{
 		name = "electromagnetic-connection-rod",
@@ -774,7 +841,8 @@ local recipes = {
 		result = "electromagnetic-control-rod",
 		result_count = 10,
 		energy_required = 60,
-		category = "assembling"
+		category = "assembling",
+		icons = {"high-speed-connector"}
 	},
 	{
 		name = "infused-uranium-cell",
@@ -787,7 +855,8 @@ local recipes = {
 		result = "uranium-fuel-cell",
 		result_count = 35,
 		energy_required = 120,
-		category = "manufacturing"
+		category = "manufacturing",
+		icons = {"sulfur"}
 	},
 	{
 		name = "nuclear-fuel-unit",
@@ -800,16 +869,23 @@ local recipes = {
 		result = "nuclear-fuel",
 		result_count = 3,
 		energy_required = 300,
-		category = "manufacturing"
+		category = "manufacturing",
+		icons = {"crystal-oscillator"}
 	}
 }
-for _,r in pairs(recipes) do
+for i,r in pairs(recipes) do
+	local icons = r.icons
+	local product = data.raw.item[r.main_product or r.result] or data.raw.fluid[r.main_product]
+	r.icons = {
+		{icon = product.icon, icon_size = 64}
+	}
+	for i,icon in pairs(icons) do
+		table.insert(r.icons, {icon = "__Satisfactorio__/graphics/icons/"..icon..".png", icon_size = 64, scale = 0.25, shift = {-8, 8-(i-1)*8}})
+	end
 	r.type = "recipe"
 	r.localised_name = {"recipe-name."..r.name}
-	if not (data.raw.item[r.main_product or r.result] or data.raw.fluid[r.main_product]) then
-		error(r.name.." creates "..serpent.line(r.main_product or r.result).." but that doesn't exist as an item")
-	end
-	r.order = (data.raw.item[r.main_product or r.result] or data.raw.fluid[r.main_product]).order.."-alt["..r.name.."]"
+	r.order = product.order.."-x-alt["..i.."]"
+	r.allow_decomposition = r.name == "compacted-coal" or r.name == "turbofuel"
 	r.enabled = false
 end
 data:extend(recipes)

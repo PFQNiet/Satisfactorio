@@ -45,7 +45,6 @@ data:extend({
 	{type="item-subgroup",group="production",name="production-miner",order="s-d"},
 	{type="item-subgroup",group="production",name="production-smelter",order="s-e"},
 	{type="item-subgroup",group="production",name="production-workstation",order="s-f"},
-	{type="item-subgroup",group="production",name="production-powerslugs",order="s-g"},
 	{type="item-subgroup",group="production",name="production-undo",order="s-undo"},
 	{type="item-subgroup",group="intermediate-products",name="organic-resource",order="s-a"},
 	{type="item-subgroup",group="intermediate-products",name="mineral-resource",order="s-b"},
@@ -97,6 +96,10 @@ require("prototypes.equipment")
 require("prototypes.alt-recipes")
 require("prototypes.technology")
 require("prototypes.map-tweaks")
+
+for _,fluid in pairs(data.raw.fluid) do
+	fluid.auto_barrel = false
+end
 
 data:extend({
 	{

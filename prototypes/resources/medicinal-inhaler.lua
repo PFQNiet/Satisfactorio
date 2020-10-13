@@ -53,6 +53,10 @@ local recipe1 = {
 	result = name,
 	energy_required = 5/4,
 	category = "equipment",
+	icons = {
+		{ icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64 },
+		{ icon = "__Satisfactorio__/graphics/icons/mycelia.png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
+	},
 	enabled = false
 }
 local recipe2 = {
@@ -66,6 +70,10 @@ local recipe2 = {
 	result = name,
 	energy_required = 5/4,
 	category = "equipment",
+	icons = {
+		{ icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64 },
+		{ icon = "__Satisfactorio__/graphics/icons/alien-organs.png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
+	},
 	enabled = false
 }
 local recipe3 = {
@@ -80,6 +88,10 @@ local recipe3 = {
 	result = name,
 	energy_required = 5/4,
 	category = "equipment",
+	icons = {
+		{ icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64 },
+		{ icon = "__Satisfactorio__/graphics/icons/bacon-agaric.png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
+	},
 	enabled = false
 }
 

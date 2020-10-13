@@ -21,6 +21,10 @@ local ingotrecipe1 = {
 	result_count = 4,
 	energy_required = 5/4,
 	category = "craft-bench",
+	icons = {
+		{ icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64 },
+		{ icon = "__Satisfactorio__/graphics/icons/water.png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
+	},
 	hide_from_player_crafting = true,
 	enabled = false
 }
@@ -32,6 +36,10 @@ local ingotrecipe2 = { -- in Foundry
 	result_count = 4,
 	energy_required = 3,
 	category = "foundry",
+	icons = {
+		{ icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64 },
+		{ icon = "__Satisfactorio__/graphics/icons/water.png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
+	},
 	enabled = false
 }
 
