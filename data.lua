@@ -28,10 +28,10 @@ data:extend({
 	{type="recipe-category",name="awesome-shop"},
 	{type="recipe-category",name="coal-generator"},
 	{type="recipe-category",name="nuclear-power"},
-	{type="item-group",name="special",order="a",icon="__base__/graphics/item-group/effects.png",icon_size=64},
-	{type="item-group",name="milestones",order="h",icon="__Satisfactorio__/graphics/icons/the-hub.png",icon_size=64},
-	{type="item-group",name="space-elevator",order="i",icon="__Satisfactorio__/graphics/icons/space-elevator.png",icon_size=64},
-	{type="item-group",name="mam-research",order="j",icon="__Satisfactorio__/graphics/icons/mam.png",icon_size=64},
+	{type="item-group",name="special",order="a1",icon="__base__/graphics/item-group/effects.png",icon_size=64},
+	{type="item-group",name="milestones",order="a2",icon="__Satisfactorio__/graphics/icons/the-hub.png",icon_size=64},
+	{type="item-group",name="space-elevator",order="a3",icon="__Satisfactorio__/graphics/icons/space-elevator.png",icon_size=64},
+	{type="item-group",name="mam-research",order="a4",icon="__Satisfactorio__/graphics/icons/mam.png",icon_size=64},
 	{type="item-subgroup",group="special",name="special",order="s-a"},
 	{type="item-subgroup",group="special",name="special-undo",order="s-undo"},
 	{type="item-subgroup",group="logistics",name="logistics-balancing",order="s-a"},
@@ -94,6 +94,7 @@ require("prototypes.constructors")
 require("prototypes.vehicles")
 require("prototypes.weapons")
 require("prototypes.equipment")
+require("prototypes.alt-recipes")
 require("prototypes.technology")
 require("prototypes.map-tweaks")
 

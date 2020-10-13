@@ -88,6 +88,7 @@ local function addTech(name, icon, category, subgroup, order, time, prerequisite
 			effects = effects
 		}
 	})
+	return data.raw.technology[name]
 end
 
 data:extend({
@@ -828,3 +829,11 @@ addTech("mam-sulfur-inflated-pocket-dimension", "mam/thumbsup", "mam", "mam-sulf
 }, {
 	{type="character-inventory-slots-bonus",modifier=5}
 })
+
+--[[ ALT RECIPES ]]--
+local alt_recipe_tech = addTech("mam-hard-drive", "mam/hard-drive", "mam", "mam-hard-drive", "m-0", 600, {"hub-tier1-field-research"}, {
+	{"hard-drive",1}
+}, {
+	{type="nothing",effect_description={"technology-effect.alt-recipe"}}
+})
+alt_recipe_tech.max_level = "infinite"
