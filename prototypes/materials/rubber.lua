@@ -42,6 +42,7 @@ local residualrecipe = {
 		{ icon = "__Satisfactorio__/graphics/icons/polymer-resin.png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
 	},
 	order = rubber.order.."-b",
+	allow_decomposition = false,
 	enabled = false
 }
 
