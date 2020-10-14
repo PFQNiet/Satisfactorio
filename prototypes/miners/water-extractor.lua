@@ -65,17 +65,18 @@ local extractor = {
 }
 -- "placeholder" that can be placed on any water tiles, will spawn a water "resource node" beneath itself
 local placeholder = {
-	type = "constant-combinator",
+	type = "electric-energy-interface",
 	name = name.."-placeholder",
-	activity_led_light_offsets = {{0,0},{0,0},{0,0},{0,0}},
-	activity_led_sprites = {
-		filename = "__core__/graphics/empty.png",
-		width = 1,
-		height = 1
+	energy_source = {
+		type = "electric",
+		buffer_capacity = "20MJ",
+		usage_priority = "secondary-input",
+		drain = "0W",
+		input_flow_limit = "30MW",
+		output_flow_limit = "0W"
 	},
-	circuit_wire_connection_points = data.raw['constant-combinator']['constant-combinator'].circuit_wire_connection_points,
-	item_slot_count = 0,
-	sprites = extractor.animations,
+	energy_usage = "20MW",
+	animations = extractor.animations,
 	max_health = 1,
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,

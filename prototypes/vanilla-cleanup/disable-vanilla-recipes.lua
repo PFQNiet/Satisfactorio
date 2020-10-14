@@ -46,6 +46,7 @@ local to_hide = {
 	"logistic-robot", "construction-robot", "logistic-chest-active-provider", "logistic-chest-passive-provider", "logistic-chest-storage", "logistic-chest-buffer", "logistic-chest-requester", "roboport",
 	"small-lamp", "red-wire", "green-wire", "arithmetic-combinator", "decider-combinator", "constant-combinator", "power-switch", "programmable-speaker",
 	"stone-brick", "hazard-concrete", "refined-concrete", "refined-hazard-concrete", "landfill", "cliff-explosives",
+	"repair-pack",
 	"boiler", "steam-engine", "solar-panel", "accumulator", "nuclear-reactor", "heat-pipe", "heat-exchanger", "steam-turbine",
 	"burner-mining-drill", "electric-mining-drill", "offshore-pump", "pumpjack",
 	"stone-furnace", "steel-furnace", "electric-furnace",
@@ -66,7 +67,7 @@ local to_hide = {
 for _,key in pairs(to_hide) do
 	local item = data.raw.item[key] or data.raw['item-with-entity-data'][key] or data.raw.tool[key] or data.raw.module[key]
 		or data.raw.gun[key] or data.raw.ammo[key] or data.raw.capsule[key] or data.raw.armor[key]
-		or data.raw['spidertron-remote'][key]
+		or data.raw['spidertron-remote'][key] or data.raw['repair-tool'][key]
 	if not item.flags then item.flags = {} end
 	table.insert(item.flags, "hidden")
 end

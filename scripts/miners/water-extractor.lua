@@ -19,6 +19,10 @@ local function onBuilt(event)
 			force = entity.force,
 			raise_built = true
 		}
+		local fish = entity.surface.find_entities_filtered{area=entity.selection_box, type="fish"}
+		for _,f in pairs(fish) do
+			f.destroy()
+		end
 		entity.destroy()
 	end
 end

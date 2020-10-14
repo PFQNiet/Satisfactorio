@@ -39,7 +39,7 @@ local function onBuilt(event)
 		io.addInput(entity, {-2,10}, boil)
 		io.addOutput(entity, {2,10}, boil, defines.direction.south)
 		powertrip.registerGenerator(boil, gen, accumulator)
-		-- make the base intangible
+		-- make the base intangible (TODO: remove the base outright and put graphics on the child entities instead)
 		entity.operable = false
 		entity.minable = false
 		entity.destructible = false
