@@ -10,7 +10,6 @@ local colours = {
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not entity or not entity.valid then return end
-	log("Built "..entity.name.." = "..serpent.line(colours[entity.name]))
 	if not colours[entity.name] then return end
 	rendering.draw_light{
 		sprite = "utility/light_medium",

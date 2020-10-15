@@ -44,5 +44,7 @@ cloud.created_effect[2].distance = 13.8
 cloud.action.action_delivery.target_effects.action.radius = 16
 cloud.action.action_delivery.target_effects.action.action_delivery.target_effects.damage.amount = 1
 cloud.action_cooldown = 12 -- 5 dps
-cloud.color = {0.239,0.992,0.426,0.69}
-data.raw['smoke-with-trigger']['poison-cloud-visual-dummy'].color = {0.014,0.395,0.128,0.322}
+cloud.color = {0.239/2,0.992/2,0.426/2,0.69/2}
+
+cloud = data.raw['smoke-with-trigger']['poison-cloud-visual-dummy']
+cloud.color = {0.014/2,0.395/2,0.128/2,0.322/2}
