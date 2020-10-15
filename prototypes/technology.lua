@@ -383,8 +383,8 @@ addTech("hub-tier5-gas-mask", "hub/equipment", "hub-progressing", "hub-tier5", "
 	{"plastic-bar",100},
 	{"fabric",50}
 }, {
-	-- {type="unlock-recipe",recipe="gas-mask"},
-	-- {type="unlock-recipe",recipe="gas-filter"}
+	{type="unlock-recipe",recipe="gas-mask"},
+	{type="unlock-recipe",recipe="gas-filter"}
 })
 addTech("hub-tier6-expanded-power-infrastructure", "hub/logistics", "hub-progressing", "hub-tier6", "a-6-1", 900, {"space-elevator-phase2"}, {
 	{"heavy-modular-frame",50},

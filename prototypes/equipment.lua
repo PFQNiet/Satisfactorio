@@ -1,4 +1,5 @@
 require("prototypes.equipment.blade-runners")
+require("prototypes.equipment.gas-mask")
 
 -- generic power source for all equipment
 data:extend({
