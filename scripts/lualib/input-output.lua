@@ -21,7 +21,7 @@ local function addInput(entity, offset, target, direction)
 	}
 	local inserter_left = entity.surface.create_entity{
 		name = "loader-inserter",
-		position = position,
+		position = entity.position,
 		direction = (entity.direction + direction) % 8,
 		force = entity.force,
 		raise_built = true
@@ -33,7 +33,7 @@ local function addInput(entity, offset, target, direction)
 	inserter_left.destructible = false
 	local inserter_right = entity.surface.create_entity{
 		name = "loader-inserter",
-		position = position,
+		position = entity.position,
 		direction = (entity.direction + direction) % 8,
 		force = entity.force,
 		raise_built = true
@@ -116,7 +116,7 @@ local function addOutput(entity, offset, target, direction)
 	}
 	local inserter_left = entity.surface.create_entity{
 		name = "loader-inserter",
-		position = position,
+		position = entity.position,
 		direction = (entity.direction+direction)%8,
 		force = entity.force,
 		raise_built = true
@@ -128,7 +128,7 @@ local function addOutput(entity, offset, target, direction)
 	inserter_left.destructible = false
 	local inserter_right = entity.surface.create_entity{
 		name = "loader-inserter",
-		position = position,
+		position = entity.position,
 		direction = (entity.direction+direction)%8,
 		force = entity.force,
 		raise_built = true
