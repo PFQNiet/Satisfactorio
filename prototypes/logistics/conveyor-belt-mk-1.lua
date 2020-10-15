@@ -12,6 +12,7 @@ local beltitem = data.raw.item[basename]
 beltitem.icon = belt.icon
 beltitem.icon_mipmaps = 0
 beltitem.stack_size = 50
+beltitem.order = belt.order
 
 local ingredients = {{"iron-plate",1}}
 local beltrecipe = {
