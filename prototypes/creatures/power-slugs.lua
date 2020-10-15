@@ -42,12 +42,36 @@ local green = {
 	max_health = 1,
 	type = "simple-entity-with-owner"
 }
+local greendec = {
+	picture = {
+		filename = "__Satisfactorio__/graphics/icons/"..name..".png",
+		size = {64,64},
+	},
+	collision_box = {{-0.8,-0.8},{0.8,0.8}},
+	corpse = "big-remnants",
+	dying_explosion = "big-explosion",
+	flags = {
+		"placeable-neutral"
+	},
+	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon_size = 64,
+	max_health = 1,
+	minable = {
+		mining_time = 0.5,
+		result = name
+	},
+	name = name.."-decorative",
+	selection_box = {{-1,-1},{1,1}},
+	render_layer = "object",
+	max_health = 1,
+	type = "simple-entity-with-owner"
+}
 local greenitem = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	name = name,
 	order = "k[power-slugs]-b["..name.."]",
-	place_result = name,
+	place_result = name.."-decorative",
 	stack_size = 50,
 	subgroup = "mineral-resource",
 	type = "item"
@@ -115,12 +139,36 @@ local yellow = {
 	max_health = 1,
 	type = "simple-entity-with-owner"
 }
+local yellowdec = {
+	picture = {
+		filename = "__Satisfactorio__/graphics/icons/"..name..".png",
+		size = {64,64},
+	},
+	collision_box = {{-0.8,-0.8},{0.8,0.8}},
+	corpse = "big-remnants",
+	dying_explosion = "big-explosion",
+	flags = {
+		"placeable-neutral"
+	},
+	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon_size = 64,
+	max_health = 1,
+	minable = {
+		mining_time = 0.5,
+		result = name
+	},
+	name = name.."-decorative",
+	selection_box = {{-1,-1},{1,1}},
+	render_layer = "object",
+	max_health = 1,
+	type = "simple-entity-with-owner"
+}
 local yellowitem = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	name = name,
 	order = "k[power-slugs]-c["..name.."]",
-	place_result = name,
+	place_result = name.."-decorative",
 	stack_size = 50,
 	subgroup = "mineral-resource",
 	type = "item"
@@ -188,12 +236,36 @@ local purple = {
 	max_health = 1,
 	type = "simple-entity-with-owner"
 }
+local purpledec = {
+	picture = {
+		filename = "__Satisfactorio__/graphics/icons/"..name..".png",
+		size = {64,64},
+	},
+	collision_box = {{-0.8,-0.8},{0.8,0.8}},
+	corpse = "big-remnants",
+	dying_explosion = "big-explosion",
+	flags = {
+		"placeable-neutral"
+	},
+	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon_size = 64,
+	max_health = 1,
+	minable = {
+		mining_time = 0.5,
+		result = name
+	},
+	name = name.."-decorative",
+	selection_box = {{-1,-1},{1,1}},
+	render_layer = "object",
+	max_health = 1,
+	type = "simple-entity-with-owner"
+}
 local purpleitem = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	name = name,
 	order = "k[power-slugs]-d["..name.."]",
-	place_result = name,
+	place_result = name.."-decorative",
 	stack_size = 50,
 	subgroup = "mineral-resource",
 	type = "item"
@@ -236,7 +308,7 @@ local purplerecipe2 = {
 
 data:extend({
 	powershard,
-	green,greenitem,greenrecipe1,greenrecipe2,
-	yellow,yellowitem,yellowrecipe1,yellowrecipe2,
-	purple,purpleitem,purplerecipe1,purplerecipe2
+	green,greendec,greenitem,greenrecipe1,greenrecipe2,
+	yellow,yellowdec,yellowitem,yellowrecipe1,yellowrecipe2,
+	purple,purpledec,purpleitem,purplerecipe1,purplerecipe2
 })

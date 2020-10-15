@@ -2,6 +2,7 @@ local handler = require("event_handler")
 
 handler.add_lib(require("scripts.freeplay"))
 handler.add_lib(require("scripts.indestructible"))
+handler.add_libraries(require("scripts.creatures"))
 handler.add_libraries(require("scripts.constructors"))
 handler.add_libraries(require("scripts.miners"))
 handler.add_libraries(require("scripts.special"))
