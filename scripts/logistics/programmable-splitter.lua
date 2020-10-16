@@ -334,6 +334,8 @@ local function onGuiClick(event)
 					local i = #list.children+1
 					if i > 32 then
 						break
+					elseif i == 32 then
+						game.players[pid].gui.screen['programmable-splitter'].content.table[cell].children[3].enabled = false
 					end
 					addFilterEntry(list, struct, dir, i)
 				end
