@@ -175,6 +175,8 @@ local function onDriving(event)
 			menu.style.top_margin = 4
 			menu.style.bottom_margin = 4
 			menu.style.horizontally_stretchable = true
+			menu.style.minimal_height = 200
+			menu.style.maximal_height = 200
 
 			refreshGui(car, menu)
 			menu.selected_index = #menu.items
