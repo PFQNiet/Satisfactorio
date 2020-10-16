@@ -11,7 +11,7 @@ local splitter = {
 	activity_led_light_offsets = {{0,0},{0,0},{0,0},{0,0}},
 	activity_led_sprites = empty_sprite,
 	circuit_wire_connection_points = data.raw['constant-combinator']['constant-combinator'].circuit_wire_connection_points,
-	item_slot_count = 0,
+	item_slot_count = 96,
 	sprites = {
 		north = {
 			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-n.png",
@@ -39,7 +39,8 @@ local splitter = {
 	flags = {
 		"placeable-neutral",
 		"placeable-player",
-		"player-creation"
+		"player-creation",
+		"hide-alt-info"
 	},
 	minable = {
 		mining_time = 0.5,
@@ -49,6 +50,7 @@ local splitter = {
 }
 local bufferbox = {
 	collision_box = {{-0.2,-0.2},{0.2,0.2}},
+	collision_mask = {},
 	corpse = "big-remnants",
 	dying_explosion = "big-explosion",
 	enable_inventory_bar = false,

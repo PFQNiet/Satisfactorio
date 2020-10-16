@@ -49,6 +49,7 @@ local merger = {
 }
 local bufferbox = {
 	collision_box = {{-0.2,-0.2},{0.2,0.2}},
+	collision_mask = {},
 	corpse = "big-remnants",
 	dying_explosion = "big-explosion",
 	enable_inventory_bar = false,
