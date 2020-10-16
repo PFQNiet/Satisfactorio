@@ -25,6 +25,7 @@ local inserter = {
 	energy_source = {type="void"},
 	extension_speed = 10,
 	rotation_speed = 0.5,
+	filter_count = 5,
 	pickup_position = {0, -1},
 	insert_position = {0, 1.2},
 	draw_held_item = false,

@@ -590,7 +590,7 @@ addTech("mam-caterium-smart-splitter", "mam/smart-splitter", "mam", "mam-cateriu
 	{"processing-unit",10},
 	{"reinforced-iron-plate",50}
 }, {
-	-- {type="unlock-recipe",recipe="smart-splitter"}
+	{type="unlock-recipe",recipe="smart-splitter"}
 })
 addTech("mam-caterium-high-speed-connector", "mam/high-speed-connector", "mam", "mam-caterium", "m-2-a", 3, {"mam-caterium-ai-limiter"}, {
 	{"quickwire",500},
@@ -621,7 +621,7 @@ addTech("mam-caterium-programmable-splitter", "mam/programmable-splitter", "mam"
 	{"supercomputer",50},
 	{"heavy-modular-frame",50}
 }, {
-	-- {type="unlock-recipe",recipe="programmable-splitter"}
+	{type="unlock-recipe",recipe="programmable-splitter"}
 })
 addTech("mam-caterium-geothermal-generator", "mam/geothermal-generator", "mam", "mam-caterium", "m-2-f", 480, {"mam-caterium-supercomputer"}, {
 	{"supercomputer",50},

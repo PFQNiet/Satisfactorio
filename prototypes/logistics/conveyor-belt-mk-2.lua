@@ -1,6 +1,7 @@
 local name = "conveyor-belt-mk-2"
 local basename = "fast-transport-belt"
 local belt = data.raw['transport-belt'][basename]
+belt.order = "a[transport-belt]-b["..basename.."]"
 belt.icon = "__Satisfactorio__/graphics/icons/"..name..".png"
 belt.icon_mipmaps = 0
 belt.max_health = 1

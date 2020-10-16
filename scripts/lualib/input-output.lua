@@ -28,7 +28,8 @@ local function addInput(entity, offset, target, direction)
 	}
 	inserter_left.pickup_position = math2d.position.add(position, math2d.position.rotate_vector({-0.25,0.25},((entity.direction+direction)%8)/8*360))
 	inserter_left.drop_position = (target or entity).position
-	--inserter_left.operable = false
+	inserter_left.inserter_filter_mode = "blacklist" -- allow all items by default, specific uses may override this
+	inserter_left.operable = false
 	inserter_left.minable = false
 	inserter_left.destructible = false
 	local inserter_right = entity.surface.create_entity{
@@ -40,7 +41,8 @@ local function addInput(entity, offset, target, direction)
 	}
 	inserter_right.pickup_position = math2d.position.add(position, math2d.position.rotate_vector({0.25,0.25},((entity.direction+direction)%8)/8*360))
 	inserter_right.drop_position = (target or entity).position
-	--inserter_right.operable = false
+	inserter_right.inserter_filter_mode = "blacklist" -- allow all items by default, specific uses may override this
+	inserter_right.operable = false
 	inserter_right.minable = false
 	inserter_right.destructible = false
 	local visual = rendering.draw_sprite{
@@ -89,8 +91,8 @@ local function removeInput(entity, offset, event)
 		game.print("Could not find the loader belt")
 	end
 	for _=1,2 do
-		-- both inserters behave the same so...
-		local inserter = entity.surface.find_entity("loader-inserter",position)
+		-- both inserters behave the same so... (also note that removing these should only be done on entity removal, in which case ALL inserters get yeeted, so order doesn't matter)
+		local inserter = entity.surface.find_entity("loader-inserter",entity.position)
 		if inserter and inserter.valid then
 			if inserter.held_stack and inserter.held_stack.valid_for_read then
 				addToBufferOrSpillStack(inserter.held_stack, entity, event.buffer or nil)
@@ -123,7 +125,8 @@ local function addOutput(entity, offset, target, direction)
 	}
 	inserter_left.pickup_position = (target or entity).position
 	inserter_left.drop_position = math2d.position.add(position, math2d.position.rotate_vector({-0.25,-0.49},((entity.direction+direction)%8)/8*360))
-	--inserter_left.operable = false
+	inserter_left.inserter_filter_mode = "blacklist" -- allow all items by default, specific uses may override this
+	inserter_left.operable = false
 	inserter_left.minable = false
 	inserter_left.destructible = false
 	local inserter_right = entity.surface.create_entity{
@@ -135,7 +138,8 @@ local function addOutput(entity, offset, target, direction)
 	}
 	inserter_right.pickup_position = (target or entity).position
 	inserter_right.drop_position = math2d.position.add(position, math2d.position.rotate_vector({0.25,-0.49},((entity.direction+direction)%8)/8*360))
-	--inserter_right.operable = false
+	inserter_right.inserter_filter_mode = "blacklist" -- allow all items by default, specific uses may override this
+	inserter_right.operable = false
 	inserter_right.minable = false
 	inserter_right.destructible = false
 	local visual = rendering.draw_sprite{
