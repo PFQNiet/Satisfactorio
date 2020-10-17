@@ -246,7 +246,11 @@ local function onGuiOpened(event)
 				list.style.minimal_height = 400
 				list.style.maximal_height = 400
 				list.style.minimal_width = 240
-				local button = col.add{
+
+				title.add{
+					type = "empty-widget"
+				}.style.horizontally_stretchable = true
+				local button = title.add{
 					type = "sprite-button",
 					name = "programmable-splitter-"..dir.."-add",
 					style = "tool_button_green",
@@ -270,6 +274,7 @@ local function onGuiOpened(event)
 			for i=1,fcount do
 				addFilterEntry(list, struct, dir, i)
 			end
+			col.title.children[3].enabled = fcount < 32
 		end
 		
 		gui.visible = true
@@ -316,7 +321,7 @@ local function onGuiClick(event)
 					if i > 32 then
 						break
 					elseif i == 32 then
-						game.players[pid].gui.screen['programmable-splitter'].columns["filter-"..dir].children[3].enabled = false
+						game.players[pid].gui.screen['programmable-splitter'].columns["filter-"..dir].title[event.element.name].enabled = false
 					end
 					addFilterEntry(list, struct, dir, i)
 					if event.player_index == pid then list.scroll_to_bottom() end
