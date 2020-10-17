@@ -200,6 +200,39 @@ local function onTick(event)
 	end
 end
 
+local function fullGuiUpdate(struct, columns)
+	for _,dir in pairs({"left","forward","right"}) do
+		local list = columns["filter-"..dir].filters
+		list.clear()
+		local flow = list.add{type = "flow"}
+		flow.style.vertical_align = "center"
+		flow.style.minimal_height = 40
+		local menu = flow.add{
+			type = "drop-down",
+			name = "smart-splitter-"..dir.."-selection",
+			items = {
+				"None",
+				{"","[img=virtual-signal.signal-any] ",{"gui.smart-splitter-any"}},
+				{"","[img=virtual-signal.signal-any-undefined] ",{"gui.smart-splitter-any-undefined"}},
+				{"","[img=virtual-signal.signal-overflow] ",{"gui.smart-splitter-overflow"}},
+				"Item..."
+			},
+			selected_index = struct.filters[dir] and (({
+				["any"] = 2,
+				["any-undefined"] = 3,
+				["overflow"] = 4
+			})[struct.filters[dir]] or 5) or 1
+		}
+		menu.style.horizontally_stretchable = true
+		local item = flow.add{
+			type = "choose-elem-button",
+			name = "smart-splitter-"..dir.."-item",
+			elem_type = "item",
+			item = struct.filters[dir] and game.item_prototypes[struct.filters[dir]] and struct.filters[dir] or nil
+		}
+		item.visible = menu.selected_index == 5
+	end
+end
 local function updateSplitter(struct, gui)
 	-- gui is the columns (left forward right) each containing a "filters" as an array of one (multiple for programmable) consisting of the drop-down and item elements
 	local control = struct.base.get_control_behavior()
@@ -239,7 +272,12 @@ local function onPaste(event)
 				struct.filters[dir] = signal.name
 			end
 		end
-		-- TODO check if anyone has this entity open and update GUI accordingly
+		local base = struct.base
+		for pid,struct in pairs(global['gui-splitter']) do
+			if struct.base == base then
+				fullGuiUpdate(struct, game.players[pid].gui.screen['programmable-splitter'].columns)
+			end
+		end
 	end
 end
 --[[
@@ -313,37 +351,7 @@ local function onGuiOpened(event)
 		end
 		
 		local struct = findStruct(event.entity)
-		for _,dir in pairs({"left","forward","right"}) do
-			local list = columns["filter-"..dir].filters
-			list.clear()
-			local flow = list.add{type = "flow"}
-			flow.style.vertical_align = "center"
-			flow.style.minimal_height = 40
-			local menu = flow.add{
-				type = "drop-down",
-				name = "smart-splitter-"..dir.."-selection",
-				items = {
-					"None",
-					{"","[img=virtual-signal.signal-any] ",{"gui.smart-splitter-any"}},
-					{"","[img=virtual-signal.signal-any-undefined] ",{"gui.smart-splitter-any-undefined"}},
-					{"","[img=virtual-signal.signal-overflow] ",{"gui.smart-splitter-overflow"}},
-					"Item..."
-				},
-				selected_index = struct.filters[dir] and (({
-					["any"] = 2,
-					["any-undefined"] = 3,
-					["overflow"] = 4
-				})[struct.filters[dir]] or 5) or 1
-			}
-			menu.style.horizontally_stretchable = true
-			local item = flow.add{
-				type = "choose-elem-button",
-				name = "smart-splitter-"..dir.."-item",
-				elem_type = "item",
-				item = struct.filters[dir] and game.item_prototypes[struct.filters[dir]] and struct.filters[dir] or nil
-			}
-			item.visible = menu.selected_index == 5
-		end
+		fullGuiUpdate(struct, columns)
 		
 		gui.visible = true
 		player.opened = gui

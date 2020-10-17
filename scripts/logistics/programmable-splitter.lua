@@ -100,7 +100,6 @@ local function updateSplitter(struct, gui)
 		local filters = gui["filter-"..dir].filters
 		struct.filters[dir] = {}
 		for i,flow in pairs(filters.children) do
-			local flow = filters.children[1]
 			local index = flow.children[1].selected_index
 			local item = flow.children[2].elem_value
 			table.insert(struct.filters[dir], ({
@@ -117,32 +116,6 @@ local function updateSplitter(struct, gui)
 		end
 	end
 end
-local function onPaste(event)
-	if event.destination.name == splitter then
-		-- read signals and update struct accordingly
-		local struct = findStruct(event.destination)
-		local control = struct.base.get_control_behavior()
-		for _,dir in pairs({"left","forward","right"}) do
-			struct.filters[dir] = {}
-			for slot=1,32 do
-				local signal = control.get_signal(signalIndex(dir,slot)).signal
-				if not signal then
-					-- don't insert an empty signal
-				elseif signal.type == "virtual" then
-					struct.filters[dir][slot] = ({
-						["signal-any"] = "any",
-						["signal-any-undefined"] = "any-undefined",
-						["signal-overflow"] = "overflow"
-					})[signal.name] or nil
-				elseif signal.type == "item" then
-					struct.filters[dir][slot] = signal.name
-				end
-			end
-		end
-		-- TODO check if anyone has this entity open and update GUI accordingly
-	end
-end
-
 local function addFilterEntry(list, struct, dir, index)
 	local flow = list.add{type = "flow", name = "flow-"..index}
 	flow.style.vertical_align = "center"
@@ -174,6 +147,52 @@ local function addFilterEntry(list, struct, dir, index)
 	local caption = list.parent.title.label
 	caption.caption = {"gui.programmable-splitter-"..dir,math.max(1,#list.children)}
 end
+local function fullGuiUpdate(struct, columns)
+	for _,dir in pairs({"left","forward","right"}) do
+		local col = columns["filter-"..dir]
+		local title = col.title.label
+		local fcount = math.max(1,#struct.filters[dir])
+		title.caption = {"gui.programmable-splitter-"..dir,fcount}
+		local list = col.filters
+		list.clear()
+		for i=1,fcount do
+			addFilterEntry(list, struct, dir, i)
+		end
+		col.title.children[3].enabled = fcount < 32
+	end
+end
+
+local function onPaste(event)
+	if event.destination.name == splitter then
+		-- read signals and update struct accordingly
+		local struct = findStruct(event.destination)
+		local control = struct.base.get_control_behavior()
+		for _,dir in pairs({"left","forward","right"}) do
+			struct.filters[dir] = {}
+			for slot=1,32 do
+				local signal = control.get_signal(signalIndex(dir,slot)).signal
+				if not signal then
+					-- don't insert an empty signal
+				elseif signal.type == "virtual" then
+					struct.filters[dir][slot] = ({
+						["signal-any"] = "any",
+						["signal-any-undefined"] = "any-undefined",
+						["signal-overflow"] = "overflow"
+					})[signal.name] or nil
+				elseif signal.type == "item" then
+					struct.filters[dir][slot] = signal.name
+				end
+			end
+		end
+		local base = struct.base
+		for pid,struct in pairs(global['gui-splitter']) do
+			if struct.base == base then
+				fullGuiUpdate(struct, game.players[pid].gui.screen['programmable-splitter'].columns)
+			end
+		end
+	end
+end
+
 --[[
 	GUI[screen]
 	- frame[smart-splitter]
@@ -263,20 +282,8 @@ local function onGuiOpened(event)
 		end
 		
 		local struct = findStruct(event.entity)
+		fullGuiUpdate(struct, columns)
 
-		for _,dir in pairs({"left","forward","right"}) do
-			local col = columns["filter-"..dir]
-			local title = col.title.label
-			local fcount = math.max(1,#struct.filters[dir])
-			title.caption = {"gui.programmable-splitter-"..dir,fcount}
-			local list = col.filters
-			list.clear()
-			for i=1,fcount do
-				addFilterEntry(list, struct, dir, i)
-			end
-			col.title.children[3].enabled = fcount < 32
-		end
-		
 		gui.visible = true
 		player.opened = gui
 		if not global['gui-splitter'] then global['gui-splitter'] = {} end
