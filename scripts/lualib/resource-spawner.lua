@@ -255,6 +255,7 @@ local function onInit()
 	registerResource("raw-quartz", 800, 1, 6)
 	registerResource("bauxite", 1000, 2, 6)
 	registerResource("uranium-ore", 1400, 2, 2)
+	registerResource("geyser", 850, 1, 1)
 
 	registerResource("x-plant", 100, 1, 3)
 	registerResource("x-powerslug", 200, 1, 10)

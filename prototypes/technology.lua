@@ -628,7 +628,8 @@ addTech("mam-caterium-geothermal-generator", "mam/geothermal-generator", "mam", 
 	{"heavy-modular-frame",50},
 	{"rubber",300}
 }, {
-	{type="unlock-recipe",recipe="geothermal-generator"}
+	{type="unlock-recipe",recipe="geothermal-generator"},
+	{type="unlock-recipe",recipe="scanner-geyser"}
 })
 
 -- 3: flower petals

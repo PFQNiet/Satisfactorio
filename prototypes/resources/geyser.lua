@@ -49,5 +49,15 @@ data:extend(
 	{
 		type = "noise-layer",
 		name = name
+	},
+	{
+		type = "item",
+		name = name,
+		icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+		icon_size = 64,
+		flags = {"hidden"}, -- exists only for locale texts and Resource Scanner "recipe"
+		subgroup = "mineral-resource",
+		order = "r["..name.."]",
+		stack_size = 1
 	}
 })

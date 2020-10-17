@@ -8,6 +8,7 @@ require("prototypes.resource-scanner.scanner-bauxite")
 require("prototypes.resource-scanner.scanner-raw-quartz")
 require("prototypes.resource-scanner.scanner-uranium-ore")
 require("prototypes.resource-scanner.scanner-sulfur")
+require("prototypes.resource-scanner.scanner-geyser")
 
 require("prototypes.resource-scanner.scanner-beryl-nut")
 require("prototypes.resource-scanner.scanner-paleberry")
