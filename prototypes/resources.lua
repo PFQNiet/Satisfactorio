@@ -16,6 +16,7 @@ require("prototypes.resources.caterium-ore")
 require("prototypes.resources.bauxite")
 require("prototypes.resources.raw-quartz")
 require("prototypes.resources.sulfur")
+require("prototypes.resources.geyser")
 
 -- loot
 require("prototypes.resources.alien-carapace")
