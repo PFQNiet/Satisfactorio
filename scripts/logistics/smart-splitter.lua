@@ -201,16 +201,10 @@ local function onTick(event)
 end
 
 local function updateSplitter(struct, gui)
-	-- gui is the table
-	local orientations = ({
-		[defines.direction.north] = {input=8, left=4, forward=2, right=6},
-		[defines.direction.east] = {input=4, left=2, forward=6, right=8},
-		[defines.direction.south] = {input=2, left=6, forward=8, right=4},
-		[defines.direction.west] = {input=6, left=8, forward=4, right=2},
-	})[struct.base.direction]
+	-- gui is the columns (left forward right) each containing a "filters" as an array of one (multiple for programmable) consisting of the drop-down and item elements
 	local control = struct.base.get_control_behavior()
 	for slot,dir in pairs({"left","forward","right"}) do
-		local flow = gui.children[orientations[dir]].flow
+		local flow = gui["filter-"..dir].filters.children[1]
 		local index = flow.children[1].selected_index
 		local item = flow.children[2].elem_value
 		struct.filters[dir] = ({
@@ -248,13 +242,25 @@ local function onPaste(event)
 		-- TODO check if anyone has this entity open and update GUI accordingly
 	end
 end
-
+--[[
+	GUI[screen]
+	- frame[smart-splitter]
+	-- title[title_flow]
+	-- columns[columns] (left, forward, right)
+	--- frame[filter-{DIR}]
+	---- title
+	----- label
+	---- flow[filters]
+	----- flow
+	------ dropdown[smart-splitter-{DIR}-selection]
+	------ item[smart-splitter-{DIR}-item]
+]]
 local function onGuiOpened(event)
 	local player = game.players[event.player_index]
 	if event.gui_type == defines.gui_type.entity and event.entity.name == splitter then
 		-- create the custom gui and open that instead
 		local gui = player.gui.screen['smart-splitter']
-		local table
+		local columns
 		if not gui then
 			gui = player.gui.screen.add{
 				type = "frame",
@@ -271,80 +277,46 @@ local function onGuiOpened(event)
 			pusher.drag_target = gui
 			title_flow.add{type = "sprite-button", style = "frame_action_button", sprite = "utility/close_white", name = "smart-splitter-close"}
 			
-			local content = gui.add{
-				type = "frame",
-				name = "content",
-				style = "inside_shallow_frame_with_padding"
+			columns = gui.add{
+				type = "flow",
+				name = "columns"
 			}
-			table = content.add{
-				type = "table",
-				column_count = 3,
-				name = "table"
-			}
-			table.style.horizontally_stretchable = true
-			table.style.cell_padding = 6
-			for i=1,9 do
-				local cell = i%2 == 0 and (table.add{
-					type = "scroll-pane",
+			columns.style.horizontal_spacing = 12
+			for _,dir in pairs({"left","forward","right"}) do
+				local col = columns.add{
+					type = "frame",
+					style = "inside_shallow_frame",
 					direction = "vertical",
-					horizontal_scroll_policy = "never",
-					vertical_scroll_policy = "auto-and-reserve-space",
-					name = "cell-"..i,
-					style = "scroll_pane_in_shallow_frame"
-				}) or (table.add{
+					name = "filter-"..dir
+				}
+				local title = col.add{
+					type = "frame",
+					style = "subheader_frame"
+				}
+				title.style.horizontally_stretchable = true
+				title.add{
+					type = "label",
+					style = "caption_label",
+					caption = {"gui.smart-splitter-"..dir}
+				}
+				local list = col.add{
 					type = "flow",
 					direction = "vertical",
-					name = "cell-"..i
-				})
-				cell.style.minimal_height = 150
-				cell.style.maximal_height = 150
-				cell.style.minimal_width = 240
-				cell.style.maximal_width = 240
-				cell.style.vertical_align = "center"
+					name = "filters"
+				}
+				list.style.padding = 12
+				list.style.horizontally_stretchable = true
+				list.style.minimal_width = 240
 			end
-			local cell = table.children[5]
-			cell.style.horizontal_align = "center"
-			local preview = cell.add{
-				type = "frame",
-				name = "preview-container",
-				style = "deep_frame_in_shallow_frame"
-			}
-			preview.add{
-				type = "entity-preview",
-				name = "preview",
-				style = "entity_button_base"
-			}
 		else
-			table = gui.content.table
+			columns = gui.columns
 		end
 		
 		local struct = findStruct(event.entity)
-		table.children[5]['preview-container'].preview.entity = struct.base
-		local orientations = ({
-			[defines.direction.north] = {input=8, left=4, forward=2, right=6},
-			[defines.direction.east] = {input=4, left=2, forward=6, right=8},
-			[defines.direction.south] = {input=2, left=6, forward=8, right=4},
-			[defines.direction.west] = {input=6, left=8, forward=4, right=2},
-		})[event.entity.direction]
-
-		local cell = table.children[orientations.input]
-		cell.clear()
-		cell.style.horizontal_align = "center"
-		cell.add{
-			type = "label",
-			caption = {"gui.smart-splitter-input"},
-			style = "heading_1_label"
-		}
 		for _,dir in pairs({"left","forward","right"}) do
-			cell = table.children[orientations[dir]]
-			cell.clear()
-			cell.style.horizontal_align = "left"
-			cell.add{
-				type = "label",
-				caption = {"gui.smart-splitter-"..dir},
-				style = "heading_1_label"
-			}
-			local flow = cell.add{type = "flow", name = "flow"}
+			local list = columns["filter-"..dir].filters
+			list.clear()
+			local flow = list.add{type = "flow"}
 			flow.style.vertical_align = "center"
 			flow.style.minimal_height = 40
 			local menu = flow.add{
@@ -406,17 +378,21 @@ local function onGuiSelected(event)
 		or event.element.name == "smart-splitter-right-selection"
  	) then
 		local struct = global['gui-splitter'][event.player_index]
-		updateSplitter(struct, game.players[event.player_index].gui.screen['smart-splitter'].content.table)
+		updateSplitter(struct, game.players[event.player_index].gui.screen['smart-splitter'].columns)
 
 		local index = event.element.selected_index
 		local itemsel = event.element.parent.children[2]
 		itemsel.visible = index == 5
 		-- mirror this change to other players with this entity open
 		local base = struct.base
-		local cell = event.element.parent.parent.name
+		local dir = ({
+			["smart-splitter-left-selection"] = "left",
+			["smart-splitter-forward-selection"] = "forward",
+			["smart-splitter-right-selection"] = "right"
+		})[event.element.name]
 		for pid,struct in pairs(global['gui-splitter']) do
 			if event.player_index ~= pid and struct.base == base then
-				local flow = game.players[pid].gui.screen['smart-splitter'].content.table[cell].flow
+				local flow = game.players[pid].gui.screen['smart-splitter'].columns["filter-"..dir].filters.children[1]
 				flow.children[1].selected_index = index
 				flow.children[2].visible = index == 5
 			end
@@ -430,13 +406,17 @@ local function onGuiElemChanged(event)
 		or event.element.name == "smart-splitter-right-item"
 	) then
 		local struct = global['gui-splitter'][event.player_index]
-		updateSplitter(struct, game.players[event.player_index].gui.screen['smart-splitter'].content.table)
+		updateSplitter(struct, game.players[event.player_index].gui.screen['smart-splitter'].columns)
 		-- mirror this change to other players with this entity open
 		local base = struct.base
-		local cell = event.element.parent.parent.name
+		local dir = ({
+			["smart-splitter-left-item"] = "left",
+			["smart-splitter-forward-item"] = "forward",
+			["smart-splitter-right-item"] = "right"
+		})[event.element.name]
 		for pid,struct in pairs(global['gui-splitter']) do
 			if event.player_index ~= pid and struct.base == base then
-				local flow = game.players[pid].gui.screen['smart-splitter'].content.table[cell].flow
+				local flow = game.players[pid].gui.screen['smart-splitter'].columns["filter-"..dir].filters.children[1]
 				flow.children[2].elem_value = event.element.elem_value
 			end
 		end
