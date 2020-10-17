@@ -13,6 +13,7 @@ box.max_health = 1
 box.enable_inventory_bar = false
 box.inventory_size = 48
 box.collision_box = {{-1.2,-1.2},{1.2,1.2}}
+box.collision_mask = {}
 box.selection_box = {{-1.5,-1.5},{1.5,1.5}}
 box.picture = empty_sprite
 box.minable.mining_time = 1

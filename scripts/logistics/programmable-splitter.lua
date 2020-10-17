@@ -231,8 +231,8 @@ local function onGuiOpened(event)
 				})
 				cell.style.minimal_height = 150
 				cell.style.maximal_height = 150
-				cell.style.minimal_width = 200
-				cell.style.maximal_width = 200
+				cell.style.minimal_width = 240
+				cell.style.maximal_width = 240
 				cell.style.vertical_align = "center"
 			end
 			local cell = table.children[5]
