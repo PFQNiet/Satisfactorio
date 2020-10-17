@@ -95,7 +95,7 @@ local others = {
 	right = {"left","forward"}
 }
 local function testFilter(filter, item, struct, look)
-	-- "overflow" is not checked here
+	-- "overflow" is treated as "any-undefined" here
 	if type(filter) == "table" then
 		local any = false
 		for _,f in pairs(filter) do
@@ -107,7 +107,7 @@ local function testFilter(filter, item, struct, look)
 		return any
 	elseif filter == "any" then
 		return true
-	elseif filter == "any-undefined" then
+	elseif filter == "any-undefined" or filter == "overflow" then
 		-- check the other filters and, if none of them match, then this one matches
 		for _,dir in pairs(look) do
 			local other = struct.filters[dir]
