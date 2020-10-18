@@ -251,7 +251,7 @@ data:extend{
 	{
 		type = "sound",
 		name = "jump-pad-launch",
-		filename = "__base__/sound/fight/artillery-shoots-1.ogg",
+		filename = "__base__/sound/fight/rocket-launcher.ogg",
 		volume = 0.5
 	}
 }
