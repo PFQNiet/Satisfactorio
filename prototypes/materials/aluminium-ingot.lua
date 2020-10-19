@@ -23,7 +23,7 @@ local ingotrecipe1 = {
 	category = "craft-bench",
 	icons = {
 		{ icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64 },
-		{ icon = "__Satisfactorio__/graphics/icons/water.png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
+		{ icon = "__Satisfactorio__/graphics/icons/silica.png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
 	},
 	hide_from_player_crafting = true,
 	enabled = false
@@ -38,7 +38,7 @@ local ingotrecipe2 = { -- in Foundry
 	category = "foundry",
 	icons = {
 		{ icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64 },
-		{ icon = "__Satisfactorio__/graphics/icons/water.png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
+		{ icon = "__Satisfactorio__/graphics/icons/silica.png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
 	},
 	enabled = false
 }

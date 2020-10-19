@@ -179,7 +179,7 @@ local function updatePings()
 			local ring = 3 -- thickness of "transition" ring between pointing away and pointing at target
 			local distance = math.sqrt(dx*dx+dy*dy)+1
 			local direction = math.atan2(dy,dx)
-			if distance < dist-ring+2 or not ping.player.character then
+			if distance < dist-ring+2 then
 				rendering.set_target(ping.graphics.background, {ping.position[1], ping.position[2]-1})
 				rendering.set_target(ping.graphics.item, {ping.position[1], ping.position[2]-1})
 				rendering.set_target(ping.graphics.arrow, ping.position)
@@ -204,11 +204,11 @@ local function updatePings()
 					math.cos(direction),
 					-math.sin(direction)
 				}
-				rendering.set_target(ping.graphics.background, ping.player.character, {offset[1]*dist,offset[2]*dist})
-				rendering.set_target(ping.graphics.item, ping.player.character, {offset[1]*dist,offset[2]*dist})
-				rendering.set_target(ping.graphics.arrow, ping.player.character, {offset[1]*(dist+1),offset[2]*(dist+1)})
+				rendering.set_target(ping.graphics.background, {ping.player.position.x+offset[1]*dist, ping.player.position.y+offset[2]*dist})
+				rendering.set_target(ping.graphics.item, {ping.player.position.x+offset[1]*dist, ping.player.position.y+offset[2]*dist})
+				rendering.set_target(ping.graphics.arrow, {ping.player.position.x+offset[1]*(dist+1), ping.player.position.y+offset[2]*(dist+1)})
 				rendering.set_orientation(ping.graphics.arrow, 0.25 - direction / math.pi/2)
-				rendering.set_target(ping.graphics.label, ping.player.character, {offset[1]*dist,offset[2]*dist+0.25})
+				rendering.set_target(ping.graphics.label, {ping.player.position.x+offset[1]*dist, ping.player.position.y+offset[2]*dist+0.25})
 			end
 			rendering.set_text(ping.graphics.label, {"gui.resource-scanner-distance", util.format_number(math.floor(distance))})
 		end
@@ -225,51 +225,45 @@ local function onTick(event)
 			elseif effect.type == "ping" then
 				local ttl = 20*60
 				if not global['resource-scanner-pings'] then global['resource-scanner-pings'] = {} end
-				if effect.player.character then
-					-- graphics are created with no offset and placeholder text, as they are immediately updated in updatePings()
-					-- TODO make it compatible with Sandbox, where there is no effect.player.character
-					table.insert(global['resource-scanner-pings'], {
-						player = effect.player,
-						position = effect.position,
-						graphics = {
-							background = rendering.draw_sprite{
-								sprite = "resource-scanner-ping",
-								target = effect.player.character,
-								target_offset = {0,0},
-								surface = effect.player.surface,
-								time_to_live = ttl,
-								players = {effect.player}
-							},
-							item = rendering.draw_sprite{
-								sprite = (effect.resource == "crude-oil" and "fluid" or "item").."/"..effect.resource,
-								target = effect.player.character,
-								target_offset = {0,0},
-								surface = effect.player.surface,
-								time_to_live = ttl,
-								players = {effect.player}
-							},
-							arrow = rendering.draw_sprite{
-								sprite = "utility/indication_arrow",
-								orientation = 0,
-								target = effect.player.character,
-								target_offset = {0,0},
-								surface = effect.player.surface,
-								time_to_live = ttl,
-								players = {effect.player}
-							},
-							label = rendering.draw_text{
-								text = {"gui.resource-scanner-distance","-"},
-								color = {1,1,1},
-								surface = effect.player.surface,
-								target = effect.player.character,
-								target_offset = {0,0},
-								time_to_live = ttl,
-								players = {effect.player},
-								alignment = "center"
-							}
+				-- graphics are created with no offset and placeholder text, as they are immediately updated in updatePings()
+				-- TODO make it compatible with Sandbox, where there is no effect.player.character
+				table.insert(global['resource-scanner-pings'], {
+					player = effect.player,
+					position = effect.position,
+					graphics = {
+						background = rendering.draw_sprite{
+							sprite = "resource-scanner-ping",
+							target = effect.player.position,
+							surface = effect.player.surface,
+							time_to_live = ttl,
+							players = {effect.player}
+						},
+						item = rendering.draw_sprite{
+							sprite = (effect.resource == "crude-oil" and "fluid" or "item").."/"..effect.resource,
+							target = effect.player.position,
+							surface = effect.player.surface,
+							time_to_live = ttl,
+							players = {effect.player}
+						},
+						arrow = rendering.draw_sprite{
+							sprite = "utility/indication_arrow",
+							orientation = 0,
+							target = effect.player.position,
+							surface = effect.player.surface,
+							time_to_live = ttl,
+							players = {effect.player}
+						},
+						label = rendering.draw_text{
+							text = {"gui.resource-scanner-distance","-"},
+							color = {1,1,1},
+							surface = effect.player.surface,
+							target = effect.player.position,
+							time_to_live = ttl,
+							players = {effect.player},
+							alignment = "center"
 						}
-					})
-				end
+					}
+				})
 			end
 		end
 		global['resource-scanner-fx'][event.tick] = nil
