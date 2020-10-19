@@ -23,7 +23,7 @@ local ingotrecipe = { -- in Assembler
 	result = basename,
 	result_count = 10,
 	energy_required = 60,
-	category = "constructing",
+	category = "assembling",
 	enabled = false
 }
 

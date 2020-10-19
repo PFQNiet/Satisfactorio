@@ -372,10 +372,15 @@ addTech("hub-tier5-alternative-fluid-transport", "hub/logistics", "hub-progressi
 	{type="unlock-recipe",recipe="industrial-fluid-buffer"},
 	{type="unlock-recipe",recipe="empty-canister"},
 	{type="unlock-recipe",recipe="packaged-water"},
+	{type="unlock-recipe",recipe="unpack-water"},
 	{type="unlock-recipe",recipe="packaged-oil"},
+	{type="unlock-recipe",recipe="unpack-oil"},
 	{type="unlock-recipe",recipe="packaged-heavy-oil"},
+	{type="unlock-recipe",recipe="unpack-heavy-oil"},
 	{type="unlock-recipe",recipe="packaged-fuel"},
+	{type="unlock-recipe",recipe="unpack-fuel"},
 	{type="unlock-recipe",recipe="packaged-liquid-biofuel"},
+	{type="unlock-recipe",recipe="unpack-liquid-biofuel"},
 	{type="unlock-recipe",recipe="liquid-biofuel"}
 })
 addTech("hub-tier5-gas-mask", "hub/equipment", "hub-progressing", "hub-tier5", "a-5-4", 300, {"space-elevator-phase2"}, {

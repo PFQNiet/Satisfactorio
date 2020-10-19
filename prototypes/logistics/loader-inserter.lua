@@ -17,7 +17,8 @@ local inserter = {
 	selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
 	selection_priority = 30,
 	flags = {
-		"not-on-map"
+		"not-on-map",
+		"placeable-off-grid"
 	},
 	allow_custom_vectors = true,
 	energy_per_movement = "1W",

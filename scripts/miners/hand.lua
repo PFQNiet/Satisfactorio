@@ -26,7 +26,7 @@ local function onMined(event)
 			buffer.insert{name="leaves",count=math.random(4,10)}
 		end
 		-- may give Mycelia (dirt), Flower Petals (grass), Limestone (sand) or Silica (desert) based on the tile
-		local tile = (entity.surface.get_hidden_tile(entity.position) or entity.surface.get_tile(entity.position)).name
+		local tile = entity.surface.get_hidden_tile(entity.position) or entity.surface.get_tile(entity.position).name
 		if string.starts_with(tile,"grass") then
 			local count = math.floor(math.random(1,5)*math.random(1,5)/5) -- 0-5
 			if count > 0 then

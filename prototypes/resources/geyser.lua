@@ -12,6 +12,7 @@ data:extend(
 		category = "geothermal",
 		tree_removal_probability = 0,
 		tree_removal_max_distance = 0,
+		randomize_visual_position = false,
 		minable = {
 			mining_time = 1
 		},

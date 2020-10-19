@@ -62,6 +62,11 @@ data:extend({
 	{
 		type = "recipe",
 		name = "unpack-water",
+		localised_name = {"recipe-name.unpack",{"fluid-name.water"}},
+		icons = {
+			{icon = "__Satisfactorio__/graphics/icons/water.png", icon_size = 64},
+			{icon = "__Satisfactorio__/graphics/icons/packaged-water.png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
+		},
 		ingredients = {{"packaged-water",2}},
 		results = {{"empty-canister",2}, {type="fluid",name="water",amount=2}},
 		main_product = "water",
@@ -102,6 +107,11 @@ data:extend({
 	{
 		type = "recipe",
 		name = "unpack-oil",
+		localised_name = {"recipe-name.unpack",{"fluid-name.crude-oil"}},
+		icons = {
+			{icon = "__Satisfactorio__/graphics/icons/crude-oil.png", icon_size = 64},
+			{icon = "__Satisfactorio__/graphics/icons/packaged-oil.png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
+		},
 		ingredients = {{"packaged-oil",2}},
 		results = {{"empty-canister",2}, {type="fluid",name="crude-oil",amount=2}},
 		main_product = "crude-oil",
@@ -142,6 +152,11 @@ data:extend({
 	{
 		type = "recipe",
 		name = "unpack-heavy-oil",
+		localised_name = {"recipe-name.unpack",{"fluid-name.heavy-oil"}},
+		icons = {
+			{icon = "__Satisfactorio__/graphics/icons/heavy-oil-residue.png", icon_size = 64},
+			{icon = "__Satisfactorio__/graphics/icons/packaged-heavy-oil-residue.png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
+		},
 		ingredients = {{"packaged-heavy-oil",2}},
 		results = {{"empty-canister",2}, {type="fluid",name="heavy-oil",amount=2}},
 		main_product = "heavy-oil",
@@ -182,6 +197,11 @@ data:extend({
 	{
 		type = "recipe",
 		name = "unpack-fuel",
+		localised_name = {"recipe-name.unpack",{"fluid-name.fuel"}},
+		icons = {
+			{icon = "__Satisfactorio__/graphics/icons/fuel.png", icon_size = 64},
+			{icon = "__Satisfactorio__/graphics/icons/packaged-fuel.png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
+		},
 		ingredients = {{"packaged-fuel",2}},
 		results = {{"empty-canister",2}, {type="fluid",name="fuel",amount=2}},
 		main_product = "fuel",
@@ -222,6 +242,11 @@ data:extend({
 	{
 		type = "recipe",
 		name = "unpack-liquid-biofuel",
+		localised_name = {"recipe-name.unpack",{"fluid-name.liquid-biofuel"}},
+		icons = {
+			{icon = "__Satisfactorio__/graphics/icons/liquid-biofuel.png", icon_size = 64},
+			{icon = "__Satisfactorio__/graphics/icons/packaged-liquid-biofuel.png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
+		},
 		ingredients = {{"packaged-liquid-biofuel",2}},
 		results = {{"empty-canister",2}, {type="fluid",name="liquid-biofuel",amount=2}},
 		main_product = "liquid-biofuel",
@@ -262,6 +287,11 @@ data:extend({
 	{
 		type = "recipe",
 		name = "unpack-turbofuel",
+		localised_name = {"recipe-name.unpack",{"fluid-name.turbofuel"}},
+		icons = {
+			{icon = "__Satisfactorio__/graphics/icons/turbofuel.png", icon_size = 64},
+			{icon = "__Satisfactorio__/graphics/icons/packaged-turbofuel.png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
+		},
 		ingredients = {{"packaged-turbofuel",2}},
 		results = {{"empty-canister",2}, {type="fluid",name="turbofuel",amount=2}},
 		main_product = "turbofuel",

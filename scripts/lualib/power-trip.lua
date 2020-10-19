@@ -23,7 +23,8 @@ local function registerGenerator(burner, generator, accumulator_name)
 	global['accumulators'][burner.surface.index][burner.position.y][burner.position.x] = {
 		burner = burner,
 		generator = generator,
-		accumulator = accumulator
+		accumulator = accumulator,
+		active = true
 	}
 end
 local function unregisterGenerator(burner)
@@ -32,6 +33,18 @@ local function unregisterGenerator(burner)
 	if entry then
 		row[burner.position.x] = nil
 		entry.accumulator.destroy()
+	end
+end
+local function findRegistration(entity)
+	if not global['accumulators'] then return end
+	for _,surface in pairs(global['accumulators']) do
+		for _,row in pairs(surface) do
+			for _,entry in pairs(row) do
+				if entry.burner == entity then return entry end
+				if entry.generator == entity then return entry end
+				if entry.accumulator == entity then return entry end
+			end
+		end
 	end
 end
 local function isRegistered(burner)
@@ -68,6 +81,7 @@ end
 local function toggle(entry, enabled)
 	entry.burner.active = enabled
 	entry.generator.active = enabled
+	entry.active = enabled
 
 end
 local function onTick(event)
@@ -111,7 +125,9 @@ end
 local function onGuiOpened(event)
 	if event.gui_type ~= defines.gui_type.entity then return end
 	if not isRegistered(event.entity) then return end
-	if event.entity.active then return end
+	local entry = findRegistration(event.entity)
+	if not entry then return end
+	if entry.active then return end
 	local player = game.players[event.player_index]
 	createFusebox(player)
 end

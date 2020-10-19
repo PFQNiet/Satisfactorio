@@ -79,6 +79,7 @@ local interface = {
 		mining_time = 1,
 		result = name
 	},
+	placeable_by = {item=name,count=1},
 	selection_box = {{-5,-5},{5,5}}
 }
 local accumulator = {

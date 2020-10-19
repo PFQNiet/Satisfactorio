@@ -76,7 +76,7 @@ local function onTick(event)
 end
 local function onGuiOpened(event)
 	local player = game.players[event.player_index]
-	if event.gui_type == defines.gui_type.entity and event.entity.name == buffer then
+	if event.entity and event.entity.valid and event.entity.name == buffer then
 		-- opening the EEI instead opens the tank
 		player.opened = event.entity.surface.find_entity(storage, event.entity.position)
 	end
