@@ -4,7 +4,7 @@ local ingot = {
 	icon_size = 64,
 	name = name,
 	order = "i[quartz]-b["..name.."]",
-	stack_size = 500,
+	stack_size = 100,
 	subgroup = "ingots",
 	type = "item"
 }
