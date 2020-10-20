@@ -61,7 +61,7 @@ local radioactive_items = {
 
 local function addRadiationForResource(entity)
 	-- the only radioactive resource is uranium-ore
-	return entity.name == "uranium-ore" and 10000 or 0
+	return entity.name == "uranium-ore" and 10000*entity.amount/120 or 0
 end
 local function addRadiationForInventory(inventory)
 	if not (inventory and inventory.valid) then return 0 end
