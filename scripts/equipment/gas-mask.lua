@@ -26,7 +26,7 @@ local function onDamaged(event)
 	if not global['poison-damage'] then global['poison-damage'] = {} end
 	if not global['poison-damage'][entity.player.index] then global['poison-damage'][entity.player.index] = -100 end
 	local mask = entity.get_inventory(defines.inventory.character_armor)[1]
-	if not mask.valid_for_read then
+	if not mask.valid_for_read or mask.name ~= "gas-mask" then
 		-- no mask so damage is taken in full, but only if it wasn't too recent
 		if global['poison-damage'][entity.player.index] + 12 > event.tick then
 			-- heal the player for the damage taken

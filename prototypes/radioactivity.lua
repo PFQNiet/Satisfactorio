@@ -11,6 +11,7 @@ local base = {
 	collision_mask = {},
 	selection_box = {{-0.5,-0.5},{0.5,0.5}},
 	selectable_in_game = false,
+	flags = {"hidden"},
 	max_health = 1,
 	icon = "__Satisfactorio__/graphics/icons/uranium.png",
 	icon_size = 64,

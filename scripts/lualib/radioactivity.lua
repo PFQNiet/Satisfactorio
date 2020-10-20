@@ -171,7 +171,6 @@ local function onTick(event)
 					end
 				end
 				radiation = bit32.rshift(radiation, 1)
-				if radiation == 0 then break end
 			end
 		end
 	end

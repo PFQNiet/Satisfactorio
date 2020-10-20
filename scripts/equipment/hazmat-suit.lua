@@ -24,7 +24,7 @@ local function onDamaged(event)
 	if not (entity and entity.valid and entity.type == "character") then return end
 	if event.damage_type.name ~= "radiation" then return end
 	local mask = entity.get_inventory(defines.inventory.character_armor)[1]
-	if not mask.valid_for_read then
+	if not mask.valid_for_read or mask.name ~= "hazmat-suit" then
 		-- no mask so damage is taken in full
 	else
 		-- mask equipped, check for and consume filters if available
