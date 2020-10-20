@@ -7,6 +7,7 @@
 -- uses global['rad-chunks'] to store chunks in a surface-Y-X array
 -- uses global['rad-buckets'] to spread chunks out over the course of a minute rather than trying to do them all at once
 -- uses global['rad-chunks-count'] to count the total number of chunks being tracked
+local mod_gui = require("mod-gui")
 
 -- using a 10-bit number for 1024 buckets
 local function bitrev10(n)
@@ -49,6 +50,13 @@ local function onChunkGenerated(event)
 	if not global['rad-buckets'][bucketindex] then global['rad-buckets'][bucketindex] = {} end
 	table.insert(global['rad-buckets'][bucketindex], entry)
 	global['rad-chunks-count'] = count+1
+end
+local function getRadiationForChunk(surface, cx, cy)
+	if not global['rad-chunks'] then return 0 end
+	if not global['rad-chunks'][surface.index] then return 0 end
+	if not global['rad-chunks'][surface.index][cy] then return 0 end
+	if not global['rad-chunks'][surface.index][cy][cx] then return 0 end
+	return global['rad-chunks'][surface.index][cy][cx].radioactivity
 end
 
 local radioactive_items = {
@@ -98,6 +106,7 @@ end
 local function addRadiationForCharacter(entity)
 	return addRadiationForInventory(entity.get_inventory(defines.inventory.character_main))
 		+ addRadiationForInventory(entity.get_inventory(defines.inventory.character_trash))
+		+ addRadiationForItemStack(entity.cursor_stack)
 	-- no radioactive items can go in guns, armor, etc. so skip those
 end
 local function addRadiationForItemOnGround(entity)
@@ -174,22 +183,65 @@ local function onTick(event)
 			end
 		end
 	end
-	if tick%60 == 0 then
+	if tick%6 == 0 then
 		for _,player in pairs(game.players) do
 			if player.character then
 				-- radiation damage is based on pollution of the current chunk
 				local radiation = player.character.surface.get_pollution(player.character.position)
-					+ addRadiationForCharacter(player.character)
-				if radiation > 10 then
-					-- anything too low fails to affect us through standard clothing
-					-- anything above 2k is capped
-					if radiation > 2000 then radiation = 2000 end
-					-- crude approximation of inverse-square law...
-					radiation = math.sqrt(radiation)
-					-- this gives a number between 3 and 45 or so, re-scale this to max out at 20dps
-					local damage = radiation/45*20
-					player.character.damage(damage, game.forces.neutral, "radiation")
-					-- hazmat suit is handled separately
+					+ getRadiationForChunk(player.surface,math.floor(player.position.x/32),math.floor(player.position.y/32))
+					+ addRadiationForCharacter(player.character)/10
+				if tick%60 == 0 then
+					if radiation >= 1 then
+						local rad = radiation
+						-- anything above 2k is capped
+						if rad > 2000 then rad = 2000 end
+						-- crude approximation of inverse-square law...
+						rad = math.sqrt(rad)
+						-- this gives a number between 0 and 45 or so, re-scale this to max out at 20dps
+						local damage = rad/45*20
+						player.character.damage(damage, game.forces.neutral, "radiation")
+						-- hazmat suit is handled separately
+					end
+				end
+				local gui = player.gui.screen.radiation
+				if not gui then
+					gui = player.gui.screen.add{
+						type = "frame",
+						name = "radiation",
+						direction = "vertical",
+						caption = {"gui.radiation"},
+						style = mod_gui.frame_style
+					}
+					gui.style.horizontally_stretchable = false
+					gui.style.use_header_filler = false
+					gui.style.width = 250
+					local flow = gui.add{
+						type = "flow",
+						direction = "horizontal",
+						name = "content"
+					}
+					flow.style.horizontally_stretchable = true
+					flow.style.vertical_align = "center"
+					local sprite = flow.add{
+						type = "sprite",
+						sprite = "tooltip-category-nuclear"
+					}
+					local bar = flow.add{
+						type = "progressbar",
+						name = "bar",
+						style = "radioactivity-progressbar"
+					}
+				end
+				if radiation < 1 then
+					if gui.visible then
+						gui.visible = false
+					end
+				else
+					if not gui.visible then
+						gui.visible = true
+						gui.location = {(player.display_resolution.width-250)/2, 160}
+					end
+					gui.content.bar.value = math.min(radiation/145,1)
 				end
 			end
 		end
