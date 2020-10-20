@@ -179,6 +179,7 @@ local function onTick(event)
 			if player.character then
 				-- radiation damage is based on pollution of the current chunk
 				local radiation = player.character.surface.get_pollution(player.character.position)
+					+ addRadiationForCharacter(player.character)
 				if radiation > 10 then
 					-- anything too low fails to affect us through standard clothing
 					-- anything above 2k is capped
