@@ -16,6 +16,7 @@ handler.add_lib(require("scripts.lualib.resource-spawner"))
 handler.add_lib(require("scripts.lualib.resource-scanner"))
 handler.add_lib(require("scripts.lualib.power-trip").lib)
 handler.add_lib(require("scripts.lualib.self-driving"))
+handler.add_lib(require("scripts.lualib.radioactivity"))
 handler.add_lib(require("scripts.tech-extras"))
 handler.add_lib(require("scripts.map-tweaks"))
 

@@ -18,3 +18,14 @@ for _,recipe in pairs(data.raw.recipe) do
 		end
 	end
 end
+
+-- give all tiles a fixed pollution absorption so that radioactivity falls off with distance rather than based on terrain
+-- one chunk contains 1024 tiles
+-- (Note: divide radiation numbers by 100 so that it doesn't full-strength the redness on the map)
+for _,tile in pairs(data.raw.tile) do
+	tile.pollution_absorption_per_second = 40/60/1024 -- 40.00 pollution per minute per chunk
+end
+-- trees don't absorb radiation
+for _,tree in pairs(data.raw.tree) do
+	tree.emissions_per_second = 0
+end

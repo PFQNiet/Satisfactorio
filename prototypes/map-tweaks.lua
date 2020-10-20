@@ -9,7 +9,7 @@ data.raw['turret']['big-worm-turret'].autoplace = nil
 data.raw['turret']['behemoth-worm-turret'].autoplace = nil
 -- disable pollution and enemy settings by default
 local settings = data.raw['map-settings']['map-settings']
-settings.pollution.enabled = false
+-- settings.pollution.enabled = false -- keep enabled for Radioactivity
 settings.enemy_evolution.enabled = false
 settings.enemy_expansion.enabled = false
 
