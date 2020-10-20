@@ -25,3 +25,10 @@ for i=1,31 do
 	copy.emissions_per_second = bit32.lshift(1,i)/60
 	data:extend({copy})
 end
+
+data:extend({
+	{
+		type = "damage-type",
+		name = "radiation"
+	}
+})

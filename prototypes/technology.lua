@@ -457,8 +457,8 @@ addTech("hub-tier7-hazmat-suit", "hub/equipment", "hub-progressing", "hub-tier7"
 	{"quickwire",100},
 	{"rubber",500}
 }, {
-	-- {type="unlock-recipe",recipe="hazmat-suit"},
-	-- {type="unlock-recipe",recipe="iodine-infused-filter"}
+	{type="unlock-recipe",recipe="hazmat-suit"},
+	{type="unlock-recipe",recipe="iodine-infused-filter"}
 })
 addTech("hub-tier7-nuclear-power", "hub/factory", "hub-progressing", "hub-tier7", "a-7-4", 1200, {"space-elevator-phase3"}, {
 	{"processing-unit",50},

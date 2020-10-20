@@ -152,7 +152,7 @@ local function onTick(event)
 				end
 			end
 			radiation = math.floor(radiation/100)
-			entry.radiation = radiation
+			entry.radioactivity = radiation
 			-- create/remove entities to diffuse this amount of radiation per minute
 			for i=0,32 do
 				if radiation%2 == 1 then
@@ -175,7 +175,25 @@ local function onTick(event)
 			end
 		end
 	end
-	-- TODO for each character, if the chunk they are in is polluted, take damage
+	if tick%60 == 0 then
+		for _,player in pairs(game.players) do
+			if player.character then
+				-- radiation damage is based on pollution of the current chunk
+				local radiation = player.character.surface.get_pollution(player.character.position)
+				if radiation > 10 then
+					-- anything too low fails to affect us through standard clothing
+					-- anything above 2k is capped
+					if radiation > 2000 then radiation = 2000 end
+					-- crude approximation of inverse-square law...
+					radiation = math.sqrt(radiation)
+					-- this gives a number between 3 and 45 or so, re-scale this to max out at 20dps
+					local damage = radiation/45*20
+					player.character.damage(damage, game.forces.neutral, "radiation")
+					-- hazmat suit is handled separately
+				end
+			end
+		end
+	end
 end
 
 return {

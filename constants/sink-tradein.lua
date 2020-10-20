@@ -73,7 +73,7 @@ return {
 	["factory-cart"] = 1552,
 	["xeno-zapper"] = 1880,
 	["pistol"] = 1968,
-	-- ["iodine-infused-filter"] = 2172,
+	["iodine-infused-filter"] = 2172,
 	["electromagnetic-control-rod"] = 2560,
 	["chainsaw"] = 2760,
 	["crystal-oscillator"] = 3072,
@@ -94,6 +94,6 @@ return {
 	["radio-control-unit"] = 98520,
 	["submachine-gun"] = 99160,
 	["supercomputer"] = 99576,
-	-- ["hazmat-suit"] = 104400,
+	["hazmat-suit"] = 104400,
 	["turbo-motor"] = 465056
 }
