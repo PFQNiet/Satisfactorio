@@ -326,12 +326,11 @@ end
 local function onTick(event)
 	if not global['train-stations'] then return end
 	local modulo = event.tick % 60
-	local transfer_stacks = event.tick % 120 < 60 -- once per two seconds
 	if not global['trains-accounted-for'] or modulo == 0 then global['trains-accounted-for'] = {} end
 	for i,struct in ipairs(global['train-stations']) do
 		local station = struct.station
 		local stop = struct.stop
-		if i%30 == modulo and station.energy >= 1000 then
+		if i%60 == modulo and station.energy >= 1000 then
 			-- each station will "tick" once every second
 			local trains = stop.get_train_stop_trains()
 			local power = 50 -- MJ consumed this second
@@ -354,9 +353,17 @@ local function onTick(event)
 			end
 			station.power_usage = power*1000*1000/60 -- set power usage for the next second based on power consumed in the last second
 			station.electric_buffer_size = power*1000*1000
+		end
+	end
 
+	modulo = event.tick % 45 -- one transfer every 45 ticks = 24 seconds for a 32-stack freight car
+	for i,struct in ipairs(global['train-stations']) do
+		local station = struct.station
+		local stop = struct.stop
+		local energy_used = (50/60*45)*1000*1000
+		if i%45 == modulo and station.energy >= 1000 then
 			local train = stop.get_stopped_train()
-			if transfer_stacks and train then
+			if train then
 				-- scan attached platforms and, if a matching wagon is present, handle loading/unloading
 				local delta = math2d.position.rotate_vector({0,7},station.direction*45)
 				local position = station.position
@@ -369,7 +376,7 @@ local function onTick(event)
 					}[1]
 					if not assertPosition(platform, position) then break end
 
-					if platform.name == freight and platform.energy >= 50*1000*1000 then
+					if platform.name == freight and platform.energy >= energy_used then
 						local wagon = station.surface.find_entity("cargo-wagon", position)
 						if wagon then
 							local is_output = io.isEnabled(platform,{6.5,-2})
@@ -385,12 +392,12 @@ local function onTick(event)
 									local source = from.find_item_stack(name)
 									-- since there is an empty stack, an insert will always succeed
 									from.remove({name=name,count=to.insert(source)})
-									platform.energy = platform.energy - 50*1000*1000
+									platform.energy = platform.energy - energy_used
 									break
 								end
 							end
 						end
-					elseif platform.name == fluid and platform.energy >= 50*1000*1000 then
+					elseif platform.name == fluid and platform.energy >= energy_used then
 						local wagon = station.surface.find_entity("fluid-wagon", position)
 						if wagon then
 							local is_output = station.surface.find_entity(
@@ -398,16 +405,16 @@ local function onTick(event)
 								math2d.position.add(platform.position, math2d.position.rotate_vector({6.5,-2}, platform.direction*45))
 							).active
 							local store = station.surface.find_entity(fluid.."-tank", math2d.position.add(platform.position, math2d.position.rotate_vector(storage_pos, platform.direction*45)))
-							-- transfer 100 units
+							-- transfer 50 units
 							local from = is_output and wagon or store
 							local to = is_output and store or wagon
-							local amount = math.min(100, from.get_fluid_count())
+							local amount = math.min(50, from.get_fluid_count())
 							if amount > 0 then
 								for name,_ in pairs(from.get_fluid_contents()) do
 									amount = to.insert_fluid{name=name,amount=amount}
 									if amount > 0 then
 										from.remove_fluid{name=name,amount=amount}
-										platform.energy = platform.energy - amount/2*1000*1000 -- 50MW at 100 units, proportionally less if there is less fluid available
+										platform.energy = platform.energy - energy_used*amount/50 -- uses less power if not all fluid is transferred
 									end
 									break
 								end
