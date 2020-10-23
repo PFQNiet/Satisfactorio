@@ -28,7 +28,7 @@ local fuel = {
 	icon_size = 64,
 	stack_size = 1
 }
-local fuelcaticon = 	{
+local fuelcaticon = {
 	filename = "__core__/graphics/icons/tooltips/tooltip-category-electricity.png",
 	flags = {"gui-icon"},
 	height = 40,
@@ -83,4 +83,4 @@ local recipe_undo = {
 	},
 	enabled = false
 }
-data:extend({fuel, fuelcat, recipe_undo})
+data:extend({fuel, fuelcat, fuelcaticon, recipe_undo})
