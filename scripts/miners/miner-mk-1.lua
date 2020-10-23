@@ -27,11 +27,11 @@ local function onRemoved(event)
 		local store = entity.surface.find_entity(box,entity.position)
 		getitems.storage(store, event and event.buffer or nil)
 		store.destroy()
-		io.removeOutput(entity, {0,-6}, event)
+		io.remove(entity, event)
 	end
 	if entity.name == box then
 		local drill = entity.surface.find_entity(miner,entity.position)
-		io.removeOutput(drill, {0,-6}, event)
+		io.remove(drill, event)
 		drill.destroy()
 	end
 end

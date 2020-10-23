@@ -1,5 +1,11 @@
 local lab = assert(data.raw.lab.omnilab, "Technology must be loaded AFTER the Omnilab")
 
+data.raw['utility-sprites'].default.character_inventory_slots_bonus_modifier_icon = {
+	filename = "__Satisfactorio__/graphics/technology/mam/thumbsup.png",
+	width = 256,
+	height = 256
+}
+
 local function addTech(name, icon, category, subgroup, order, time, prerequisites, ingredients, effects)
 	table.insert(lab.inputs, name)
 	data:extend({
@@ -417,14 +423,16 @@ addTech("hub-tier6-monorail-train-technology", "hub/vehicle", "hub-progressing",
 	{"steel-plate",500},
 	{"steel-pipe",600}
 }, {
-	-- {type="unlock-recipe",recipe="rail"},
-	-- {type="unlock-recipe",recipe="train-station"},
-	-- {type="unlock-recipe",recipe="freight-platform"},
-	-- {type="unlock-recipe",recipe="fluid-freight-platform"},
-	-- {type="unlock-recipe",recipe="empty-platform"},
-	-- {type="unlock-recipe",recipe="locomotive"},
-	-- {type="unlock-recipe",recipe="cargo-wagon"},
-	-- {type="unlock-recipe",recipe="fluid-wagon"}
+	{type="unlock-recipe",recipe="rail"},
+	{type="unlock-recipe",recipe="rail-signal"},
+	{type="unlock-recipe",recipe="rail-chain-signal"},
+	{type="unlock-recipe",recipe="train-station"},
+	{type="unlock-recipe",recipe="freight-platform"},
+	{type="unlock-recipe",recipe="fluid-freight-platform"},
+	{type="unlock-recipe",recipe="empty-platform"},
+	{type="unlock-recipe",recipe="locomotive"},
+	{type="unlock-recipe",recipe="cargo-wagon"},
+	{type="unlock-recipe",recipe="fluid-wagon"}
 })
 
 addTech("hub-tier7-bauxite-refinement", "hub/factory", "hub-progressing", "hub-tier7", "a-7-1", 900, {"space-elevator-phase3"}, {

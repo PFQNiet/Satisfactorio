@@ -1,7 +1,7 @@
 -- hypertube travel is initiated by entering the pseudo-vehicle
 -- this auto-drives the car along the path of the hyper tube until it reaches an exit, ie. an entity with only one connection
 -- uses global['hyper-tube-travel'] to track player -> movement data
--- uses global['hyper-tube-error-debounce'] to track force -> last error tick to de-duplicate placement errors
+-- uses global['player-build-error-debounce'] to track force -> last error tick to de-duplicate placement errors
 
 local tube = "hyper-tube"
 local underground = "underground-hyper-tube"
@@ -46,8 +46,8 @@ local function onBuilt(event)
 		if not isValidHyperTube(entity) then
 			local player = entity.last_user
 			player.insert{name=entity.name,count=1}
-			if not global['hyper-tube-error-debounce'] then global['hyper-tube-error-debounce'] = {} end
-			if not global['hyper-tube-error-debounce'][player.force.index] or global['hyper-tube-error-debounce'][player.force.index] < event.tick then
+			if not global['player-build-error-debounce'] then global['player-build-error-debounce'] = {} end
+			if not global['player-build-error-debounce'][player.force.index] or global['player-build-error-debounce'][player.force.index] < event.tick then
 				player.surface.create_entity{
 					name = "flying-text",
 					position = entity.position,
@@ -57,7 +57,7 @@ local function onBuilt(event)
 				player.play_sound{
 					path = "utility/cannot_build"
 				}
-				global['hyper-tube-error-debounce'][player.force.index] = event.tick + 60
+				global['player-build-error-debounce'][player.force.index] = event.tick + 60
 			end
 			entity.destroy()
 			return

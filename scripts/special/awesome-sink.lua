@@ -53,7 +53,7 @@ local function onRemoved(event)
 		-- find components
 		local floor = entity.name == base and entity or entity.surface.find_entity(base, entity.position)
 		local store = entity.name == storage and entity or entity.surface.find_entity(storage, entity.position)
-		io.removeInput(floor, {-0.5,3}, event)
+		io.remove(floor, event)
 		-- remove from global table
 		for i,x in ipairs(global['awesome-sinks']) do
 			if x == floor then

@@ -43,10 +43,7 @@ local function onRemoved(event)
 		local box = entity.surface.find_entity(buffer, entity.position)
 		if box and box.valid then
 			getitems.storage(box, event.buffer)
-			io.removeInput(entity, {0,1}, event)
-			io.removeOutput(entity, {0,-1}, event)
-			io.removeOutput(entity, {-1,0}, event)
-			io.removeOutput(entity, {1,0}, event)
+			io.remove(entity, event)
 			box.destroy()
 		else
 			game.print("Could not find the buffer")

@@ -20,7 +20,8 @@ local tank = {
 		"player-creation"
 	},
 	fluid_box = {
-		base_area = 24,
+		height = data.raw.pipe.pipe.fluid_box.height,
+		base_area = 24/data.raw.pipe.pipe.fluid_box.height, -- 2400 capacity
 		pipe_connections = {
 			{position={0,-4}},
 			{position={0,4}}

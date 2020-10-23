@@ -15,9 +15,7 @@ local function onRemoved(event)
 	local entity = event.entity
 	if not entity or not entity.valid then return end
 	if entity.name == refinery then
-		-- remove the input/output
-		io.removeInput(entity, {1,4.5}, event)
-		io.removeOutput(entity, {1,-4.5}, event)
+		io.remove(entity, event)
 	end
 end
 

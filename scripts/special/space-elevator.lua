@@ -51,13 +51,7 @@ local function onRemoved(event)
 	local entity = event.entity
 	if not entity or not entity.valid then return end
 	if entity.name == elevator then
-		-- remove the input/output
-		io.removeInput(entity, {-10,13}, event)
-		io.removeInput(entity, {-8,13}, event)
-		io.removeInput(entity, {-6,13}, event)
-		io.removeInput(entity, {-10,-13}, event)
-		io.removeInput(entity, {-8,-13}, event)
-		io.removeInput(entity, {-6,-13}, event)
+		io.remove(entity, event)
 		local silo = entity.surface.find_entity(elevator.."-silo", entity.position)
 		if not silo then
 			game.print("Could not find Space Elevator silo")

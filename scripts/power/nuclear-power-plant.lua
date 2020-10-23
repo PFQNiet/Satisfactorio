@@ -68,9 +68,7 @@ local function onRemoved(event)
 		else
 			gen.destroy()
 		end
-		-- and the input/output
-		io.removeInput(floor, {-2,10}, event)
-		io.removeOutput(floor, {2,10}, event)
+		io.remove(floor, event)
 		floor.destroy{raise_destroy = true}
 	end
 end

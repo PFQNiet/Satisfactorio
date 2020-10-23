@@ -35,10 +35,9 @@ data:extend({
 	{type="item-group",name="mam-research",order="x4",icon="__Satisfactorio__/graphics/icons/mam.png",icon_size=64},
 	{type="item-subgroup",group="special",name="special",order="s-a"},
 	{type="item-subgroup",group="special",name="special-undo",order="s-undo"},
-	{type="item-subgroup",group="logistics",name="logistics-balancing",order="s-a"},
 	{type="item-subgroup",group="logistics",name="logistics-observation",order="s-b"},
 	{type="item-subgroup",group="logistics",name="logistics-wall",order="s-c"},
-	{type="item-subgroup",group="logistics",name="transport-player",order="s-h"},
+	{type="item-subgroup",group="logistics",name="transport-player",order="dz"},
 	{type="item-subgroup",group="logistics",name="logistics-undo",order="s-undo"},
 	{type="item-subgroup",group="production",name="production-power",order="s-a"},
 	{type="item-subgroup",group="production",name="production-fluid",order="s-b"},
@@ -75,6 +74,8 @@ data:extend({
 	{type="item-subgroup",group="mam-research",name="mam-quartz",order="h"},
 	{type="item-subgroup",group="mam-research",name="mam-sulfur",order="i"}
 })
+data.raw['item-subgroup']['transport'].order = "e"
+data.raw['item-subgroup']['train-transport'].order = "f"
 data.raw['item-group']['logistics'].icon = "__Satisfactorio__/graphics/item-group/logistics.png"
 data.raw['item-group']['production'].icon = "__Satisfactorio__/graphics/item-group/production.png"
 data.raw['item-group']['intermediate-products'].icon = "__Satisfactorio__/graphics/item-group/intermediate-products.png"

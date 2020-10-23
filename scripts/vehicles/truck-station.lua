@@ -30,7 +30,7 @@ local function onBuilt(event)
 		io.addInput(entity, {0,3.5}, store)
 		io.addOutput(entity, {2,3.5}, store, defines.direction.south)
 		-- default to Input mode
-		io.toggleOutput(entity, {2,3.5}, false)
+		io.toggle(entity, {2,3.5}, false)
 		entity.rotatable = false
 		if not global['truck-stations'] then global['truck-stations'] = {} end
 		table.insert(global['truck-stations'], entity)
@@ -53,9 +53,7 @@ local function onRemoved(event)
 			getitems.storage(fuel, event and event.buffer or nil)
 			fuel.destroy()
 		end
-		io.removeInput(floor, {-4,3.5}, event)
-		io.removeInput(floor, {0,3.5}, event)
-		io.removeOutput(floor, {2,3.5}, event)
+		io.remove(floor, event)
 		-- remove from global table
 		for i,x in ipairs(global['truck-stations']) do
 			if x == floor then
@@ -77,6 +75,7 @@ local function onGuiOpened(event)
 	end
 	if event.gui_type == defines.gui_type.entity and event.entity.name == storage then
 		local floor = event.entity.surface.find_entity(base, event.entity.position)
+		local unloading = io.isEnabled(floor,{2,3.5})
 		-- create additional GUI for switching input/output mode
 		local gui = player.gui.left
 		if not gui['truck-station-gui'] then
@@ -92,27 +91,33 @@ local function onGuiOpened(event)
 			frame.add{
 				type = "switch",
 				name = "truck-station-mode-toggle",
-				switch_state = io.isOutputEnabled(floor,{2,3.5}) and "right" or "left",
+				switch_state = unloading and "right" or "left",
 				left_label_caption = {"gui.truck-station-mode-load"},
 				right_label_caption = {"gui.truck-station-mode-unload"}
 			}
+		else
+			gui['truck-station-gui'].visible = true
 		end
+		gui['truck-station-gui'].caption = {"entity-name."..event.entity.name}
+		gui['truck-station-gui']['truck-station-mode-toggle'].switch_state = unloading and "right" or "left"
 	end
 end
 local function onGuiSwitch(event)
 	if event.element.valid and event.element.name == "truck-station-mode-toggle" then
 		local player = game.players[event.player_index]
-		local floor = player.opened.surface.find_entity(base, player.opened.position)
-		local unload = event.element.switch_state == "right"
-		io.toggleInput(floor,{0,3.5},not unload)
-		io.toggleOutput(floor,{2,3.5},unload)
+		if player.opened.name == storage then
+			local floor = player.opened.surface.find_entity(base, player.opened.position)
+			local unload = event.element.switch_state == "right"
+			io.toggle(floor,{0,3.5},not unload)
+			io.toggle(floor,{2,3.5},unload)
+		end
 	end
 end
 local function onGuiClosed(event)
 	if event.gui_type == defines.gui_type.entity and event.entity.name == storage then
 		local player = game.players[event.player_index]
 		local gui = player.gui.left['truck-station-gui']
-		if gui then gui.destroy() end
+		if gui then gui.visible = false end
 	end
 end
 
@@ -131,7 +136,7 @@ local function onTick(event)
 			}
 			if #vehicle == 1 then
 				vehicle = vehicle[1]
-				local is_output = io.isOutputEnabled(station,{2,3.5})
+				local is_output = io.isEnabled(station,{2,3.5})
 				local vehicleinventory = vehicle.get_inventory(defines.inventory.car_trunk)
 				local store = station.surface.find_entity(storage, math2d.position.add(station.position, math2d.position.rotate_vector(storage_pos, station.direction*45)))
 				local storeinventory = store.get_inventory(defines.inventory.chest)

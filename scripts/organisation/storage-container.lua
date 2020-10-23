@@ -26,9 +26,7 @@ local function onRemoved(event)
 	if entity.name == fakebox or entity.name == box then
 		local fake = entity.name == fakebox and entity or entity.surface.find_entity(fakebox, entity.position)
 		local real = entity.name == box and entity or entity.surface.find_entity(box, entity.position)
-		-- remove the input/output
-		io.removeInput(fake, {0,2}, event)
-		io.removeOutput(fake, {0,-2}, event)
+		io.remove(fake, event)
 		if entity ~= fake then
 			fake.destroy()
 		end
