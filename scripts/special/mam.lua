@@ -357,7 +357,7 @@ local function onGuiOpened(event)
 				craft.add{type="empty-widget"}
 				craft.add{
 					type = "label",
-					caption = {"gui.hard-drive-recipe-time",recipe.energy,{"description.crafting-time"}}
+					caption = {"gui.hard-drive-recipe-time",{"time-symbol-seconds-short",recipe.energy},{"description.crafting-time"}}
 				}
 				craft.add{type="empty-widget"}
 				craft.add{type="empty-widget"}

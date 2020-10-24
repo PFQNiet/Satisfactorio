@@ -3,6 +3,14 @@ local ship = data.raw.container['crash-site-spaceship']
 ship.max_health = 1
 ship.inventory_size = 1
 ship.minable = nil
+ship.open_sound = {
+	filename = "__base__/sound/metallic-chest-open.ogg",
+	volume = 0.5
+}
+ship.close_sound = {
+	filename = "__base__/sound/metallic-chest-close.ogg",
+	volume = 0.5
+}
 
 -- alter crash site parts to also have 1 max HP (although they need to be set indestructible manually since Factorio doesn't trigger raise_built on them)
 for _,n in pairs({
@@ -10,14 +18,14 @@ for _,n in pairs({
 }) do
 	data.raw.container[n].max_health = 1
 	data.raw.container[n].minable = nil
-	data.raw.container[n].inventory_size = 4
+	data.raw.container[n].inventory_size = 6
 end
 for _,n in pairs({
 	"crash-site-spaceship-wreck-medium-1", "crash-site-spaceship-wreck-medium-2", "crash-site-spaceship-wreck-medium-3"
 }) do
 	data.raw.container[n].max_health = 1
 	data.raw.container[n].minable = nil
-	data.raw.container[n].inventory_size = 2
+	data.raw.container[n].inventory_size = 4
 end
 for _,n in pairs({
 	"crash-site-spaceship-wreck-small-1", "crash-site-spaceship-wreck-small-2", "crash-site-spaceship-wreck-small-3",
