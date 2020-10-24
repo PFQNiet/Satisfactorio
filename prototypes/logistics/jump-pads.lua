@@ -103,6 +103,74 @@ local vehicle = {
 		"hidden"
 	}
 }
+local vehicle2 = {
+	-- a fake car that looks like the player, just without a shadow attached
+	type = "car",
+	name = name.."-flying",
+	animation = {
+		layers = {
+			table.deepcopy(data.raw.character.character.animations[1].running.layers[1]),
+			table.deepcopy(data.raw.character.character.animations[1].running.layers[2])
+		}
+	},
+	braking_power = "200kW",
+	burner = {
+		effectivity = 1,
+		fuel_category = "chemical",
+		fuel_inventory_size = 0,
+		render_no_power_icon = false
+	},
+	consumption = "1W",
+	effectivity = 1,
+	weight = 1,
+	braking_force = 1,
+	friction_force = 1,
+	energy_per_hit_point = 1,
+	inventory_size = 0,
+	rotation_speed = 0,
+	max_health = 1,
+	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon_size = 64,
+	collision_box = {{-0.2,-0.2},{0.2,0.2}},
+	collision_mask = {},
+	selection_box = {{-0.5,-0.5},{0.5,0.5}},
+	selectable_in_game = false,
+	flags = {
+		"not-on-map",
+		"placeable-off-grid",
+		"no-automated-item-removal",
+		"no-automated-item-insertion",
+		"hidden"
+	}
+}
+local shadow = {
+	type = "sprite",
+	-- name = to be set in loop
+	filename = "__base__/graphics/entity/character/level1_running_shadow-1.png",
+	draw_as_shadow = true,
+	width = 96,
+	height = 34,
+	x = 0,
+	-- y = to be set in loop,
+	shift = {0.9375,0.0625},
+	hr_version = {
+		filename = "__base__/graphics/entity/character/hr-level1_running_shadow-1.png",
+		draw_as_shadow = true,
+		width = 190,
+		height = 68,
+		x = 0,
+		-- y = to be set in loop,
+		shift = {0.9375,0.78125},
+		scale = 0.5
+	}
+}
+for i,dir in pairs({defines.direction.north, defines.direction.east, defines.direction.south, defines.direction.west}) do
+	local clone = table.deepcopy(shadow)
+	clone.name = name.."-flying-shadow-"..dir
+	clone.y = clone.height*(i-1)*2
+	clone.hr_version.y = clone.hr_version.height*(i-1)*2
+	data:extend{clone}
+end
 
 local item = {
 	type = "item",
@@ -155,7 +223,7 @@ local undo = {
 	},
 	enabled = false
 }
-data:extend{interface,vehicle,item,recipe,undo}
+data:extend{interface,vehicle,vehicle2,item,recipe,undo}
 
 name = "u-jelly-landing-pad"
 interface = {

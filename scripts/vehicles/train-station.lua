@@ -340,12 +340,14 @@ local function onTick(event)
 				if not global['trains-accounted-for'][train.id] then
 					global['trains-accounted-for'][train.id] = true
 					-- each train consumes 25MW normally, plus up to 85MW more to recharge its power
-					for _,loco in pairs(train.locomotives.front_movers) do
-						local burner = loco.burner
-						if not burner.currently_burning then burner.currently_burning = "train-power" end
-						local missing = 85*1000*1000 - burner.remaining_burning_fuel
-						power = power + 25 + missing/1000/1000
-						burner.remaining_burning_fuel = 85*1000*1000
+					for _,dir in pairs({"front_movers","back_movers"}) do
+						for _,loco in pairs(train.locomotives[dir]) do
+							local burner = loco.burner
+							if not burner.currently_burning then burner.currently_burning = "train-power" end
+							local missing = 85*1000*1000 - burner.remaining_burning_fuel
+							power = power + 25 + missing/1000/1000
+							burner.remaining_burning_fuel = 85*1000*1000
+						end
 					end
 					-- it's okay to just set max power here, as the following second will rapidly drain the station's energy and cause a blackout if power usage is too high
 					-- if there are two power grids trying to account for this train, then this block won't be reached if the first is blacked out, so it's all good!

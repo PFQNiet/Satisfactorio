@@ -8,7 +8,7 @@ train.burner = {
 	fuel_category = "train-power"
 }
 train.weight = 850000/2
-train.braking_force = train.weight/100
+train.braking_force = train.weight/400
 train.friction_force = train.braking_force/40
 
 train = data.raw['item-with-entity-data']['locomotive']
@@ -37,7 +37,7 @@ local fuelcaticon = {
 	priority = "extra-high-no-scale",
 	scale = 0.5,
 	type = "sprite",
-	width = 40
+	width = 32
 }
 
 local ingredients = {

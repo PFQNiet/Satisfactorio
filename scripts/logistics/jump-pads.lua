@@ -4,6 +4,8 @@
 
 local launcher = "jump-pad"
 local vehicle = launcher.."-car"
+local flying = launcher.."-flying"
+local shadow = launcher.."-flying-shadow"
 local landing = "u-jelly-landing-pad"
 
 local function onBuilt(event)
@@ -59,8 +61,8 @@ local vectors = {
 local function onVehicle(event)
 	local player = game.players[event.player_index]
 	local entity = event.entity
-	if entity and entity.valid and entity.name == vehicle then
-		if player.driving then
+	if player.driving then
+		if entity and entity.valid and entity.name == vehicle then
 			local enter = entity.surface.find_entity(launcher,entity.position)
 			player.driving = false
 			if enter.energy == 0 then
@@ -70,18 +72,37 @@ local function onVehicle(event)
 				-- initiate YEETage
 				local character = player.character
 				if not global['jump-pad-launch'] then global['jump-pad-launch'] = {} end
-				global['jump-pad-launch'][player.index] = {
-					character = character,
-					start = enter.position,
-					time = 0,
+				local car2 = enter.surface.create_entity{
+					name = flying,
+					force = enter.force,
+					position = enter.position,
 					direction = enter.direction
 				}
-				character.surface.play_sound{
+				car2.set_driver(player)
+				local graphic = rendering.draw_sprite{
+					sprite = shadow.."-"..enter.direction,
+					surface = enter.surface,
+					target = car2
+				}
+				global['jump-pad-launch'][player.index] = {
+					player = player,
+					start = enter.position,
+					time = 0,
+					direction = enter.direction,
+					car = car2,
+					shadow = graphic
+				}
+				player.surface.play_sound{
 					path = "jump-pad-launch",
 					position = enter.position
 				}
-				character.destructible = false -- invincible while flying
 			end
+		end
+	else
+		-- check if player is being yeeted and put them back in if so
+		local yeet = global['jump-pad-launch'] and global['jump-pad-launch'][player.index]
+		if yeet then
+			yeet.car.set_driver(player)
 		end
 	end
 end
@@ -93,33 +114,39 @@ local function onTick(event)
 		local position = data.time / 120
 		local x = data.start.x + vectors[data.direction][1] * position * 40
 		local y = data.start.y + vectors[data.direction][2] * position * 40
-		y = y - 10*math.sin(position*math.pi) -- Z axis (representation)
-		local character = data.character
-		character.teleport({x,y})
-		character.direction = data.direction -- force character to face forward despite keyboard input
+		local z = 10*math.sin(position*math.pi) -- Z axis (representation)
+		y = y - z
+		local car = data.car
+		car.teleport({x,y})
+		rendering.set_target(data.shadow, car, {z+1,z})
+		rendering.set_x_scale(data.shadow, 1-z/20)
+		rendering.set_y_scale(data.shadow, 1-z/20)
 
 		if data.time == 120 then
 			-- landing! check for collision and bump accordingly - should wind up close by at worst
-			character.destructible = true
-			-- if we landed on water, just die XD
-			local surface = character.surface
-			local water_tile = surface.find_tiles_filtered{
-				position = {x,y},
-				radius = 1,
-				limit = 1,
-				collision_mask = "player-layer" -- tiles that collide with the player are impassible - in vanilla that's just water but let's support mods too!
-			}
-			if #water_tile > 0 then
-				character.die()
-			else
-				-- move the character aside so it is out of the way of its own collision check
-				character.teleport({character.position.x-5, character.position.y})
-				-- then find an empty space at the target
-				character.teleport(surface.find_non_colliding_position("character",{x,y},0,0.05))
-				-- if we landed on jelly then we're good, otherwise take some fall damage (that'll just regen anyway so whatever lol XD)
-				local jelly = surface.find_entity(landing, character.position)
-				if not jelly or jelly.energy == 0 then
-					character.damage(40, game.forces.neutral) -- so you can unsafe-jump twice but the third time is death
+			local character = data.player.character
+			car.destroy()
+			if character then
+				-- if we landed on water, just die XD
+				local surface = character.surface
+				local water_tile = surface.find_tiles_filtered{
+					position = {x,y},
+					radius = 1,
+					limit = 1,
+					collision_mask = "player-layer" -- tiles that collide with the player are impassible - in vanilla that's just water but let's support mods too!
+				}
+				if #water_tile > 0 then
+					character.die()
+				else
+					-- move the character aside so it is out of the way of its own collision check
+					character.teleport({x-5, y})
+					-- then find an empty space at the target
+					character.teleport(surface.find_non_colliding_position("character",{x,y},0,0.05))
+					-- if we landed on jelly then we're good, otherwise take some fall damage (that'll just regen anyway so whatever lol XD)
+					local jelly = surface.find_entity(landing, character.position)
+					if not jelly or jelly.energy == 0 then
+						character.damage(40, game.forces.neutral) -- so you can unsafe-jump twice but the third time is death
+					end
 				end
 			end
 			global['jump-pad-launch'][pid] = nil
