@@ -331,7 +331,7 @@ local function onGuiOpened(event)
 				title.style.horizontally_stretchable = true
 				title.add{
 					type = "label",
-					style = "caption_label",
+					style = "heading_2_label",
 					caption = {"gui.smart-splitter-"..dir}
 				}
 				local list = col.add{

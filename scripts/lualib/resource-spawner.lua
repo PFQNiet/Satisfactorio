@@ -17,7 +17,10 @@
 		(grid, nodes, sleep) are grouped by surface index
 	}
 	When spawned, a "node" can actually be a cluster of resource nodes, akin to oil patches in vanilla
+	Special resource "types": x-plant, x-powerslug, x-crashsite
 ]]
+local crash_site = require("scripts.lualib.crash-sites")
+
 local function registerResource(name, radius, min, max)
 	if global['resources'][name] then return end
 	global['resources'][name] = {
@@ -115,6 +118,16 @@ local function spawnNode(resource, surface, cx, cy)
 					queueEntity(entity, surface, chunkpos)
 				else
 					surface.create_entity(entity)
+				end
+			elseif resource.type == "x-crashsite" then
+				pval = purity -- always just one crash site
+				local tx = cx+x+0.5
+				local ty = cy+y+0.5
+				local chunkpos = {x=math.floor(tx/32), y=math.floor(ty/32)}
+				if not surface.is_chunk_generated({chunkpos.x, chunkpos.y}) then
+					queueEntity({name="x-crashsite",position={tx,ty}}, surface, chunkpos)
+				else
+					crash_site.createCrashSite(surface, {tx,ty})
 				end
 			else
 				local tx = cx+math.floor(x+0.5)
@@ -221,7 +234,11 @@ local function onChunkGenerated(event)
 	local queued = getQueuedEntities(surface, pos)
 	if queued and #queued > 0 then
 		for _,node in pairs(queued) do
-			event.surface.create_entity(node)
+			if node.name == "x-crashsite" then
+				crash_site.createCrashSite(event.surface, node.position)
+			else
+				event.surface.create_entity(node)
+			end
 		end
 		clearQueuedEntities(surface, pos)
 	end
@@ -259,6 +276,7 @@ local function onInit()
 
 	registerResource("x-plant", 100, 1, 3)
 	registerResource("x-powerslug", 200, 1, 10)
+	registerResource("x-crashsite", 450, 1, 1)
 end
 local function onTick()
 	-- check for open nodes and process one

@@ -247,7 +247,7 @@ local function onGuiOpened(event)
 				title.add{
 					type = "label",
 					name = "label",
-					style = "caption_label",
+					style = "heading_2_label",
 					caption = {"gui.programmable-splitter-"..dir,1}
 				}
 				local list = col.add{

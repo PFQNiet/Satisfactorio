@@ -354,7 +354,7 @@ local function onTick(event)
 				end
 			end
 			station.power_usage = power*1000*1000/60 -- set power usage for the next second based on power consumed in the last second
-			station.electric_buffer_size = power*1000*1000
+			station.electric_buffer_size = math.max(station.electric_buffer_size, station.power_usage)
 		end
 	end
 
