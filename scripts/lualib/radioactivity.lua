@@ -231,6 +231,7 @@ local function onTick(event)
 						name = "bar",
 						style = "radioactivity-progressbar"
 					}
+					gui.visible = false
 				end
 				if radiation < 1 then
 					if gui.visible then

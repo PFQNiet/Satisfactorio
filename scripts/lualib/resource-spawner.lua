@@ -279,6 +279,7 @@ local function onInit()
 	registerResource("x-crashsite", 450, 1, 1)
 end
 local function onTick()
+	local total_per_surface = {}
 	-- check for open nodes and process one
 	for _,surface in pairs(game.surfaces) do
 		local total = 0
@@ -290,6 +291,51 @@ local function onTick()
 		end
 		if total > 0 then
 			scanForResources(surface, total)
+		end
+		total_per_surface[surface.index] = total
+	end
+	-- if there are many nodes on the player's current surface, show a GUI to indicate the map is loading
+	for _,player in pairs(game.players) do
+		local gui = player.gui.screen['resources-loading']
+		if not gui then
+			gui = player.gui.screen.add{
+				type = "frame",
+				name = "resources-loading",
+				direction = "vertical",
+				caption = {"gui.map-generator-working-title"},
+				style = mod_gui.frame_style
+			}
+			gui.style.horizontally_stretchable = false
+			gui.style.use_header_filler = false
+			gui.style.width = 300
+			local flow = gui.add{
+				type = "frame",
+				direction = "vertical",
+				name = "content",
+				style = "inside_shallow_frame_with_padding"
+			}
+			flow.style.horizontally_stretchable = true
+			flow.add{
+				type = "label",
+				style = "heading_2_label",
+				caption = {"gui.map-generator-working-label"}
+			}.style.bottom_margin = 12
+			flow.add{
+				type = "label",
+				name = "count"
+			}
+			gui.visible = false
+		end
+		if total_per_surface[player.surface.index] < 10 then
+			if gui.visible then
+				gui.visible = false
+			end
+		else
+			if not gui.visible then
+				gui.visible = true
+				gui.location = {(player.display_resolution.width-300)/2, 280}
+			end
+			gui.content.count.caption = {"gui.map-generator-node-count",total_per_surface[player.surface.index]}
 		end
 	end
 end
