@@ -145,7 +145,7 @@ local function onDriving(event)
 	if entity and entity.valid and isSelfDrivingCar(entity) then
 		local gui = player.gui.left
 		local car = getCar(entity)
-		if player.driving and entity.get_driver().player == player then
+		if player.driving and player.vehicle == entity then
 			-- create the gui
 			if gui['self-driving'] then
 				gui['self-driving'].destroy()

@@ -1,5 +1,6 @@
 require("prototypes.vehicles.tractor")
 require("prototypes.vehicles.truck")
+require("prototypes.vehicles.explorer")
 require("prototypes.vehicles.truck-station")
 
 require("prototypes.vehicles.train")

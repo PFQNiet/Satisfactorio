@@ -767,7 +767,7 @@ addTech("mam-quartz-explorer", "mam/explorer", "mam", "mam-quartz", "m-7-6", 300
 	{"crystal-oscillator",10},
 	{"modular-frame",100}
 }, {
-	-- {type="unlock-recipe",recipe="explorer"}
+	{type="unlock-recipe",recipe="explorer"}
 })
 addTech("mam-quartz-frequency-mapping", "mam/map", "mam", "mam-quartz", "m-7-7", 300, {"mam-quartz-signal-technologies"}, {
 	{"crystal-oscillator",10},
