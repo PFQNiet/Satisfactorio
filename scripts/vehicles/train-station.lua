@@ -186,9 +186,6 @@ local function onBuilt(event)
 			force = entity.force,
 			raise_built = true
 		}
-
-		-- TODO entity-specific things like storage, station etc.
-		-- TODO establish the chain of station-platforms
 	end
 end
 
@@ -242,7 +239,7 @@ local function onGuiOpened(event)
 		-- opening the combinator instead opens the storage
 		player.opened = event.entity.surface.find_entities_filtered{
 			name = {trainstop, freight.."-box", fluid.."-tank"},
-			position = math2d.position.add(event.entity.position, math2d.position.rotate_vector(storage_pos, event.entity.direction*45))
+			area = event.entity.bounding_box
 		}[1]
 	end
 	if event.entity.name == freight.."-box" or event.entity.name == fluid.."-tank" then
