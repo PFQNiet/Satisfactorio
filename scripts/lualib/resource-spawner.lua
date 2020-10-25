@@ -142,14 +142,14 @@ local function spawnNode(resource, surface, cx, cy)
 				if not surface.is_chunk_generated({chunkpos.x, chunkpos.y}) then
 					queueEntity(entity, surface, chunkpos)
 					queueEntity({
-						name = "small-biter",
+						name = "big-biter",
 						position = {tx,ty},
 						force = game.forces.enemy
 					}, surface, chunkpos)
 				else
 					surface.create_entity(entity)
 					surface.create_entity({
-						name = "small-biter",
+						name = "big-biter",
 						position = {tx,ty},
 						force = game.forces.enemy
 					})

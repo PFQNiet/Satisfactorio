@@ -122,11 +122,11 @@ local function onBuilt(event)
 				}
 				io.addOutput(entity, {6.5,-2}, store, defines.direction.east)
 				io.addInput(entity, {6.5,-1}, store, defines.direction.west)
-				io.addOutput(entity, {6.5,1}, store, defines.direction.east)
-				io.addInput(entity, {6.5,2}, store, defines.direction.west)
+				io.addInput(entity, {6.5,1}, store, defines.direction.east)
+				io.addOutput(entity, {6.5,2}, store, defines.direction.west)
 				-- default to Input mode
 				io.toggle(entity, {6.5,-2}, false)
-				io.toggle(entity, {6.5,1}, false)
+				io.toggle(entity, {6.5,2}, false)
 			end
 			if entity.name == fluid then
 				entity.surface.create_entity{
@@ -152,22 +152,22 @@ local function onBuilt(event)
 					force = entity.force,
 					raise_built = true
 				}.rotatable = false
-				pump = entity.surface.create_entity{
+				entity.surface.create_entity{
 					name = entity.name.."-pump",
 					position = math2d.position.add(entity.position, math2d.position.rotate_vector({6.5,1}, entity.direction*45)),
 					direction = (entity.direction + 2) % 8,
 					force = entity.force,
 					raise_built = true
-				}
-				pump.rotatable = false
-				pump.active = false
-				entity.surface.create_entity{
+				}.rotatable = false
+				pump = entity.surface.create_entity{
 					name = entity.name.."-pump",
 					position = math2d.position.add(entity.position, math2d.position.rotate_vector({6.5,2}, entity.direction*45)),
 					direction = (entity.direction + 6) % 8,
 					force = entity.force,
 					raise_built = true
-				}.rotatable = false
+				}
+				pump.rotatable = false
+				pump.active = false
 			end
 		end
 		entity.rotatable = false
@@ -290,8 +290,8 @@ local function onGuiSwitch(event)
 			local unload = event.element.switch_state == "right"
 			io.toggle(floor,{6.5,-2},unload)
 			io.toggle(floor,{6.5,-1},not unload)
-			io.toggle(floor,{6.5,1},unload)
-			io.toggle(floor,{6.5,2},not unload)
+			io.toggle(floor,{6.5,1},not unload)
+			io.toggle(floor,{6.5,2},unload)
 		end
 		if player.opened.name == fluid.."-tank" then
 			local floor = player.opened.surface.find_entity(fluid, player.opened.position)
@@ -307,11 +307,11 @@ local function onGuiSwitch(event)
 			floor.surface.find_entity(
 				fluid.."-pump",
 				math2d.position.add(floor.position, math2d.position.rotate_vector({6.5,1}, floor.direction*45))
-			).active = unload
+			).active = not unload
 			floor.surface.find_entity(
 				fluid.."-pump",
 				math2d.position.add(floor.position, math2d.position.rotate_vector({6.5,2}, floor.direction*45))
-			).active = not unload
+			).active = unload
 		end
 	end
 end

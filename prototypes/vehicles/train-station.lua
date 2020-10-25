@@ -1,6 +1,6 @@
 -- base entity is an electric-energy-interface to manage power consumption
 -- station is 7x14 and auto-builds (and removes) a vanilla train-stop entity
--- freight platform layout is |OO-II|
+-- freight platform layout is |OI-IO|
 -- fluid platform consists of pumps and a storage tank, so that it can draw fluid into itself and output it
 -- central 7x2 is reserved for the rails
 local name = "train-station"

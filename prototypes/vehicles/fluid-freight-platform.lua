@@ -150,8 +150,8 @@ local storage = {
 		pipe_connections = {
 			{position={3,-2},type="output"},
 			{position={3,-1},type="input"},
-			{position={3,1},type="output"},
-			{position={3,2},type="input"}
+			{position={3,1},type="input"},
+			{position={3,2},type="output"}
 		},
 		pipe_covers = table.deepcopy(data.raw['storage-tank']['storage-tank'].fluid_box.pipe_covers)
 	},
