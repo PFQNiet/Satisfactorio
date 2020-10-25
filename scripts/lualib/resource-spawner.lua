@@ -2,6 +2,7 @@
 	Resources are spawned using a poisson-disc distribution, with the small change that nodes outside the bounding box of the generated map are "asleep"
 	Sleeping nodes won't be considered for expansion until the bounding box of generated chunks contains them
 	Uses global['queued-nodes'] to track nodes that should have spawned, but whose location wasn't generated yet
+	Uses global['resource-node-count'] to store a running total of open nodes
 	Uses global['resources'] to store data relating to resource generation
 	Each resource is a table: {
 		r = radius, nodes will spawn between r and 2r tiles away from any other nodes
@@ -33,6 +34,14 @@ local function registerResource(name, radius, min, max)
 		nodes = {},
 		sleep = {}
 	}
+end
+local function registerSurface(surface)
+	for _,struct in pairs(global['resources']) do
+		struct.nodes[surface.index] = {{0,0}}
+		struct.sleep[surface.index] = {}
+		struct.grid[surface.index] = {[0]={[0]={0,0}}}
+		global['resource-node-count'] = global['resource-node-count'] + 1
+	end
 end
 
 local function queueEntity(entity, surface, chunkpos)
@@ -167,6 +176,7 @@ local function addNode(resource, surface, x, y)
 	if not resource.grid[surface.index][gy] then resource.grid[surface.index][gy] = {} end
 	resource.grid[surface.index][gy][gx] = {x,y}
 	table.insert(resource.nodes[surface.index], {x,y})
+	global['resource-node-count'] = global['resource-node-count'] + 1
 	spawnNode(resource, surface, x, y)
 end
 local function existsNear(mytype, surface, x, y)
@@ -192,37 +202,43 @@ local function existsNear(mytype, surface, x, y)
 	end
 	return false
 end
-local function scanForResources(surface, nodecount)
+local function scanForResources()
 	-- pick a random number and iterate the groups again until that many have passed
-	local rand = math.random(1,nodecount)
-	for name,data in pairs(global['resources']) do
-		if rand <= #data.nodes[surface.index] then
-			-- found it!
-			local node = data.nodes[surface.index][rand]
-			-- but if the node is outside the generated surface, put it to sleep
-			if not surface.is_chunk_generated{x=math.floor(node[1]/32), y=math.floor(node[2]/32)} then
-				table.insert(data.sleep[surface.index], node)
-				table.remove(data.nodes[surface.index], rand)
-			else
-				for _=1,data.k do
-					-- pick a random point between r and 2r distance away
-					local theta = math.random()*math.pi*2
-					local range = math.random()*data.r+data.r
-					local test = {node[1]+math.cos(theta)*range, node[2]+math.sin(theta)*range}
-					if not existsNear(name, surface, test[1], test[2]) then
-						-- it's free real estate!
-						addNode(data, surface, test[1], test[2])
-						break
-					end
-					if _ == data.k then
-						-- give up on this node, it is now closed
-						table.remove(data.nodes[surface.index],rand)
+	local rand = math.random(1,global['resource-node-count'])
+	for _,surface in pairs(game.surfaces) do
+		for name,data in pairs(global['resources']) do
+			if not data.nodes[surface.index] then break end
+
+			if rand <= #data.nodes[surface.index] then
+				-- found it!
+				local node = data.nodes[surface.index][rand]
+				-- but if the node is outside the generated surface, put it to sleep
+				if not surface.is_chunk_generated{x=math.floor(node[1]/32), y=math.floor(node[2]/32)} then
+					table.insert(data.sleep[surface.index], node)
+					table.remove(data.nodes[surface.index], rand)
+					global['resource-node-count'] = global['resource-node-count'] - 1
+				else
+					for _=1,data.k do
+						-- pick a random point between r and 2r distance away
+						local theta = math.random()*math.pi*2
+						local range = math.random()*data.r+data.r
+						local test = {node[1]+math.cos(theta)*range, node[2]+math.sin(theta)*range}
+						if not existsNear(name, surface, test[1], test[2]) then
+							-- it's free real estate!
+							addNode(data, surface, test[1], test[2])
+							break
+						end
+						if _ == data.k then
+							-- give up on this node, it is now closed
+							table.remove(data.nodes[surface.index],rand)
+							global['resource-node-count'] = global['resource-node-count'] - 1
+						end
 					end
 				end
+				return
+			else
+				rand = rand - #data.nodes[surface.index]
 			end
-			break
-		else
-			rand = rand - #data.nodes[surface.index]
 		end
 	end
 end
@@ -247,21 +263,27 @@ local function onChunkGenerated(event)
 	bbox[1] = {bbox[1].x or bbox[1][1], bbox[1].y or bbox[1][2]}
 	bbox[2] = {bbox[2].x or bbox[2][1], bbox[2].y or bbox[2][2]}
 	if global['resources'] then
+		local awaken = 0
 		for _,data in pairs(global['resources']) do
 			for surfid,nodes in pairs(data.sleep) do
 				for k,v in pairs(nodes) do
 					if v[1] >= bbox[1][1] and v[1] <= bbox[2][1] and v[2] >= bbox[1][2] and v[2] <= bbox[2][2] then
 						table.remove(data.sleep[surfid],k)
 						table.insert(data.nodes[surfid],v)
+						awaken = awaken + 1
 					end
 				end
 			end
+		end
+		if awaken > 0 then
+			global['resource-node-count'] = global['resource-node-count'] + awaken
 		end
 	end
 end
 
 local function onInit()
 	if not global['resources'] then global['resources'] = {} end
+	if not global['resource-node-count'] then global['resource-node-count'] = 0 end
 	registerResource("iron-ore", 150, 4, 8)
 	registerResource("copper-ore", 180, 2, 6)
 	registerResource("stone", 175, 3, 7)
@@ -277,75 +299,67 @@ local function onInit()
 	registerResource("x-plant", 100, 1, 3)
 	registerResource("x-powerslug", 200, 1, 10)
 	registerResource("x-crashsite", 450, 1, 1)
+
+	registerSurface(game.surfaces.nauvis)
 end
-local function onTick()
-	local total_per_surface = {}
-	-- check for open nodes and process one
-	for _,surface in pairs(game.surfaces) do
-		local total = 0
-		for name,data in pairs(global['resources']) do
-			if not data.nodes[surface.index] then data.nodes[surface.index] = {{0,0}} end
-			if not data.sleep[surface.index] then data.sleep[surface.index] = {} end
-			if not data.grid[surface.index] then data.grid[surface.index] = {[0]={[0]={0,0}}} end
-			total = total + #data.nodes[surface.index]
-		end
-		if total > 0 then
-			scanForResources(surface, total)
-		end
-		total_per_surface[surface.index] = total
+local function onTick(event)
+	local count = global['resource-node-count']
+	-- run more often the more open nodes there are
+	if count > 30 or (count > 20 and event.tick%4 == 0) or (count > 10 and event.tick%6 == 0) or (count > 5 and event.tick%8 == 0) or (count > 0 and event.tick%10 == 0) then
+		scanForResources()
 	end
-	-- if there are many nodes on the player's current surface, show a GUI to indicate the map is loading
-	for _,player in pairs(game.players) do
-		local gui = player.gui.screen['resources-loading']
-		if not gui then
-			gui = player.gui.screen.add{
-				type = "frame",
-				name = "resources-loading",
-				direction = "vertical",
-				caption = {"gui.map-generator-working-title"},
-				style = mod_gui.frame_style
-			}
-			gui.style.horizontally_stretchable = false
-			gui.style.use_header_filler = false
-			gui.style.width = 300
-			local flow = gui.add{
-				type = "frame",
-				direction = "vertical",
-				name = "content",
-				style = "inside_shallow_frame_with_padding"
-			}
-			flow.style.horizontally_stretchable = true
-			flow.add{
-				type = "label",
-				style = "heading_2_label",
-				caption = {"gui.map-generator-working-label"}
-			}.style.bottom_margin = 12
-			flow.add{
-				type = "label",
-				name = "count"
-			}
-			gui.visible = false
-		end
-		if total_per_surface[player.surface.index] < 10 then
-			if gui.visible then
+	if event.tick%30 == 0 then
+		-- if there are many nodes on the player's current surface, show a GUI to indicate the map is loading
+		for _,player in pairs(game.players) do
+			local gui = player.gui.screen['resources-loading']
+			if not gui then
+				gui = player.gui.screen.add{
+					type = "frame",
+					name = "resources-loading",
+					direction = "vertical",
+					caption = {"gui.map-generator-working-title"},
+					style = mod_gui.frame_style
+				}
+				gui.style.horizontally_stretchable = false
+				gui.style.use_header_filler = false
+				gui.style.width = 300
+				local flow = gui.add{
+					type = "frame",
+					direction = "vertical",
+					name = "content",
+					style = "inside_shallow_frame_with_padding"
+				}
+				flow.style.horizontally_stretchable = true
+				flow.add{
+					type = "label",
+					style = "heading_2_label",
+					caption = {"gui.map-generator-working-label"}
+				}.style.bottom_margin = 12
+				flow.add{
+					type = "label",
+					name = "count"
+				}
 				gui.visible = false
 			end
-		else
-			if not gui.visible then
-				gui.visible = true
-				gui.location = {(player.display_resolution.width-300)/2, 280}
+			if count < 5 then
+				if gui.visible then
+					gui.visible = false
+				end
+			else
+				if not gui.visible then
+					gui.visible = true
+					gui.location = {(player.display_resolution.width-300)/2, 40}
+				end
+				gui.content.count.caption = {"gui.map-generator-node-count",count}
 			end
-			gui.content.count.caption = {"gui.map-generator-node-count",total_per_surface[player.surface.index]}
 		end
 	end
 end
 
 return {
 	on_init = onInit,
-	on_nth_tick = {
-		[10] = onTick
-	},
 	events = {
+		[defines.events.on_tick] = onTick,
 		[defines.events.on_chunk_generated] = onChunkGenerated
 	}
 }
