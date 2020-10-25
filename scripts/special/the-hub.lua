@@ -4,6 +4,7 @@
 
 local mod_gui = require("mod-gui")
 local util = require("util")
+local math2d = require("math2d")
 local string = require("scripts.lualib.string")
 local omnilab = require("scripts.lualib.omnilab")
 local getitems = require("scripts.lualib.get-items-from")
@@ -28,30 +29,17 @@ local function findHubForForce(force)
 	return game.get_surface(pos[1]).find_entity(terminal,pos[2])
 end
 
-local rotations = {
-	[defines.direction.north] = {0,-1},
-	[defines.direction.east] = {1,0},
-	[defines.direction.south] = {0,1},
-	[defines.direction.west] = {-1,0}
-}
-local function position(relative,to) -- relative is {forward, rightward} based on to.direction
-	local rot1 = rotations[to.direction]
-	local rot2 = rotations[(to.direction+2)%8]
-	local rel = {relative[1] or relative.x or 0, relative[2] or relative.y or 0}
-	local pos = {to.position[1] or to.position.x or 0, to.position[2] or to.position.y or 0}
-	return {
-		pos[1] + rel[1]*rot1[1] + rel[2]*rot2[1],
-		pos[2] + rel[1]*rot1[2] + rel[2]*rot2[2]
-	}
+local function position(offset,entity) -- entity's position and direction are used
+	return math2d.position.add(entity.position, math2d.position.rotate_vector(offset, entity.direction*45))
 end
-local spawn_pos = {0,1}
-local bench_pos = {0,2.5}
+local spawn_pos = {1,0}
+local bench_pos = {2.5,0}
 local bench_rotation = 2 -- 90deg
-local storage_pos = {-2,0}
-local burner_1_pos = {2,-4}
-local burner_2_pos = {-2,-4}
-local powerpole_pos = {0,-5}
-local freighter_pos = {0,6}
+local storage_pos = {0,2}
+local burner_1_pos = {-4,2}
+local burner_2_pos = {-4,-2}
+local powerpole_pos = {-5,0}
+local freighter_pos = {6,0}
 
 local function buildFloor(hub)
 	-- also build the Omnilab (which will check if this is the first time the HUB is being placed)
