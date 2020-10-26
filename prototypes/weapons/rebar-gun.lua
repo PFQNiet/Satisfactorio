@@ -124,7 +124,7 @@ data:extend({
 		},
 		result = ammo,
 		energy_required = 1/4,
-		category = "craft-bench",
+		category = "equipment",
 		hide_from_player_crafting = true,
 		enabled = false
 	}

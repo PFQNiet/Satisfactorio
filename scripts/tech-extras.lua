@@ -1,6 +1,6 @@
 -- Technology effects don't include -manual, -undo or awesome-shop- recipes, to avoid polluting the technology GUI
 -- Instead they are unlocked here.
-function onResearch(event)
+local function onResearch(event)
 	local technology = event.research
 	for _,effect in pairs(technology.effects) do
 		if effect.type == "unlock-recipe" then

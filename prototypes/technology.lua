@@ -815,13 +815,13 @@ addTech("mam-sulfur-nobelisk-detonator", "mam/nobelisk-detonator", "mam", "mam-s
 	{"copper-cable",100},
 	{"object-scanner",5}
 }, {
-	-- {type="unlock-recipe",recipe="nobelisk-detonator"}
+	{type="unlock-recipe",recipe="nobelisk-detonator"}
 })
 addTech("mam-sulfur-nobelisk", "mam/nobelisk", "mam", "mam-sulfur", "m-8-5", 3, {"mam-sulfur-nobelisk-detonator"}, {
 	{"black-powder",100},
 	{"steel-pipe",100}
 }, {
-	-- {type="unlock-recipe",recipe="nobelisk"}
+	{type="unlock-recipe",recipe="nobelisk"}
 })
 addTech("mam-sulfur-rifle", "mam/rifle", "mam", "mam-sulfur", "m-8-6", 180, {"mam-sulfur-volatile-applications"}, {
 	{"steel-pipe",100},

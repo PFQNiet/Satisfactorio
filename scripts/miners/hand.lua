@@ -56,7 +56,7 @@ end
 
 -- plants may be harvested, and may leave behind a "harvested" entity which can later regenerate
 -- uses global['plant-regen'] to track when such plants should regenerate
-function onHarvest(event)
+local function onHarvest(event)
 	-- check if the "open GUI" event is intended for a plant...
 	local player = game.players[event.player_index]
 	if not (player.selected and player.selected.valid) then return end
@@ -94,7 +94,7 @@ function onHarvest(event)
 		end
 	end
 end
-function checkForRegrowth(event)
+local function checkForRegrowth(event)
 	if not global['plant-regen'] then return end
 	for i,plant in pairs(global['plant-regen']) do
 		if plant.regen_at < event.tick then

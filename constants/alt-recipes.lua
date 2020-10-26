@@ -8,7 +8,7 @@ return {
 	["fine-concrete"] = {"mam-quartz-quartz"},
 	["radio-control-system"] = {"mam-quartz-radio-control-unit","mam-caterium-high-speed-connector"},
 	["cheap-silica"] = {"mam-quartz-silica"},
-	-- ["seismic-nobelisk"] = {"mam-sulfur-nobelisk","mam-quartz-quartz-crystals"},
+	["seismic-nobelisk"] = {"mam-sulfur-nobelisk","mam-quartz-quartz-crystals"},
 	["casted-screw"] = {},
 	["iron-wire"] = {},
 	["iron-alloy-ingot"] = {},

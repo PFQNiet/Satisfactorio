@@ -60,7 +60,7 @@ data:extend({{
 	},
 	result = basename,
 	energy_required = 10/4,
-	category = "craft-bench",
+	category = "equipment",
 	hide_from_player_crafting = true,
 	enabled = false
 }})

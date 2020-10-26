@@ -109,7 +109,7 @@ local recipes = {
 		category = "assembling",
 		icons = {"limestone"}
 	},
-	--[[{
+	{
 		name = "seismic-nobelisk",
 		ingredients = {
 			{"black-powder",8},
@@ -121,7 +121,7 @@ local recipes = {
 		energy_required = 40,
 		category = "manufacturing",
 		icons = {"crystal-oscillator"}
-	},]]
+	},
 	{
 		name = "casted-screw",
 		ingredients = {
@@ -875,7 +875,7 @@ local recipes = {
 }
 for i,r in pairs(recipes) do
 	local icons = r.icons
-	local product = data.raw.item[r.main_product or r.result] or data.raw.fluid[r.main_product]
+	local product = data.raw.item[r.main_product or r.result] or data.raw.capsule[r.result] or data.raw.fluid[r.main_product]
 	r.icons = {
 		{icon = product.icon, icon_size = 64}
 	}
@@ -894,7 +894,7 @@ local alts = require("constants.alt-recipes") -- dict [base name] => {prerequisi
 for base,prereq in pairs(alts) do
 	table.insert(prereq,"mam-hard-drive")
 	local recipe = data.raw.recipe[base]
-	local product = recipe and (data.raw.item[recipe.main_product or recipe.result] or data.raw.fluid[recipe.main_product]) or nil
+	local product = recipe and (data.raw.item[recipe.main_product or recipe.result] or data.raw.capsule[recipe.result] or data.raw.fluid[recipe.main_product]) or nil
 	local order = "m-x-"..(product and data.raw['item-subgroup'][product.subgroup].order.."-"..product.order or "z")
 	data:extend({
 		{
