@@ -22,6 +22,7 @@ local fuelcat = {
 local fuel = {
 	type = "item",
 	name = "train-power",
+	flags = {"hidden"},
 	fuel_category = "train-power",
 	fuel_value = "85MJ", -- 1 second of max power
 	icon = "__Satisfactorio__/graphics/icons/battery.png",

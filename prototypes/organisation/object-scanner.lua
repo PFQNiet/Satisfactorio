@@ -6,7 +6,20 @@ local scanneritem = {
 	order = "f["..name.."]",
 	stack_size = 1,
 	subgroup = "logistics-observation",
-	type = "item"
+	type = "selection-tool",
+	selection_mode = {"nothing"},
+	selection_color = {a=0},
+	selection_cursor_box_type = "entity",
+	alt_selection_mode = {"nothing"},
+	alt_selection_color = {a=0},
+	alt_selection_cursor_box_type = "entity",
+	mouse_cursor = name,
+	flags = {"mod-openable"}
+}
+local defaultcursor = {
+	type = "mouse-cursor",
+	name = name,
+	system_cursor = "arrow"
 }
 
 local ingredients = {
@@ -27,4 +40,4 @@ local scannerrecipe = {
 	enabled = false
 }
 
-data:extend({scanneritem,scannerrecipe})
+data:extend({scanneritem,defaultcursor,scannerrecipe})

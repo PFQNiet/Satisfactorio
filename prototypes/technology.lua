@@ -540,7 +540,7 @@ addTech("mam-alien-organisms-hostile-organism-detection", "mam/enemies", "mam", 
 	{"alien-organs",5},
 	{"alien-carapace",5}
 }, {
-	-- TODO Object Scanner enemies mode
+	{type="unlock-recipe",recipe="scanner-enemies"}
 })
 addTech("mam-alien-organisms-medicinal-inhaler", "mam/medicinal-inhaler", "mam", "mam-alien-organisms", "m-1-a", 300, {"mam-alien-organisms-organic-properties"}, {
 	{"alien-organs",5},
@@ -780,7 +780,7 @@ addTech("mam-quartz-radio-signal-scanning", "mam/crash-site", "mam", "mam-quartz
 	{"motor",100},
 	{"map-marker",10}
 }, {
-	-- {type="unlock-recipe",recipe="scanner-crash-site"}
+	{type="unlock-recipe",recipe="scanner-crash-site"}
 })
 addTech("mam-quartz-radar-technology", "mam/radar-tower", "mam", "mam-quartz", "m-7-9", 3, {"mam-quartz-frequency-mapping"}, {
 	{"crystal-oscillator",100},

@@ -86,7 +86,6 @@ end
 local function toggleResourceScanner(event)
 	local player = game.players[event.player_index]
 	if event.name == defines.events.on_lua_shortcut and event.prototype_name ~= "resource-scanner" then
-		log("Event was on_lua_shortcut but prototype_name was "..event.prototype_name)
 		return
 	end
 	if player.opened and player.opened.name == "resource-scanner" then

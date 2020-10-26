@@ -63,9 +63,7 @@ function onHarvest(event)
 	local entity = player.selected
 	if entity.name == "paleberry" or entity.name == "beryl-nut" or entity.name == "bacon-agaric" then
 		-- ensure it's not too far away...
-		local dx = entity.position.x - player.position.x
-		local dy = entity.position.y - player.position.y
-		if dx*dx+dy*dy < 5*5 then
+		if player.can_reach_entity(entity) then
 			if game.entity_prototypes[entity.name.."-harvested"] then
 				local remains = entity.surface.create_entity{
 					name = entity.name.."-harvested",

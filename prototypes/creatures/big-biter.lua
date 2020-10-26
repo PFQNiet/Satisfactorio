@@ -4,6 +4,7 @@ biter.attack_parameters.cooldown = 60
 biter.attack_parameters.cooldown_deviation = 0
 biter.healing_per_tick = 0
 biter.max_health = 20
+biter.movement_speed = 0.2
 biter.resistances = nil
 biter.vision_distance = 20
 biter.loot = {

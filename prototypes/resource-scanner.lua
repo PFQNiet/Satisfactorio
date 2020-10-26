@@ -14,6 +14,8 @@ require("prototypes.resource-scanner.scanner-beryl-nut")
 require("prototypes.resource-scanner.scanner-paleberry")
 require("prototypes.resource-scanner.scanner-bacon-agaric")
 require("prototypes.resource-scanner.scanner-power-slugs")
+require("prototypes.resource-scanner.scanner-crash-site")
+require("prototypes.resource-scanner.scanner-enemies")
 
 data:extend({
 	{
