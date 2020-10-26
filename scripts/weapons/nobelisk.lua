@@ -55,6 +55,21 @@ local function onScriptTriggerEffect(event)
 	end
 end
 local function onEntityDied(event)
+	if global['nobelisk-queue'] then
+		for pid,explosions in pairs(global['nobelisk-explosions']) do
+			for _,exp in pairs(explosions) do
+				if exp.entity == event.entity then
+					-- drop nobelisk on the ground instead
+					exp.entity = event.entity.surface.create_entity{
+						name = onground,
+						position = event.entity.position,
+						force = exp.force
+					}
+					exp.entity.destructible = false
+				end
+			end
+		end
+	end
 	if global['nobelisk-explosions'] then
 		for tick,explosions in pairs(global['nobelisk-explosions']) do
 			for _,exp in pairs(explosions) do
