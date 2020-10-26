@@ -28,6 +28,7 @@ local function onScriptTriggerEffect(event)
 				position = event.target_position,
 				force = event.source_entity and event.source_entity.force or "player"
 			}
+			target.destructible = false
 			offset = {0,0}
 		end
 		if not global['nobelisk-queue'] then global['nobelisk-queue'] = {} end
@@ -64,6 +65,7 @@ local function onEntityDied(event)
 						position = event.entity.position,
 						force = exp.force
 					}
+					exp.entity.destructible = false
 				end
 			end
 		end
