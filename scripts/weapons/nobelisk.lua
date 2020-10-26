@@ -91,11 +91,18 @@ local function onTick(event)
 				radius = 7
 			}
 			for _,entity in pairs(entities) do
-				if entity.is_entity_with_health and entity.destructible then
+				if entity.valid and entity.is_entity_with_health and entity.destructible then
 					local dx = entity.position.x - pos[1]
 					local dy = entity.position.y - pos[2]
 					local damage = math.max(1,50-(dx*dx+dy*dy))
 					entity.damage(damage, explosion.force, "explosion")
+				end
+				if entity.valid and entity.type == "cliff" then
+					local dx = entity.position.x - pos[1]
+					local dy = entity.position.y - pos[2]
+					if dx*dx+dy*dy < 4*4 then
+						entity.destroy{do_cliff_correction=true}
+					end
 				end
 			end
 			if explosion.entity.valid then
