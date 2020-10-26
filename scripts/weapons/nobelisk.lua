@@ -98,10 +98,13 @@ local function onTick(event)
 				name = "big-explosion",
 				position = pos
 			}
-			explosion.entity.surface.create_entity{
+			if explosion.entity.surface.can_place_entity{
 				name = "medium-scorchmark-tintable",
 				position = pos
-			}
+			} then explosion.entity.surface.create_entity{
+				name = "medium-scorchmark-tintable",
+				position = pos
+			} end
 			-- find nearby entities-with-health and damage them according to distance from the centre
 			local entities = explosion.entity.surface.find_entities_filtered{
 				position = pos,

@@ -21,6 +21,7 @@
 	Special resource "types": x-plant, x-powerslug, x-crashsite
 ]]
 local crash_site = require("scripts.lualib.crash-sites")
+local enemies = require("scripts.lualib.enemy-spawning")
 
 local function registerResource(name, radius, min, max)
 	if global['resources'][name] then return end
@@ -150,23 +151,26 @@ local function spawnNode(resource, surface, cx, cy)
 				}
 				if not surface.is_chunk_generated({chunkpos.x, chunkpos.y}) then
 					queueEntity(entity, surface, chunkpos)
-					queueEntity({
-						name = "big-biter",
-						position = {tx,ty},
-						force = game.forces.enemy
-					}, surface, chunkpos)
 				else
 					surface.create_entity(entity)
-					surface.create_entity({
-						name = "big-biter",
-						position = {tx,ty},
-						force = game.forces.enemy
-					})
 				end
 			end
 			purity = purity - pval
 		end
 		if purity <= 0 then break end
+	end
+	-- everything except plants is guarded (maybe plants too but with a low value parameter?)
+	if resource.type ~= "x-plant" then
+		local chunkpos = {x=math.floor(cx/32), y=math.floor(cy/32)}
+		if not surface.is_chunk_generated({chunkpos.x, chunkpos.y}) then
+			queueEntity({
+				name = "x-enemies",
+				position = {cx,cy},
+				value = 1
+			}, surface, chunkpos)
+		else
+			enemies.spawnGroup(surface, {cx,cy}, 1)
+		end
 	end
 end
 
@@ -252,6 +256,8 @@ local function onChunkGenerated(event)
 		for _,node in pairs(queued) do
 			if node.name == "x-crashsite" then
 				crash_site.createCrashSite(event.surface, node.position)
+			elseif node.name == "x-enemies" then
+				enemies.spawnGroup(event.surface, node.position, node.value)
 			else
 				event.surface.create_entity(node)
 			end
