@@ -1,16 +1,20 @@
 -- uses global['unit-tracking'] to track units unit_number = {spawn, entity}
 
-local function _goToSpawn(struct)
+local function _guardSpawn(struct)
 	struct.entity.set_command{
-		type = defines.command.go_to_location,
-		destination = struct.spawn,
-		radius = 10
-	}
-end
-local function _wander(struct)
-	struct.entity.set_command{
-		type = defines.command.wander,
-		radius = 20
+		type = defines.command.compound,
+		structure_type = defines.compound_command.return_last,
+		commands = {
+			{
+				type = defines.command.go_to_location,
+				destination = struct.spawn,
+				radius = 10
+			},
+			{
+				type = defines.command.wander,
+				radius = 15
+			}
+		}
 	}
 end
 local function spawnGroup(surface,position,value)
@@ -30,7 +34,7 @@ local function spawnGroup(surface,position,value)
 				entity = entity
 			}
 			global['unit-tracking'][entity.unit_number] = struct
-			_wander(struct)
+			_guardSpawn(struct)
 		end
 	end
 	-- TODO sometimes spawn gas cloud entities
@@ -39,12 +43,9 @@ local function onCommandCompleted(event)
 	local struct = global['unit-tracking'] and global['unit-tracking'][event.unit_number]
 	if struct then
 		if struct.entity.valid then
-			if event.was_distracted then
-				_goToSpawn(struct)
-			else
-				_wander(struct)
-			end
+			_guardSpawn(struct)
 		else
+			-- died perhaps, clean up the struct
 			global['unit-tracking'][event.unit_number] = nil
 		end
 	end

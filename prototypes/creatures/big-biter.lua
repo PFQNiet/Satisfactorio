@@ -15,6 +15,7 @@ biter.loot = {
 	}
 }
 biter.ai_settings.destroy_when_commands_fail = false
+biter.ai_settings.allow_try_return_to_spawner = false
 for i,flag in pairs(biter.flags) do
 	if flag == "breaths-air" then
 		table.remove(biter.flags,i)
