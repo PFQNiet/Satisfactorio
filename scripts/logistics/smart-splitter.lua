@@ -9,11 +9,7 @@ local splitter = "smart-splitter"
 local buffer = "smart-splitter-box"
 
 local function findStruct(entity)
-	for i,splitter in pairs(global['smart-splitters']) do
-		if splitter.base == entity then
-			return splitter, i
-		end
-	end
+	return global['smart-splitters'] and global['smart-splitters'][entity.unit_number]
 end
 
 local function onBuilt(event)
@@ -65,7 +61,7 @@ local function onBuilt(event)
 
 		entity.rotatable = false
 		if not global['smart-splitters'] then global['smart-splitters'] = {} end
-		table.insert(global['smart-splitters'], struct)
+		global['smart-splitters'][entity.unit_number] = struct
 	end
 end
 
@@ -78,8 +74,7 @@ local function onRemoved(event)
 			getitems.storage(box, event.buffer)
 			io.remove(entity, event)
 			box.destroy()
-			local splitter, i = findStruct(entity)
-			table.remove(global['smart-splitters'],i)
+			global['smart-splitters'][entity.unit_number] = nil
 		else
 			game.print("Could not find the buffer")
 		end
@@ -152,8 +147,7 @@ local function checkOverflow(look, valid, struct)
 end
 local function onTick(event)
 	if not global['smart-splitters'] then return end
-	for i = event.tick%4+1, #global['smart-splitters'], 4 do
-		local struct = global['smart-splitters'][i]
+	for i,struct in pairs(global['smart-splitters']) do
 		local contents = struct.buffer.get_inventory(defines.inventory.chest)[1]
 		if contents.valid_for_read then
 			local valid = {}
@@ -427,9 +421,10 @@ local function onGuiElemChanged(event)
 end
 
 return {
+	on_nth_tick = {
+		[4] = onTick
+	},
 	events = {
-		[defines.events.on_tick] = onTick,
-
 		[defines.events.on_gui_opened] = onGuiOpened,
 		[defines.events.on_gui_closed] = onGuiClosed,
 		[defines.events.on_gui_click] = onGuiClick,

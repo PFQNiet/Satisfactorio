@@ -33,7 +33,7 @@ local function onBuilt(event)
 		io.toggle(entity, {2,3.5}, false)
 		entity.rotatable = false
 		if not global['truck-stations'] then global['truck-stations'] = {} end
-		table.insert(global['truck-stations'], entity)
+		global['truck-stations'][entity.unit_number] = entity
 	end
 end
 
@@ -54,13 +54,7 @@ local function onRemoved(event)
 			fuel.destroy()
 		end
 		io.remove(floor, event)
-		-- remove from global table
-		for i,x in ipairs(global['truck-stations']) do
-			if x == floor then
-				table.remove(global['truck-stations'], i)
-				break
-			end
-		end
+		global['truck-stations'][floor.unit_number] = nil
 		if entity.name ~= base then
 			floor.destroy()
 		end
@@ -123,19 +117,18 @@ end
 
 local function onTick(event)
 	if not global['truck-stations'] then return end
-	for i = event.tick%30+1, #global['truck-stations'], 30 do
-		local station = global['truck-stations'][i]
-		if station.energy >= 10*1000*1000 then
+	for i,station in pairs(global['truck-stations']) do
+		if event.tick%30 == i%30 and station.energy >= 10*1000*1000 then
 			-- each station will "tick" once every 30 in-game ticks, ie. every half-second
 			-- power consumption is 20MW, so each "tick" consumes 10MJ if a vehicle is present
 			local centre = math2d.position.add(station.position, math2d.position.rotate_vector({-0.5,-8}, station.direction*45))
-			local vehicle = station.surface.find_entities_filtered{
+			local vehicles = station.surface.find_entities_filtered{
 				name = {"tractor","truck","explorer"},
 				area = {{centre.x-4,centre.y-4}, {centre.x+4,centre.y+4}},
 				limit = 1
 			}
-			if #vehicle == 1 then
-				vehicle = vehicle[1]
+			if #vehicles == 1 then
+				local vehicle = vehicles[1]
 				local is_output = io.isEnabled(station,{2,3.5})
 				local vehicleinventory = vehicle.get_inventory(defines.inventory.car_trunk)
 				local store = station.surface.find_entity(storage, math2d.position.add(station.position, math2d.position.rotate_vector(storage_pos, station.direction*45)))
@@ -164,6 +157,7 @@ local function onTick(event)
 				-- drain 10MJ
 				station.energy = station.energy - 10*1000*1000
 			end
+			io.toggle(station,{0,3.5},#vehicles == 0)
 		end
 	end
 end

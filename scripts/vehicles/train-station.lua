@@ -99,7 +99,7 @@ local function onBuilt(event)
 			stop.rotatable = false
 
 			if not global['train-stations'] then global['train-stations'] = {} end
-			table.insert(global['train-stations'], {station=entity, stop=stop})
+			global['train-stations'][entity.unit_number] = {station=entity, stop=stop}
 		else
 			-- platforms must be adjacent to another platform or a station
 			local before = math2d.position.add(entity.position, math2d.position.rotate_vector({0,-7}, entity.direction*45))
@@ -122,8 +122,8 @@ local function onBuilt(event)
 				}
 				io.addOutput(entity, {6.5,-2}, store, defines.direction.east)
 				io.addInput(entity, {6.5,-1}, store, defines.direction.west)
-				io.addInput(entity, {6.5,1}, store, defines.direction.east)
-				io.addOutput(entity, {6.5,2}, store, defines.direction.west)
+				io.addInput(entity, {6.5,1}, store, defines.direction.west)
+				io.addOutput(entity, {6.5,2}, store, defines.direction.east)
 				-- default to Input mode
 				io.toggle(entity, {6.5,-2}, false)
 				io.toggle(entity, {6.5,2}, false)
@@ -155,14 +155,14 @@ local function onBuilt(event)
 				entity.surface.create_entity{
 					name = entity.name.."-pump",
 					position = math2d.position.add(entity.position, math2d.position.rotate_vector({6.5,1}, entity.direction*45)),
-					direction = (entity.direction + 2) % 8,
+					direction = (entity.direction + 6) % 8,
 					force = entity.force,
 					raise_built = true
 				}.rotatable = false
 				pump = entity.surface.create_entity{
 					name = entity.name.."-pump",
 					position = math2d.position.add(entity.position, math2d.position.rotate_vector({6.5,2}, entity.direction*45)),
-					direction = (entity.direction + 6) % 8,
+					direction = (entity.direction + 2) % 8,
 					force = entity.force,
 					raise_built = true
 				}
@@ -198,18 +198,14 @@ local function onRemoved(event)
 			position = entity.position
 		}[1]
 		floor.destroy({raise_destroy=true})
+		return
 	end
 	if entity.name == station or entity.name == freight or entity.name == fluid or entity.name == empty then
 		local names
 		if entity.name == station then
 			names = {entity.name.."-walkable", trainstop}
 			-- remove from global table
-			for i,x in ipairs(global['train-stations']) do
-				if x.station == entity then
-					table.remove(global['train-stations'], i)
-					break
-				end
-			end
+			global['train-stations'][entity.unit_number] = nil
 		elseif entity.name == freight then
 			names = {entity.name.."-walkable", entity.name.."-collision", entity.name.."-box"}
 			io.remove(entity, event)
@@ -325,11 +321,10 @@ local function onTick(event)
 	
 	if not global['trains-accounted-for'] or event.tick%60 == 0 then global['trains-accounted-for'] = {} end
 	-- poll every station once per second
-	for i = event.tick%60+1, #global['train-stations'], 60 do
-		local struct = global['train-stations'][i]
+	for i,struct in pairs(global['train-stations']) do
 		local station = struct.station
 		local stop = struct.stop
-		if station.energy >= 1000 then
+		if event.tick%60 == i%60 and station.energy >= 1000 then
 			-- each station will "tick" once every second
 			local trains = stop.get_train_stop_trains()
 			local power = 50 -- MJ consumed this second
@@ -358,71 +353,78 @@ local function onTick(event)
 	end
 
 	-- one transfer every 45 ticks = 24 seconds for a 32-stack freight car
-	for i = event.tick%45+1, #global['train-stations'], 45 do
-		local struct = global['train-stations'][i]
+	local energy_used = (50/60*45)*1000*1000
+	for i,struct in pairs(global['train-stations']) do
 		local station = struct.station
 		local stop = struct.stop
-		local energy_used = (50/60*45)*1000*1000
-		if station.energy >= 1000 then
+		if event.tick%45 == i%45 and station.energy >= 1000 then
 			local train = stop.get_stopped_train()
-			if train then
-				-- scan attached platforms and, if a matching wagon is present, handle loading/unloading
-				local delta = math2d.position.rotate_vector({0,7},station.direction*45)
-				local position = station.position
-				while true do
-					position = math2d.position.add(position, delta)
-					local platform = station.surface.find_entities_filtered{
-						name = {freight, fluid, empty},
-						position = position,
-						force = station.force
-					}[1]
-					if not assertPosition(platform, position) then break end
-
-					if platform.name == freight and platform.energy >= energy_used then
-						local wagon = station.surface.find_entity("cargo-wagon", position)
-						if wagon then
-							local is_output = io.isEnabled(platform,{6.5,-2})
-							local wagoninventory = wagon.get_inventory(defines.inventory.cargo_wagon)
-							local store = station.surface.find_entity(freight.."-box", math2d.position.add(platform.position, math2d.position.rotate_vector(storage_pos, platform.direction*45)))
-							local storeinventory = store.get_inventory(defines.inventory.chest)
-							-- transfer one item stack
-							local from = is_output and wagoninventory or storeinventory
-							local to = is_output and storeinventory or wagoninventory
-							local target = to.find_empty_stack()
-							if target and not from.is_empty() then
-								for name,_ in pairs(from.get_contents()) do
-									local source = from.find_item_stack(name)
-									-- since there is an empty stack, an insert will always succeed
-									from.remove({name=name,count=to.insert(source)})
-									platform.energy = platform.energy - energy_used
-									break
-								end
-							end
-						end
-					elseif platform.name == fluid and platform.energy >= energy_used then
-						local wagon = station.surface.find_entity("fluid-wagon", position)
-						if wagon then
-							local is_output = station.surface.find_entity(
-								fluid.."-pump",
-								math2d.position.add(platform.position, math2d.position.rotate_vector({6.5,-2}, platform.direction*45))
-							).active
-							local store = station.surface.find_entity(fluid.."-tank", math2d.position.add(platform.position, math2d.position.rotate_vector(storage_pos, platform.direction*45)))
-							-- transfer 50 units
-							local from = is_output and wagon or store
-							local to = is_output and store or wagon
-							local amount = math.min(50, from.get_fluid_count())
-							if amount > 0 then
-								for name,_ in pairs(from.get_fluid_contents()) do
-									amount = to.insert_fluid{name=name,amount=amount}
-									if amount > 0 then
-										from.remove_fluid{name=name,amount=amount}
-										platform.energy = platform.energy - energy_used*amount/50 -- uses less power if not all fluid is transferred
-									end
-									break
-								end
+			-- scan attached platforms and, if a matching wagon is present, handle loading/unloading
+			local delta = math2d.position.rotate_vector({0,7},station.direction*45)
+			local position = station.position
+			while true do
+				position = math2d.position.add(position, delta)
+				local platform = station.surface.find_entities_filtered{
+					name = {freight, fluid, empty},
+					position = position,
+					force = station.force
+				}[1]
+				if not assertPosition(platform, position) then break end
+				
+				if platform.name == freight and platform.energy >= energy_used then
+					local wagon = station.surface.find_entity("cargo-wagon", position)
+					if train and wagon then
+						local is_output = io.isEnabled(platform,{6.5,-2})
+						local wagoninventory = wagon.get_inventory(defines.inventory.cargo_wagon)
+						local store = station.surface.find_entity(freight.."-box", math2d.position.add(platform.position, math2d.position.rotate_vector(storage_pos, platform.direction*45)))
+						local storeinventory = store.get_inventory(defines.inventory.chest)
+						-- transfer one item stack
+						local from = is_output and wagoninventory or storeinventory
+						local to = is_output and storeinventory or wagoninventory
+						local target = to.find_empty_stack()
+						if target and not from.is_empty() then
+							for name,_ in pairs(from.get_contents()) do
+								local source = from.find_item_stack(name)
+								-- since there is an empty stack, an insert will always succeed
+								from.remove({name=name,count=to.insert(source)})
+								platform.energy = platform.energy - energy_used
+								break
 							end
 						end
 					end
+					io.toggle(platform,{6.5,-1},not (train and wagon))
+					io.toggle(platform,{6.5,1},not (train and wagon))
+				elseif platform.name == fluid and platform.energy >= energy_used then
+					local wagon = station.surface.find_entity("fluid-wagon", position)
+					if train and wagon then
+						local is_output = station.surface.find_entity(
+							fluid.."-pump",
+							math2d.position.add(platform.position, math2d.position.rotate_vector({6.5,-2}, platform.direction*45))
+						).active
+						local store = station.surface.find_entity(fluid.."-tank", math2d.position.add(platform.position, math2d.position.rotate_vector(storage_pos, platform.direction*45)))
+						-- transfer 50 units
+						local from = is_output and wagon or store
+						local to = is_output and store or wagon
+						local amount = math.min(50, from.get_fluid_count())
+						if amount > 0 then
+							for name,_ in pairs(from.get_fluid_contents()) do
+								amount = to.insert_fluid{name=name,amount=amount}
+								if amount > 0 then
+									from.remove_fluid{name=name,amount=amount}
+									platform.energy = platform.energy - energy_used*amount/50 -- uses less power if not all fluid is transferred
+								end
+								break
+							end
+						end
+					end
+					station.surface.find_entity(
+						fluid.."-pump",
+						math2d.position.add(platform.position, math2d.position.rotate_vector({6.5,-1}, platform.direction*45))
+					).active = not (train and wagon)
+					station.surface.find_entity(
+						fluid.."-pump",
+						math2d.position.add(platform.position, math2d.position.rotate_vector({6.5,1}, platform.direction*45))
+					).active = not (train and wagon)
 				end
 			end
 		end

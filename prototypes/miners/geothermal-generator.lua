@@ -64,6 +64,28 @@ local interface = {
 	},
 	selection_box = {{-4.5,-4.5},{4.5,4.5}}
 }
+local accumulator = {
+	picture = {
+		filename = "__core__/graphics/empty.png",
+		size = {1,1}
+	},
+	energy_source = {
+		type = "electric",
+		buffer_capacity = "1J",
+		usage_priority = "tertiary"
+	},
+	charge_cooldown = 0,
+	discharge_cooldown = 0,
+	collision_box = {{-4.2,-4.2},{4.2,4.2}},
+	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon_size = 64,
+	max_health = 1,
+	minable = nil,
+	name = name.."-accumulator",
+	selection_box = {{-4.5,-4.5},{4.5,4.5}},
+	selection_priority = 30,
+	type = "accumulator"
+}
 
 local mineritem = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
@@ -119,4 +141,4 @@ local minerrecipe_undo = {
 	enabled = false
 }
 
-data:extend({miner,interface,mineritem,minerrecipe,minerrecipe_undo})
+data:extend({miner,interface,accumulator,mineritem,minerrecipe,minerrecipe_undo})

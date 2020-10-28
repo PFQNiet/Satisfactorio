@@ -17,42 +17,35 @@ local function registerGenerator(burner, generator, accumulator_name)
 	accumulator.minable = false
 	accumulator.operable = false
 	accumulator.destructible = false
-	if not global['accumulators'] then global['accumulators'] = {} end
-	if not global['accumulators'][burner.surface.index] then global['accumulators'][burner.surface.index] = {} end
-	if not global['accumulators'][burner.surface.index][burner.position.y] then global['accumulators'][burner.surface.index][burner.position.y] = {} end
-	global['accumulators'][burner.surface.index][burner.position.y][burner.position.x] = {
+
+	local struct = {
 		burner = burner,
 		generator = generator,
 		accumulator = accumulator,
 		active = true
 	}
-end
-local function unregisterGenerator(burner)
-	local row = global['accumulators'][burner.surface.index][burner.position.y]
-	local entry = row[burner.position.x]
-	if entry then
-		row[burner.position.x] = nil
-		entry.accumulator.destroy()
-	end
+	if not global['accumulators'] then global['accumulators'] = {} end
+	-- store the struct under the index of the accumulator, and record the burner and generator as pointers to it
+	if burner then global['accumulators'][burner.unit_number] = accumulator.unit_number end
+	global['accumulators'][generator.unit_number] = accumulator.unit_number
+	global['accumulators'][accumulator.unit_number] = struct
 end
 local function findRegistration(entity)
-	if not global['accumulators'] then return end
-	for _,surface in pairs(global['accumulators']) do
-		for _,row in pairs(surface) do
-			for _,entry in pairs(row) do
-				if entry.burner == entity then return entry end
-				if entry.generator == entity then return entry end
-				if entry.accumulator == entity then return entry end
-			end
-		end
+	if not global['accumulators'] then return nil end
+	-- look up a struct based on any of its components
+	local lookup = global['accumulators'][entity.unit_number]
+	if type(lookup) == "number" then
+		-- pointer to the accumulator
+		lookup = global['accumulators'][lookup]
 	end
+	return lookup
 end
-local function isRegistered(burner)
-	if not global['accumulators'] then return false end
-	if not global['accumulators'][burner.surface.index] then return false end
-	if not global['accumulators'][burner.surface.index][burner.position.y] then return false end
-	if not global['accumulators'][burner.surface.index][burner.position.y][burner.position.x] then return false end
-	return true
+local function unregisterGenerator(entity)
+	local struct = findRegistration(entity)
+	if struct.burner then global['accumulators'][struct.burner.unit_number] = nil end
+	global['accumulators'][struct.generator.unit_number] = nil
+	global['accumulators'][struct.accumulator.unit_number] = nil
+	struct.accumulator.destroy()
 end
 
 local function createFusebox(player)
@@ -79,41 +72,40 @@ local function createFusebox(player)
 	end
 end
 local function toggle(entry, enabled)
-	entry.burner.active = enabled
+	if entry.burner then entry.burner.active = enabled end
 	entry.generator.active = enabled
 	entry.active = enabled
 
 end
 local function onTick(event)
 	if not global['accumulators'] then return end
-	for surface, rows in pairs(global['accumulators']) do
-		for y, row in pairs(rows) do
-			for x, entry in pairs(row) do
-				if entry.generator.active and entry.accumulator.energy == 0 then
-					-- don't count running out of fuel as a power trip
-					if entry.burner.burner and entry.burner.burner.remaining_burning_fuel == 0 then
-						-- just ran out of fuel
-					elseif entry.burner.type == "storage-tank" and entry.burner.get_fluid_count() == 0 then
-						-- likewise, ran out of fuel
-					else
-						-- power failure!
-						toggle(entry,false)
-						if not global['last-power-trip'] then global['last-power-trip'] = {} end
-						if not global['last-power-trip'][entry.burner.force.index] then global['last-power-trip'][entry.burner.force.index] = -5000 end
-						if global['last-power-trip'][entry.burner.force.index]+60 < event.tick then
-							-- only play sound at most once a second
-							entry.burner.force.play_sound{path="power-failure"}
-						end
-						if global['last-power-trip'][entry.burner.force.index]+3600 < event.tick then
-							-- only show console message at most once a minute
-							entry.burner.force.print({"message.power-failure"})
-						end
-						global['last-power-trip'][entry.burner.force.index] = event.tick
-						-- see if any player on this entity's force has this generator opened
-						for _,player in pairs(entry.burner.force.players) do
-							if player.opened and (player.opened == entry.burner or player.opened == entry.generator) then
-								createFusebox(player)
-							end
+	for _,entry in pairs(global['accumulators']) do
+		if type(entry) == "table" then -- skip numeric pointers
+			if entry.generator.active and entry.accumulator.energy == 0 then
+				-- don't count running out of fuel as a power trip
+				if entry.burner and entry.burner.burner and entry.burner.burner.remaining_burning_fuel == 0 then
+					-- just ran out of fuel
+				elseif entry.burner and entry.burner.type == "storage-tank" and entry.burner.get_fluid_count() == 0 then
+					-- likewise, ran out of fuel
+				else
+					-- power failure!
+					toggle(entry,false)
+					local force = entry.accumulator.force
+					if not global['last-power-trip'] then global['last-power-trip'] = {} end
+					if not global['last-power-trip'][force.index] then global['last-power-trip'][force.index] = -5000 end
+					if global['last-power-trip'][force.index]+60 < event.tick then
+						-- only play sound at most once a second
+						force.play_sound{path="power-failure"}
+					end
+					if global['last-power-trip'][force.index]+3600 < event.tick then
+						-- only show console message at most once a minute
+						force.print({"message.power-failure"})
+					end
+					global['last-power-trip'][force.index] = event.tick
+					-- see if any player on this entity's force has this generator opened
+					for _,player in pairs(force.players) do
+						if player.opened and (player.opened == entry.burner or player.opened == entry.generator) then
+							createFusebox(player)
 						end
 					end
 				end
@@ -124,7 +116,6 @@ end
 
 local function onGuiOpened(event)
 	if event.gui_type ~= defines.gui_type.entity then return end
-	if not isRegistered(event.entity) then return end
 	local entry = findRegistration(event.entity)
 	if not entry then return end
 	if entry.active then return end
@@ -143,31 +134,31 @@ local function onGuiClick(event)
 	if event.element and event.element.valid and event.element.name == "power-trip-reset-fuse-submit" then
 		-- get electric network ID of opened GUI
 		if not player.opened then return end
-		if not isRegistered(player.opened) then return end
-		local network = global['accumulators'][player.opened.surface.index][player.opened.position.y][player.opened.position.x].generator.electric_network_id
+		local entry = findRegistration(player.opened)
+		if not entry then return end
+		local force = entry.generator.force
+		local network = entry.generator.electric_network_id
 		-- seek out all generators with this network ID and re-enable them
-		for surface, rows in pairs(global['accumulators']) do
-			for y, row in pairs(rows) do
-				for x, entry in pairs(row) do
-					if entry.generator.electric_network_id == network then
-						toggle(entry, true)
-						if entry.burner.type == "storage-tank" then
-							-- immediately perform a fuel transfer
-							local fluid_type, fluid_amount = next(entry.burner.get_fluid_contents())
-							if fluid_type and fluid_amount > 0 then
-								local fuel_value = game.fluid_prototypes[fluid_type].fuel_value
-								if fuel_value > 0 then
-									local energy_to_full_charge = entry.generator.electric_buffer_size - entry.generator.energy
-									local fuel_to_full_charge = energy_to_full_charge / fuel_value
-									-- attempt to remove the full amount - if it's limited by the amount actually present then the return value will reflect that
-									local fuel_consumed_this_tick = entry.burner.remove_fluid{name=fluid_type, amount=fuel_to_full_charge}
-									local energy_gained_this_tick = fuel_consumed_this_tick * fuel_value
-									entry.generator.energy = entry.generator.energy + energy_gained_this_tick
-								end
+		for _,entry in pairs(global['accumulators']) do
+			if type(entry) == "table" then -- ignore pointers to accumulators, just do actual entries
+				if entry.generator.force == force and entry.generator.electric_network_id == network then
+					toggle(entry, true)
+					if entry.burner and entry.burner.type == "storage-tank" then
+						-- immediately perform a fuel transfer
+						local fluid_type, fluid_amount = next(entry.burner.get_fluid_contents())
+						if fluid_type and fluid_amount > 0 then
+							local fuel_value = game.fluid_prototypes[fluid_type].fuel_value
+							if fuel_value > 0 then
+								local energy_to_full_charge = entry.generator.electric_buffer_size - entry.generator.energy
+								local fuel_to_full_charge = energy_to_full_charge / fuel_value
+								-- attempt to remove the full amount - if it's limited by the amount actually present then the return value will reflect that
+								local fuel_consumed_this_tick = entry.burner.remove_fluid{name=fluid_type, amount=fuel_to_full_charge}
+								local energy_gained_this_tick = fuel_consumed_this_tick * fuel_value
+								entry.generator.energy = entry.generator.energy + energy_gained_this_tick
 							end
 						end
-						entry.accumulator.energy = 1
 					end
+					entry.accumulator.energy = 1
 				end
 			end
 		end

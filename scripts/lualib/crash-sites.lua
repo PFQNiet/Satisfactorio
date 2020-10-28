@@ -73,7 +73,7 @@ local function createCrashSite(surface, position)
 	end
 	-- register ship's requirements
 	if not global['crash-sites'] then global['crash-sites'] = {} end
-	global['crash-sites'][surface.index.."/"..ship.position.x.."/"..ship.position.y] = {
+	global['crash-sites'][ship.unit_number] = {
 		ship = ship,
 		eei = eei,
 		requirements = reqs
@@ -87,10 +87,10 @@ local function onGuiOpened(event)
 	if event.gui_type ~= defines.gui_type.entity then return end
 	if event.entity.name ~= spaceship then return end
 	if not global['crash-sites'] then return end
-	local struct = global['crash-sites'][event.entity.surface.index.."/"..event.entity.position.x.."/"..event.entity.position.y]
+	local struct = global['crash-sites'][event.entity.unit_number]
 	if not struct then return end
 	if not global['opened-crash-site'] then global['opened-crash-site'] = {} end
-	global['opened-crash-site'][player.index] = event.entity.surface.index.."/"..event.entity.position.x.."/"..event.entity.position.y
+	global['opened-crash-site'][player.index] = event.entity.unit_number
 	
 	local gui = player.gui.screen['crash-site-locked']
 	if not gui then

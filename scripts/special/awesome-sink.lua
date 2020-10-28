@@ -42,7 +42,7 @@ local function onBuilt(event)
 		io.addInput(entity, {-0.5,3}, store)
 		entity.rotatable = false
 		if not global['awesome-sinks'] then global['awesome-sinks'] = {} end
-		table.insert(global['awesome-sinks'], entity)
+		global['awesome-sinks'][entity.unit_number] = entity
 	end
 end
 
@@ -54,13 +54,7 @@ local function onRemoved(event)
 		local floor = entity.name == base and entity or entity.surface.find_entity(base, entity.position)
 		local store = entity.name == storage and entity or entity.surface.find_entity(storage, entity.position)
 		io.remove(floor, event)
-		-- remove from global table
-		for i,x in ipairs(global['awesome-sinks']) do
-			if x == floor then
-				table.remove(global['awesome-sinks'], i)
-				break
-			end
-		end
+		global['awesome-sinks'][floor.unit_number] = nil
 		(entity == floor and store or floor).destroy()
 	end
 end
@@ -189,10 +183,9 @@ local function onGuiClosed(event)
 	end
 end
 
-local function onTick(event)
+local function on4thTick(event)
 	if not global['awesome-sinks'] then return end
-	for i = event.tick%4+1, #global['awesome-sinks'], 4 do
-		local sink = global['awesome-sinks'][i]
+	for i,sink in pairs(global['awesome-sinks']) do
 		-- the fastest belt carries a max of 1 item every 4.5 ticks, so this should easily keep up with that
 		if sink.energy >= 30*1000*1000 then
 			-- entity can charge at 40MW and store 30MW, with a drain of 30MW, so it'll take a few seconds to power up, which is fine
@@ -210,26 +203,30 @@ local function onTick(event)
 			end
 		end
 	end
-	if event.tick % 6 == 0 then
-		-- if a player has a sink entity open, update their GUI
-		for _,player in pairs(game.players) do
-			if player.opened and player.opened_gui_type == defines.gui_type.entity and player.opened.valid and player.opened.name == storage then
-				-- GUI can be assumed to exist
-				local gui = player.gui.left['awesome-sink-gui']['awesome-sink-content']['awesome-sink-table']['awesome-sink-count-flow1']['awesome-sink-count']
-				gui.caption = util.format_number(
-					global['awesome-coupons'] and global['awesome-coupons'][player.force.index] and global['awesome-coupons'][player.force.index][2] or 0
-				)
-				gui = player.gui.left['awesome-sink-gui']['awesome-sink-content']['awesome-sink-table']['awesome-sink-count-flow2']['awesome-sink-to-next']
-				gui.caption = util.format_number(
-					pointsToNext(global['awesome-coupons'] and global['awesome-coupons'][player.force.index] and global['awesome-coupons'][player.force.index][1] or 0)
-					-(global['awesome-coupons'] and global['awesome-coupons'][player.force.index] and global['awesome-coupons'][player.force.index][3] or 0)
-				)
-			end
+end
+local function on60thTick(event)
+	-- if a player has a sink entity open, update their GUI
+	for _,player in pairs(game.players) do
+		if player.opened and player.opened_gui_type == defines.gui_type.entity and player.opened.valid and player.opened.name == storage then
+			-- GUI can be assumed to exist
+			local gui = player.gui.left['awesome-sink-gui']['awesome-sink-content']['awesome-sink-table']['awesome-sink-count-flow1']['awesome-sink-count']
+			gui.caption = util.format_number(
+				global['awesome-coupons'] and global['awesome-coupons'][player.force.index] and global['awesome-coupons'][player.force.index][2] or 0
+			)
+			gui = player.gui.left['awesome-sink-gui']['awesome-sink-content']['awesome-sink-table']['awesome-sink-count-flow2']['awesome-sink-to-next']
+			gui.caption = util.format_number(
+				pointsToNext(global['awesome-coupons'] and global['awesome-coupons'][player.force.index] and global['awesome-coupons'][player.force.index][1] or 0)
+				-(global['awesome-coupons'] and global['awesome-coupons'][player.force.index] and global['awesome-coupons'][player.force.index][3] or 0)
+			)
 		end
 	end
 end
 
 return {
+	on_nth_tick = {
+		[4] = on4thTick,
+		[60] = on60thTick
+	},
 	events = {
 		[defines.events.on_built_entity] = onBuilt,
 		[defines.events.on_robot_built_entity] = onBuilt,
@@ -243,9 +240,7 @@ return {
 
 		[defines.events.on_gui_opened] = onGuiOpened,
 		[defines.events.on_gui_closed] = onGuiClosed,
-		[defines.events.on_gui_click] = onGuiClick,
-
-		[defines.events.on_tick] = onTick
+		[defines.events.on_gui_click] = onGuiClick
 	}
 }
 

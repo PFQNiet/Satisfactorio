@@ -9,11 +9,7 @@ local splitter = "programmable-splitter"
 local buffer = "programmable-splitter-box"
 
 local function findStruct(entity)
-	for i,splitter in pairs(global['smart-splitters']) do
-		if splitter.base == entity then
-			return splitter, i
-		end
-	end
+	return global['smart-splitters'] and global['smart-splitters'][entity.unit_number]
 end
 local function signalIndex(side, index)
 	return ({left=0,forward=1,right=2})[side]*32+index
@@ -68,7 +64,7 @@ local function onBuilt(event)
 
 		entity.rotatable = false
 		if not global['smart-splitters'] then global['smart-splitters'] = {} end
-		table.insert(global['smart-splitters'], struct)
+		global['smart-splitters'][entity.unit_number] = struct
 	end
 end
 
@@ -81,8 +77,7 @@ local function onRemoved(event)
 			getitems.storage(box, event.buffer)
 			io.remove(entity, event)
 			box.destroy()
-			local splitter, i = findStruct(entity)
-			table.remove(global['smart-splitters'],i)
+			global['smart-splitters'][entity.unit_number] = nil
 		else
 			game.print("Could not find the buffer")
 		end

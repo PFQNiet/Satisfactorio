@@ -1,4 +1,4 @@
--- uses global['hub-terminal'] as table of Force index -> {surface, position} of the HUB terminal
+-- uses global['hub-terminal'] as table of Force index -> HUB terminal
 -- uses global['hub-milestone-selected'] as table of Force index -> milestone shown in GUI - if different to current selection then GUI needs refresh, otherwise just update counts
 -- uses global['hub-cooldown'] as table of Force index -> tick at which the Freighter returns
 
@@ -24,9 +24,7 @@ local graphics = {
 }
 
 local function findHubForForce(force)
-	local pos = global['hub-terminal'] and global['hub-terminal'][force.index] or nil
-	if not pos then return nil end
-	return game.get_surface(pos[1]).find_entity(terminal,pos[2])
+	return global['hub-terminal'] and global['hub-terminal'][force.index]
 end
 
 local function position(offset,entity) -- entity's position and direction are used
@@ -73,7 +71,7 @@ local function buildTerminal(hub)
 	}
 	terminal.active = false -- "crafting" is faked :D
 	if not global['hub-terminal'] then global['hub-terminal'] = {} end
-	global['hub-terminal'][terminal.force.index] = {terminal.surface.index, terminal.position}
+	global['hub-terminal'][terminal.force.index] = terminal
 	hub.force.set_spawn_position(position(spawn_pos,hub), hub.surface)
 	return terminal
 end

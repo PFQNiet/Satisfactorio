@@ -117,6 +117,7 @@ pump.animations = empty_sprite
 pump.fluid_animation = empty_sprite
 pump.glass_pictures = empty_sprite
 pump.minable = nil
+pump.pumping_speed = 600/60/60 -- 600/minute
 pump.fluid_box.pipe_connections[1].position = {0,-1}
 pump.fluid_box.pipe_connections[2].position = {0,1}
 pump.placeable_by = {item=name,count=1}

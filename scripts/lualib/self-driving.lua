@@ -59,6 +59,7 @@ local function refreshGui(car, menu)
 		rendering.destroy(point)
 	end
 	car.rendering = {}
+	local driver = car.car.get_driver()
 	if menu then menu.clear_items() end
 	local prev
 	for i,waypoint in pairs(car.waypoints) do
@@ -74,8 +75,8 @@ local function refreshGui(car, menu)
 				from = {prev.x,prev.y},
 				to = {waypoint.x,waypoint.y},
 				surface = car.car.surface,
-				players = car.car.get_driver() and {car.car.get_driver().player} or {},
-				visible = car.car.get_driver() and true or false
+				players = driver and {driver.is_player and driver or driver.player} or {},
+				visible = driver and true or false
 			})
 		end
 		prev = waypoint
@@ -89,9 +90,9 @@ local function refreshGui(car, menu)
 			from = {car.waypoints[#car.waypoints].x,car.waypoints[#car.waypoints].y},
 			to = {car.waypoints[1].x,car.waypoints[1].y},
 			surface = car.car.surface,
-			players = car.car.get_driver() and {car.car.get_driver().player} or {},
-			visible = car.car.get_driver() and true or false
-		})
+			players = driver and {driver.is_player and driver or driver.player} or {},
+			visible = driver and true or false
+	})
 	end
 	if menu then
 		menu.add_item({"gui.self-driving-waypoint-new"})
@@ -126,7 +127,7 @@ local function onTick(event)
 				local driver = car.car.get_driver()
 				if driver then
 					-- gui exists in this case
-					refreshGui(car, driver.player.gui.left['self-driving']['self-driving-waypoints'])
+					refreshGui(car, (driver.is_player and driver or driver.player).gui.left['self-driving']['self-driving-waypoints'])
 				end
 			end
 		end

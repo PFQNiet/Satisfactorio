@@ -1,49 +1,84 @@
--- uses global['space-elevator'] as table of Force index -> {surface, position} of the elevator
+-- uses global['space-elevator'] as table of Force index -> elevator
 -- uses global['space-elevator-phase'] as table of Force index -> phase shown in GUI - if different to current selection then GUI needs refresh, otherwise just update counts
+-- uses global['player-build-error-debounce'] to track force -> last error tick to de-duplicate placement errors
 local mod_gui = require("mod-gui")
 local util = require("util")
 local string = require("scripts.lualib.string")
 local io = require("scripts.lualib.input-output")
 
 local elevator = "space-elevator"
+local function findElevatorForForce(force)
+	return global['space-elevator'] and global['space-elevator'][force.index]
+end
+
+local function refundEntity(entity, reason, event)
+	-- refund the entity and trigger an error message flying text (but only if event.tick is not too recent from the last one)
+	local player = entity.last_user
+	if player then
+		if not player.cursor_stack.valid_for_read then
+			player.cursor_stack.set_stack{name=entity.name,count=1}
+		else
+			player.insert{name=entity.name,count=1}
+		end
+		if not global['player-build-error-debounce'] then global['player-build-error-debounce'] = {} end
+		if not global['player-build-error-debounce'][player.force.index] or global['player-build-error-debounce'][player.force.index] < event.tick then
+			player.surface.create_entity{
+				name = "flying-text",
+				position = entity.position,
+				text = reason,
+				render_player_index = player.index
+			}
+			player.play_sound{
+				path = "utility/cannot_build"
+			}
+			global['player-build-error-debounce'][player.force.index] = event.tick + 60
+		end
+	else
+		entity.surface.spill_item_stack(entity.position, {name=entity.name,count=1}, false, nil, false)
+	end
+	entity.destroy()
+end
 
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not entity or not entity.valid then return end
 	if entity.name == elevator then
-		-- TODO check if one already exists and cancel construction if so
-		-- position hack to avoid it trying to drop stuff in the rocket silo
-		io.addInput(entity, {-10,13}, {position={entity.position.x-8,entity.position.y}})
-		io.addInput(entity, {-8,13}, {position={entity.position.x-8,entity.position.y}})
-		io.addInput(entity, {-6,13}, {position={entity.position.x-8,entity.position.y}})
-		io.addInput(entity, {-10,-13}, {position={entity.position.x-8,entity.position.y}}, defines.direction.south)
-		io.addInput(entity, {-8,-13}, {position={entity.position.x-8,entity.position.y}}, defines.direction.south)
-		io.addInput(entity, {-6,-13}, {position={entity.position.x-8,entity.position.y}}, defines.direction.south)
-		local silo = entity.surface.create_entity{
-			name = elevator.."-silo",
-			position = entity.position,
-			force = entity.force,
-			raise_built = true
-		}
-		silo.operable = false
-		silo.minable = false
-		silo.destructible = false
-		silo.auto_launch = true
+		if findElevatorForForce(entity.force) then
+			refundEntity(entity, {"message.space-elevator-only-one-allowed"}, event)
+		else
+			-- position hack to avoid it trying to drop stuff in the rocket silo
+			io.addInput(entity, {-10,13}, {position={entity.position.x-8,entity.position.y}})
+			io.addInput(entity, {-8,13}, {position={entity.position.x-8,entity.position.y}})
+			io.addInput(entity, {-6,13}, {position={entity.position.x-8,entity.position.y}})
+			io.addInput(entity, {-10,-13}, {position={entity.position.x-8,entity.position.y}}, defines.direction.south)
+			io.addInput(entity, {-8,-13}, {position={entity.position.x-8,entity.position.y}}, defines.direction.south)
+			io.addInput(entity, {-6,-13}, {position={entity.position.x-8,entity.position.y}}, defines.direction.south)
+			local silo = entity.surface.create_entity{
+				name = elevator.."-silo",
+				position = entity.position,
+				force = entity.force,
+				raise_built = true
+			}
+			silo.operable = false
+			silo.minable = false
+			silo.destructible = false
+			silo.auto_launch = true
 
-		local inserter = silo.surface.create_entity{
-			name = "loader-inserter",
-			position = silo.position,
-			force = silo.force,
-			raise_built = true
-		}
-		inserter.drop_position = silo.position
-		inserter.operable = false
-		inserter.minable = false
-		inserter.destructible = false
+			local inserter = silo.surface.create_entity{
+				name = "loader-inserter",
+				position = silo.position,
+				force = silo.force,
+				raise_built = true
+			}
+			inserter.drop_position = silo.position
+			inserter.operable = false
+			inserter.minable = false
+			inserter.destructible = false
 
-		if not global['space-elevator'] then global['space-elevator'] = {} end
-		global['space-elevator'][entity.force.index] = {entity.surface.index, entity.position}
-		entity.active = false
+			if not global['space-elevator'] then global['space-elevator'] = {} end
+			global['space-elevator'][entity.force.index] = entity
+			entity.active = false
+		end
 	end
 end
 
@@ -69,11 +104,6 @@ local function onRemoved(event)
 	end
 end
 
-local function findElevatorForForce(force)
-	local pos = global['space-elevator'] and global['space-elevator'][force.index] or nil
-	if not pos then return nil end
-	return game.get_surface(pos[1]).find_entity(elevator,pos[2])
-end
 local function launchFreighter(hub, item)
 	if not hub then return end
 	local silo = hub.surface.find_entity(elevator.."-silo",hub.position)
@@ -163,7 +193,7 @@ local function updateElevatorGUI(force)
 		local gui = player.gui.left
 		local frame = gui['space-elevator-tracking']
 		-- if the space elevator was deconstructed, hide the GUI
-		if not global['space-elevator'] or not global['space-elevator'][force.index] then
+		if not findElevatorForForce(force) then
 			if frame then
 				frame.destroy()
 			end

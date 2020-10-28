@@ -1,4 +1,4 @@
--- uses global.io to track structures based on [surface, y, x] > {belt, inserter1, inserter2, indicator}
+-- uses global.io to track structures based on unit_number > {belt, inserter1, inserter2, indicator}
 local math2d = require("math2d")
 
 local function addToBufferOrSpillStack(stack, entity, buffer)
@@ -11,9 +11,7 @@ end
 
 local function addInput(entity, offset, target, direction)
 	if not global['io'] then global['io'] = {} end
-	if not global['io'][entity.surface.index] then global['io'][entity.surface.index] = {} end
-	if not global['io'][entity.surface.index][entity.position.y] then global['io'][entity.surface.index][entity.position.y] = {} end
-	if not global['io'][entity.surface.index][entity.position.y][entity.position.x] then global['io'][entity.surface.index][entity.position.y][entity.position.x] = {} end
+	if not global['io'][entity.unit_number] then global['io'][entity.unit_number] = {} end
 
 	offset = math2d.position.rotate_vector(offset, entity.direction/8*360)
 	local position = math2d.position.add(entity.position, offset)
@@ -60,7 +58,7 @@ local function addInput(entity, offset, target, direction)
 		surface = entity.surface,
 		only_in_alt_mode = true
 	}
-	global['io'][entity.surface.index][entity.position.y][entity.position.x][offset.x..","..offset.y] = {
+	global['io'][entity.unit_number][offset.x..","..offset.y] = {
 		belt = belt,
 		inserter_left = inserter_left,
 		inserter_right = inserter_right,
@@ -71,9 +69,7 @@ end
 
 local function addOutput(entity, offset, target, direction)
 	if not global['io'] then global['io'] = {} end
-	if not global['io'][entity.surface.index] then global['io'][entity.surface.index] = {} end
-	if not global['io'][entity.surface.index][entity.position.y] then global['io'][entity.surface.index][entity.position.y] = {} end
-	if not global['io'][entity.surface.index][entity.position.y][entity.position.x] then global['io'][entity.surface.index][entity.position.y][entity.position.x] = {} end
+	if not global['io'][entity.unit_number] then global['io'][entity.unit_number] = {} end
 
 	offset = math2d.position.rotate_vector(offset, entity.direction/8*360)
 	local position = math2d.position.add(entity.position, offset)
@@ -121,7 +117,7 @@ local function addOutput(entity, offset, target, direction)
 		only_in_alt_mode = true
 	}
 
-	global['io'][entity.surface.index][entity.position.y][entity.position.x][offset.x..","..offset.y] = {
+	global['io'][entity.unit_number][offset.x..","..offset.y] = {
 		belt = belt,
 		inserter_left = inserter_left,
 		inserter_right = inserter_right,
@@ -132,7 +128,7 @@ end
 
 local function remove(entity, event)
 	-- assume it exists - it not existing is an error condition
-	local structs = global['io'][entity.surface.index][entity.position.y][entity.position.x]
+	local structs = global['io'][entity.unit_number]
 	for _,struct in pairs(structs) do
 		-- any items held in the inserters or remaining on the belt are added to event.buffer, if it exists, or spilled if not
 		local belt = struct.belt
@@ -171,20 +167,20 @@ local function remove(entity, event)
 
 		-- visualisation is linked to the main entity so it gets destroyed automatically
 	end
-	global['io'][entity.surface.index][entity.position.y][entity.position.x] = nil
+	global['io'][entity.unit_number] = nil
 end
 
 local function toggle(entity, offset, enable)
 	offset = math2d.position.rotate_vector(offset, entity.direction/8*360)
 	-- assume it exists - it not existing is an error condition
-	local struct = global['io'][entity.surface.index][entity.position.y][entity.position.x][offset.x..","..offset.y]
+	local struct = global['io'][entity.unit_number][offset.x..","..offset.y]
 	struct.inserter_left.active = enable
 	struct.inserter_right.active = enable
 end
 local function isEnabled(entity, offset)
 	offset = math2d.position.rotate_vector(offset, entity.direction/8*360)
 	-- assume it exists - it not existing is an error condition
-	local struct = global['io'][entity.surface.index][entity.position.y][entity.position.x][offset.x..","..offset.y]
+	local struct = global['io'][entity.unit_number][offset.x..","..offset.y]
 	return struct.inserter_left.active
 end
 
