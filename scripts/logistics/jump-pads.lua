@@ -67,10 +67,11 @@ local function onVehicle(event)
 			player.driving = false
 			if enter.energy == 0 then
 				-- must have power
-				player.character.teleport(entity.position)
+				if player.character then
+					player.character.teleport(entity.position)
+				end
 			else
 				-- initiate YEETage
-				local character = player.character
 				if not global['jump-pad-launch'] then global['jump-pad-launch'] = {} end
 				local car2 = enter.surface.create_entity{
 					name = flying,
@@ -125,6 +126,7 @@ local function onTick(event)
 		if data.time == 120 then
 			-- landing! check for collision and bump accordingly - should wind up close by at worst
 			local character = data.player.character
+			global['jump-pad-launch'][pid] = nil
 			car.destroy()
 			if character then
 				-- if we landed on water, just die XD
@@ -142,14 +144,22 @@ local function onTick(event)
 					character.teleport({x-5, y})
 					-- then find an empty space at the target
 					character.teleport(surface.find_non_colliding_position("character",{x,y},0,0.05))
-					-- if we landed on jelly then we're good, otherwise take some fall damage (that'll just regen anyway so whatever lol XD)
-					local jelly = surface.find_entity(landing, character.position)
-					if not jelly or jelly.energy == 0 then
-						character.damage(40, game.forces.neutral) -- so you can unsafe-jump twice but the third time is death
+					-- if we landed on another jump pad, re-bounce
+					local rebounce = surface.find_entity(launcher, character.position)
+					if rebounce and rebounce.energy > 0 then
+						local car = surface.find_entity(vehicle, rebounce.position)
+						if car then
+							car.set_driver(data.player)
+						end
+					else
+						-- if we landed on jelly then we're good, otherwise take some fall damage (that'll just regen anyway so whatever lol XD)
+						local jelly = surface.find_entity(landing, character.position)
+						if not jelly or jelly.energy == 0 then
+							character.damage(40, game.forces.neutral) -- so you can unsafe-jump twice but the third time is death
+						end
 					end
 				end
 			end
-			global['jump-pad-launch'][pid] = nil
 		end
 	end
 end
