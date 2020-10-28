@@ -22,6 +22,7 @@ require("prototypes.logistics.pipe-to-ground")
 require("prototypes.logistics.pipe-to-ground-mk-2")
 require("prototypes.logistics.pump")
 require("prototypes.logistics.pump-mk-2")
+require("prototypes.logistics.valve")
 require("prototypes.logistics.foundation")
 require("prototypes.logistics.wall")
 

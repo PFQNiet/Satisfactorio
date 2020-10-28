@@ -322,12 +322,14 @@ end
 
 local function onTick(event)
 	if not global['train-stations'] then return end
-	local modulo = event.tick % 60
-	if not global['trains-accounted-for'] or modulo == 0 then global['trains-accounted-for'] = {} end
-	for i,struct in ipairs(global['train-stations']) do
+	
+	if not global['trains-accounted-for'] or event.tick%60 == 0 then global['trains-accounted-for'] = {} end
+	-- poll every station once per second
+	for i = event.tick%60+1, #global['train-stations'], 60 do
+		local struct = global['train-stations'][i]
 		local station = struct.station
 		local stop = struct.stop
-		if i%60 == modulo and station.energy >= 1000 then
+		if station.energy >= 1000 then
 			-- each station will "tick" once every second
 			local trains = stop.get_train_stop_trains()
 			local power = 50 -- MJ consumed this second
@@ -355,12 +357,13 @@ local function onTick(event)
 		end
 	end
 
-	modulo = event.tick % 45 -- one transfer every 45 ticks = 24 seconds for a 32-stack freight car
-	for i,struct in ipairs(global['train-stations']) do
+	-- one transfer every 45 ticks = 24 seconds for a 32-stack freight car
+	for i = event.tick%45+1, #global['train-stations'], 45 do
+		local struct = global['train-stations'][i]
 		local station = struct.station
 		local stop = struct.stop
 		local energy_used = (50/60*45)*1000*1000
-		if i%45 == modulo and station.energy >= 1000 then
+		if station.energy >= 1000 then
 			local train = stop.get_stopped_train()
 			if train then
 				-- scan attached platforms and, if a matching wagon is present, handle loading/unloading

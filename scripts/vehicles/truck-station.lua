@@ -123,9 +123,9 @@ end
 
 local function onTick(event)
 	if not global['truck-stations'] then return end
-	local modulo = event.tick % 30
-	for i,station in ipairs(global['truck-stations']) do
-		if i%30 == modulo and station.energy >= 10*1000*1000 then
+	for i = event.tick%30+1, #global['truck-stations'], 30 do
+		local station = global['truck-stations'][i]
+		if station.energy >= 10*1000*1000 then
 			-- each station will "tick" once every 30 in-game ticks, ie. every half-second
 			-- power consumption is 20MW, so each "tick" consumes 10MJ if a vehicle is present
 			local centre = math2d.position.add(station.position, math2d.position.rotate_vector({-0.5,-8}, station.direction*45))

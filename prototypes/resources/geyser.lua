@@ -19,7 +19,7 @@ data:extend(
 		collision_box = {{ -2.1, -2.1}, {2.1, 2.1}},
 		collision_mask = {"resource-layer", "water-tile"},
 		selection_box = {{ -2.5, -2.5}, {2.5, 2.5}},
-		selection_priority = 10, -- below Foundation even
+		selection_priority = 25, -- below most entities, but not Foundation
 		autoplace = nil,
 		stage_counts = {0},
 		stages = {

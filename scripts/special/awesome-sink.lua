@@ -191,9 +191,10 @@ end
 
 local function onTick(event)
 	if not global['awesome-sinks'] then return end
-	local modulo = event.tick % 4 -- the fastest belt carries a max of 1 item every 4.5 ticks, so this should easily keep up with that
-	for i,sink in ipairs(global['awesome-sinks']) do
-		if i%4 == modulo and sink.energy >= 30*1000*1000 then
+	for i = event.tick%4+1, #global['awesome-sinks'], 4 do
+		local sink = global['awesome-sinks'][i]
+		-- the fastest belt carries a max of 1 item every 4.5 ticks, so this should easily keep up with that
+		if sink.energy >= 30*1000*1000 then
 			-- entity can charge at 40MW and store 30MW, with a drain of 30MW, so it'll take a few seconds to power up, which is fine
 			local store = sink.surface.find_entity(storage, sink.position)
 			local inventory = store.get_inventory(defines.inventory.chest)

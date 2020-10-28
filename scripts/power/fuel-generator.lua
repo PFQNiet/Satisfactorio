@@ -53,23 +53,21 @@ end
 
 local function onTick(event)
 	if not global['fuel-generators'] then return end
-	local modulo = event.tick % 60
-	for i,storage in ipairs(global['fuel-generators']) do
-		if i%60 == modulo then
-			-- each station will "tick" once every 60 in-game ticks, ie. every second
-			-- power production is 150MW, so each "tick" can buffer up to 150MJ given enough fuel
-			local eei = storage.surface.find_entity(buffer, storage.position)
-			local fluid_type, fluid_amount = next(storage.get_fluid_contents())
-			if fluid_type and fluid_amount > 0 and eei.active then
-				local fuel_value = game.fluid_prototypes[fluid_type].fuel_value
-				if fuel_value > 0 then
-					local energy_to_full_charge = eei.electric_buffer_size - eei.energy
-					local fuel_to_full_charge = energy_to_full_charge / fuel_value
-					-- attempt to remove the full amount - if it's limited by the amount actually present then the return value will reflect that
-					local fuel_consumed_this_tick = storage.remove_fluid{name=fluid_type, amount=fuel_to_full_charge}
-					local energy_gained_this_tick = fuel_consumed_this_tick * fuel_value
-					eei.energy = eei.energy + energy_gained_this_tick
-				end
+	for i = event.tick%60+1, #global['fuel-generators'], 60 do
+		local storage = global['fuel-generators'][i]
+		-- each station will "tick" once every 60 in-game ticks, ie. every second
+		-- power production is 150MW, so each "tick" can buffer up to 150MJ given enough fuel
+		local eei = storage.surface.find_entity(buffer, storage.position)
+		local fluid_type, fluid_amount = next(storage.get_fluid_contents())
+		if fluid_type and fluid_amount > 0 and eei.active then
+			local fuel_value = game.fluid_prototypes[fluid_type].fuel_value
+			if fuel_value > 0 then
+				local energy_to_full_charge = eei.electric_buffer_size - eei.energy
+				local fuel_to_full_charge = energy_to_full_charge / fuel_value
+				-- attempt to remove the full amount - if it's limited by the amount actually present then the return value will reflect that
+				local fuel_consumed_this_tick = storage.remove_fluid{name=fluid_type, amount=fuel_to_full_charge}
+				local energy_gained_this_tick = fuel_consumed_this_tick * fuel_value
+				eei.energy = eei.energy + energy_gained_this_tick
 			end
 		end
 	end

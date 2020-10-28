@@ -152,46 +152,44 @@ local function checkOverflow(look, valid, struct)
 end
 local function onTick(event)
 	if not global['smart-splitters'] then return end
-	local modulo = event.tick % 4
-	for i,struct in ipairs(global['smart-splitters']) do
-		if i%4 == modulo then
-			local contents = struct.buffer.get_inventory(defines.inventory.chest)[1]
-			if contents.valid_for_read then
-				local valid = {}
-				for dir,look in pairs(others) do
-					-- first pass: everything except overflow
-					local filter = struct.filters[dir]
-					if testFilter(filter, contents.name, struct, look) then
+	for i = event.tick%4+1, #global['smart-splitters'], 4 do
+		local struct = global['smart-splitters'][i]
+		local contents = struct.buffer.get_inventory(defines.inventory.chest)[1]
+		if contents.valid_for_read then
+			local valid = {}
+			for dir,look in pairs(others) do
+				-- first pass: everything except overflow
+				local filter = struct.filters[dir]
+				if testFilter(filter, contents.name, struct, look) then
+					table.insert(valid, dir)
+				end
+			end
+			for dir,look in pairs(others) do
+				-- second pass: overflow
+				-- this is done in a second pass so that only options that are enabled are considered for overflowing
+				-- this means that if one side takes iron and the other copper, the current item is iron, iron is full but copper isn't, copper isn't considered anyway
+				local filter = struct.filters[dir]
+				if filterContainsOverflow(filter) then
+					if checkOverflow(look, valid, struct) then
 						table.insert(valid, dir)
 					end
 				end
-				for dir,look in pairs(others) do
-					-- second pass: overflow
-					-- this is done in a second pass so that only options that are enabled are considered for overflowing
-					-- this means that if one side takes iron and the other copper, the current item is iron, iron is full but copper isn't, copper isn't considered anyway
-					local filter = struct.filters[dir]
-					if filterContainsOverflow(filter) then
-						if checkOverflow(look, valid, struct) then
-							table.insert(valid, dir)
-						end
-					end
+			end
+			local candidates = {}
+			for _,dir in pairs(valid) do
+				-- final pass: get inserters that aren't already holding something
+				if not struct[dir][1].held_stack.valid_for_read then
+					table.insert(candidates, struct[dir][1].held_stack)
 				end
-				local candidates = {}
-				for _,dir in pairs(valid) do
-					-- final pass: get inserters that aren't already holding something
-					if not struct[dir][1].held_stack.valid_for_read then
-						table.insert(candidates, struct[dir][1].held_stack)
-					end
-					if not struct[dir][2].held_stack.valid_for_read then
-						table.insert(candidates, struct[dir][2].held_stack)
-					end
+				if not struct[dir][2].held_stack.valid_for_read then
+					table.insert(candidates, struct[dir][2].held_stack)
 				end
-				if #candidates > 0 then
-					-- found at least one candidate for receiving the item!
-					local choose = math.floor(event.tick/4) % #candidates -- this should cycle through candidates equally
-					candidates[choose+1].transfer_stack(contents)
-				-- else the item stays stuck in the splitter's buffer until deconstructed or filters are set to allow it through
-				end
+			end
+			if #candidates > 0 then
+				-- found at least one candidate for receiving the item!
+				local choose = math.floor(event.tick/4) % #candidates -- this should cycle through candidates equally
+				candidates[choose+1].transfer_stack(contents)
+			-- else the item stays stuck in the splitter's buffer until deconstructed or filters are set to allow it through
 			end
 		end
 	end
