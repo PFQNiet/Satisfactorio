@@ -53,7 +53,10 @@ local function createCrashSite(surface, position)
 		position = position,
 		radius = 50
 	}
-	for _,wreck in pairs(wreckage) do wreck.destructible = false end
+	for _,wreck in pairs(wreckage) do
+		wreck.force = "neutral"
+		wreck.destructible = false
+	end
 
 	local ship = surface.find_entity(spaceship, position)
 	local reqs = generateRequirements()

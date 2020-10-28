@@ -6,22 +6,22 @@ local refinery = {
 	animation = {
 		north = {
 			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-n.png",
-			size = {160,320}
+			size = {224,320}
 		},
 		east = {
 			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-e.png",
-			size = {320,160}
+			size = {320,224}
 		},
 		south = {
 			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-s.png",
-			size = {160,320}
+			size = {224,320}
 		},
 		west = {
 			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-w.png",
-			size = {320,160}
+			size = {320,224}
 		}
 	},
-	collision_box = {{-2.2,-4.7},{2.2,4.7}},
+	collision_box = {{-3.2,-4.7},{3.2,4.7}},
 	corpse = "big-remnants",
 	crafting_categories = {"refining"},
 	crafting_speed = 1,
@@ -76,7 +76,7 @@ local refinery = {
 		result = name
 	},
 	name = name,
-	selection_box = {{-2.5,-5},{2.5,5}},
+	selection_box = {{-3.5,-5},{3.5,5}},
 	type = "assembling-machine"
 }
 
