@@ -446,6 +446,9 @@ addTech("hub-tier7-bauxite-refinement", "hub/factory", "hub-progressing", "hub-t
 	{type="unlock-recipe",recipe="aluminium-scrap"},
 	{type="unlock-recipe",recipe="aluminium-ingot"},
 	{type="unlock-recipe",recipe="alclad-aluminium-sheet"},
+	{type="unlock-recipe",recipe="pipeline-mk-2"},
+	{type="unlock-recipe",recipe="pipeline-junction-cross-mk-2"},
+	{type="unlock-recipe",recipe="pipeline-pump-mk-2"},
 	{type="unlock-recipe",recipe="scanner-bauxite"},
 	{type="unlock-recipe",recipe="scanner-raw-quartz"}
 })
