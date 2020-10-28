@@ -70,6 +70,7 @@ tankin.pictures.picture = {
 }
 table.insert(tankin.flags,"hide-alt-info")
 tankin.collision_box = {{-0.4,-0.4},{0.4,0.4}}
+tankin.collision_mask = {}
 tankin.selection_box = {{-0.5,-0.5},{0.5,0.5}}
 tankin.selection_priority = 40
 
@@ -83,9 +84,11 @@ tankout.pictures.picture = {
 }
 table.insert(tankout.flags,"hide-alt-info")
 tankout.collision_box = {{-0.4,-0.4},{0.4,0.4}}
+tankout.collision_mask = {}
 tankout.selection_box = {{-0.5,-0.5},{0.5,0.5}}
 tankout.selection_priority = 40
 
+tank.fast_replaceable_group = "pipe"
 tank.fluid_box.base_area = 6/data.raw.pipe.pipe.fluid_box.height -- 600 capacity - for visualisation purposes only
 
 local tankitem = {

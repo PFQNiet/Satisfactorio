@@ -14,6 +14,7 @@ for _,pic in pairs(pipe.pictures) do
 		pic.hr_version.tint = {0.2,0.8,1}
 	end
 end
+data.raw.pipe.pipe.next_upgrade = name
 
 local pipeitem = table.deepcopy(data.raw.item[basename])
 pipeitem.name = name

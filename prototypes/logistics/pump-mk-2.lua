@@ -13,6 +13,7 @@ for _,pic in pairs(pump.animations) do
 		pic.hr_version.tint = {0.2,0.8,1}
 	end
 end
+data.raw.pump.pump.next_upgrade = name
 
 local pumpitem = table.deepcopy(data.raw.item[basename])
 pumpitem.name = name

@@ -116,10 +116,9 @@ local function onGuiOpened(event)
 			name = "content"
 		}
 		local columns = content.add{
-			type = "table",
-			column_count = 2,
-			name = "table",
-			vertical_centering = false
+			type = "flow",
+			direction = "horizontal",
+			name = "table"
 		}
 		columns.style.horizontal_spacing = 12
 		local col1 = columns.add{

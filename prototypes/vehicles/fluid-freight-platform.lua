@@ -120,6 +120,7 @@ pump.minable = nil
 pump.fluid_box.pipe_connections[1].position = {0,-1}
 pump.fluid_box.pipe_connections[2].position = {0,1}
 pump.placeable_by = {item=name,count=1}
+pump.next_upgrade = nil
 
 local storage = {
 	type = "storage-tank",
