@@ -6,5 +6,6 @@ return {
 	require("scripts.constructors.constructor"),
 	require("scripts.constructors.assembler"),
 	require("scripts.constructors.manufacturer"),
-	require("scripts.constructors.refinery")
+	require("scripts.constructors.refinery"),
+	require("scripts.constructors.packager")
 }

@@ -376,6 +376,7 @@ addTech("hub-tier5-alternative-fluid-transport", "hub/logistics", "hub-progressi
 	{"wire",3000}
 }, {
 	{type="unlock-recipe",recipe="industrial-fluid-buffer"},
+	{type="unlock-recipe",recipe="packager"},
 	{type="unlock-recipe",recipe="empty-canister"},
 	{type="unlock-recipe",recipe="packaged-water"},
 	{type="unlock-recipe",recipe="unpack-water"},
