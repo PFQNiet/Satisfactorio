@@ -17,6 +17,7 @@ stop.minable = {
 	mining_time = 1,
 	result = name
 }
+stop.placeable_by = {{item=name,count=1}}
 
 local base = {
 	type = "electric-energy-interface",
@@ -52,7 +53,7 @@ local base = {
 	icon_size = 64,
 	render_layer = "decorative", -- required so that the train-stop renders on top of it
 	collision_box = {{-6.7,-3.2},{6.7,3.2}},
-	collision_mask = {}, -- collision will be checked by script
+	collision_mask = {"water-tile","colliding-with-tiles-only"}, -- object collision will be checked by script
 	corpse = "big-remnants",
 	dying_explosion = "big-explosion",
 	flags = {

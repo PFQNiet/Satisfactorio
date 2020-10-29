@@ -7,7 +7,7 @@ local valvein = valve.."-input"
 local valveout = valve.."-output"
 
 local function findStruct(entity)
-	return global['valves'] and global['valved'][entity.unit_number]
+	return global['valves'] and global['valves'][entity.unit_number]
 end
 
 local function onBuilt(event)
