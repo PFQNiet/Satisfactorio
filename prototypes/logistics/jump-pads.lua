@@ -134,6 +134,7 @@ local vehicle2 = {
 	collision_box = {{-0.2,-0.2},{0.2,0.2}},
 	collision_mask = {},
 	selection_box = {{-0.5,-0.5},{0.5,0.5}},
+	render_layer = "air-object",
 	selectable_in_game = false,
 	flags = {
 		"not-on-map",
