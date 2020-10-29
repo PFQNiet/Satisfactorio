@@ -74,7 +74,9 @@ local function openObjectScanner(player)
 			index = i
 		end
 	end
-	menu.selected_index = index
+	if #menu.items > 0 then
+		menu.selected_index = index
+	end
 
 	gui.visible = true
 	player.opened = gui
@@ -95,7 +97,7 @@ local function onGuiClick(event)
 	if event.element.name == "object-scanner-select" then
 		closeObjectScanner(player)
 		local index = player.gui.screen['object-scanner']['object-scanner-item'].selected_index
-		if not index then
+		if not index or index == 0 then
 			return
 		end
 		local type = getUnlockedScans(player.force)[index].products[1].name

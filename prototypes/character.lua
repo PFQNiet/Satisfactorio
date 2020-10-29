@@ -5,6 +5,25 @@ char.crafting_categories = {"building","unbuilding"}
 char.mining_categories = {"solid"}
 char.mining_speed = 1
 
+-- character can't damage targets without a weapon, but can at least "punch" them away and stun them
+char.tool_attack_distance = 3
+char.tool_attack_result = {
+	type = "direct",
+	action_delivery = {
+		type = "instant",
+		target_effects = {
+			{
+				type = "create-sticker",
+				sticker = "xeno-zapper-stun-sticker"
+			},
+			{
+				type = "push-back",
+				distance = 3
+			}
+		}
+	}
+}
+
 -- ensure character corpse doesn't expire
 data.raw['character-corpse']['character-corpse'].time_to_live = 60*60*60*24*7
 -- you have a *week* to retrieve your corpse. If that's not enough then I don't know what to say...
