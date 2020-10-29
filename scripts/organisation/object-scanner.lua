@@ -74,13 +74,16 @@ local function openObjectScanner(player)
 			index = i
 		end
 	end
-	if #menu.items > 0 then
+	if #menu.items == 0 then
+		player.opened = nil
+		player.print({"message.object-scanner-no-scans-unlocked"})
+	else
 		menu.selected_index = index
+		
+		gui.visible = true
+		player.opened = gui
+		gui.force_auto_center()
 	end
-
-	gui.visible = true
-	player.opened = gui
-	gui.force_auto_center()
 end
 local function closeObjectScanner(player)
 	local gui = player.gui.screen['object-scanner']
