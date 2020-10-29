@@ -50,6 +50,7 @@ local interface = {
 		mining_time = 1,
 		result = name
 	},
+	--[[
 	radius_visualisation_specification = {
 		sprite = {
 			filename = "__Satisfactorio__/graphics/particles/"..name.."-landing.png",
@@ -58,12 +59,14 @@ local interface = {
 		distance = 1.5,
 		offset = {0,-40}
 	},
+	]]
 	selection_box = {{-1.5,-1.5},{1.5,1.5}}
 }
 local vehicle = {
 	-- a fake car for the player to initiate launch with Enter
 	type = "car",
 	name = name.."-car",
+	localised_name = {"entity-name."..name},
 	animation = {
 		direction_count = 1,
 		filename = "__core__/graphics/empty.png",
@@ -322,5 +325,27 @@ data:extend{
 		name = "jump-pad-launch",
 		filename = "__base__/sound/fight/rocket-launcher.ogg",
 		volume = 0.5
+	},
+	{
+		type = "custom-input",
+		name = "tile-bigger",
+		key_sequence = "",
+		linked_game_control = "larger-terrain-building-area",
+		consuming = "none",
+		action = "lua"
+	},
+	{
+		type = "custom-input",
+		name = "tile-smaller",
+		key_sequence = "",
+		linked_game_control = "smaller-terrain-building-area",
+		consuming = "none",
+		action = "lua"
+	},
+	{
+		type = "sprite",
+		name = "jump-pad-landing",
+		filename = "__Satisfactorio__/graphics/particles/jump-pad-landing.png",
+		size = {64,64}
 	}
 }

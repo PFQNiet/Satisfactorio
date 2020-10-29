@@ -12,7 +12,7 @@ local function onBuilt(event)
 			force = entity.force,
 			raise_built = true
 		}
-		entity.destructible = false
+		entity.operable = false
 	end
 end
 

@@ -1,4 +1,6 @@
 -- jump pad launch is initiated by entering the pseudo-vehicle
+-- uses global['jump-pads'] to record the range setting for a given jump pad (max = 40, default = max)
+-- uses global['jump-pad-visualisation'] to track player -> arrow
 -- uses global['jump-pad-launch'] to track player -> movement data
 -- on landing, player takes "fall damage" unless they land on U-Jelly Landing Pad. If they land on water, they die instantly.
 
@@ -19,6 +21,8 @@ local function onBuilt(event)
 			force = entity.force,
 			raise_built = true
 		}
+		if not global['jump-pads'] then global['jump-pads'] = {} end
+		global['jump-pads'][entity.unit_number] = 40
 	end
 end
 local function onRemoved(event)
@@ -29,9 +33,11 @@ local function onRemoved(event)
 		if car and car.valid then
 			car.destroy()
 		end
+		global['jump-pads'][entity.unit_number] = nil
 	elseif entity.name == car then
 		local floor = entity.surface.find_entity(launcher, entity.position)
 		if floor and floor.valid then
+			global['jump-pads'][floor.unit_number] = nil
 			floor.destroy()
 		end
 	end
@@ -90,6 +96,7 @@ local function onVehicle(event)
 					start = enter.position,
 					time = 0,
 					direction = enter.direction,
+					range = global['jump-pads'][enter.unit_number],
 					car = car2,
 					shadow = graphic
 				}
@@ -113,15 +120,15 @@ local function onTick(event)
 		local player = game.players[pid]
 		data.time = data.time + 1
 		local position = data.time / 120
-		local x = data.start.x + vectors[data.direction][1] * position * 40
-		local y = data.start.y + vectors[data.direction][2] * position * 40
-		local z = 10*math.sin(position*math.pi) -- Z axis (representation)
+		local x = data.start.x + vectors[data.direction][1] * position * data.range
+		local y = data.start.y + vectors[data.direction][2] * position * data.range
+		local z = (80-data.range)/4*math.sin(position*math.pi) -- Z axis (representation)
 		y = y - z
 		local car = data.car
 		car.teleport({x,y})
 		rendering.set_target(data.shadow, car, {z+1,z})
-		rendering.set_x_scale(data.shadow, 1-z/20)
-		rendering.set_y_scale(data.shadow, 1-z/20)
+		rendering.set_x_scale(data.shadow, 1-z/40)
+		rendering.set_y_scale(data.shadow, 1-z/40)
 
 		if data.time == 120 then
 			-- landing! check for collision and bump accordingly - should wind up close by at worst
@@ -164,6 +171,104 @@ local function onTick(event)
 	end
 end
 
+local function onInteract(event)
+	local player = game.players[event.player_index]
+	if player.selected and player.selected.name == launcher then
+		if not global['jump-pad-visualisation'] then global['jump-pad-visualisation'] = {} end
+		if global['jump-pad-visualisation'][player.index] then
+			for _,part in pairs(global['jump-pad-visualisation'][player.index]) do
+				rendering.destroy(part)
+			end
+		end
+		local entity = player.selected
+		local tris = {}
+		local range = global['jump-pads'][entity.unit_number]
+		local vector = vectors[entity.direction]
+		local max_z = 80-range
+		local prev = {0,0,0.25}
+		local o = {vector[2],vector[1]}
+		for i=1,58 do
+			local position = i/60
+			local x = vector[1] * position * range
+			local y = vector[2] * position * range
+			local z = max_z/4*math.sin(position*math.pi) -- Z axis (representation)
+			y = y-z
+			-- "width" of the arrow is based on the position along the arc
+			local w = math.sin(position*math.pi)/4+0.25
+			table.insert(tris,rendering.draw_polygon{
+				color = {0.75,0.75,0,0.75},
+				vertices = {
+					{target={prev[1]+o[1]*prev[3],prev[2]+o[2]*prev[3]}},
+					{target={x+o[1]*w,y+o[2]*w}},
+					{target={x-o[1]*w,y-o[2]*w}}
+				},
+				target = entity,
+				surface = entity.surface,
+				time_to_live = 5*60,
+				players = {player}
+			})
+			table.insert(tris,rendering.draw_polygon{
+				color = {0.75,0.75,0,0.75},
+				vertices = {
+					{target={prev[1]+o[1]*prev[3],prev[2]+o[2]*prev[3]}},
+					{target={x-o[1]*w,y-o[2]*w}},
+					{target={prev[1]-o[1]*prev[3],prev[2]-o[2]*prev[3]}}
+				},
+				target = entity,
+				surface = entity.surface,
+				time_to_live = 5*60,
+				players = {player}
+			})
+			prev = {x,y,w}
+		end
+		-- arrow head
+		local position = 58/60
+		local x = vector[1] * position * range
+		local y = vector[2] * position * range
+		local z = max_z/4*math.sin(position*math.pi) -- Z axis (representation)
+		y = y-z
+		local w = 1.5
+		table.insert(tris,rendering.draw_polygon{
+			color = {0.75,0.75,0,0.75},
+			vertices = {
+				{target={x+o[1]*w,y+o[2]*w}},
+				{target={vector[1]*range,vector[2]*range}},
+				{target={x-o[1]*w,y-o[2]*w}}
+			},
+			target = entity,
+			surface = entity.surface,
+			time_to_live = 5*60,
+			players = {player}
+		})
+		table.insert(tris,rendering.draw_sprite{
+			sprite = "jump-pad-landing",
+			target = entity,
+			target_offset = {vector[1]*range,vector[2]*range},
+			surface = entity.surface,
+			time_to_live = 5*60,
+			players = {player}
+		})
+		
+		global['jump-pad-visualisation'][player.index] = tris
+	end
+end
+local function onRangeDown(event)
+	local player = game.players[event.player_index]
+	if player.selected and player.selected.name == launcher then
+		local entity = player.selected
+		global['jump-pads'][entity.unit_number] = math.max(4,global['jump-pads'][entity.unit_number]-1)
+		onInteract(event)
+	end
+end
+local function onRangeUp(event)
+	local player = game.players[event.player_index]
+	if player.selected and player.selected.name == launcher then
+		local entity = player.selected
+		global['jump-pads'][entity.unit_number] = math.min(40,global['jump-pads'][entity.unit_number]+1)
+		onInteract(event)
+	end
+end
+
 return {
 	events = {
 		[defines.events.on_built_entity] = onBuilt,
@@ -176,9 +281,21 @@ return {
 		[defines.events.on_entity_died] = onRemoved,
 		[defines.events.script_raised_destroy] = onRemoved,
 
-		[defines.events.on_player_rotated_entity] = onRotated,
+		[defines.events.on_player_rotated_entity] = function(event)
+			onRotated(event)
+			onInteract(event)
+		end,
 
 		[defines.events.on_player_driving_changed_state] = onVehicle,
-		[defines.events.on_tick] = onTick
+		[defines.events.on_tick] = onTick,
+
+		["interact"] = onInteract,
+		["tile-smaller"] = onRangeDown,
+		["tile-bigger"] = onRangeUp,
+		[defines.events.on_gui_opened] = function(event)
+			if event.entity and event.entity.valid and event.entity.name == launcher then
+				game.players[event.player_index].opened = nil
+			end
+		end
 	}
 }
