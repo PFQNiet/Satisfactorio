@@ -2,6 +2,7 @@
 -- uses global['jump-pads'] to record the range setting for a given jump pad (max = 40, default = max)
 -- uses global['jump-pad-visualisation'] to track player -> arrow
 -- uses global['jump-pad-launch'] to track player -> movement data
+-- uses global['jump-pad-rebounce'] to track visited jump pads in a chain, to detect a loop and break out of it
 -- on landing, player takes "fall damage" unless they land on U-Jelly Landing Pad. If they land on water, they die instantly.
 
 local launcher = "jump-pad"
@@ -79,6 +80,9 @@ local function onVehicle(event)
 			else
 				-- initiate YEETage
 				if not global['jump-pad-launch'] then global['jump-pad-launch'] = {} end
+				if not global['jump-pad-rebounce'] then global['jump-pad-rebounce'] = {} end
+				if not global['jump-pad-rebounce'][player.index] then global['jump-pad-rebounce'][player.index] = {} end
+				global['jump-pad-rebounce'][player.index][enter.unit_number] = true
 				local car2 = enter.surface.create_entity{
 					name = flying,
 					force = enter.force,
@@ -153,12 +157,14 @@ local function onTick(event)
 					character.teleport(surface.find_non_colliding_position("character",{x,y},0,0.05))
 					-- if we landed on another jump pad, re-bounce
 					local rebounce = surface.find_entity(launcher, character.position)
-					if rebounce and rebounce.energy > 0 then
+					if rebounce and rebounce.energy > 0 and not global['jump-pad-rebounce'][data.player.index][rebounce.unit_number] then
 						local car = surface.find_entity(vehicle, rebounce.position)
 						if car then
+							global['jump-pad-rebounce'][data.player.index][rebounce.unit_number] = true
 							car.set_driver(data.player)
 						end
 					else
+						global['jump-pad-rebounce'][data.player.index] = nil
 						-- if we landed on jelly then we're good, otherwise take some fall damage (that'll just regen anyway so whatever lol XD)
 						local jelly = surface.find_entity(landing, character.position)
 						if not jelly or jelly.energy == 0 then
