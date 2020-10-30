@@ -143,6 +143,13 @@ for k,_ in pairs(radioactivity_functions) do
 	table.insert(radioactive_containers, k)
 end
 
+local function onResolutionChanged(event)
+	local player = game.players[event.player_index]
+	local gui = player.gui.screen.radiation
+	if gui then
+		gui.location = {(player.display_resolution.width-250*player.display_scale)/2, 160*player.display_scale}
+	end
+end
 local function onTick(event)
 	local tick = event.tick
 	local bucket = tick % 1024
@@ -240,7 +247,7 @@ local function onTick(event)
 				else
 					if not gui.visible then
 						gui.visible = true
-						gui.location = {(player.display_resolution.width-250)/2, 160}
+						onResolutionChanged({player_index=player.index})
 					end
 					gui.content.bar.value = math.min(radiation/145,1)
 				end
@@ -252,6 +259,9 @@ end
 return {
 	events = {
 		[defines.events.on_chunk_generated] = onChunkGenerated,
-		[defines.events.on_tick] = onTick
+		[defines.events.on_tick] = onTick,
+
+		[defines.events.on_player_display_resolution_changed] = onResolutionChanged,
+		[defines.events.on_player_display_scale_changed] = onResolutionChanged
 	}
 }

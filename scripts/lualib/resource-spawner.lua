@@ -308,6 +308,14 @@ local function onInit()
 
 	registerSurface(game.surfaces.nauvis)
 end
+
+local function onResolutionChanged(event)
+	local player = game.players[event.player_index]
+	local gui = player.gui.screen['resources-loading']
+	if gui then
+		gui.location = {(player.display_resolution.width-300*player.display_scale)/2, 40*player.display_scale}
+	end
+end
 local function onTick(event)
 	local count = global['resource-node-count']
 	-- run more often the more open nodes there are
@@ -354,7 +362,7 @@ local function onTick(event)
 			else
 				if not gui.visible then
 					gui.visible = true
-					gui.location = {(player.display_resolution.width-300)/2, 40}
+					onResolutionChanged({player_index=player.index})
 				end
 				gui.content.count.caption = {"gui.map-generator-node-count",count}
 			end
@@ -366,6 +374,9 @@ return {
 	on_init = onInit,
 	events = {
 		[defines.events.on_tick] = onTick,
-		[defines.events.on_chunk_generated] = onChunkGenerated
+		[defines.events.on_chunk_generated] = onChunkGenerated,
+
+		[defines.events.on_player_display_resolution_changed] = onResolutionChanged,
+		[defines.events.on_player_display_scale_changed] = onResolutionChanged
 	}
 }
