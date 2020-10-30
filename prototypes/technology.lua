@@ -415,7 +415,7 @@ addTech("hub-tier6-jetpack", "hub/equipment", "hub-progressing", "hub-tier6", "a
 	{"plastic-bar",200},
 	{"rubber",200}
 }, {
-	-- {type="unlock-recipe",recipe="jetpack"},
+	{type="unlock-recipe",recipe="jetpack"},
 	{type="character-inventory-slots-bonus",modifier=5}
 })
 addTech("hub-tier6-monorail-train-technology", "hub/vehicle", "hub-progressing", "hub-tier6", "a-6-3", 900, {"space-elevator-phase2"}, {

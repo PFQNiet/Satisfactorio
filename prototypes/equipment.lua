@@ -1,4 +1,5 @@
 require("prototypes.equipment.blade-runners")
+require("prototypes.equipment.jetpack")
 require("prototypes.equipment.gas-mask")
 require("prototypes.equipment.hazmat-suit")
 
@@ -35,5 +36,12 @@ data:extend({
 			height = 1,
 			type = "full"
 		}
+	},
+	{
+		type = "custom-input",
+		name = "jump",
+		key_sequence = "J",
+		consuming = "game-only",
+		action = "lua"
 	}
 })

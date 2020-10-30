@@ -149,6 +149,7 @@ local function onTick(event)
 					collision_mask = "player-layer" -- tiles that collide with the player are impassible - in vanilla that's just water but let's support mods too!
 				}
 				if #water_tile > 0 then
+					character.teleport({x, y})
 					character.die()
 				else
 					-- move the character aside so it is out of the way of its own collision check
