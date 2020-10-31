@@ -676,7 +676,7 @@ addTech("mam-mycelia-fabric", "mam/fabric", "mam", "mam-mycelia", "m-4-4", 3, {"
 })
 addTech("mam-mycelia-parachute", "mam/parachute", "mam", "mam-mycelia", "m-4-5", 3, {"mam-mycelia-fabric"}, {
 	{"fabric",10},
-	{"cable",50}
+	{"copper-cable",50}
 }, {
 	{type="unlock-recipe",recipe="parachute"}
 })
