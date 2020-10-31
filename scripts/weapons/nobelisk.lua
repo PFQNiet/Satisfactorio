@@ -36,7 +36,8 @@ local function onScriptTriggerEffect(event)
 		table.insert(global['nobelisk-queue'][source], {
 			entity = target,
 			offset = offset,
-			force = event.source_entity and event.source_entity.force or "player"
+			force = event.source_entity and event.source_entity.force or "player",
+			cause = event.source_entity
 		})
 	end
 	if event.effect_id == detonator then
@@ -122,6 +123,13 @@ local function onTick(event)
 					local dy = entity.position.y - pos[2]
 					if dx*dx+dy*dy < 4*4 then
 						entity.destroy{do_cliff_correction=true}
+					end
+				end
+				if entity.valid and entity.name == "big-worm-turret" then
+					local dx = entity.position.x - pos[1]
+					local dy = entity.position.y - pos[2]
+					if dx*dx+dy*dy < 4*4 then
+						entity.die(explosion.force, explosion.cause)
 					end
 				end
 			end

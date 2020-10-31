@@ -25,7 +25,7 @@ worm.healing_per_tick = 0
 worm.max_health = 9999
 worm.resistances = nil
 worm.call_for_help_radius = 0
-worm.collision_mask = {"item-layer", "object-layer", "player-layer", "water-tile", "resource-layer"} -- can't be placed on resources either
+worm.collision_mask = {"object-layer", "resource-layer"} -- can't be placed on objects or resources, but could appear on water
 for i,flag in pairs(worm.flags) do
 	if flag == "breaths-air" then
 		table.remove(worm.flags,i)
