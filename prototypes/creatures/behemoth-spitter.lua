@@ -3,6 +3,7 @@ biter.attack_parameters.damage_modifier = 20
 biter.attack_parameters.cooldown = 90
 biter.attack_parameters.cooldown_deviation = 0
 biter.attack_parameters.range = 20
+biter.attack_parameters.lead_target_for_projectile_speed = 0.5
 biter.healing_per_tick = 0
 biter.max_health = 80
 biter.movement_speed = 0.25

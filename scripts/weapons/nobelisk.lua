@@ -7,7 +7,7 @@ local sticker = name.."-armed"
 local onground = name.."-on-ground"
 
 local function onScriptTriggerEffect(event)
-	local source = event.source_entity and event.source_entity.player and event.source_entity.player.index or 0
+	local source = event.source_entity and event.source_entity.type == "character" and event.source_entity.player and event.source_entity.player.index or 0
 	if event.effect_id == name then
 		local target
 		if event.target_entity and (event.target_entity.type == "unit" or event.target_entity.type == "character" or event.target_entity.type == "car") then

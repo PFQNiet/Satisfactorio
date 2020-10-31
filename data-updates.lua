@@ -29,3 +29,15 @@ end
 for _,tree in pairs(data.raw.tree) do
 	tree.emissions_per_second = 0
 end
+
+-- remove "resource-layer" from the collision masks of water tiles
+for _,tile in pairs(data.raw.tile) do
+	if tile.draw_in_water_layer then
+		for i,mask in pairs(tile.collision_mask) do
+			if mask == "resource-layer" then
+				table.remove(tile.collision_mask,i)
+				break
+			end
+		end
+	end
+end
