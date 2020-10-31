@@ -7,6 +7,7 @@
 	Each resource is a table: {
 		r = radius, nodes will spawn between r and 2r tiles away from any other nodes
 		k = attempts to spawn a node before considering the node "closed" (30)
+		value = how strongly it should be defended (0-6)
 		size = {min,max} range for total purity value of node cluster, where impure=1, normal=2, pure=4
 		gridsize = r/sqrt(2)
 		grid = grid size ensures there can only ever be one node in a grid square and allows for much faster checking of proximity
@@ -23,12 +24,13 @@
 local crash_site = require("scripts.lualib.crash-sites")
 local enemies = require("scripts.lualib.enemy-spawning")
 
-local function registerResource(name, radius, min, max)
+local function registerResource(name, radius, min, max, value)
 	if global['resources'][name] then return end
 	global['resources'][name] = {
 		type = name,
 		r = radius,
 		k = 30,
+		value = value,
 		size = {min,max},
 		gridsize = radius/math.sqrt(2),
 		grid = {},
@@ -115,6 +117,7 @@ local function spawnNode(resource, surface, cx, cy)
 				pval = purity -- always just a single slug, purity value affects rarity of slug
 				local tiers = {"green","green","green","green","green","green","yellow","yellow","yellow","purple"}
 				local slug = tiers[pval].."-power-slug"
+				resource.value = math.ceil(pval/2) -- remap 1-10 as 1-5
 				local tx = cx+x+0.5
 				local ty = cy+y+0.5
 				local chunkpos = {x=math.floor(tx/32), y=math.floor(ty/32)}
@@ -166,10 +169,11 @@ local function spawnNode(resource, surface, cx, cy)
 			queueEntity({
 				name = "x-enemies",
 				position = {cx,cy},
-				value = 1
+				value = resource.value,
+				base_distance = resource.r
 			}, surface, chunkpos)
 		else
-			enemies.spawnGroup(surface, {cx,cy}, 1)
+			enemies.spawnGroup(surface, {cx,cy}, resource.value, resource.r)
 		end
 	end
 end
@@ -257,7 +261,7 @@ local function onChunkGenerated(event)
 			if node.name == "x-crashsite" then
 				crash_site.createCrashSite(event.surface, node.position)
 			elseif node.name == "x-enemies" then
-				enemies.spawnGroup(event.surface, node.position, node.value)
+				enemies.spawnGroup(event.surface, node.position, node.value, node.base_distance)
 			else
 				event.surface.create_entity(node)
 			end
@@ -290,21 +294,21 @@ end
 local function onInit()
 	if not global['resources'] then global['resources'] = {} end
 	if not global['resource-node-count'] then global['resource-node-count'] = 0 end
-	registerResource("iron-ore", 150, 4, 8)
-	registerResource("copper-ore", 180, 2, 6)
-	registerResource("stone", 175, 3, 7)
-	registerResource("coal", 250, 2, 6)
-	registerResource("crude-oil", 500, 3, 7)
-	registerResource("caterium-ore", 600, 2, 4)
-	registerResource("sulfur", 750, 1, 4)
-	registerResource("raw-quartz", 800, 1, 6)
-	registerResource("bauxite", 1000, 2, 6)
-	registerResource("uranium-ore", 1400, 2, 2)
-	registerResource("geyser", 850, 1, 1)
+	registerResource("iron-ore", 150, 4, 8, 1)
+	registerResource("copper-ore", 180, 2, 6, 1)
+	registerResource("stone", 175, 3, 7, 1)
+	registerResource("coal", 250, 2, 6, 2)
+	registerResource("crude-oil", 500, 3, 7, 3)
+	registerResource("caterium-ore", 600, 2, 4, 2)
+	registerResource("sulfur", 750, 1, 4, 4)
+	registerResource("raw-quartz", 800, 1, 6, 3)
+	registerResource("bauxite", 1000, 2, 6, 5)
+	registerResource("uranium-ore", 1400, 2, 2, 6)
+	registerResource("geyser", 850, 1, 1, 4)
 
-	registerResource("x-plant", 100, 1, 3)
-	registerResource("x-powerslug", 200, 1, 10)
-	registerResource("x-crashsite", 450, 1, 1)
+	registerResource("x-plant", 100, 1, 3, 0)
+	registerResource("x-powerslug", 200, 1, 10, 0) -- "value" is dynamic 1-5 based on slug type
+	registerResource("x-crashsite", 450, 1, 1, 5)
 
 	registerSurface(game.surfaces.nauvis)
 end
