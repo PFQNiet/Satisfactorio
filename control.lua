@@ -25,31 +25,10 @@ handler.add_lib(require("scripts.map-tweaks"))
 
 handler.add_lib({
 	add_commands = function()
-		commands.add_command("fill-hub","Instantly fill the HUB Terminal with the items needed to progress.",function(event)
+		commands.add_command("respawn","Kills your character, allowing you to respawn. Handy if you somehow manage to get yourself stuck.",function(event)
 			local player = game.players[event.player_index]
-			local pos = global['hub-terminal'] and global['hub-terminal'][player.force.index] or nil
-			if not pos then
-				player.print("No HUB built",{1,0,0})
-				return
-			end
-			local terminal = game.get_surface(pos[1]).find_entity("the-hub-terminal",pos[2])
-			if not terminal then
-				player.print("No HUB built",{1,0,0})
-				return
-			end
-			local recipe = terminal.get_recipe()
-			if not recipe then
-				player.print("No Milestone selected in the HUB",{1,0,0})
-				return
-			end
-			local inventory = terminal.get_inventory(defines.inventory.assembling_machine_input)
-			local submitted = inventory.get_contents()
-			for _,ingredient in pairs(recipe.ingredients) do
-				local amount = ingredient.amount - (submitted[ingredient.name] or 0)
-				inventory.insert{name=ingredient.name, count=amount}
-			end
-			if global['hub-cooldown'] and global['hub-cooldown'][player.force.index] and global['hub-cooldown'][player.force.index] > game.tick then
-				global['hub-cooldown'][player.force.index] = game.tick
+			if player.character then
+				player.character.die()
 			end
 		end)
 	end
