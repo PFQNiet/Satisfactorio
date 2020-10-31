@@ -1,13 +1,13 @@
-local name = "jetpack"
+local name = "parachute"
 local item = {
 	type = "armor",
 	name = name,
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	infinite = true,
-	order = "s-c["..name.."]",
+	order = "s-a["..name.."]",
 	subgroup = "armor",
-	stack_size = 1
+	stack_size = 50
 }
 local vehicle = {
 	type = "car",
@@ -44,71 +44,28 @@ local vehicle = {
 	selectable_in_game = false,
 	flags = {
 		"not-on-map",
+		"building-direction-8-way",
 		"placeable-off-grid",
 		"no-automated-item-removal",
 		"no-automated-item-insertion",
 		"hidden"
-	},
-	equipment_grid = name
-}
-local grid = {
-	type = "equipment-grid",
-	name = name,
-	locked = true,
-	width = 1,
-	height = 1,
-	equipment_categories = {name}
-}
-local category = {
-	type = "equipment-category",
-	name = name
-}
-local fakeitem = {
-	type = "item",
-	name = name.."-equipment",
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
-	icon_size = 64,
-	stack_size = 1,
-	flags = {"hidden"},
-	place_as_equipment_result = name.."-equipment"
-}
-local fakeequip = {
-	type = "energy-shield-equipment",
-	name = name.."-equipment",
-	sprite = {
-		filename = "__Satisfactorio__/graphics/icons/"..name..".png",
-		size = {64,64}
-	},
-	categories = {name},
-	energy_per_shield = "10MJ",
-	max_shield_value = 6*60, -- number of ticks of flight time
-	energy_source = {
-		type = "electric",
-		usage_priority = "primary-input",
-		buffer_capacity = "1.2GJ"
-	},
-	shape = {
-		width = 1,
-		height = 1,
-		type = "full"
 	}
 }
 local recipe = {
 	name = name,
 	type = "recipe",
 	ingredients = {
-		{"plastic-bar",50},
-		{"electronic-circuit",15},
-		{"rubber",50},
-		{"copper-cable",25}
+		{"fabric",10},
+		{"copper-cable",5}
 	},
 	result = name,
-	energy_required = 30/4,
+	result_count = 5,
+	energy_required = 10/4,
 	category = "equipment",
 	enabled = false
 }
 
-data:extend({item, vehicle, grid, category, fakeitem, fakeequip, recipe})
+data:extend({item, vehicle, recipe})
 
 local shadow = {
 	type = "sprite",

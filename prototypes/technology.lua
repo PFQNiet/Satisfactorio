@@ -674,14 +674,12 @@ addTech("mam-mycelia-fabric", "mam/fabric", "mam", "mam-mycelia", "m-4-4", 3, {"
 }, {
 	{type="unlock-recipe",recipe="fabric"}
 })
---[[
 addTech("mam-mycelia-parachute", "mam/parachute", "mam", "mam-mycelia", "m-4-5", 3, {"mam-mycelia-fabric"}, {
 	{"fabric",10},
 	{"cable",50}
 }, {
 	{type="unlock-recipe",recipe="parachute"}
 })
-]]
 
 addTech("mam-nutrients-beryl-nut", "mam/beryl-nut", "mam", "mam-nutrients", "m-5-1", 180, {"hub-tier1-field-research"}, {
 	{"beryl-nut",5}

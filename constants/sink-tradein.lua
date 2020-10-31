@@ -57,7 +57,7 @@ return {
 	["modular-frame"] = 408,
 	["smart-plating"] = 520,
 	["packaged-turbofuel"] = 570,
-	-- ["parachute"] = 608,
+	["parachute"] = 608,
 	["encased-industrial-beam"] = 632,
 	["firearm-magazine"] = 664,
 	["electronic-circuit"] = 696,

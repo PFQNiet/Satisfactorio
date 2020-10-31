@@ -123,6 +123,7 @@ local vehicle2 = {
 		fuel_inventory_size = 0,
 		render_no_power_icon = false
 	},
+	light = table.deepcopy(data.raw.character.character.light),
 	consumption = "1W",
 	effectivity = 1,
 	weight = 1,

@@ -1,3 +1,4 @@
+require("prototypes.equipment.parachute")
 require("prototypes.equipment.blade-runners")
 require("prototypes.equipment.jetpack")
 require("prototypes.equipment.gas-mask")

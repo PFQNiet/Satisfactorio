@@ -78,11 +78,11 @@ local function onTick(event)
 		local shield = struct.car.grid.get{0,0}
 		shield.shield = math.max(0,shield.max_shield-struct.time)
 
-		local altitude = 10
+		local altitude = 5
 		if struct.time < 60 then
-			altitude = 10*math.sin(struct.time/60*math.pi/2)
+			altitude = 5*math.sin(struct.time/60*math.pi/2)
 		elseif struct.time > 360 then -- fly for 360 ticks, then fall for another 60
-			altitude = 10*math.sin((420-struct.time)/60*math.pi/2)
+			altitude = 5*math.sin((420-struct.time)/60*math.pi/2)
 		end
 
 		local driving = struct.player.riding_state

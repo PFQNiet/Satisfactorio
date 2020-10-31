@@ -50,11 +50,17 @@ local function onCommandCompleted(event)
 		end
 	end
 end
+local function onEntityDied(event)
+	if event.entity.unit_number and global['unit-tracking'] and global['unit-tracking'][event.entity.unit_number] then
+		global['unit-tracking'][event.entity.unit_number] = nil
+	end
+end
 
 return {
 	spawnGroup = spawnGroup,
 	lib = {
 		events = {
+			[defines.events.on_entity_died] = onEntityDied,
 			[defines.events.on_ai_command_completed] = onCommandCompleted
 		}
 	}
