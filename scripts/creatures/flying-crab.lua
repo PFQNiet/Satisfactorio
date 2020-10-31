@@ -26,6 +26,12 @@ local function onScriptTriggerEffect(event)
 	end
 	if event.effect_id == spawn and event.source_entity and event.source_entity.valid and event.source_entity.name == spawner then
 		-- self-destruct
+		event.source_entity.surface.create_entity{
+			name = "item-on-ground",
+			force = "neutral",
+			position = event.source_entity.position,
+			stack = {name="alien-carapace",count=1}
+		}
 		event.source_entity.die(event.source_entity.force, event.source_entity)
 	end
 end

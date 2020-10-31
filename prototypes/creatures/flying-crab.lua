@@ -104,6 +104,7 @@ worm.healing_per_tick = 0
 worm.max_health = 0.99
 worm.resistances = nil
 worm.call_for_help_radius = 0
+--[[
 worm.loot = {
 	{
 		item = "alien-carapace",
@@ -111,6 +112,7 @@ worm.loot = {
 		count_max = 1
 	}
 }
+]] -- loot is created by the "spawn crabs" control code, so that it can be dropped on water tiles
 worm.collision_mask = {"object-layer", "resource-layer"} -- can't be placed on objects or resources, but could appear on water
 for i,flag in pairs(worm.flags) do
 	if flag == "breaths-air" then
