@@ -9,7 +9,7 @@ local fuel = "packaged-fuel"
 local function onJump(event)
 	local player = game.players[event.player_index]
 	local armour = player.get_inventory(defines.inventory.character_armor)[1]
-	if armour.valid_for_read and armour.name == item then
+	if armour.valid_for_read and armour.name == item and not player.driving then
 		-- spawn a car and get into it
 		local car = player.surface.create_entity{
 			name = vehicle,

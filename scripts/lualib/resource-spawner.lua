@@ -326,6 +326,25 @@ local function onTick(event)
 	if count > 30 or (count > 20 and event.tick%4 == 0) or (count > 10 and event.tick%6 == 0) or (count > 5 and event.tick%8 == 0) or (count > 0 and event.tick%10 == 0) then
 		scanForResources()
 	end
+	if event.tick == 0 then
+		-- draw blackness over the screen
+		for _,player in pairs(game.players) do
+			rendering.draw_rectangle{
+				color = {}, -- black
+				filled = true,
+				left_top = {-player.display_resolution.width/64-1, -player.display_resolution.height/64-1},
+				right_bottom = {player.display_resolution.width/64+1, player.display_resolution.height/64+1},
+				surface = player.surface,
+				time_to_live = 5,
+				players = {player}
+			}
+		end
+	elseif event.tick == 3 then
+		-- process all nodes
+		while global['resource-node-count'] > 2 do
+			scanForResources()
+		end
+	end
 	if event.tick%30 == 0 then
 		-- if there are many nodes on the player's current surface, show a GUI to indicate the map is loading
 		for _,player in pairs(game.players) do
@@ -368,7 +387,9 @@ local function onTick(event)
 					gui.visible = true
 					onResolutionChanged({player_index=player.index})
 				end
-				gui.content.count.caption = {"gui.map-generator-node-count",count}
+				if event.tick > 0 then -- don't show node count on first tick
+					gui.content.count.caption = {"gui.map-generator-node-count",count}
+				end
 			end
 		end
 	end
