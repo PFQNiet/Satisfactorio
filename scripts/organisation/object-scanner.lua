@@ -146,8 +146,25 @@ local function openBeaconScanner(player)
 	local index = menu.selected_index or 0
 	if index == 0 then index = 1 end
 	menu.clear_items()
-	for i,beacon in pairs(player.surface.find_entities_filtered{name="map-marker",force=player.force}) do
-		local tag = findBeaconTag(beacon)
+	local beacons = player.surface.find_entities_filtered{name="map-marker",force=player.force}
+	local tags = {}
+	for i,beacon in pairs(beacons) do
+		tags[beacon.unit_number] = findBeaconTag(beacon)
+	end
+	-- sort beacons alphabetically... to help :D
+	table.sort(beacons, function(a,b)
+		if tags[a.unit_number].text ~= tags[b.unit_number].text then
+			return tags[a.unit_number].text < tags[b.unit_number].text
+		elseif tags[a.unit_number].icon.type ~= tags[b.unit_number].icon.type then
+			return tags[a.unit_number].icon.type < tags[b.unit_number].icon.type
+		elseif tags[a.unit_number].icon.name ~= tags[b.unit_number].icon.name then
+			return tags[a.unit_number].icon.name < tags[b.unit_number].icon.name
+		else
+			return a.unit_number < b.unit_number
+		end
+	end)
+	for i,beacon in pairs(beacons) do
+		local tag = tags[beacon.unit_number]
 		menu.add_item({"","[img="..tag.icon.type.."."..tag.icon.name.."] ",tag.text == "" and {"item-name.map-marker"} or tag.text})
 		table.insert(global['beacon-list'][player.index], beacon)
 		if global['object-scanner-pings'][player.index].beacon == beacon then
@@ -185,7 +202,9 @@ local function onGuiClick(event)
 			return
 		end
 		local type = getUnlockedScans(player.force)[index].products[1].name
-		global['object-scanner-pings'][player.index].type = type
+		local struct = global['object-scanner-pings'][player.index]
+		struct.type = type
+		struct.target = nil
 		if type == "map-marker" then
 			openBeaconScanner(player)
 		else
@@ -210,9 +229,11 @@ local function onGuiClick(event)
 		if not beacon or not beacon.valid then
 			return
 		end
-		global['object-scanner-pings'][player.index].beacon = beacon
+		local struct = global['object-scanner-pings'][player.index]
 		local tag = findBeaconTag(beacon)
-		global['object-scanner-pings'][player.index].icon = tag.icon.type.."/"..tag.icon.name
+		struct.beacon = beacon
+		struct.icon = tag.icon.type.."/"..tag.icon.name
+		struct.target = nil
 		-- if cursor is empty, find an object scanner in player's inventory and put it in the cursor
 		if not player.cursor_stack.valid_for_read then
 			local stack = player.get_main_inventory().find_item_stack(scanner)
