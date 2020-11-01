@@ -185,6 +185,14 @@ local function spawnNode(resource, surface, cx, cy)
 							nobump = true,
 							force = game.forces.neutral
 						}, surface, chunkpos)
+					elseif math.random()<0.05 then
+						queueEntity({
+							name = "rock-huge",
+							position = entity.position,
+							nobump = true,
+							force = game.forces.neutral,
+							raise_built = true
+						}, surface, chunkpos)
 					end
 				else
 					entity.position = surface.find_non_colliding_position(entity.name, entity.position, 0, 1, true)
@@ -194,6 +202,14 @@ local function spawnNode(resource, surface, cx, cy)
 							name = resource.type == "stone" and "rock-big" or "rock-big-"..resource.type,
 							position = entity.position,
 							force = game.forces.neutral
+						})
+					elseif math.random()<0.05 then
+						surface.create_entity({
+							name = "rock-huge",
+							position = entity.position,
+							nobump = true,
+							force = game.forces.neutral,
+							raise_built = true
 						})
 					end
 				end

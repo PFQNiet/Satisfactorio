@@ -6,6 +6,7 @@ local sandyrock = data.raw['simple-entity']['sand-rock-big']
 rock.autoplace = nil
 rock.loot = nil
 hugerock.autoplace = nil
+hugerock.minable = nil
 hugerock.loot = nil
 sandyrock.autoplace = nil
 sandyrock.loot = nil
