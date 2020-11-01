@@ -20,6 +20,12 @@ local function onGuiClosed(event)
 	local entity = event.entity
 	if not entity or not entity.valid then return end
 	if entity.name == bench then
+		-- check if another player has it open
+		for _,p in pairs(game.players) do
+			if p.opened and p.opened == entity then
+				return
+			end
+		end
 		entity.active = false
 	end
 end
