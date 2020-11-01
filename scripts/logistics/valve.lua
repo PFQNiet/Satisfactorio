@@ -102,7 +102,7 @@ local function onGuiOpened(event)
 				type = "frame",
 				name = "valve",
 				direction = "vertical",
-				style = mod_gui.frame_style
+				style = "inner_frame_in_outer_frame"
 			}
 			local title_flow = gui.add{type = "flow", name = "title_flow"}
 			local title = title_flow.add{type = "label", caption = {"item-name.valve"}, style = "frame_title"}

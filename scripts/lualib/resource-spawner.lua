@@ -332,8 +332,8 @@ local function onTick(event)
 			rendering.draw_rectangle{
 				color = {}, -- black
 				filled = true,
-				left_top = {-player.display_resolution.width/64-1, -player.display_resolution.height/64-1},
-				right_bottom = {player.display_resolution.width/64+1, player.display_resolution.height/64+1},
+				left_top = {player.position.x-player.display_resolution.width/64-1, player.position.y-player.display_resolution.height/64-1},
+				right_bottom = {player.position.x+player.display_resolution.width/64+1, player.position.y+player.display_resolution.height/64+1},
 				surface = player.surface,
 				time_to_live = 5,
 				players = {player}
@@ -355,7 +355,7 @@ local function onTick(event)
 					name = "resources-loading",
 					direction = "vertical",
 					caption = {"gui.map-generator-working-title"},
-					style = mod_gui.frame_style
+					style = "inner_frame_in_outer_frame"
 				}
 				gui.style.horizontally_stretchable = false
 				gui.style.use_header_filler = false

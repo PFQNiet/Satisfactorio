@@ -1,7 +1,6 @@
 -- uses global['space-elevator'] as table of Force index -> elevator
 -- uses global['space-elevator-phase'] as table of Force index -> phase shown in GUI - if different to current selection then GUI needs refresh, otherwise just update counts
 -- uses global['player-build-error-debounce'] to track force -> last error tick to de-duplicate placement errors
-local mod_gui = require("mod-gui")
 local util = require("util")
 local string = require("scripts.lualib.string")
 local io = require("scripts.lualib.input-output")
@@ -205,7 +204,7 @@ local function updateElevatorGUI(force)
 					name = "space-elevator-tracking",
 					direction = "vertical",
 					caption = {"gui.space-elevator-tracking-caption"},
-					style = mod_gui.frame_style
+					style = "inner_frame_in_outer_frame"
 				}
 				frame.style.horizontally_stretchable = false
 				frame.style.use_header_filler = false

@@ -1,8 +1,6 @@
 -- uses global['hub-terminal'] as table of Force index -> HUB terminal
 -- uses global['hub-milestone-selected'] as table of Force index -> milestone shown in GUI - if different to current selection then GUI needs refresh, otherwise just update counts
 -- uses global['hub-cooldown'] as table of Force index -> tick at which the Freighter returns
-
-local mod_gui = require("mod-gui")
 local util = require("util")
 local math2d = require("math2d")
 local string = require("scripts.lualib.string")
@@ -349,7 +347,7 @@ local function updateMilestoneGUI(force)
 					name = "hub-milestone-tracking",
 					direction = "vertical",
 					caption = {"gui.hub-milestone-tracking-caption"},
-					style = mod_gui.frame_style
+					style = "inner_frame_in_outer_frame"
 				}
 				frame.style.horizontally_stretchable = false
 				frame.style.use_header_filler = false

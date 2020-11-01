@@ -12,7 +12,7 @@ local function openBeaconGUI(beacon, player)
 		name = "beacon-naming",
 		direction = "vertical",
 		caption = {"gui.beacon-title"},
-		style = mod_gui.frame_style
+		style = "inner_frame_in_outer_frame"
 	}
 	local inner = gui.add{
 		type = "frame",

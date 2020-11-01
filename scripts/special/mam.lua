@@ -1,6 +1,4 @@
 -- uses global['hard-drive-research'] to record which alt recipes have been selected as rewards
-
-local mod_gui = require("mod-gui")
 local util = require("util")
 local string = require("scripts.lualib.string")
 local omnilab = require("scripts.lualib.omnilab")
@@ -154,7 +152,7 @@ local function manageMamGUI(player)
 					name = "mam-tracking",
 					direction = "vertical",
 					caption = {"gui.mam-tracking-caption"},
-					style = mod_gui.frame_style
+					style = "inner_frame_in_outer_frame"
 				}
 				frame.style.horizontally_stretchable = false
 				frame.style.use_header_filler = false
@@ -271,7 +269,7 @@ local function onGuiOpened(event)
 			type = "frame",
 			name = "hard-drive-reward",
 			direction = "vertical",
-			style = mod_gui.frame_style
+			style = "inner_frame_in_outer_frame"
 		}
 		local title_flow = gui.add{type = "flow", name = "title_flow"}
 		local title = title_flow.add{type = "label", caption = {"gui.hard-drive-reward-title"}, style = "frame_title"}

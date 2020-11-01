@@ -1,7 +1,6 @@
 -- uses global['object-scanner-pings'] as table of player => {type, target, graphics} for active pings
 local scanner = "object-scanner"
 
-local mod_gui = require("mod-gui")
 local util = require("util")
 
 local function getUnlockedScans(force)
@@ -25,7 +24,7 @@ local function openObjectScanner(player)
 			type = "frame",
 			name = "object-scanner",
 			direction = "vertical",
-			style = mod_gui.frame_style
+			style = "inner_frame_in_outer_frame"
 		}
 		local title_flow = gui.add{type = "flow", name = "title_flow"}
 		local title = title_flow.add{type = "label", caption = {"gui.object-scanner-title"}, style = "frame_title"}

@@ -1,6 +1,5 @@
 -- uses global['resource-scanner-fx'] as a queue of effects
 -- uses global['resource-scanner-pings'] as table of player => {pos, graphics}[] for active pings
-local mod_gui = require("mod-gui")
 local util = require("util")
 
 local function queueEffect(tick, effect)
@@ -27,7 +26,7 @@ local function openResourceScanner(player)
 			type = "frame",
 			name = "resource-scanner",
 			direction = "vertical",
-			style = mod_gui.frame_style
+			style = "inner_frame_in_outer_frame"
 		}
 		local title_flow = gui.add{type = "flow", name = "title_flow"}
 		local title = title_flow.add{type = "label", caption = {"gui.resource-scanner-title"}, style = "frame_title"}

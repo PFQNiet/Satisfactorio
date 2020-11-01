@@ -4,8 +4,6 @@
 
 -- uses global['accumulators'] to track the hidden accumulators
 -- uses global['last-power-trip'] to track per-force when the last power outage was, to de-duplicate FX
-local gui = require("mod-gui")
-
 local function registerGenerator(burner, generator, accumulator_name)
 	local accumulator = generator.surface.create_entity{
 		name = accumulator_name,
@@ -56,7 +54,7 @@ local function createFusebox(player)
 			name = "power-trip-reset-fuse",
 			direction = "vertical",
 			caption = {"gui.power-trip-reset-fuse-title"},
-			style = mod_gui.frame_style
+			style = "inner_frame_in_outer_frame"
 		}
 		frame.style.horizontally_stretchable = false
 		frame.style.use_header_filler = false

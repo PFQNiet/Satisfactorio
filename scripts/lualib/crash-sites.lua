@@ -98,7 +98,7 @@ local function onGuiOpened(event)
 			type = "frame",
 			name = "crash-site-locked",
 			direction = "vertical",
-			style = mod_gui.frame_style
+			style = "inner_frame_in_outer_frame"
 		}
 		local title_flow = gui.add{type = "flow", name = "title_flow"}
 		local title = title_flow.add{type = "label", caption = {"gui.crash-site-title"}, style = "frame_title"}

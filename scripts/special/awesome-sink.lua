@@ -74,7 +74,7 @@ local function onGuiOpened(event)
 				name = "awesome-sink-gui",
 				direction = "vertical",
 				caption = {"gui.awesome-sink-gui-title"},
-				style = mod_gui.frame_style
+				style = "inner_frame_in_outer_frame"
 			}
 			frame.style.horizontally_stretchable = false
 			frame.style.use_header_filler = false

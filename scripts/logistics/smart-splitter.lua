@@ -1,7 +1,6 @@
 -- a splitter that allows setting a single filter on each output
 -- uses global['smart-splitters'] to track structures {base, buffer, filters, {left1, left2}, {middle1, middle2}, {right1, right2}}
 -- GUI uses global['gui-splitter'] to track player > opened smart splitter
-local mod_gui = require("mod-gui")
 local io = require("scripts.lualib.input-output")
 local getitems = require("scripts.lualib.get-items-from")
 
@@ -293,7 +292,7 @@ local function onGuiOpened(event)
 				type = "frame",
 				name = "smart-splitter",
 				direction = "vertical",
-				style = mod_gui.frame_style
+				style = "inner_frame_in_outer_frame"
 			}
 			local title_flow = gui.add{type = "flow", name = "title_flow"}
 			local title = title_flow.add{type = "label", caption = {"item-name.smart-splitter"}, style = "frame_title"}

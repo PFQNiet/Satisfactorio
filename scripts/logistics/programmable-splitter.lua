@@ -1,7 +1,6 @@
 -- uses tick events from smart-splitter, just with a table of filters instead of just one (up to 32 per side)
 -- uses global['smart-splitters'] to track structures {base, buffer, filters, {left1, left2}, {middle1, middle2}, {right1, right2}}
 -- GUI uses global['gui-splitter'] to track player > opened programmable splitter
-local mod_gui = require("mod-gui")
 local io = require("scripts.lualib.input-output")
 local getitems = require("scripts.lualib.get-items-from")
 
@@ -210,7 +209,7 @@ local function onGuiOpened(event)
 				type = "frame",
 				name = "programmable-splitter",
 				direction = "vertical",
-				style = mod_gui.frame_style
+				style = "inner_frame_in_outer_frame"
 			}
 			local title_flow = gui.add{type = "flow", name = "title_flow"}
 			local title = title_flow.add{type = "label", caption = {"item-name.programmable-splitter"}, style = "frame_title"}

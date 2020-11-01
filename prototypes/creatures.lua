@@ -5,4 +5,6 @@ require("prototypes.creatures.behemoth-spitter")
 require("prototypes.creatures.big-worm")
 require("prototypes.creatures.behemoth-worm")
 require("prototypes.creatures.flying-crab")
+
+require("prototypes.creatures.small-biter")
 require("prototypes.creatures.power-slugs")

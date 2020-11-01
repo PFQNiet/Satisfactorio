@@ -7,7 +7,6 @@
 -- uses global['rad-chunks'] to store chunks in a surface-Y-X array
 -- uses global['rad-buckets'] to spread chunks out over the course of a minute rather than trying to do them all at once
 -- uses global['rad-chunks-count'] to count the total number of chunks being tracked
-local mod_gui = require("mod-gui")
 
 -- using a 10-bit number for 1024 buckets
 local function bitrev10(n)
@@ -217,7 +216,7 @@ local function onTick(event)
 						name = "radiation",
 						direction = "vertical",
 						caption = {"gui.radiation"},
-						style = mod_gui.frame_style
+						style = "inner_frame_in_outer_frame"
 					}
 					gui.style.horizontally_stretchable = false
 					gui.style.use_header_filler = false
