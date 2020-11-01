@@ -21,7 +21,8 @@ local extractor = {
 		}
 	},
 	collision_box = {{-4.7,-4.7},{4.7,4.7}},
-	collision_mask = {"ground-tile","object-layer","layer-12"}, -- "layer-12" is the Foundation layer - you can't build Foundation under an extractor
+	collision_mask = {"ground-tile","object-layer","layer-12"}, -- collides with foundation layer
+	-- collision_mask = {"ground-tile","object-layer","layer-37"}, -- 1.1.0
 	corpse = "big-remnants",
 	dying_explosion = "big-explosion",
 	energy_source = {
@@ -82,6 +83,7 @@ local placeholder = {
 	icon_size = 64,
 	collision_box = {{-4.7,-4.7},{4.7,4.7}},
 	collision_mask = {"ground-tile","object-layer","layer-12"},
+	-- collision_mask = {"ground-tile","object-layer","layer-37"}, -- 1.1.0
 	corpse = "big-remnants",
 	dying_explosion = "big-explosion",
 	flags = {

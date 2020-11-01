@@ -25,6 +25,7 @@ local foundation = {
 	selection_priority = 20,
 	render_layer = "lower-radius-visualization",
 	collision_mask = {"layer-12"},
+	-- collision_mask = {"layer-37"}, -- 1.1.0
 	max_health = 1,
 	type = "simple-entity-with-owner"
 }
@@ -104,6 +105,7 @@ data:extend({
 		alt_entity_filters = {name},
 		flags = {
 			"only-in-cursor",
+			-- "spawnable", -- 1.1.0
 			"hidden",
 			"not-stackable"
 		}
@@ -114,7 +116,9 @@ data:extend({
 		key_sequence = "ALT + F",
 		consuming = "game-only",
 		action = "create-blueprint-item",
+		-- action = "spawn-item", -- 1.1.0
 		item_to_create = "deconstruct-foundation"
+		-- item_to_spawn = "deconstruct-foundation" -- 1.1.0
 	},
 	{
 		type = "shortcut",
