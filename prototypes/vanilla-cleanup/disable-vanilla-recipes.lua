@@ -77,3 +77,8 @@ for _,group in pairs(data.raw) do
 		if thing.next_upgrade then thing.next_upgrade = nil end
 	end
 end
+-- hide fluids
+to_hide = {"steam", "light-oil", "lubricant", "petroleum-gas"}
+for _,key in pairs(to_hide) do
+	data.raw.fluid[key].hidden = true
+end

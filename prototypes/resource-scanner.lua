@@ -10,6 +10,7 @@ require("prototypes.resource-scanner.scanner-uranium-ore")
 require("prototypes.resource-scanner.scanner-sulfur")
 require("prototypes.resource-scanner.scanner-geyser")
 
+require("prototypes.resource-scanner.scanner-map-marker")
 require("prototypes.resource-scanner.scanner-beryl-nut")
 require("prototypes.resource-scanner.scanner-paleberry")
 require("prototypes.resource-scanner.scanner-bacon-agaric")

@@ -1,4 +1,5 @@
 -- uses global['object-scanner-pings'] as table of player => {type, target, graphics} for active pings
+-- uses global['beacon-list'] to temporary store the order of beacons in the beacon selector list
 local scanner = "object-scanner"
 
 local util = require("util")
@@ -90,13 +91,94 @@ local function closeObjectScanner(player)
 	player.opened = nil
 end
 
+local function findBeaconTag(beacon)
+	return beacon.force.find_chart_tags(beacon.surface, {{beacon.position.x-0.1,beacon.position.y-0.1},{beacon.position.x+0.1,beacon.position.y+0.1}})[1]
+end
+local function openBeaconScanner(player)
+	local gui = player.gui.screen['beacon-scanner']
+	local menu
+	if not gui then
+		if not global['beacon-list'] then global['beacon-list'] = {} end
+		if not global['beacon-list'][player.index] then global['beacon-list'][player.index] = {} end
+		
+		gui = player.gui.screen.add{
+			type = "frame",
+			name = "beacon-scanner",
+			direction = "vertical",
+			style = "inner_frame_in_outer_frame"
+		}
+		local title_flow = gui.add{type = "flow", name = "title_flow"}
+		local title = title_flow.add{type = "label", caption = {"gui.beacon-scanner-title"}, style = "frame_title"}
+		title.drag_target = gui
+		local pusher = title_flow.add{type = "empty-widget", style = "draggable_space_header"}
+		pusher.style.height = 24
+		pusher.style.horizontally_stretchable = true
+		pusher.drag_target = gui
+		title_flow.add{type = "sprite-button", style = "frame_action_button", sprite = "utility/close_white", name = "beacon-scanner-close"}
+
+		gui.add{
+			type = "label",
+			caption = {"","[font=heading-2]",{"gui.beacon-scanner-scan-for"},"[/font]"}
+		}
+		menu = gui.add{
+			type = "list-box",
+			name = "beacon-scanner-item"
+		}
+		menu.style.top_margin = 4
+		menu.style.bottom_margin = 4
+		menu.style.height = 200
+
+		local flow = gui.add{
+			type = "flow",
+			direction = "horizontal"
+		}
+		pusher = flow.add{type = "empty-widget"}
+		pusher.style.horizontally_stretchable = true
+		flow.add{
+			type = "button",
+			style = "confirm_button",
+			name = "beacon-scanner-select",
+			caption = {"gui.beacon-scanner-select"}
+		}
+	else
+		menu = gui['beacon-scanner-item']
+	end
+	local index = menu.selected_index or 0
+	if index == 0 then index = 1 end
+	menu.clear_items()
+	for i,beacon in pairs(player.surface.find_entities_filtered{name="map-marker",force=player.force}) do
+		local tag = findBeaconTag(beacon)
+		menu.add_item({"","[img="..tag.icon.type.."."..tag.icon.name.."] ",tag.text == "" and {"item-name.map-marker"} or tag.text})
+		table.insert(global['beacon-list'][player.index], beacon)
+		if global['object-scanner-pings'][player.index].beacon == beacon then
+			index = i
+		end
+	end
+	if #menu.items == 0 then
+		gui.visible = false
+		openObjectScanner(player)
+		player.print({"message.beacon-scanner-no-beacons-placed"})
+	else
+		menu.selected_index = index
+		
+		gui.visible = true
+		player.opened = gui
+		gui.force_auto_center()
+	end
+end
+local function closeBeaconScanner(player)
+	local gui = player.gui.screen['beacon-scanner']
+	if gui then gui.visible = false end
+	global['beacon-list'][player.index] = {}
+	player.opened = nil
+end
+
 local function onGuiClick(event)
 	if not (event.element and event.element.valid) then return end
 	local player = game.players[event.player_index]
 	if event.element.name == "object-scanner-close" then
 		closeObjectScanner(player)
-	end
-	if event.element.name == "object-scanner-select" then
+	elseif event.element.name == "object-scanner-select" then
 		closeObjectScanner(player)
 		local index = player.gui.screen['object-scanner']['object-scanner-item'].selected_index
 		if not index or index == 0 then
@@ -104,6 +186,33 @@ local function onGuiClick(event)
 		end
 		local type = getUnlockedScans(player.force)[index].products[1].name
 		global['object-scanner-pings'][player.index].type = type
+		if type == "map-marker" then
+			openBeaconScanner(player)
+		else
+			-- if cursor is empty, find an object scanner in player's inventory and put it in the cursor
+			if not player.cursor_stack.valid_for_read then
+				local stack = player.get_main_inventory().find_item_stack(scanner)
+				if stack then
+					player.cursor_stack.swap_stack(stack)
+				end
+			end
+		end
+	elseif event.element.name == "beacon-scanner-close" then
+		closeBeaconScanner(player)
+	elseif event.element.name == "beacon-scanner-select" then
+		local index = player.gui.screen['beacon-scanner']['beacon-scanner-item'].selected_index
+		if not index or index == 0 then
+			closeBeaconScanner(player)
+			return
+		end
+		local beacon = global['beacon-list'][player.index][index]
+		closeBeaconScanner(player)
+		if not beacon or not beacon.valid then
+			return
+		end
+		global['object-scanner-pings'][player.index].beacon = beacon
+		local tag = findBeaconTag(beacon)
+		global['object-scanner-pings'][player.index].icon = tag.icon.type.."/"..tag.icon.name
 		-- if cursor is empty, find an object scanner in player's inventory and put it in the cursor
 		if not player.cursor_stack.valid_for_read then
 			local stack = player.get_main_inventory().find_item_stack(scanner)
@@ -140,6 +249,8 @@ local function onTick(event)
 				local entities
 				if ping.type == "enemies" then
 					entities = player.surface.find_enemy_units(player.position, 250, player.force)
+				elseif ping.type == "map-marker" then
+					entities = ping.beacon and ping.beacon.surface == player.surface and {ping.beacon} or nil
 				else
 					entities = player.surface.find_entities_filtered{
 						name = search_for,
@@ -149,7 +260,11 @@ local function onTick(event)
 				end
 				ping.target = #entities > 0 and player.surface.get_closest(player.position, entities) or nil
 				if ping.target and ping.target.valid and ping.graphics and rendering.is_valid(ping.graphics.item) then
-					rendering.set_sprite(ping.graphics.item, "entity/"..ping.target.name)
+					local graphic = "entity/"..ping.target.name
+					if ping.type == "map-marker" then
+						graphic = ping.icon
+					end
+					rendering.set_sprite(ping.graphics.item, graphic)
 				end
 			end
 
@@ -249,8 +364,12 @@ return {
 		[defines.events.on_tick] = onTick,
 		[defines.events.on_gui_click] = onGuiClick,
 		[defines.events.on_gui_closed] = function(event)
-			if event.element and event.element.valid and event.element.name == "object-scanner" then
-				closeObjectScanner(game.players[event.player_index])
+			if event.element and event.element.valid then
+				if event.element.name == "object-scanner" then
+					closeObjectScanner(game.players[event.player_index])
+				elseif event.element.name == "beacon-scanner" then
+					closeBeaconScanner(game.players[event.player_index])
+				end
 			end
 		end
 	}
