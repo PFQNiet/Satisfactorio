@@ -19,7 +19,7 @@
 		(grid, nodes, sleep) are grouped by surface index
 	}
 	When spawned, a "node" can actually be a cluster of resource nodes, akin to oil patches in vanilla
-	Special resource "types": x-plant, x-powerslug, x-crashsite
+	Special resource "types": x-plant, x-deposit, x-powerslug, x-crashsite
 ]]
 local crash_site = require("scripts.lualib.crash-sites")
 local enemies = require("scripts.lualib.enemy-spawning")
@@ -114,6 +114,29 @@ local function spawnNode(resource, surface, cx, cy)
 					entity.position = surface.find_non_colliding_position(entity.name, entity.position, 0, 1, true)
 					surface.create_entity(entity)
 				end
+			elseif resource.type == "x-deposit" then
+				pval = purity -- just a single deposit
+				local tiers = {1,1,1,1,1,1,2,2,2,3}
+				local deposits = {
+					{"rock-big-iron-ore","rock-big-copper-ore","rock-big"},
+					{"rock-big-coal","rock-big-caterium-ore","rock-big-raw-quartz"},
+					{"rock-big-sulfur","rock-big-bauxite"}
+				}
+				local deposit = deposits[tiers[pval]][math.random(#deposits[tiers[pval]])]
+				local tx = cx+x+0.5
+				local ty = cy+y+0.5
+				local chunkpos = {x=math.floor(tx/32), y=math.floor(ty/32)}
+				local entity = {
+					name = deposit,
+					position = {tx,ty},
+					force = game.forces.neutral,
+					raise_built = true
+				}
+				if not surface.is_chunk_generated({chunkpos.x, chunkpos.y}) then
+					queueEntity(entity, surface, chunkpos)
+				else
+					surface.create_entity(entity)
+				end
 			elseif resource.type == "x-powerslug" then
 				pval = purity -- always just a single slug, purity value affects rarity of slug
 				local tiers = {"green","green","green","green","green","green","yellow","yellow","yellow","purple"}
@@ -131,7 +154,6 @@ local function spawnNode(resource, surface, cx, cy)
 				if not surface.is_chunk_generated({chunkpos.x, chunkpos.y}) then
 					queueEntity(entity, surface, chunkpos)
 				else
-					entity.position = surface.find_non_colliding_position(entity.name, entity.position, 0, 1, true)
 					surface.create_entity(entity)
 				end
 			elseif resource.type == "x-crashsite" then
@@ -156,9 +178,24 @@ local function spawnNode(resource, surface, cx, cy)
 				}
 				if not surface.is_chunk_generated({chunkpos.x, chunkpos.y}) then
 					queueEntity(entity, surface, chunkpos)
+					if resource.type == "iron-ore" or resource.type == "copper-ore" or (resource.type == "stone" and math.random()<0.5) then
+						queueEntity({
+							name = resource.type == "stone" and "rock-big" or "rock-big-"..resource.type,
+							position = entity.position,
+							nobump = true,
+							force = game.forces.neutral
+						}, surface, chunkpos)
+					end
 				else
 					entity.position = surface.find_non_colliding_position(entity.name, entity.position, 0, 1, true)
 					surface.create_entity(entity)
+					if resource.type == "iron-ore" or resource.type == "copper-ore" or (resource.type == "stone" and math.random()<0.5) then
+						surface.create_entity({
+							name = resource.type == "stone" and "rock-big" or "rock-big-"..resource.type,
+							position = entity.position,
+							force = game.forces.neutral
+						})
+					end
 				end
 			end
 			purity = purity - pval
@@ -167,18 +204,9 @@ local function spawnNode(resource, surface, cx, cy)
 	end
 	-- everything except plants is guarded (maybe plants too but with a low value parameter?)
 	local chunkpos = {x=math.floor(cx/32), y=math.floor(cy/32)}
-	if resource.type ~= "x-plant" then
-		if not surface.is_chunk_generated({chunkpos.x, chunkpos.y}) then
-			queueEntity({
-				name = "x-enemies",
-				position = {cx,cy},
-				value = resource.value,
-				base_distance = resource.r
-			}, surface, chunkpos)
-		else
-			enemies.spawnGroup(surface, {cx,cy}, resource.value, resource.r)
-		end
-	else
+	if resource.type == "x-deposit" then
+		-- nothing
+	elseif resource.type == "x-plant" then
 		-- plants may have a Lizard Doggo nearby
 		if math.random()<0.1 then
 			local entity = {
@@ -196,6 +224,17 @@ local function spawnNode(resource, surface, cx, cy)
 					surface.create_entity(entity)
 				end
 			end
+		end
+	else
+		if not surface.is_chunk_generated({chunkpos.x, chunkpos.y}) then
+			queueEntity({
+				name = "x-enemies",
+				position = {cx,cy},
+				value = resource.value,
+				base_distance = resource.r
+			}, surface, chunkpos)
+		else
+			enemies.spawnGroup(surface, {cx,cy}, resource.value, resource.r)
 		end
 	end
 end
@@ -291,7 +330,11 @@ local function onChunkGenerated(event)
 					event.surface.create_entity(node)
 				end
 			else
-				node.position = surface.find_non_colliding_position(node.name, node.position, 0, 1, true)
+				if node.nobump then
+					node.nobump = nil
+				else
+					node.position = surface.find_non_colliding_position(node.name, node.position, 0, 1, true)
+				end
 				event.surface.create_entity(node)
 			end
 		end
@@ -336,6 +379,7 @@ local function onInit()
 	registerResource("geyser", 850, 1, 1, 4)
 
 	registerResource("x-plant", 100, 1, 3, 0)
+	registerResource("x-deposit", 100, 1, 10, 0) -- "value" is unused
 	registerResource("x-powerslug", 200, 1, 10, 0) -- "value" is dynamic 1-5 based on slug type
 	registerResource("x-crashsite", 450, 1, 1, 5)
 

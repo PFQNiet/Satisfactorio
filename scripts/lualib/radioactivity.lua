@@ -70,6 +70,13 @@ local function addRadiationForResource(entity)
 	-- the only radioactive resource is uranium-ore
 	return entity.name == "uranium-ore" and 10000*entity.amount/120 or 0
 end
+local function addRadiationForSimpleEntity(entity)
+	-- the only radioactive simple entity is rock-big-uranium-ore
+	if entity.name == "rock-big-uranium-ore" then
+		log(entity.name)
+	end
+	return entity.name == "rock-big-uranium-ore" and 1250 or 0
+end
 local function addRadiationForInventory(inventory)
 	if not (inventory and inventory.valid) then return 0 end
 	-- once an inventory has been identified, check it for radioactive items
@@ -146,7 +153,8 @@ local radioactivity_functions = {
 	["transport-belt"] = addRadiationForTransportBelt,
 	["underground-belt"] = addRadiationForTransportBelt,
 	["splitter"] = addRadiationForTransportBelt,
-	["unit"] = addRadiationForUnit
+	["unit"] = addRadiationForUnit,
+	["simple-entity"] = addRadiationForSimpleEntity
 }
 local radioactive_containers = {}
 for k,_ in pairs(radioactivity_functions) do

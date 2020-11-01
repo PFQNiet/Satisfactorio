@@ -47,7 +47,7 @@ data:extend(
 				}
 			}
 		},
-		map_color = {r=1, g=0.4, b=1},
+		map_color = {r=1, g=1, b=0.4},
 		infinite = true,
 		infinite_depletion_amount = 0,
 		minimum = 1,

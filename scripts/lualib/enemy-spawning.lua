@@ -87,6 +87,19 @@ local function spawnGroup(surface,position,value,basedist)
 			end
 		end
 	end
+	-- and very rarely some uranium deposits
+	if value*distance > 5 and math.random() < 0.05 then
+		for i=1,4 do
+			local pos = surface.find_non_colliding_position("rock-big-uranium-ore", getRandomOffset(position), 10, 0.1)
+			if pos then
+				surface.create_entity{
+					name = "rock-big-uranium-ore",
+					position = pos,
+					force = game.forces.neutral
+				}
+			end
+		end
+	end
 end
 local function onCommandCompleted(event)
 	local struct = global['unit-tracking'] and global['unit-tracking'][event.unit_number]
