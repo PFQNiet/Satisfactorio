@@ -123,6 +123,16 @@ local function addRadiationForTransportBelt(entity)
 	end
 	return rad
 end
+local function addRadiationForUnit(entity)
+	-- tamed Lizard Doggos may sometimes find Nuclear Waste, which should be accounted for
+	local stack = global['lizard-doggos'] and global['lizard-doggos'][entity.unit_number] and global['lizard-doggos'][entity.unit_number].helditem
+	return stack and addRadiationForItemStack{
+		valid = true,
+		valid_for_read = true,
+		name = stack.name,
+		count = stack.count
+	} or 0
+end
 local radioactivity_functions = {
 	["resource"] = addRadiationForResource,
 	["container"] = addRadiationForContainer,
@@ -135,7 +145,8 @@ local radioactivity_functions = {
 	["inserter"] = addRadiationForInserter,
 	["transport-belt"] = addRadiationForTransportBelt,
 	["underground-belt"] = addRadiationForTransportBelt,
-	["splitter"] = addRadiationForTransportBelt
+	["splitter"] = addRadiationForTransportBelt,
+	["unit"] = addRadiationForUnit
 }
 local radioactive_containers = {}
 for k,_ in pairs(radioactivity_functions) do
@@ -166,7 +177,7 @@ local function onTick(event)
 					radiation = radiation + radioactivity_functions[entity.type](entity)
 				end
 			end
-			radiation = math.floor(radiation/100)
+			radiation = math.ceil(radiation/100)
 			entry.radioactivity = radiation
 			-- create/remove entities to diffuse this amount of radiation per minute
 			for i=0,32 do

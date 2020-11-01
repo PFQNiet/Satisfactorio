@@ -1,4 +1,4 @@
-require("profiler")
+if script.active_mods.debugadapter then require("profiler") end
 local handler = require("event_handler")
 
 handler.add_lib(require("scripts.freeplay"))
