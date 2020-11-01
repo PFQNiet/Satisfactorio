@@ -27,7 +27,7 @@ local function _guardSpawn(struct)
 	}
 end
 local function getRandomOffset(position)
-	local r = (math.random()*3)^2
+	local r = (math.random()*100)^0.5
 	local theta = math.random()*math.pi*2
 	return {position[1]+math.cos(theta)*r, position[2]-math.sin(theta)*r}
 end
@@ -72,14 +72,19 @@ local function spawnGroup(surface,position,value,basedist)
 	if math.random()<math.min(10,value*distance)/20 then
 		-- add some gas clouds
 		local name = math.random() < 0.85 and "big-worm-turret" or "behemoth-worm-turret"
-		local offset = getRandomOffset(position)
-		local pos = surface.find_non_colliding_position(name, offset, 4, 0.25, false)
-		if pos then
-			surface.create_entity{
-				name = name,
-				position = pos,
-				force = game.forces.enemy
-			}
+		for i=1,4 do
+			-- find_non_collising_position doesn't support the map gen box, which is needed for worm turrets to give ore nodes some space
+			for _=1,10 do
+				local pos = getRandomOffset(position)
+				if not surface.entity_prototype_collides(name, pos, true) then
+					surface.create_entity{
+						name = name,
+						position = pos,
+						force = game.forces.enemy
+					}.destructible = false
+					break
+				end
+			end
 		end
 	end
 end

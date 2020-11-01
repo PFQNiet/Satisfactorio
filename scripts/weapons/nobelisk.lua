@@ -129,7 +129,8 @@ local function onTick(event)
 					local dx = entity.position.x - pos[1]
 					local dy = entity.position.y - pos[2]
 					if dx*dx+dy*dy < 4*4 then
-						entity.die(explosion.force, explosion.cause)
+						entity.destructible = true
+						entity.die(explosion.force)
 					end
 				end
 			end

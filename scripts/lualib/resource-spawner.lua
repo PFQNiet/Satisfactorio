@@ -111,6 +111,7 @@ local function spawnNode(resource, surface, cx, cy)
 				if not surface.is_chunk_generated({chunkpos.x, chunkpos.y}) then
 					queueEntity(entity, surface, chunkpos)
 				else
+					entity.position = surface.find_non_colliding_position(entity.name, entity.position, 0, 1, true)
 					surface.create_entity(entity)
 				end
 			elseif resource.type == "x-powerslug" then
@@ -130,6 +131,7 @@ local function spawnNode(resource, surface, cx, cy)
 				if not surface.is_chunk_generated({chunkpos.x, chunkpos.y}) then
 					queueEntity(entity, surface, chunkpos)
 				else
+					entity.position = surface.find_non_colliding_position(entity.name, entity.position, 0, 1, true)
 					surface.create_entity(entity)
 				end
 			elseif resource.type == "x-crashsite" then
@@ -155,6 +157,7 @@ local function spawnNode(resource, surface, cx, cy)
 				if not surface.is_chunk_generated({chunkpos.x, chunkpos.y}) then
 					queueEntity(entity, surface, chunkpos)
 				else
+					entity.position = surface.find_non_colliding_position(entity.name, entity.position, 0, 1, true)
 					surface.create_entity(entity)
 				end
 			end
@@ -288,6 +291,7 @@ local function onChunkGenerated(event)
 					event.surface.create_entity(node)
 				end
 			else
+				node.position = surface.find_non_colliding_position(node.name, node.position, 0, 1, true)
 				event.surface.create_entity(node)
 			end
 		end

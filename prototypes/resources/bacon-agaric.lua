@@ -4,6 +4,7 @@ local plant = {
 	name = name,
 	type = "simple-entity",
 	collision_box = {{-0.2,-0.2},{0.2,0.2}},
+	collision_mask = {"object-layer"},
 	count_as_rock_for_filtered_deconstruction = true,
 	flags = {
 		"placeable-neutral",
