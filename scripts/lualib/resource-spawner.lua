@@ -163,8 +163,8 @@ local function spawnNode(resource, surface, cx, cy)
 		if purity <= 0 then break end
 	end
 	-- everything except plants is guarded (maybe plants too but with a low value parameter?)
+	local chunkpos = {x=math.floor(cx/32), y=math.floor(cy/32)}
 	if resource.type ~= "x-plant" then
-		local chunkpos = {x=math.floor(cx/32), y=math.floor(cy/32)}
 		if not surface.is_chunk_generated({chunkpos.x, chunkpos.y}) then
 			queueEntity({
 				name = "x-enemies",
@@ -174,6 +174,25 @@ local function spawnNode(resource, surface, cx, cy)
 			}, surface, chunkpos)
 		else
 			enemies.spawnGroup(surface, {cx,cy}, resource.value, resource.r)
+		end
+	else
+		-- plants may have a Lizard Doggo nearby
+		if math.random()<0.1 then
+			local entity = {
+				name = "small-biter",
+				position = {cx,cy},
+				force = "neutral",
+				raise_built = true
+			}
+			if not surface.is_chunk_generated({chunkpos.x, chunkpos.y}) then
+				queueEntity(entity, surface, chunkpos)
+			else
+				local pos = surface.find_non_colliding_position(entity.name, entity.position, 6, 0.1, false)
+				if pos then
+					entity.position = pos
+					surface.create_entity(entity)
+				end
+			end
 		end
 	end
 end
@@ -262,6 +281,12 @@ local function onChunkGenerated(event)
 				crash_site.createCrashSite(event.surface, node.position)
 			elseif node.name == "x-enemies" then
 				enemies.spawnGroup(event.surface, node.position, node.value, node.base_distance)
+			elseif node.name == "small-biter" then
+				local pos = surface.find_non_colliding_position(node.name, node.position, 6, 0.1, false)
+				if pos then
+					node.position = pos
+					event.surface.create_entity(node)
+				end
 			else
 				event.surface.create_entity(node)
 			end
