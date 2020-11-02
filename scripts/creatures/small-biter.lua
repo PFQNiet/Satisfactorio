@@ -48,7 +48,7 @@ local function onEntityDestroyed(event)
 	end
 end
 local function onEntityDied(event)
-	if event.entity.name == doggo then
+	if event.entity.valid and event.entity.name == doggo then
 		local item = global['lizard-doggos'][event.entity.unit_number] and global['lizard-doggos'][event.entity.unit_number].helditem
 		if item then
 			event.entity.surface.spill_item_stack(
@@ -267,7 +267,7 @@ local function onInteract(event)
 
 			gui.content.table.left.preview.entity = struct.entity
 			local lootbtn = gui.content.table.right.loot.lootsprite
-			lootbtn.tooltip = struct.helditem and {"item-name."..struct.helditem.name} or nil
+			lootbtn.tooltip = struct.helditem and {"item-name."..struct.helditem.name} or ""
 			lootbtn.sprite = struct.helditem and "item/"..struct.helditem.name or nil
 			lootbtn.number = struct.helditem and struct.helditem.count or nil
 			gui.content.table.right.loot['take-lizard-doggo-loot'].enabled = struct.helditem and true or false

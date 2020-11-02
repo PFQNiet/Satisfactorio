@@ -72,9 +72,6 @@ local function addRadiationForResource(entity)
 end
 local function addRadiationForSimpleEntity(entity)
 	-- the only radioactive simple entity is rock-big-uranium-ore
-	if entity.name == "rock-big-uranium-ore" then
-		log(entity.name)
-	end
 	return entity.name == "rock-big-uranium-ore" and 1250 or 0
 end
 local function addRadiationForInventory(inventory)

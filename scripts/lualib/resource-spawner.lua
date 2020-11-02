@@ -397,7 +397,7 @@ local function onInit()
 	registerResource("x-plant", 100, 1, 3, 0)
 	registerResource("x-deposit", 100, 1, 10, 0) -- "value" is unused
 	registerResource("x-powerslug", 200, 1, 10, 0) -- "value" is dynamic 1-5 based on slug type
-	registerResource("x-crashsite", 450, 1, 1, 5)
+	registerResource("x-crashsite", 225, 1, 1, 5)
 
 	registerSurface(game.surfaces.nauvis)
 end

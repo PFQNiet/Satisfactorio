@@ -248,7 +248,7 @@ local function onTick(event)
 	if not global['object-scanner-pings'] then return end
 	for pid,ping in ipairs(global['object-scanner-pings']) do
 		local player = game.players[pid]
-		if not (ping.type and player.cursor_stack.valid_for_read and player.cursor_stack.name == scanner) then
+		if not (ping.type and player.cursor_stack and player.cursor_stack.valid_for_read and player.cursor_stack.name == scanner) then
 			if ping.graphics then
 				for _,rid in pairs(ping.graphics) do
 					if rendering.is_valid(rid) then

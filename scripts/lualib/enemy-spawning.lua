@@ -88,7 +88,7 @@ local function spawnGroup(surface,position,value,basedist)
 		end
 	end
 	-- and very rarely some uranium deposits
-	if value*distance > 5 and math.random() < 0.05 then
+	if value*distance > 5 and math.random() < 0.02 then
 		for i=1,4 do
 			local pos = surface.find_non_colliding_position("rock-big-uranium-ore", getRandomOffset(position), 10, 0.1)
 			if pos then
@@ -113,7 +113,7 @@ local function onCommandCompleted(event)
 	end
 end
 local function onEntityDied(event)
-	if event.entity.unit_number and global['unit-tracking'] and global['unit-tracking'][event.entity.unit_number] then
+	if event.entity.valid and event.entity.unit_number and global['unit-tracking'] and global['unit-tracking'][event.entity.unit_number] then
 		global['unit-tracking'][event.entity.unit_number] = nil
 	end
 end
