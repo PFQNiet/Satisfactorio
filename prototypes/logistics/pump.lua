@@ -23,7 +23,7 @@ local pumprecipe = {
 	type = "recipe",
 	ingredients = ingredients,
 	result = basename,
-	energy_required = 0.1,
+	energy_required = 0.5,
 	category = "building",
 	allow_intermediates = false,
 	allow_as_intermediate = false,
@@ -39,7 +39,7 @@ local pumprecipe_undo = {
 		{basename,1}
 	},
 	results = ingredients,
-	energy_required = 0.1,
+	energy_required = 0.5,
 	category = "unbuilding",
 	subgroup = _group.group .. "-undo",
 	order = _group.order .. "-" .. pumpitem.order,

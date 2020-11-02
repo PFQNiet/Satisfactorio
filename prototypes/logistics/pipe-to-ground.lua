@@ -25,7 +25,7 @@ local piperecipe = {
 	ingredients = ingredients,
 	result = basename,
 	result_count = 2,
-	energy_required = 0.1,
+	energy_required = 0.5,
 	category = "building",
 	allow_intermediates = false,
 	allow_as_intermediate = false,
@@ -42,7 +42,7 @@ local piperecipe_undo = {
 		{basename,2}
 	},
 	results = ingredients,
-	energy_required = 0.1,
+	energy_required = 0.5,
 	category = "unbuilding",
 	subgroup = _group.group .. "-undo",
 	order = _group.order .. "-" .. pipeitem.order,
