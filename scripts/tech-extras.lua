@@ -35,9 +35,18 @@ local function onResearch(event)
 		end
 	end
 end
+local function onTechEffectsReset(event)
+	-- if/when a force's tech effects are reset, re-apply the unlocks above for all researched techs
+	for _,tech in pairs(event.force.technologies) do
+		if tech.researched then
+			onResearch({research=tech})
+		end
+	end
+end
 
 return {
 	events = {
-		[defines.events.on_research_finished] = onResearch
+		[defines.events.on_research_finished] = onResearch,
+		[defines.events.on_technology_effects_reset] = onTechEffectsReset
 	}
 }
