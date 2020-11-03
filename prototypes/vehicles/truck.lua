@@ -12,6 +12,8 @@ car.burner.fuel_categories = {"chemical","carbon","packaged-fuel","packaged-alt-
 car.burner.fuel_inventory_size = 1
 car.inventory_size = 48
 car.guns = {}
+car.immune_to_rock_impacts = false
+car.immune_to_tree_impacts = false
 car.minable.result = name
 
 local caritem = {

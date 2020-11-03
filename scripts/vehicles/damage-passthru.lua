@@ -1,12 +1,16 @@
 -- when a vehicle takes damage, pass it on to the player
 local function onDamaged(event)
 	if event.entity.type == "car" then
+		local damage = event.original_damage_amount
+		if event.damage_type.name == "impact" then
+			damage = math.max(0, (damage - 10) * 0.7)
+		end
 		local driver = event.entity.get_driver()
 		if driver and not driver.is_player() then
 			if event.cause then
-				driver.damage(event.original_damage_amount, event.force, event.damage_type.name, event.cause)
+				driver.damage(damage, event.force, event.damage_type.name, event.cause)
 			else
-				driver.damage(event.original_damage_amount, event.force, event.damage_type.name)
+				driver.damage(damage, event.force, event.damage_type.name)
 			end
 		elseif event.cause and event.cause.type == "unit" then
 			event.cause.set_command{
@@ -17,9 +21,9 @@ local function onDamaged(event)
 		local passenger = event.entity.get_passenger()
 		if passenger and not passenger.is_player() then
 			if event.cause then
-				passenger.damage(event.original_damage_amount, event.force, event.damage_type.name, event.cause)
+				passenger.damage(damage, event.force, event.damage_type.name, event.cause)
 			else
-				passenger.damage(event.original_damage_amount, event.force, event.damage_type.name)
+				passenger.damage(damage, event.force, event.damage_type.name)
 			end
 		end
 	end
