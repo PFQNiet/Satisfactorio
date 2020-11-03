@@ -124,40 +124,43 @@ local function onTick(event)
 			local centre = math2d.position.add(station.position, math2d.position.rotate_vector({-0.5,-8}, station.direction*45))
 			local vehicles = station.surface.find_entities_filtered{
 				name = {"tractor","truck","explorer"},
-				area = {{centre.x-4,centre.y-4}, {centre.x+4,centre.y+4}},
-				limit = 1
+				area = {{centre.x-4,centre.y-4}, {centre.x+4,centre.y+4}}
 			}
-			if #vehicles == 1 then
-				local vehicle = vehicles[1]
-				local is_output = io.isEnabled(station,{2,3.5})
-				local vehicleinventory = vehicle.get_inventory(defines.inventory.car_trunk)
-				local store = station.surface.find_entity(storage, math2d.position.add(station.position, math2d.position.rotate_vector(storage_pos, station.direction*45)))
-				local storeinventory = store.get_inventory(defines.inventory.chest)
-				local fuel = station.surface.find_entity(fuelbox, math2d.position.add(station.position, math2d.position.rotate_vector(fuelbox_pos, station.direction*45)))
-				-- always load fuel if possible
-				local fuelinventory = vehicle.get_inventory(defines.inventory.fuel)
-				local fuelstore = fuel.get_inventory(defines.inventory.chest)
-				if not fuelstore.is_empty() then
-					if fuelinventory.can_insert(fuelstore[1]) then
-						fuelstore.remove({name=fuelstore[1].name, count=fuelinventory.insert(fuelstore[1])})
+			local done = false
+			for _,vehicle in pairs(vehicles) do
+				if vehicle.speed == 0 then
+					local is_output = io.isEnabled(station,{2,3.5})
+					local vehicleinventory = vehicle.get_inventory(defines.inventory.car_trunk)
+					local store = station.surface.find_entity(storage, math2d.position.add(station.position, math2d.position.rotate_vector(storage_pos, station.direction*45)))
+					local storeinventory = store.get_inventory(defines.inventory.chest)
+					local fuel = station.surface.find_entity(fuelbox, math2d.position.add(station.position, math2d.position.rotate_vector(fuelbox_pos, station.direction*45)))
+					-- always load fuel if possible
+					local fuelinventory = vehicle.get_inventory(defines.inventory.fuel)
+					local fuelstore = fuel.get_inventory(defines.inventory.chest)
+					if not fuelstore.is_empty() then
+						if fuelinventory.can_insert(fuelstore[1]) then
+							fuelstore.remove({name=fuelstore[1].name, count=fuelinventory.insert(fuelstore[1])})
+						end
 					end
-				end
-				-- transfer one item stack
-				local from = is_output and vehicleinventory or storeinventory
-				local to = is_output and storeinventory or vehicleinventory
-				local target = to.find_empty_stack()
-				if target and not from.is_empty() then
-					for name,_ in pairs(from.get_contents()) do
-						local source = from.find_item_stack(name)
-						-- since there is an empty stack, an insert will always succeed
-						from.remove({name=name,count=to.insert(source)})
-						break
+					-- transfer one item stack
+					local from = is_output and vehicleinventory or storeinventory
+					local to = is_output and storeinventory or vehicleinventory
+					local target = to.find_empty_stack()
+					if target and not from.is_empty() then
+						for name,_ in pairs(from.get_contents()) do
+							local source = from.find_item_stack(name)
+							-- since there is an empty stack, an insert will always succeed
+							from.remove({name=name,count=to.insert(source)})
+							break
+						end
 					end
+					-- drain 10MJ
+					station.energy = station.energy - 10*1000*1000
+					done = true
+					break
 				end
-				-- drain 10MJ
-				station.energy = station.energy - 10*1000*1000
 			end
-			io.toggle(station,{0,3.5},#vehicles == 0)
+			io.toggle(station,{0,3.5},done)
 		end
 	end
 end
