@@ -58,7 +58,6 @@ local function refreshGui(car, menu)
 		rendering.destroy(point)
 	end
 	car.rendering = {}
-	local driver = car.car.get_driver()
 	if menu then menu.clear_items() end
 	local prev
 	for i,waypoint in pairs(car.waypoints) do
@@ -68,14 +67,13 @@ local function refreshGui(car, menu)
 		if i > 1 then
 			table.insert(car.rendering, rendering.draw_line{
 				color = {1,1,0},
-				width = 3,
+				width = 1,
 				gap_length = 1,
-				dash_length = 1,
+				dash_length = 3,
 				from = {prev.x,prev.y},
 				to = {waypoint.x,waypoint.y},
 				surface = car.car.surface,
-				players = driver and {driver.is_player() and driver or driver.player} or {},
-				visible = driver and true or false
+				only_in_alt_mode = true
 			})
 		end
 		prev = waypoint
@@ -83,14 +81,13 @@ local function refreshGui(car, menu)
 	if #car.waypoints > 1 then
 		table.insert(car.rendering, rendering.draw_line{
 			color = {1,1,0},
-			width = 3,
+			width = 1,
 			gap_length = 1,
-			dash_length = 1,
+			dash_length = 3,
 			from = {car.waypoints[#car.waypoints].x,car.waypoints[#car.waypoints].y},
 			to = {car.waypoints[1].x,car.waypoints[1].y},
 			surface = car.car.surface,
-			players = driver and {driver.is_player() and driver or driver.player} or {},
-			visible = driver and true or false
+			only_in_alt_mode = true
 	})
 	end
 	if menu then
@@ -135,11 +132,16 @@ local function onTick(event)
 						player.add_alert(car.car, defines.alert_type.train_out_of_fuel)
 					end
 				elseif car.car.riding_state.acceleration == defines.riding.acceleration.accelerating and car.car.speed == 0 then
-					-- car is trying to move but can't, despite having fuel
-					for _,player in pairs(car.car.force.players) do
-						player.add_custom_alert(car.car, {type="virtual",name="signal-vehicle-crashed"}, {"gui-alert-tooltip.vehicle-crashed",{"entity-name."..car.car.name}}, true)
+					if not car.crash_check then
+						car.crash_check = true
+					else
+						-- car is trying to move but can't, despite having fuel
+						for _,player in pairs(car.car.force.players) do
+							player.add_custom_alert(car.car, {type="virtual",name="signal-vehicle-crashed"}, {"gui-alert-tooltip.vehicle-crashed",{"entity-name."..car.car.name}}, true)
+						end
 					end
 				else
+					if car.crash_check then car.crash_check = false end
 					for _,player in pairs(car.car.force.players) do
 						player.remove_alert{entity=car.car}
 					end
