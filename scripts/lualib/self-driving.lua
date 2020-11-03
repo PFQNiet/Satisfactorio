@@ -26,7 +26,7 @@ local function turn(myvector, targetvector)
 	if dir < -0.035 then return defines.riding.direction.left end
 	return defines.riding.direction.straight
 end
-local function speed(myspeed, mypos, targetpos)
+local function speed(myspeed, mypos, targetpos, steer)
 	-- if we're getting close to the target, slow down
 	local wait = targetpos.wait
 	mypos = math2d.position.ensure_xy(mypos)
@@ -34,9 +34,23 @@ local function speed(myspeed, mypos, targetpos)
 	local dx = mypos.x-targetpos.x
 	local dy = mypos.y-targetpos.y
 	local dist = math.sqrt(dx*dx+dy*dy)
-	if dist < 2 and myspeed == 0 then return defines.riding.acceleration.nothing end -- this will register that the waypoint is reached and continue from there
+	if dist < 2 and myspeed == 0 then
+		-- register that the waypoint is reached and continue from there
+		return defines.riding.acceleration.nothing
+	end
+	-- if car is driving straight and waypoint has no wait time, then there is no need to brake - just continue
+	if steer == defines.riding.direction.straight and wait == 0 then
+		if dist < 3 then
+			return defines.riding.acceleration.nothing -- register "arrival"
+		else
+			return defines.riding.acceleration.accelerating
+		end
+	end
+	-- otherwise check if we're on approach and slow down
 	local ticks_to_target = dist/myspeed
-	if ticks_to_target < 90 then return defines.riding.acceleration.braking end
+	if ticks_to_target < 90 then
+		return defines.riding.acceleration.braking
+	end
 	return defines.riding.acceleration.accelerating
 end
 
@@ -111,7 +125,7 @@ local function onTick(event)
 			local mydir = {math.cos(math.pi*2*(0.25-car.car.orientation)), -math.sin(math.pi*2*(0.25-car.car.orientation))}
 			local todir = {car.waypoints[car.waypoint_index].x-car.car.position.x, car.waypoints[car.waypoint_index].y-car.car.position.y}
 			local steer = turn(mydir, todir)
-			local accel = speed(car.car.speed, car.car.position, car.waypoints[car.waypoint_index])
+			local accel = speed(car.car.speed, car.car.position, car.waypoints[car.waypoint_index], steer)
 			car.car.riding_state = {
 				acceleration = accel,
 				direction = steer
@@ -255,7 +269,8 @@ local function onGuiClick(event)
 		local list = gui['self-driving-waypoints']
 		local index = list.selected_index
 		local time = tonumber(gui['self-driving-edit']['self-driving-time'].text)
-		if index > #car.waypoints then
+		if index == 0 or index > #car.waypoints then
+			index = #car.waypoints + 1
 			-- new waypoint
 			local waypoint = {
 				x = math.floor(car.car.position.x),
