@@ -51,5 +51,13 @@ data:extend({
 		icon_mipmaps = 4,
 		icon_size = 64,
 		order = "s[splitter]-c[overflow]"
+	},
+	-- "vehicle crashed" icon needs to be a virtual signal for use...
+	{
+		type = "virtual-signal",
+		name = "signal-vehicle-crashed",
+		icon = "__Satisfactorio__/graphics/icons/alert-vehicle-crashed.png",
+		icon_size = 64,
+		order = "v[vehicles]-a[crashed]"
 	}
 })

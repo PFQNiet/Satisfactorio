@@ -128,6 +128,23 @@ local function onTick(event)
 					-- gui exists in this case
 					refreshGui(car, (driver.is_player() and driver or driver.player).gui.left['self-driving']['self-driving-waypoints'])
 				end
+			elseif not car.fuel_check or car.fuel_check < event.tick then
+				local fuel = car.car.burner
+				if not fuel.currently_burning and not fuel.inventory[1].valid_for_read then
+					for _,player in pairs(car.car.force.players) do
+						player.add_alert(car.car, defines.alert_type.train_out_of_fuel)
+					end
+				elseif car.car.riding_state.acceleration == defines.riding.acceleration.accelerating and car.car.speed == 0 then
+					-- car is trying to move but can't, despite having fuel
+					for _,player in pairs(car.car.force.players) do
+						player.add_custom_alert(car.car, {type="virtual",name="signal-vehicle-crashed"}, {"gui-alert-tooltip.vehicle-crashed",{"entity-name."..car.car.name}}, true)
+					end
+				else
+					for _,player in pairs(car.car.force.players) do
+						player.remove_alert{entity=car.car}
+					end
+				end
+				car.fuel_check = event.tick + 300 -- alerts last 5 seconds so only bother checking every 5 seconds
 			end
 		end
 	end

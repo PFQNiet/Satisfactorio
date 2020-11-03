@@ -8,6 +8,18 @@ return {
 			player.permission_group.set_allows_action(defines.input_action.edit_custom_tag, false)
 			player.permission_group.set_allows_action(defines.input_action.delete_custom_tag, false)
 		end,
+		[defines.events.on_tick] = function(event)
+			for _,force in pairs(game.forces) do
+				if not force.technologies[maptech].researched then
+					for _,player in pairs(force.players) do
+						if player.render_mode ~= defines.render_mode.game then
+							player.print({"message.map-needs-research"})
+							player.close_map()
+						end
+					end
+				end
+			end
+		end,
 		["open-map"] = function(event)
 			local player = game.players[event.player_index]
 			if player.render_mode == defines.render_mode.game then
