@@ -9,6 +9,7 @@ local function getCar(car)
 			waypoints = {}, -- points defined by the player, (position, wait)
 			waypoint_index = 1, -- which waypoint we're going to next
 			wait_until = 0,
+			recording = false,
 			autopilot = false,
 			rendering = {}
 		}
@@ -61,19 +62,47 @@ local function findClosestWaypoint(car)
 	end
 	return closest[1]
 end
-local function refreshGui(car, menu)
-	local index = menu and menu.selected_index
-	for _,point in pairs(car.rendering) do
-		rendering.destroy(point)
+
+local function refreshStopList(car, menu)
+	local index = menu.selected_index
+	menu.clear_items()
+	for i,waypoint in pairs(car.waypoints) do
+		if waypoint.wait > 0 then
+			menu.add_item({"gui.self-driving-waypoint",
+				(i%#car.waypoints)+1 == car.waypoint_index and {"gui.self-driving-waypoint-current"} or "",
+				waypoint.x, waypoint.y,
+				waypoint.wait
+			})
+		end
+	end
+	if car.recording then
+		menu.add_item({"gui.self-driving-waypoint-new"})
+	end
+	if #menu.items > 0 then
+		menu.selected_index = index > 0 and math.min(index,#menu.items) or #menu.items
+	end
+end
+local function refreshPathRender(car)
+	for _,line in pairs(car.rendering) do
+		rendering.destroy(line)
 	end
 	car.rendering = {}
-	if menu then menu.clear_items() end
 	local prev
 	for i,waypoint in pairs(car.waypoints) do
-		if menu then
-			menu.add_item({"gui.self-driving-waypoint",car.waypoint_index == i and {"gui.self-driving-waypoint-current"} or "",waypoint.x,waypoint.y,waypoint.wait})
-		end
-		if i > 1 then
+		if i == 1 then
+			if car.recording then
+				table.insert(car.rendering, rendering.draw_circle{
+					color = {1,1,0},
+					radius = 2,
+					width = 1,
+					filled = false,
+					target = {waypoint.x,waypoint.y},
+					surface = car.car.surface,
+					draw_on_ground = true,
+					only_in_alt_mode = true
+				})
+			end
+		else
 			table.insert(car.rendering, rendering.draw_line{
 				color = {1,1,0},
 				width = 1,
@@ -82,12 +111,25 @@ local function refreshGui(car, menu)
 				from = {prev.x,prev.y},
 				to = {waypoint.x,waypoint.y},
 				surface = car.car.surface,
+				draw_on_ground = true,
 				only_in_alt_mode = true
 			})
 		end
 		prev = waypoint
 	end
-	if #car.waypoints > 1 then
+	if #car.waypoints > 0 and car.recording then
+		table.insert(car.rendering, rendering.draw_line{
+			color = {1,1,0},
+			width = 1,
+			gap_length = 1,
+			dash_length = 3,
+			from = {car.waypoints[#car.waypoints].x,car.waypoints[#car.waypoints].y},
+			to = car.car,
+			surface = car.car.surface,
+			draw_on_ground = true,
+			only_in_alt_mode = true
+		})
+	elseif #car.waypoints > 1 then
 		table.insert(car.rendering, rendering.draw_line{
 			color = {1,1,0},
 			width = 1,
@@ -96,12 +138,9 @@ local function refreshGui(car, menu)
 			from = {car.waypoints[#car.waypoints].x,car.waypoints[#car.waypoints].y},
 			to = {car.waypoints[1].x,car.waypoints[1].y},
 			surface = car.car.surface,
+			draw_on_ground = true,
 			only_in_alt_mode = true
-	})
-	end
-	if menu then
-		menu.add_item({"gui.self-driving-waypoint-new"})
-		menu.selected_index = index
+		})
 	end
 end
 
@@ -110,6 +149,19 @@ local function onTick(event)
 	for i,car in pairs(global['cars']) do
 		if not (car.car and car.car.valid) then
 			global['cars'][i] = nil
+		elseif car.recording then
+			-- if driving straight, don't bother recording waypoints
+			if event.tick%5 == 0 and car.car.riding_state.direction ~= defines.riding.direction.straight then
+				-- get proximity with previous waypoint and, if it's too close, don't record it either
+				if #car.waypoints == 0 or math2d.position.distance(car.waypoints[#car.waypoints], car.car.position) > 3 then
+					table.insert(car.waypoints, {
+						x = car.car.position.x,
+						y = car.car.position.y,
+						wait = 0
+					})
+					refreshPathRender(car)
+				end
+			end
 		elseif car.autopilot and car.wait_until < event.tick and #car.waypoints > 1 and (not car.sleep_until or car.sleep_until < event.tick) then
 			if car.waypoint_index > #car.waypoints then
 				-- list was edited and no longer valid
@@ -130,7 +182,7 @@ local function onTick(event)
 				local driver = car.car.get_driver()
 				if driver then
 					-- gui exists in this case
-					refreshGui(car, (driver.is_player() and driver or driver.player).gui.left['self-driving']['self-driving-waypoints'])
+					refreshStopList(car, (driver.is_player() and driver or driver.player).gui.left['self-driving']['self-driving-waypoints'])
 				end
 			elseif not car.fuel_check or car.fuel_check < event.tick then
 				local fuel = car.car.burner
@@ -155,7 +207,7 @@ local function onTick(event)
 				end
 				car.fuel_check = event.tick + 300 -- alerts last 5 seconds so only bother checking every 5 seconds
 			end
-			if accel == defines.riding.acceleration.accelerating and steer == defines.riding.direction.straight then
+			if accel == defines.riding.acceleration.accelerating and steer == defines.riding.direction.straight and car.car.speed > 0.05 then
 				-- driving straight, sleep based on current ticks to near destination
 				car.sleep_until = event.tick + math.min(distance/car.car.speed/1.2 - 90, 60) -- wake up 90 ticks before destination, based on current speed plus a bit
 			end
@@ -190,26 +242,28 @@ local function onDriving(event)
 			frame.style.horizontally_stretchable = false
 			frame.style.use_header_filler = false
 
-			frame.add{
+			local switch = frame.add{
 				type = "switch",
 				name = "self-driving-mode-toggle",
 				switch_state = car.autopilot and "right" or "left",
 				left_label_caption = {"gui.self-driving-mode-manual"},
 				right_label_caption = {"gui.self-driving-mode-auto"}
 			}
+			switch.enabled = #car.waypoints > 0 and not car.recording
+			frame.add{
+				type = "button",
+				name = "self-driving-record",
+				caption = {"gui.self-driving-record"}
+			}
 
 			local menu = frame.add{
 				type = "list-box",
 				name = "self-driving-waypoints"
 			}
-			menu.style.top_margin = 4
-			menu.style.bottom_margin = 4
 			menu.style.horizontally_stretchable = true
-			menu.style.minimal_height = 200
-			menu.style.maximal_height = 200
+			menu.style.height = 200
 
-			refreshGui(car, menu)
-			menu.selected_index = #menu.items
+			refreshStopList(car, menu)
 
 			local flow = frame.add{
 				type = "flow",
@@ -224,7 +278,7 @@ local function onDriving(event)
 				type = "textfield",
 				name = "self-driving-time",
 				numeric = true,
-				text = 0,
+				text = 25,
 				allow_decimal = false,
 				allow_negative = false
 			}
@@ -253,12 +307,49 @@ local function onDriving(event)
 			if gui['self-driving'] then
 				gui['self-driving'].destroy()
 			end
-			refreshGui(car) -- basically just hide the rendering from this player
+			if car.recording then
+				car.waypoints = {}
+				car.recording = false
+				player.print{"message.self-driving-recording-aborted"}
+			end
 		end
 	end
 end
 local function onGuiClick(event)
 	local player = game.players[event.player_index]
+	if event.element.valid and event.element.name == "self-driving-record" then
+		-- all of this must exist for the GUI button to exist
+		local gui = player.gui.left['self-driving']
+		local car = getCar(player.vehicle)
+		if not car.recording then
+			if car.autopilot then
+				player.print{"message.self-driving-recording-disable-autopilot"}
+			else
+				player.print{"message.self-driving-recording-started"}
+				car.recording = true
+				car.waypoints = {}
+				table.insert(car.waypoints, {
+					x = car.car.position.x,
+					y = car.car.position.y,
+					wait = 0
+				})
+				refreshPathRender(car)
+				refreshStopList(car, gui['self-driving-waypoints'])
+				gui['self-driving-mode-toggle'].enabled = false
+				gui['self-driving-record'].caption = {"gui.self-driving-stop"}
+			end
+		else
+			-- recording must have at least one waypoint, and car must be in the starting circle
+			if #car.waypoints == 0 or math2d.position.distance(car.waypoints[1], car.car.position) > 2 then
+				player.print{"message.self-driving-recording-must-close"}
+			else
+				player.print{"message.self-driving-recording-finished"}
+				car.recording = false
+				gui['self-driving-mode-toggle'].enabled = true
+				gui['self-driving-record'].caption = {"gui.self-driving-record"}
+			end
+		end
+	end
 	if event.element.valid and event.element.name == "self-driving-add" then
 		-- all of this must exist for the GUI button to exist
 		local gui = player.gui.left['self-driving']
@@ -266,8 +357,17 @@ local function onGuiClick(event)
 		local list = gui['self-driving-waypoints']
 		local index = list.selected_index
 		local time = tonumber(gui['self-driving-edit']['self-driving-time'].text)
-		if index == 0 or index > #car.waypoints then
-			index = #car.waypoints + 1
+		if time == 0 then return end
+		-- scan waypoint list for stops
+		local stops = {}
+		for _,waypoint in pairs(car.waypoints) do
+			if waypoint.wait > 0 then
+				table.insert(stops, waypoint)
+			end
+		end
+		if index == 0 or index > #stops then
+			if not car.recording then return end
+			index = #stops + 1
 			-- new waypoint
 			local waypoint = {
 				x = math.floor(car.car.position.x),
@@ -276,10 +376,10 @@ local function onGuiClick(event)
 			}
 			table.insert(car.waypoints, waypoint)
 			list.add_item({"gui.self-driving-waypoint","",waypoint.x,waypoint.y,waypoint.wait}, index)
-			refreshGui(car, list)
+			refreshPathRender(car)
 		else
-			-- update waypoint time
-			local waypoint = car.waypoints[index]
+			-- update stop time (can be done even if car is currently on autopilot)
+			local waypoint = stops[index]
 			waypoint.wait = time
 			list.set_item(index, {"gui.self-driving-waypoint","",waypoint.x,waypoint.y,waypoint.wait})
 		end
@@ -291,8 +391,19 @@ local function onGuiClick(event)
 		local list = gui['self-driving-waypoints']
 		local index = list.selected_index
 		if index > 0 and index <= #car.waypoints then
-			table.remove(car.waypoints, index)
 			list.remove_item(index)
+			-- scan waypoint list for stops
+			local stops = {}
+			for i,waypoint in pairs(car.waypoints) do
+				if waypoint.wait > 0 then
+					index = index - 1
+					if index == 0 then
+						table.remove(car.waypoints, i)
+						break
+					end
+				end
+			end
+			refreshPathRender(car)
 		end
 	end
 end
@@ -302,11 +413,13 @@ local function onGuiSelection(event)
 		local index = event.element.selected_index
 		local edit = player.gui.left['self-driving']['self-driving-edit']
 		local car = getCar(player.vehicle)
-		if index < #event.element.items then
+		if index <= #car.waypoints then
 			edit['self-driving-add'].tooltip = {"gui.self-driving-waypoint-edit"}
+			edit['self-driving-add'].enabled = true
 			edit['self-driving-delete'].enabled = not car.autopilot
 		else
 			edit['self-driving-add'].tooltip = {"gui.self-driving-waypoint-add"}
+			edit['self-driving-add'].enabled = car.recording
 			edit['self-driving-delete'].enabled = false
 		end
 	end
@@ -327,7 +440,7 @@ local function onGuiSwitch(event)
 			}
 		end
 		car.waypoint_index = findClosestWaypoint(car)
-		refreshGui(car, waypoints)
+		refreshPathRender(car)
 	end
 end
 
