@@ -41,3 +41,16 @@ for _,tile in pairs(data.raw.tile) do
 		end
 	end
 end
+
+-- if a car is destructible (has more then 1 max health) then give it resistance to all damage and also make it breathe air (to receive poison damage)
+local resists = {}
+for name,_ in pairs(data.raw['damage-type']) do
+	table.insert(resists, {type=name,percent=100})
+end
+for _,car in pairs(data.raw.car) do
+	if car.max_health > 1 then
+		if not car.flags then car.flags = {} end
+		table.insert(car.flags,"breaths-air")
+		car.resistances = resists
+	end
+end
