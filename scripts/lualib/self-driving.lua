@@ -24,7 +24,7 @@ local function turn(myvector, targetvector)
 	-- <0 = clockwise
 	if dir > 0.035 then return defines.riding.direction.right end
 	if dir < -0.035 then return defines.riding.direction.left end
-	return defines.riding.direction.straight
+	return defines.riding.direction.straight, dir
 end
 local function speed(myspeed, mypos, targetpos, steer)
 	-- if we're getting close to the target, slow down
@@ -34,24 +34,19 @@ local function speed(myspeed, mypos, targetpos, steer)
 	local dx = mypos.x-targetpos.x
 	local dy = mypos.y-targetpos.y
 	local dist = math.sqrt(dx*dx+dy*dy)
+	local accel
 	if dist < 2 and myspeed == 0 then
 		-- register that the waypoint is reached and continue from there
-		return defines.riding.acceleration.nothing
+		accel = defines.riding.acceleration.nothing
+	elseif steer == defines.riding.direction.straight and wait == 0 then
+		-- if car is driving straight and waypoint has no wait time, then there is no need to brake - just continue
+		accel = dist < 3 and defines.riding.acceleration.nothing or defines.riding.acceleration.accelerating
+	elseif dist/myspeed < 90 then -- ticks to target
+		accel = defines.riding.acceleration.braking
+	else
+		accel = defines.riding.acceleration.accelerating
 	end
-	-- if car is driving straight and waypoint has no wait time, then there is no need to brake - just continue
-	if steer == defines.riding.direction.straight and wait == 0 then
-		if dist < 3 then
-			return defines.riding.acceleration.nothing -- register "arrival"
-		else
-			return defines.riding.acceleration.accelerating
-		end
-	end
-	-- otherwise check if we're on approach and slow down
-	local ticks_to_target = dist/myspeed
-	if ticks_to_target < 90 then
-		return defines.riding.acceleration.braking
-	end
-	return defines.riding.acceleration.accelerating
+	return accel, dist
 end
 
 local function findClosestWaypoint(car)
@@ -112,20 +107,18 @@ end
 
 local function onTick(event)
 	if not global['cars'] then return end
-	local modulo = event.tick%30
 	for i,car in pairs(global['cars']) do
 		if not (car.car and car.car.valid) then
-			table.remove(global['cars'],i)
-		elseif car.autopilot and car.wait_until < event.tick and #car.waypoints > 1 and (i%30 == modulo or car.car.speed < 15) then
-			-- slow cars should update more often - if we have speed then chances are we're happily on our way
+			global['cars'][i] = nil
+		elseif car.autopilot and car.wait_until < event.tick and #car.waypoints > 1 and (not car.sleep_until or car.sleep_until < event.tick) then
 			if car.waypoint_index > #car.waypoints then
 				-- list was edited and no longer valid
 				car.waypoint_index = findClosestWaypoint(car)
 			end
 			local mydir = {math.cos(math.pi*2*(0.25-car.car.orientation)), -math.sin(math.pi*2*(0.25-car.car.orientation))}
 			local todir = {car.waypoints[car.waypoint_index].x-car.car.position.x, car.waypoints[car.waypoint_index].y-car.car.position.y}
-			local steer = turn(mydir, todir)
-			local accel = speed(car.car.speed, car.car.position, car.waypoints[car.waypoint_index], steer)
+			local steer, delta = turn(mydir, todir)
+			local accel, distance = speed(car.car.speed, car.car.position, car.waypoints[car.waypoint_index], steer)
 			car.car.riding_state = {
 				acceleration = accel,
 				direction = steer
@@ -161,6 +154,10 @@ local function onTick(event)
 					end
 				end
 				car.fuel_check = event.tick + 300 -- alerts last 5 seconds so only bother checking every 5 seconds
+			end
+			if accel == defines.riding.acceleration.accelerating and steer == defines.riding.direction.straight then
+				-- driving straight, sleep based on current ticks to near destination
+				car.sleep_until = event.tick + math.min(distance/car.car.speed/1.2 - 90, 60) -- wake up 90 ticks before destination, based on current speed plus a bit
 			end
 		end
 	end
