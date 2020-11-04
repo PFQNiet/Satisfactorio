@@ -7,9 +7,16 @@ radar.icon_mipmaps = 0
 radar.max_health = 1
 radar.energy_per_nearby_scan = "30MJ"
 radar.max_distance_of_nearby_sector_revealed = 4
-radar.energy_per_sector = "10MJ"
-radar.max_distance_of_sector_revealed = 24
+radar.energy_per_sector = "100MJ"
+radar.max_distance_of_sector_revealed = 14
 radar.energy_usage = "30MW"
+radar.selection_box = {{-2.5,-2.5},{2.5,2.5}}
+radar.collision_box = {{-2.2,-2.2},{2.2,2.2}}
+radar.pictures = {
+	filename = "__Satisfactorio__/graphics/placeholders/"..name..".png",
+	direction_count = 1,
+	size = {160,160}
+}
 
 local radaritem = data.raw.item[basename]
 radaritem.icon = radar.icon
