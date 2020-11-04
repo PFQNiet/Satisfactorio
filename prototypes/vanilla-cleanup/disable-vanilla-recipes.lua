@@ -42,7 +42,7 @@ local to_hide = {
 	"splitter", "fast-splitter", "express-splitter",
 	"burner-inserter", "inserter", "long-handed-inserter", "fast-inserter", "filter-inserter", "stack-inserter", "stack-filter-inserter",
 	"substation",
-	"artillery-wagon", "car", "tank", "spidertron", "spidertron-remote",
+	"train-stop", "artillery-wagon", "car", "tank", "spidertron", "spidertron-remote",
 	"logistic-robot", "construction-robot", "logistic-chest-active-provider", "logistic-chest-passive-provider", "logistic-chest-storage", "logistic-chest-buffer", "logistic-chest-requester", "roboport",
 	"small-lamp", "red-wire", "green-wire", "arithmetic-combinator", "decider-combinator", "constant-combinator", "power-switch", "programmable-speaker",
 	"stone-brick", "hazard-concrete", "refined-concrete", "refined-hazard-concrete", "landfill", "cliff-explosives",

@@ -20,6 +20,7 @@ local recipe1 = { -- by hand in Craft Bench
 	name = name.."-from-"..ingredients[1][1].."-manual",
 	localised_name = {"recipe-name.x-from-y",{"item-name."..name}, {"item-name."..ingredients[1][1]}},
 	type = "recipe",
+	order = "f["..name.."]-a["..ingredients[1][1].."]",
 	icons = {
 		{ icon = "__Satisfactorio__/graphics/icons/biomass.png", icon_size = 64 },
 		{ icon = "__Satisfactorio__/graphics/icons/"..ingredients[1][1]..".png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
@@ -36,6 +37,7 @@ local recipe2 = { -- in Constructor
 	name = name.."-from-"..ingredients[1][1],
 	localised_name = {"recipe-name.x-from-y",{"item-name."..name}, {"item-name."..ingredients[1][1]}},
 	type = "recipe",
+	order = "f["..name.."]-a["..ingredients[1][1].."]",
 	icons = recipe1.icons,
 	ingredients = ingredients,
 	result = name,
@@ -53,6 +55,7 @@ recipe1 = { -- by hand in Craft Bench
 	name = name.."-from-"..ingredients[1][1].."-manual",
 	localised_name = {"recipe-name.x-from-y",{"item-name."..name}, {"item-name."..ingredients[1][1]}},
 	type = "recipe",
+	order = "f["..name.."]-b["..ingredients[1][1].."]",
 	icons = {
 		{ icon = "__Satisfactorio__/graphics/icons/biomass.png", icon_size = 64 },
 		{ icon = "__Satisfactorio__/graphics/icons/"..ingredients[1][1]..".png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
@@ -69,6 +72,7 @@ recipe2 = { -- in Constructor
 	name = name.."-from-"..ingredients[1][1],
 	localised_name = {"recipe-name.x-from-y",{"item-name."..name}, {"item-name."..ingredients[1][1]}},
 	type = "recipe",
+	order = "f["..name.."]-b["..ingredients[1][1].."]",
 	icons = recipe1.icons,
 	ingredients = ingredients,
 	result = name,
@@ -86,6 +90,7 @@ recipe1 = { -- by hand in Craft Bench
 	name = name.."-from-"..ingredients[1][1].."-manual",
 	localised_name = {"recipe-name.x-from-y",{"item-name."..name}, {"item-name."..ingredients[1][1]}},
 	type = "recipe",
+	order = "f["..name.."]-c["..ingredients[1][1].."]",
 	icons = {
 		{ icon = "__Satisfactorio__/graphics/icons/biomass.png", icon_size = 64 },
 		{ icon = "__Satisfactorio__/graphics/icons/"..ingredients[1][1]..".png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
@@ -102,6 +107,7 @@ recipe2 = { -- in Constructor
 	name = name.."-from-"..ingredients[1][1],
 	localised_name = {"recipe-name.x-from-y",{"item-name."..name}, {"item-name."..ingredients[1][1]}},
 	type = "recipe",
+	order = "f["..name.."]-c["..ingredients[1][1].."]",
 	icons = recipe1.icons,
 	ingredients = ingredients,
 	result = name,
@@ -119,6 +125,7 @@ recipe1 = { -- by hand in Craft Bench
 	name = name.."-from-"..ingredients[1][1].."-manual",
 	localised_name = {"recipe-name.x-from-y",{"item-name."..name}, {"item-name."..ingredients[1][1]}},
 	type = "recipe",
+	order = "f["..name.."]-d["..ingredients[1][1].."]",
 	icons = {
 		{ icon = "__Satisfactorio__/graphics/icons/biomass.png", icon_size = 64 },
 		{ icon = "__Satisfactorio__/graphics/icons/"..ingredients[1][1]..".png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
@@ -135,6 +142,7 @@ recipe2 = { -- in Constructor
 	name = name.."-from-"..ingredients[1][1],
 	localised_name = {"recipe-name.x-from-y",{"item-name."..name}, {"item-name."..ingredients[1][1]}},
 	type = "recipe",
+	order = "f["..name.."]-d["..ingredients[1][1].."]",
 	icons = recipe1.icons,
 	ingredients = ingredients,
 	result = name,
@@ -152,6 +160,7 @@ recipe1 = { -- by hand in Craft Bench
 	name = name.."-from-"..ingredients[1][1].."-manual",
 	localised_name = {"recipe-name.x-from-y",{"item-name."..name}, {"item-name."..ingredients[1][1]}},
 	type = "recipe",
+	order = "f["..name.."]-e["..ingredients[1][1].."]",
 	icons = {
 		{ icon = "__Satisfactorio__/graphics/icons/biomass.png", icon_size = 64 },
 		{ icon = "__Satisfactorio__/graphics/icons/"..ingredients[1][1]..".png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
@@ -168,6 +177,7 @@ recipe2 = { -- in Constructor
 	name = name.."-from-"..ingredients[1][1],
 	localised_name = {"recipe-name.x-from-y",{"item-name."..name}, {"item-name."..ingredients[1][1]}},
 	type = "recipe",
+	order = "f["..name.."]-e["..ingredients[1][1].."]",
 	icons = recipe1.icons,
 	ingredients = ingredients,
 	result = name,

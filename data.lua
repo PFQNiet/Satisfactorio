@@ -56,6 +56,9 @@ data:extend({
 	{type="item-subgroup",group="intermediate-products",name="unpack-fluid",order="s-q"},
 	{type="item-subgroup",group="intermediate-products",name="nuclear",order="s-u"},
 	{type="item-subgroup",group="combat",name="melee",order="9"},
+	{type="item-subgroup",group="fluids",name="fluid-resource",order="s-a"},
+	{type="item-subgroup",group="fluids",name="fluid-product",order="s-b"},
+	{type="item-subgroup",group="fluids",name="fluid-fuel",order="s-c"},
 	{type="item-subgroup",group="milestones",name="hub-tier0",order="a"},
 	{type="item-subgroup",group="milestones",name="hub-tier1",order="b"},
 	{type="item-subgroup",group="milestones",name="hub-tier2",order="c"},
@@ -175,5 +178,24 @@ data:extend({
 		scale = 0.5,
 		type = "sprite",
 		width = 40
+	},
+	{
+		type = "custom-input",
+		name = "recipe-browser",
+		key_sequence = "X",
+		consuming = "game-only",
+		action = "lua"
+	},
+	{
+		type = "shortcut",
+		name = "recipe-browser",
+		action = "lua",
+		associated_control_input = "recipe-browser",
+		icon = {
+			filename = "__core__/graphics/icons/mip/grid-view.png",
+			size = 32,
+			mipmap_count = 2
+		},
+		order = "s-a[recipe-browser]"
 	}
 })

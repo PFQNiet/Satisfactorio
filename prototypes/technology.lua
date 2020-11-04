@@ -380,7 +380,7 @@ addTech("hub-tier5-alternative-fluid-transport", "hub/logistics", "hub-progressi
 	{type="unlock-recipe",recipe="empty-canister"},
 	{type="unlock-recipe",recipe="packaged-water"},
 	{type="unlock-recipe",recipe="unpack-water"},
-	{type="unlock-recipe",recipe="packaged-oil"},
+	{type="unlock-recipe",recipe="packaged-crude-oil"},
 	{type="unlock-recipe",recipe="unpack-oil"},
 	{type="unlock-recipe",recipe="packaged-heavy-oil"},
 	{type="unlock-recipe",recipe="unpack-heavy-oil"},

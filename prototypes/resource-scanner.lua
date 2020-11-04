@@ -38,7 +38,8 @@ data:extend({
 		disabled_icon = {
 			filename = "__Satisfactorio__/graphics/icons/resource-scanner-white.png",
 			size = 64
-		}
+		},
+		order = "s-b[resource-scanner]"
 	},
 	{ -- dummy entity so that "made in..." shows correctly for resource-scanner recipes
 		animation = {

@@ -234,7 +234,8 @@ local function onInteract(event)
 				loot.add{
 					type = "sprite-button",
 					style = "slot_button_in_shallow_frame",
-					name = "lootsprite"
+					name = "lootsprite",
+					mouse_button_filter = {}
 				}
 				loot.add{
 					type = "button",

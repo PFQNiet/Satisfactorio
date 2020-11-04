@@ -5,5 +5,5 @@ local basename = "heavy-oil"
 local fluid = data.raw.fluid[basename]
 fluid.icon = "__Satisfactorio__/graphics/icons/"..name..".png"
 fluid.icon_mipmaps = 0
-fluid.subgroup = "parts"
-fluid.order = "f[oil]-r-a["..name.."]"
+fluid.subgroup = "fluid-product"
+fluid.order = "a["..name.."]"

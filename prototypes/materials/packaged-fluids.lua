@@ -84,7 +84,7 @@ data:extend({
 	-- crude oil
 	{
 		type = "item",
-		name = "packaged-oil",
+		name = "packaged-crude-oil",
 		icon = "__Satisfactorio__/graphics/icons/packaged-oil.png",
 		icon_size = 64,
 		subgroup = "packed-fluid",
@@ -95,9 +95,9 @@ data:extend({
 	},
 	{
 		type = "recipe",
-		name = "packaged-oil",
+		name = "packaged-crude-oil",
 		ingredients = {{"empty-canister",2}, {type="fluid",name="crude-oil",amount=2}},
-		result = "packaged-oil",
+		result = "packaged-crude-oil",
 		result_count = 2,
 		energy_required = 4,
 		category = "packaging",
@@ -115,7 +115,7 @@ data:extend({
 			{icon = "__Satisfactorio__/graphics/icons/crude-oil.png", icon_size = 64},
 			{icon = "__Satisfactorio__/graphics/icons/packaged-oil.png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
 		},
-		ingredients = {{"packaged-oil",2}},
+		ingredients = {{"packaged-crude-oil",2}},
 		results = {{"empty-canister",2}, {type="fluid",name="crude-oil",amount=2}},
 		main_product = "crude-oil",
 		energy_required = 2,

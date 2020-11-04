@@ -31,8 +31,8 @@ ore.selection_box = {{-1.5,-1.5},{1.5,1.5}}
 local fluid = data.raw.fluid[name]
 fluid.icon = ore.icon
 fluid.icon_mipmaps = 0
-fluid.subgroup = "mineral-resource"
-fluid.order = "f"
+fluid.subgroup = "fluid-resource"
+fluid.order = "b["..name.."]"
 
 local autoplace = data.raw['autoplace-control'][name]
 autoplace.order = "f"

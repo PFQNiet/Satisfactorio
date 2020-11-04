@@ -36,8 +36,8 @@ data:extend({node})
 local fluid = data.raw.fluid[name]
 fluid.icon = node.icon
 fluid.icon_mipmaps = 0
-fluid.subgroup = "organic-resource"
-fluid.order = "1"
+fluid.subgroup = "fluid-resource"
+fluid.order = "a["..name.."]"
 fluid.heat_capacity = "1MJ"
 -- 100 degrees for the coal power, 500 degrees for nuclear power
 

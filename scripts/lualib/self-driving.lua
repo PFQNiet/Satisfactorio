@@ -202,7 +202,7 @@ local function onTick(event)
 				else
 					if car.crash_check then car.crash_check = 0 end
 					for _,player in pairs(car.car.force.players) do
-						player.remove_alert{entity=car.car}
+						player.remove_alert{entity=car.car, icon={type="virtual",name="signal-vehicle-crashed"}}
 					end
 				end
 				car.fuel_check = event.tick + 300 -- alerts last 5 seconds so only bother checking every 5 seconds
@@ -250,11 +250,12 @@ local function onDriving(event)
 				right_label_caption = {"gui.self-driving-mode-auto"}
 			}
 			switch.enabled = #car.waypoints > 0 and not car.recording
-			frame.add{
+			local button = frame.add{
 				type = "button",
 				name = "self-driving-record",
 				caption = {"gui.self-driving-record"}
 			}
+			button.style.horizontally_stretchable = true
 
 			local menu = frame.add{
 				type = "list-box",

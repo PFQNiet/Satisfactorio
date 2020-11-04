@@ -5,7 +5,7 @@ local item = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	infinite = true,
-	order = "s-d["..name.."]",
+	order = "s-c1["..name.."]",
 	subgroup = "armor",
 	stack_size = 1,
 	resistances = {
@@ -79,7 +79,7 @@ local filter = {
 	durability_description_value = "description.gas-mask-durability-value",
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
-	order = "s-c["..name.."]",
+	order = "s-c2["..name.."]",
 	subgroup = "armor",
 	stack_size = 50
 }

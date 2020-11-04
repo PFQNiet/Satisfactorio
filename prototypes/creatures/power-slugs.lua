@@ -91,6 +91,7 @@ local greenrecipe1 = {
 		{icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
 	},
 	hide_from_stats = true,
+	hide_from_player_crafting = true,
 	enabled = false
 }
 local greenrecipe2 = {
@@ -108,7 +109,6 @@ local greenrecipe2 = {
 		{icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
 	},
 	hide_from_stats = true,
-	hide_from_player_crafting = true,
 	enabled = false
 }
 
@@ -188,6 +188,7 @@ local yellowrecipe1 = {
 		{icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
 	},
 	hide_from_stats = true,
+	hide_from_player_crafting = true,
 	enabled = false
 }
 local yellowrecipe2 = {
@@ -205,7 +206,6 @@ local yellowrecipe2 = {
 		{icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
 	},
 	hide_from_stats = true,
-	hide_from_player_crafting = true,
 	enabled = false
 }
 
@@ -285,6 +285,7 @@ local purplerecipe1 = {
 		{icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
 	},
 	hide_from_stats = true,
+	hide_from_player_crafting = true,
 	enabled = false
 }
 local purplerecipe2 = {
@@ -302,7 +303,6 @@ local purplerecipe2 = {
 		{icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
 	},
 	hide_from_stats = true,
-	hide_from_player_crafting = true,
 	enabled = false
 }
 

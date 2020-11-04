@@ -48,7 +48,7 @@ return {
 	["rotor"] = 140,
 	["fabric"] = 140,
 	["packaged-heavy-oil"] = 180,
-	["packaged-oil"] = 180,
+	["packaged-crude-oil"] = 180,
 	["aluminium-ingot"] = 190,
 	["stator"] = 240,
 	["packaged-fuel"] = 270,

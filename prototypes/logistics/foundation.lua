@@ -132,6 +132,7 @@ data:extend({
 				{filename = "__base__/graphics/icons/deconstruction-planner.png", width=64, height=64},
 				{filename = "__Satisfactorio__/graphics/icons/"..name..".png", width=64, height=64}
 			}
-		}
+		},
+		order = "s-c[deconstruct-foundation]"
 	}
 })
