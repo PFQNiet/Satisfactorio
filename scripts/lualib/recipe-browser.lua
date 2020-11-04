@@ -2,6 +2,10 @@
 -- uses global['wanted-items'] to track a player's list of things
 local util = require("util")
 
+local function getRecipeYield(recipe)
+	return (recipe.main_product and recipe.main_product.amount or recipe.products[1].amount) or 1
+end
+
 local function openRecipeGui(player)
 	local gui = player.gui.screen['recipe-browser']
 	if not gui then
@@ -154,6 +158,7 @@ local function updateWantedList(player)
 			tooltip = recipe.localised_name,
 			number = count
 		}
+		local yield = getRecipeYield(recipe)
 		for _,ingredient in pairs(recipe.ingredients) do
 			local key = ingredient.type.."/"..ingredient.name
 			if not ingredients[key] then
@@ -164,7 +169,7 @@ local function updateWantedList(player)
 					amount = 0
 				}
 			end
-			ingredients[key].amount = ingredients[key].amount + ingredient.amount * count
+			ingredients[key].amount = ingredients[key].amount + ingredient.amount * count / yield
 		end
 	end
 	-- convert dictionary to array for sorting
@@ -203,11 +208,11 @@ local function updateWantedList(player)
 		top.add{type="empty-widget"}.style.horizontally_stretchable = true
 		top.add{
 			type = "label",
-			caption = {"gui.fraction",util.format_number(inventory[item] or 0),util.format_number(ingredient.amount)}
+			caption = {"gui.fraction",util.format_number(inventory[item] or 0),util.format_number(math.ceil(ingredient.amount))}
 		}
 		local bar = left.add{
 			type = "progressbar",
-			value = (inventory[item] or 0) / ingredient.amount
+			value = (inventory[item] or 0) / math.ceil(ingredient.amount)
 		}
 		bar.style.horizontally_stretchable = true
 
@@ -229,6 +234,7 @@ local function editItemRequestCount(player,source)
 		end
 	end
 	if index == 0 then return end
+	source.style = "yellow_slot_button"
 
 	local name
 	local count = index
@@ -239,7 +245,7 @@ local function editItemRequestCount(player,source)
 			break
 		end
 	end
-	local number = source.number
+	local number = math.ceil(source.number)
 
 	local mask = player.gui.screen['to-do-request-mask']
 	if mask then mask.destroy() end
@@ -296,6 +302,27 @@ local function editItemRequestCount(player,source)
 		loc.x + 24 + ((index-1)%5)/4*62,
 		loc.y + 92 + math.floor((index-1)/5)*40
 	}
+end
+local function closeItemRequestCount(player)
+	for _,slot in pairs(player.gui.screen['to-do-list'].content.wanted['to-do-list-wanted'].children) do slot.style = "slot_button" end
+	player.gui.screen['to-do-request-mask'].destroy()
+	player.gui.screen['to-do-request-number'].destroy()
+end
+local function updateItemRequestCount(player, name, count)
+	if count == 0 then
+		global['wanted-items'][player.index][name] = nil
+		if table_size(global['wanted-items'][player.index]) == 0 then
+			player.gui.screen['to-do-list'].visible = false
+			global['wanted-items'][player.index] = nil
+		else
+			updateWantedList(player)
+		end
+	else
+		local yield = getRecipeYield(game.recipe_prototypes[name])
+		global['wanted-items'][player.index][name] = math.ceil(count / yield) * yield
+		updateWantedList(player)
+	end
+	closeItemRequestCount(player)
 end
 
 local function onGuiClosed(event)
@@ -512,10 +539,11 @@ local function onGuiClick(event)
 	elseif event.element.name == "recipe-browser-open-tech-tree" then
 		player.open_technology_gui(event.element.parent.name)
 	elseif event.element.name == "recipe-browser-add-to-list" then
-		local recipe = event.element.parent.parent.parent.name
+		local recipe = game.recipe_prototypes[event.element.parent.parent.parent.name]
 		if not global['wanted-items'] then global['wanted-items'] = {} end
 		if not global['wanted-items'][player.index] then global['wanted-items'][player.index] = {} end
-		global['wanted-items'][player.index][recipe] = (global['wanted-items'][player.index][recipe] or 0) + 1
+		local yield = getRecipeYield(recipe)
+		global['wanted-items'][player.index][recipe.name] = (global['wanted-items'][player.index][recipe.name] or 0) + yield
 		updateWantedList(player)
 	elseif event.element.name == "to-do-list-toggle" then
 		local elem = player.gui.screen['to-do-list'].content
@@ -533,59 +561,21 @@ local function onGuiClick(event)
 		editItemRequestCount(player, event.element)
 	elseif event.element.name == "to-do-request-confirm" then
 		local flow = event.element.parent
-		local name = flow.name
 		local count = tonumber(flow['to-do-request-number-input'].text)
-		if count == 0 then
-			global['wanted-items'][player.index][name] = nil
-			if table_size(global['wanted-items'][player.index]) == 0 then
-				player.gui.screen['to-do-list'].visible = false
-				global['wanted-items'][player.index] = nil
-			else
-				updateWantedList(player)
-			end
-		else
-			global['wanted-items'][player.index][name] = count
-			updateWantedList(player)
-		end
-		player.gui.screen['to-do-request-mask'].destroy()
-		player.gui.screen['to-do-request-number'].destroy()
+		updateItemRequestCount(player, flow.name, count)
 	elseif event.element.name == "to-do-request-delete" then
 		local flow = event.element.parent
-		local name = flow.name
-		global['wanted-items'][player.index][name] = nil
-		if table_size(global['wanted-items'][player.index]) == 0 then
-			player.gui.screen['to-do-list'].visible = false
-			global['wanted-items'][player.index] = nil
-		else
-			updateWantedList(player)
-		end
-		player.gui.screen['to-do-request-mask'].destroy()
-		player.gui.screen['to-do-request-number'].destroy()
+		updateItemRequestCount(player, flow.name, 0)
 	elseif event.element.name == "to-do-request-mask" then
-		player.gui.screen['to-do-request-mask'].destroy()
-		player.gui.screen['to-do-request-number'].destroy()
+		closeItemRequestCount(player)
 	end
 end
 local function onGuiConfirmed(event)
 	if event.element and event.element.valid and event.element.name == "to-do-request-number-input" then
 		local player = game.players[event.player_index]
 		local flow = event.element.parent
-		local name = flow.name
-		local count = tonumber(event.element.text)
-		if count == 0 then
-			global['wanted-items'][player.index][name] = nil
-			if table_size(global['wanted-items'][player.index]) == 0 then
-				player.gui.screen['to-do-list'].visible = false
-				global['wanted-items'][player.index] = nil
-			else
-				updateWantedList(player)
-			end
-		else
-			global['wanted-items'][player.index][name] = count
-			updateWantedList(player)
-		end
-		player.gui.screen['to-do-request-mask'].destroy()
-		player.gui.screen['to-do-request-number'].destroy()
+		local count = tonumber(flow['to-do-request-number-input'].text)
+		updateItemRequestCount(player, flow.name, count)
 	end
 end
 

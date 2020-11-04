@@ -12,9 +12,7 @@
 			"disableExtraMods": true,
 			"adjustMods": {
 				"debugadapter": true,
-				"Satisfactorio": true,
-				"FNEI": true,
-				"MaxRateCalculator": true
+				"Satisfactorio": true
 			},
 			"modsPath": "E:\\Documents\\factorio-mods"
 		}
