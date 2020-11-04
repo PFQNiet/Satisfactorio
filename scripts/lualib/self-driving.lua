@@ -191,16 +191,16 @@ local function onTick(event)
 						player.add_alert(car.car, defines.alert_type.train_out_of_fuel)
 					end
 				elseif car.car.riding_state.acceleration == defines.riding.acceleration.accelerating and car.car.speed == 0 then
-					if not car.crash_check then
-						car.crash_check = true
+					if not car.crash_check or car.crash_check < 3 then
+						car.crash_check = (car.crash_check or 0) + 1
 					else
-						-- car is trying to move but can't, despite having fuel
+						-- car is trying to move but can't, despite having fuel, and has failed this check 3 times
 						for _,player in pairs(car.car.force.players) do
 							player.add_custom_alert(car.car, {type="virtual",name="signal-vehicle-crashed"}, {"gui-alert-tooltip.vehicle-crashed",{"entity-name."..car.car.name}}, true)
 						end
 					end
 				else
-					if car.crash_check then car.crash_check = false end
+					if car.crash_check then car.crash_check = 0 end
 					for _,player in pairs(car.car.force.players) do
 						player.remove_alert{entity=car.car}
 					end
