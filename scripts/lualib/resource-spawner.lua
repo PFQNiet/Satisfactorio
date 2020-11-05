@@ -73,7 +73,7 @@ local function spawnNode(resource, surface, cx, cy)
 	-- just generate local points within radius 4-8 and check against all others - it's so small that the "grid" method doesn't do anything for us.
 	for _=1,30 do
 		local theta = math.random()*math.pi*2
-		local r = math.random()*8+2
+		local r = math.sqrt(math.random()*64)
 		local x = math.cos(theta)*r
 		local y = math.sin(theta)*r
 		local ok = true
@@ -271,15 +271,19 @@ local function existsNear(mytype, surface, x, y)
 		local gx = math.floor(x/resource.gridsize);
 		local gy = math.floor(y/resource.gridsize);
 		local r = type == mytype and resource.r or 15
+		local grid = resource.grid[surface.index]
 		for dy=-2,2 do
-			for dx=-2,2 do
-				local node = resource.grid[surface.index][gy+dy] and resource.grid[surface.index][gy+dy][gx+dx] or nil
-				if node then
-					-- check if it's too close
-					local mx = node[1]-x;
-					local my = node[2]-y;
-					if mx*mx+my*my < r*r then
-						return true
+			local row = grid[gy+dy]
+			if row then
+				for dx=-2,2 do
+					local node = row[gx+dx]
+					if node then
+						-- check if it's too close
+						local mx = node[1]-x;
+						local my = node[2]-y;
+						if mx*mx+my*my < r*r then
+							return true
+						end
 					end
 				end
 			end
@@ -306,7 +310,8 @@ local function scanForResources()
 					for _=1,data.k do
 						-- pick a random point between r and 2r distance away
 						local theta = math.random()*math.pi*2
-						local range = math.random()*data.r+data.r
+						-- local range = data.r * math.sqrt(math.random()*3 + 1)
+						local range = data.r * (math.random() + 1)
 						local test = {node[1]+math.cos(theta)*range, node[2]+math.sin(theta)*range}
 						if not existsNear(name, surface, test[1], test[2]) then
 							-- it's free real estate!
@@ -396,8 +401,8 @@ local function onInit()
 
 	registerResource("x-plant", 100, 1, 3, 0)
 	registerResource("x-deposit", 100, 1, 10, 0) -- "value" is unused
-	registerResource("x-powerslug", 200, 1, 10, 0) -- "value" is dynamic 1-5 based on slug type
-	registerResource("x-crashsite", 225, 1, 1, 5)
+	registerResource("x-powerslug", 160, 1, 10, 0) -- "value" is dynamic 1-5 based on slug type
+	registerResource("x-crashsite", 190, 1, 1, 5)
 
 	registerSurface(game.surfaces.nauvis)
 end
@@ -409,6 +414,7 @@ local function onResolutionChanged(event)
 		gui.location = {(player.display_resolution.width-300*player.display_scale)/2, 40*player.display_scale}
 	end
 end
+local profiler = require("profiler")
 local function onTick(event)
 	local count = global['resource-node-count']
 	-- run more often the more open nodes there are

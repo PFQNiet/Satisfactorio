@@ -208,11 +208,11 @@ local function updateWantedList(player)
 		top.add{type="empty-widget"}.style.horizontally_stretchable = true
 		top.add{
 			type = "label",
-			caption = {"gui.fraction",util.format_number(inventory[item] or 0),util.format_number(math.ceil(ingredient.amount))}
+			caption = {"gui.fraction",util.format_number(inventory[item] or 0),util.format_number(ingredient.amount)}
 		}
 		local bar = left.add{
 			type = "progressbar",
-			value = (inventory[item] or 0) / math.ceil(ingredient.amount)
+			value = (inventory[item] or 0) / ingredient.amount
 		}
 		bar.style.horizontally_stretchable = true
 
