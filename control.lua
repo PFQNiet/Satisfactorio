@@ -28,7 +28,7 @@ handler.add_lib({
 	add_commands = function()
 		commands.add_command("respawn","Kills your character, allowing you to respawn. Handy if you somehow manage to get yourself stuck.",function(event)
 			local player = game.players[event.player_index]
-			if player.character then
+			if player.character and not player.character.driving then
 				player.character.die()
 			end
 		end)

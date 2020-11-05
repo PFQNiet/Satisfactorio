@@ -444,6 +444,29 @@ local recipes = {
 		icons = {"crystal-oscillator"}
 	},
 	{
+		name = "coated-iron-canister",
+		ingredients = {
+			{"iron-plate",2},
+			{"copper-plate",1}
+		},
+		result = "empty-canister",
+		result_count = 4,
+		energy_required = 4,
+		category = "assembling",
+		icons = {"iron-plate"}
+	},
+	{
+		name = "steel-canister",
+		ingredients = {
+			{"steel-plate",3}
+		},
+		result = "empty-canister",
+		result_count = 2,
+		energy_required = 3,
+		category = "constructing",
+		icons = {"steel-plate"}
+	},
+	{
 		name = "heavy-encased-frame",
 		ingredients = {
 			{"modular-frame",8},

@@ -36,6 +36,8 @@ return {
 	["high-speed-wiring"] = {"hub-tier4-advanced-steel-production","mam-caterium-ai-limiter"},
 	["quickwire-stator"] = {"hub-tier4-advanced-steel-production","mam-caterium-caterium-ingots"},
 	["rigour-motor"] = {"hub-tier4-advanced-steel-production","mam-quartz-quartz-crystals"},
+	["coated-iron-canister"] = {"hub-tier5-alternative-fluid-transport"},
+	["steel-canister"] = {"hub-tier5-alternative-fluid-transport"},
 	["heavy-encased-frame"] = {"hub-tier5-industrial-manufacturing"},
 	["heavy-flexible-frame"] = {"hub-tier5-industrial-manufacturing"},
 	["caterium-computer"] = {"hub-tier5-industrial-manufacturing","mam-caterium-caterium-ingots"},
