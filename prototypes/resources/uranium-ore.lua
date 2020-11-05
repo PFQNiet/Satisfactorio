@@ -17,10 +17,10 @@ mining.required_fluid = nil
 mining.fluid_amount = 0
 mining.mining_time = 1
 ore.category = "solid"
-ore.resource_patch_search_radius = 0
+ore.resource_patch_search_radius = 20
 ore.order = "k"
-if not ore.flags then ore.flags = {} end
-table.insert(ore.flags,"not-on-map")
+-- if not ore.flags then ore.flags = {} end
+-- table.insert(ore.flags,"not-on-map")
 ore.collision_box = {{-2.1, -2.1}, {2.1, 2.1}}
 ore.selection_box = {{-1.5,-1.5},{1.5,1.5}}
 ore.stages.sheet.scale = 3

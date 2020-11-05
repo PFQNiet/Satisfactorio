@@ -6,7 +6,7 @@ data:extend(
 		name = name,
 		icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 		icon_size = 64,
-		flags = {"placeable-neutral","not-on-map"},
+		flags = {"placeable-neutral"},
 		order="h",
 		category = "solid",
 		tree_removal_probability = 0,
@@ -47,13 +47,13 @@ data:extend(
 				}
 			}
 		},
-		map_color = {r=0.8, g=0.2, b=0},
+		map_color = {r=1, g=0.7, b=0.4},
 		infinite = true,
 		infinite_depletion_amount = 0,
 		minimum = 1,
 		normal = 60,
 		map_grid = false,
-		resource_patch_search_radius = 0
+		resource_patch_search_radius = 20
 	},
 	{
 		type = "autoplace-control",

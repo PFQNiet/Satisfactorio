@@ -19,10 +19,11 @@ ore.minable.results = {{
 	probability = 1
 }}
 ore.category = "crude-oil"
-ore.resource_patch_search_radius = 0
+ore.map_color = {0.3,0,0.3}
+ore.resource_patch_search_radius = 20
 ore.order = "f"
-if not ore.flags then ore.flags = {} end
-table.insert(ore.flags,"not-on-map")
+-- if not ore.flags then ore.flags = {} end
+-- table.insert(ore.flags,"not-on-map")
 ore.collision_box = {{-2.1, -2.1}, {2.1, 2.1}}
 ore.selection_box = {{-1.5,-1.5},{1.5,1.5}}
 -- ore.stages.sheet.scale = 3 -- crude oil was already meant to be 3x3
