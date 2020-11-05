@@ -458,13 +458,13 @@ local recipes = {
 	{
 		name = "steel-canister",
 		ingredients = {
-			{"steel-plate",3}
+			{"steel-ingot",3}
 		},
 		result = "empty-canister",
 		result_count = 2,
 		energy_required = 3,
 		category = "constructing",
-		icons = {"steel-plate"}
+		icons = {"steel-ingot"}
 	},
 	{
 		name = "heavy-encased-frame",
