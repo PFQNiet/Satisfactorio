@@ -4,15 +4,7 @@ Date: 2020.09.16
   Info:
     - Initial alpha release
 ---------------------------------------------------------------------------------------------------
-Version: 0.0.2
-Date: 2020.??.??
-  Features:
-    - More content! Tiers 5-7 are mostly done
-    - M.A.M. research and endgame resources
-    - Harvestable plants
-  Graphics:
-    - Resource Scanner pings update in real time
-  Bugfixes:
-    - Mining the Tractor gave you a vanilla Car
-    - Mining vehicles crashed due to auto-pilot looking for vehicles that no longer exist
-    - Resource scanner GUI responded to events that didn't belong to it
+Version: 0.1.0
+Date: 2020.11.05
+  Info:
+    - Pre-release release
