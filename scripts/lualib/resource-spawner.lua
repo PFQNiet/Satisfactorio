@@ -454,7 +454,6 @@ local function onResolutionChanged(event)
 		gui.location = {(player.display_resolution.width-300*player.display_scale)/2, 40*player.display_scale}
 	end
 end
-local profiler = require("profiler")
 local function onTick(event)
 	local count = global['resource-node-count']
 	-- run more often the more open nodes there are
