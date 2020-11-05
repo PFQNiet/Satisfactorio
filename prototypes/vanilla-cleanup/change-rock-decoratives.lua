@@ -58,3 +58,31 @@ for resource,colour in pairs(resources) do
 end
 
 hugerock.max_health = 1
+
+data:extend({
+	{
+		type = "autoplace-control",
+		name = "x-plant",
+		order = "r",
+		richness = false,
+		category = "terrain"
+	},
+	{
+		type = "noise-layer",
+		name = "x-plant"
+	}
+})
+
+data:extend({
+	{
+		type = "autoplace-control",
+		name = "x-deposit",
+		order = "s",
+		richness = false,
+		category = "terrain"
+	},
+	{
+		type = "noise-layer",
+		name = "x-deposit"
+	}
+})

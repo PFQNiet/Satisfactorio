@@ -7,7 +7,7 @@ data:extend(
 		name = name,
 		icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 		icon_size = 64,
-		flags = {"placeable-neutral"},
+		flags = {"placeable-neutral","not-on-map"},
 		order = "r",
 		category = "geothermal",
 		tree_removal_probability = 0,
@@ -43,7 +43,7 @@ data:extend(
 	{
 		type = "autoplace-control",
 		name = name,
-		order = "r",
+		order = "v",
 		richness = false,
 		category = "resource"
 	},

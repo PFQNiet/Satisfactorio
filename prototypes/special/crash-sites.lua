@@ -71,3 +71,17 @@ local interface = {
 	selection_priority = 40
 }
 data:extend{interface}
+
+data:extend({
+	{
+		type = "autoplace-control",
+		name = "x-crashsite",
+		order = "u",
+		richness = false,
+		category = "resource"
+	},
+	{
+		type = "noise-layer",
+		name = "x-crashsite"
+	}
+})

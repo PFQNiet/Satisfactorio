@@ -26,9 +26,31 @@ local enemies = require("scripts.lualib.enemy-spawning")
 
 local function registerResource(name, radius, min, max, value)
 	if global['resources'][name] then return end
+	local settings = game.default_map_gen_settings.autoplace_controls[name] or {frequency=1,richness=1,size=1}
+	if settings.size == 0 then return end
+
+	-- settings are supposed to be in the range 1/6 to 6
+	-- frequency affects the radius at which things spawn
+	-- example: to make things 6x more common, divide the radius by sqrt(6)
+	if name == "x-plant" or name == "x-deposit" then
+		-- plants and deposits use the inverse for... some reason
+		radius = radius * math.sqrt(settings.frequency)
+		-- "size" should also affect "richness" - although richness isn't used for deposits
+		min = math.ceil(min * settings.size)
+		max = math.ceil(max * settings.size)
+	else
+		radius = radius / math.sqrt(settings.frequency)
+		-- within a node, richness affects min/max setting
+		min = math.ceil(min * settings.richness)
+		max = math.ceil(max * settings.richness)
+	end
+	-- buffer determines how big a space the resource node reserves for itself (+2 border) and spreads its contents
+	local buffer = 8 * settings.size -- setting size too small may result in just single nodes as there's nowhere to spawn others!
+
 	global['resources'][name] = {
 		type = name,
 		r = radius,
+		border = buffer,
 		k = 30,
 		value = value,
 		size = {min,max},
@@ -73,7 +95,7 @@ local function spawnNode(resource, surface, cx, cy)
 	-- just generate local points within radius 4-8 and check against all others - it's so small that the "grid" method doesn't do anything for us.
 	for _=1,30 do
 		local theta = math.random()*math.pi*2
-		local r = math.sqrt(math.random()*64)
+		local r = math.sqrt(math.random())*resource.border
 		local x = math.cos(theta)*r
 		local y = math.sin(theta)*r
 		local ok = true
@@ -122,7 +144,8 @@ local function spawnNode(resource, surface, cx, cy)
 					{"rock-big-coal","rock-big-caterium-ore","rock-big-raw-quartz"},
 					{"rock-big-sulfur","rock-big-bauxite"}
 				}
-				local deposit = deposits[tiers[pval]][math.random(#deposits[tiers[pval]])]
+				local tier = tiers[math.random(#tiers)]
+				local deposit = deposits[tier][math.random(#deposits[tier])]
 				local tx = cx+x+0.5
 				local ty = cy+y+0.5
 				local chunkpos = {x=math.floor(tx/32), y=math.floor(ty/32)}
@@ -270,7 +293,7 @@ local function existsNear(mytype, surface, x, y)
 	for type,resource in pairs(global['resources']) do
 		local gx = math.floor(x/resource.gridsize);
 		local gy = math.floor(y/resource.gridsize);
-		local r = type == mytype and resource.r or 15
+		local r = type == mytype and resource.r or (resource.border*2+2)
 		local grid = resource.grid[surface.index]
 		for dy=-2,2 do
 			local row = grid[gy+dy]
@@ -387,6 +410,7 @@ end
 local function onInit()
 	if not global['resources'] then global['resources'] = {} end
 	if not global['resource-node-count'] then global['resource-node-count'] = 0 end
+
 	registerResource("iron-ore", 150, 4, 8, 1)
 	registerResource("copper-ore", 180, 2, 6, 1)
 	registerResource("stone", 175, 3, 7, 1)

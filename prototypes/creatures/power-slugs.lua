@@ -312,3 +312,17 @@ data:extend({
 	yellow,yellowdec,yellowitem,yellowrecipe1,yellowrecipe2,
 	purple,purpledec,purpleitem,purplerecipe1,purplerecipe2
 })
+
+data:extend({
+	{
+		type = "autoplace-control",
+		name = "x-powerslug",
+		order = "t",
+		richness = false,
+		category = "resource"
+	},
+	{
+		type = "noise-layer",
+		name = "x-powerslug"
+	}
+})

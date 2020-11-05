@@ -32,18 +32,23 @@ local function getRandomOffset(position)
 	return {position[1]+math.cos(theta)*r, position[2]-math.sin(theta)*r}
 end
 local function spawnGroup(surface,position,value,basedist)
+	local settings = game.default_map_gen_settings.autoplace_controls["enemy-base"] or {frequency=1,richness=1,size=1}
+	if settings.size == 0 then return end
+	-- size = strength, frequency = number
+
 	-- scale value based on distance from spawn
 	local distance = math.ceil(math.sqrt(position[1]*position[1] + position[2]*position[2])/basedist + 0.5)
 	-- sometimes shift up or down a tier
-	if value > 1 and math.random()<0.25 then
+	if math.random()<0.25 then
 		value = value - 1
-	elseif value < 6 and math.random()<0.25 then
+	elseif math.random()<0.25 then
 		value = value + 1
 	end
+	value = math.min(6,math.max(1,math.floor(value*settings.size+0.5))) -- minimum setting always yields 1, maximum setting always yields 6
 
 	if not global['unit-tracking'] then global['unit-tracking'] = {} end
 	for name,count in pairs(spawndata[value]) do
-		count = count*(distance^(1/3))
+		count = count*(distance^(1/3)) * settings.frequency
 		if math.random()<count%1 then count = math.ceil(count) else count = math.floor(count) end
 		for i=1,count do
 			local offset = getRandomOffset(position)
