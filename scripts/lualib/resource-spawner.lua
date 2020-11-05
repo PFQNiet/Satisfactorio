@@ -188,12 +188,12 @@ local function spawnNode(resource, surface, cx, cy)
 				else
 					surface.create_entity(entity)
 					if math.random()<0.2 then
-						surface.create_entity({
+						surface.create_entity{
 							name = "rock-huge",
 							position = entity.position,
 							force = game.forces.neutral,
 							raise_built = true
-						}, surface, chunkpos)
+						}
 					end
 				end
 			elseif resource.type == "x-crashsite" then
