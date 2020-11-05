@@ -17,7 +17,7 @@ mining.required_fluid = nil
 mining.fluid_amount = 0
 mining.mining_time = 1
 ore.category = "solid"
-ore.resource_patch_search_radius = 20
+ore.resource_patch_search_radius = 10
 ore.order = "k"
 -- if not ore.flags then ore.flags = {} end
 -- table.insert(ore.flags,"not-on-map")

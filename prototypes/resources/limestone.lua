@@ -13,7 +13,7 @@ ore.normal = 60
 ore.map_grid = false
 ore.resource_patch_search_radius = 1
 ore.category = "solid"
-ore.resource_patch_search_radius = 20
+ore.resource_patch_search_radius = 10
 ore.order = "c"
 -- if not ore.flags then ore.flags = {} end
 -- table.insert(ore.flags,"not-on-map")

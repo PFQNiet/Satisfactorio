@@ -45,7 +45,7 @@ local function registerResource(name, radius, min, max, value)
 		max = math.ceil(max * settings.richness)
 	end
 	-- buffer determines how big a space the resource node reserves for itself (+2 border) and spreads its contents
-	local buffer = 8 * settings.size -- setting size too small may result in just single nodes as there's nowhere to spawn others!
+	local buffer = 8 * math.sqrt(settings.size) -- setting size too small may result in just single nodes as there's nowhere to spawn others!
 
 	global['resources'][name] = {
 		type = name,
@@ -176,8 +176,25 @@ local function spawnNode(resource, surface, cx, cy)
 				}
 				if not surface.is_chunk_generated({chunkpos.x, chunkpos.y}) then
 					queueEntity(entity, surface, chunkpos)
+					if math.random()<0.2 then
+						queueEntity({
+							name = "rock-huge",
+							position = entity.position,
+							nobump = true,
+							force = game.forces.neutral,
+							raise_built = true
+						}, surface, chunkpos)
+					end
 				else
 					surface.create_entity(entity)
+					if math.random()<0.2 then
+						surface.create_entity({
+							name = "rock-huge",
+							position = entity.position,
+							force = game.forces.neutral,
+							raise_built = true
+						}, surface, chunkpos)
+					end
 				end
 			elseif resource.type == "x-crashsite" then
 				pval = purity -- always just one crash site
@@ -208,7 +225,7 @@ local function spawnNode(resource, surface, cx, cy)
 							nobump = true,
 							force = game.forces.neutral
 						}, surface, chunkpos)
-					elseif math.random()<0.05 then
+					elseif math.random()<0.15 then
 						queueEntity({
 							name = "rock-huge",
 							position = entity.position,
@@ -226,11 +243,10 @@ local function spawnNode(resource, surface, cx, cy)
 							position = entity.position,
 							force = game.forces.neutral
 						})
-					elseif math.random()<0.05 then
+					elseif math.random()<0.15 then
 						surface.create_entity({
 							name = "rock-huge",
 							position = entity.position,
-							nobump = true,
 							force = game.forces.neutral,
 							raise_built = true
 						})

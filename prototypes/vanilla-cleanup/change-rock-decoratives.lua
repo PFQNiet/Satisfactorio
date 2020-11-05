@@ -58,6 +58,13 @@ for resource,colour in pairs(resources) do
 end
 
 hugerock.max_health = 1
+hugerock.collision_box = {{-1.5*1.5,-1.1*1.5},{1.5*1.5,1.1*1.5}}
+hugerock.selection_box = {{-1.7*1.5,-1.3*1.5},{1.7*1.5,1.3*1.5}}
+hugerock.selection_priority = 55
+for _,pic in pairs(hugerock.pictures) do
+	pic.scale = 1.5
+	pic.hr_version.scale = 0.75
+end
 
 data:extend({
 	{

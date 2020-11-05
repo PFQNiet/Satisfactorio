@@ -53,7 +53,7 @@ data:extend(
 		minimum = 1,
 		normal = 60,
 		map_grid = false,
-		resource_patch_search_radius = 20
+		resource_patch_search_radius = 10
 	},
 	{
 		type = "autoplace-control",
