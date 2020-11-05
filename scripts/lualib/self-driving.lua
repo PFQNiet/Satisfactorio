@@ -293,14 +293,15 @@ local function onDriving(event)
 				name = "self-driving-add",
 				style = "tool_button_green",
 				tooltip = {"gui.self-driving-waypoint-add"},
-				sprite = "utility.add"
+				sprite = "utility/reassign"
 			}
+			addbtn.enabled = false
 			local delbtn = flow.add{
 				type = "sprite-button",
 				name = "self-driving-delete",
 				style = "tool_button_red",
 				tooltip = {"gui.self-driving-waypoint-delete"},
-				sprite = "utility.trash"
+				sprite = "utility/trash"
 			}
 			delbtn.enabled = false
 		else
@@ -338,6 +339,7 @@ local function onGuiClick(event)
 				refreshStopList(car, gui['self-driving-waypoints'])
 				gui['self-driving-mode-toggle'].enabled = false
 				gui['self-driving-record'].caption = {"gui.self-driving-stop"}
+				gui['self-driving-edit']['self-driving-add'].enabled = true
 			end
 		else
 			-- recording must have at least one waypoint, and car must be in the starting circle
@@ -348,6 +350,7 @@ local function onGuiClick(event)
 				car.recording = false
 				gui['self-driving-mode-toggle'].enabled = true
 				gui['self-driving-record'].caption = {"gui.self-driving-record"}
+				gui['self-driving-edit']['self-driving-add'].enabled = false
 			end
 		end
 	end
@@ -416,10 +419,12 @@ local function onGuiSelection(event)
 		local car = getCar(player.vehicle)
 		if index <= #car.waypoints then
 			edit['self-driving-add'].tooltip = {"gui.self-driving-waypoint-edit"}
+			edit['self-driving-add'].sprite = "utility/upgrade_blueprint"
 			edit['self-driving-add'].enabled = true
 			edit['self-driving-delete'].enabled = not car.autopilot
 		else
 			edit['self-driving-add'].tooltip = {"gui.self-driving-waypoint-add"}
+			edit['self-driving-add'].sprite = "utility/reassign"
 			edit['self-driving-add'].enabled = car.recording
 			edit['self-driving-delete'].enabled = false
 		end
@@ -432,8 +437,8 @@ local function onGuiSwitch(event)
 		car.autopilot = event.element.switch_state == "right"
 		local edit = player.gui.left['self-driving']['self-driving-edit']
 		local waypoints = player.gui.left['self-driving']['self-driving-waypoints']
-		edit['self-driving-add'].enabled = not car.autopilot
-		edit['self-driving-delete'].enabled = not car.autopilot and waypoints.selected_index ~= #waypoints.items
+		edit['self-driving-add'].enabled = not car.autopilot and waypoints.selected_index <= #waypoints.items
+		edit['self-driving-delete'].enabled = not car.autopilot and waypoints.selected_index <= #waypoints.items
 		if not car.autopilot then
 			car.car.riding_state = {
 				acceleration = defines.riding.acceleration.nothing,

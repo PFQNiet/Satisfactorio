@@ -234,8 +234,8 @@ local function onInteract(event)
 				loot.add{
 					type = "sprite-button",
 					style = "slot_button_in_shallow_frame",
-					name = "lootsprite",
-					mouse_button_filter = {}
+					name = "view-lizard-doggo-loot",
+					mouse_button_filter = {"left"}
 				}
 				loot.add{
 					type = "button",
@@ -267,7 +267,7 @@ local function onInteract(event)
 			end
 
 			gui.content.table.left.preview.entity = struct.entity
-			local lootbtn = gui.content.table.right.loot.lootsprite
+			local lootbtn = gui.content.table.right.loot['view-lizard-doggo-loot']
 			lootbtn.tooltip = struct.helditem and {"item-name."..struct.helditem.name} or ""
 			lootbtn.sprite = struct.helditem and "item/"..struct.helditem.name or nil
 			lootbtn.number = struct.helditem and struct.helditem.count or nil
@@ -297,23 +297,38 @@ local function onGuiClick(event)
 	local player = game.players[event.player_index]
 	if event.element.name == "lizard-doggo-close" then
 		closeGui(player)
-	elseif event.element.name == "take-lizard-doggo-loot" then
+	elseif event.element.name == "take-lizard-doggo-loot" or (event.element.name == "view-lizard-doggo-loot" and event.shift) then
 		local struct = global['lizard-doggos'][global['lizard-doggo-gui'][player.index]]
 		if struct and struct.owner == player and struct.entity and struct.entity.valid and struct.helditem then
 			local transferred = player.insert(struct.helditem)
 			local gui = player.gui.screen['lizard-doggo'].content.table.right.loot
+			local lootsprite = gui['view-lizard-doggo-loot']
 			if transferred == struct.helditem.count then
 				-- set new loot timer
 				struct.helditem = nil
 				struct.itemtimer = event.tick + math.random(8*60*60,15*60*60) -- 8-15 minutes
-				gui.lootsprite.tooltip = nil
-				gui.lootsprite.sprite = nil
-				gui.lootsprite.number = nil
+				lootsprite.tooltip = ""
+				lootsprite.sprite = nil
+				lootsprite.number = nil
 				gui['take-lizard-doggo-loot'].enabled = false
 			else
 				struct.helditem.count = struct.helditem.count - transferred
-				gui.lootsprite.number = struct.helditem.count
+				lootsprite.number = struct.helditem.count
 			end
+		end
+	elseif event.element.name == "view-lizard-doggo-loot" then -- click without shift
+		local struct = global['lizard-doggos'][global['lizard-doggo-gui'][player.index]]
+		if struct and struct.owner == player and player.cursor_stack and not player.cursor_stack.valid_for_read and struct.entity and struct.entity.valid and struct.helditem then
+			player.cursor_stack.set_stack(struct.helditem)
+			local gui = player.gui.screen['lizard-doggo'].content.table.right.loot
+			local lootsprite = gui['view-lizard-doggo-loot']
+			-- set new loot timer
+			struct.helditem = nil
+			struct.itemtimer = event.tick + math.random(8*60*60,15*60*60) -- 8-15 minutes
+			lootsprite.tooltip = ""
+			lootsprite.sprite = nil
+			lootsprite.number = nil
+			gui['take-lizard-doggo-loot'].enabled = false
 		end
 	elseif event.element.name == "stop-lizard-doggo" then
 		local struct = global['lizard-doggos'][global['lizard-doggo-gui'][player.index]]

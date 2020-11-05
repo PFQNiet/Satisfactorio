@@ -287,14 +287,14 @@ local function editItemRequestCount(player,source)
 		name = "to-do-request-confirm",
 		style = "tool_button_green",
 		tooltip = {"gui.confirm"},
-		sprite = "utility.confirm_slot"
+		sprite = "utility/check_mark_white"
 	}
 	local delbtn = flow.add{
 		type = "sprite-button",
 		name = "to-do-request-delete",
 		style = "tool_button_red",
 		tooltip = {"gui.delete"},
-		sprite = "utility.trash"
+		sprite = "utility/trash"
 	}
 
 	local loc = player.gui.screen['to-do-list'].location
@@ -522,8 +522,9 @@ local function onGuiElemChanged(event)
 						name = "recipe-browser-add-to-list",
 						style = "slot_sized_button_green",
 						tooltip = {"gui.recipe-browser-add-to-list"},
-						sprite = "utility.add"
+						sprite = "utility/reassign"
 					}
+					button.style.padding = 6
 				end
 			end
 		end

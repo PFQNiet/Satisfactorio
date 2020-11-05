@@ -82,7 +82,7 @@ local recipes = {
 		result_count = 10,
 		energy_required = 24,
 		category = "assembling",
-		icons = {"water"}
+		icons = {"silica"}
 	},
 	{
 		name = "radio-control-system",
