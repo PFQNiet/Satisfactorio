@@ -1,4 +1,5 @@
 -- uses global['unit-tracking'] to track units unit_number = {spawn, entity}
+local math2d = require("math2d")
 
 local spawndata = {
 	[1] = {["big-biter"] = 1},
@@ -16,6 +17,7 @@ local function _guardSpawn(struct)
 		commands = {
 			{
 				type = defines.command.go_to_location,
+				distraction = defines.distraction.by_damage,
 				destination = struct.spawn,
 				radius = 10
 			},
@@ -123,6 +125,18 @@ local function onCommandCompleted(event)
 		end
 	end
 end
+-- after attacking a player, check if we went too far from spawn and return there if so
+local function onDamaged(event)
+	if event.entity.type == "character" and event.cause and event.cause.valid and event.cause.type == "unit" then
+		local struct = global['unit-tracking'] and global['unit-tracking'][event.cause.unit_number]
+		if struct then
+			local distance_from_home = math2d.position.distance(struct.entity.position, struct.spawn)
+			if distance_from_home > 50 then
+				_guardSpawn(struct)
+			end
+		end
+	end
+end
 local function onEntityDied(event)
 	if event.entity.valid and event.entity.unit_number and global['unit-tracking'] and global['unit-tracking'][event.entity.unit_number] then
 		global['unit-tracking'][event.entity.unit_number] = nil
@@ -134,6 +148,7 @@ return {
 	lib = {
 		events = {
 			[defines.events.on_entity_died] = onEntityDied,
+			[defines.events.on_entity_damaged] = onDamaged,
 			[defines.events.on_ai_command_completed] = onCommandCompleted
 		}
 	}

@@ -21,3 +21,8 @@ Date: 2020.11.06
   Bugfixes:
     - Rail (chain) signals could not be built outside of Creative mode and lacked dismantle option.
     - Valve was not unlocked by the technology that was supposed to unlock it.
+---------------------------------------------------------------------------------------------------
+Version: 0.1.2
+Date: 2020.11.??
+  Combat Balancing:
+    - Enemies that chase the player will disengage if you run far enough.
