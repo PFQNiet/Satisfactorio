@@ -405,6 +405,7 @@ addTech("hub-tier6-expanded-power-infrastructure", "hub/logistics", "hub-progres
 	{"rubber",400}
 }, {
 	{type="unlock-recipe",recipe="fuel-generator"},
+	{type="unlock-recipe",recipe="valve"},
 	{type="unlock-recipe",recipe="turbo-transport-belt"},
 	{type="unlock-recipe",recipe="turbo-underground-belt"},
 	{type="unlock-recipe",recipe="scanner-caterium-ore"}

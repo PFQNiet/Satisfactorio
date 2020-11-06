@@ -166,7 +166,7 @@ end
 
 local function updatePings()
 	if not global['resource-scanner-pings'] then return end
-	for i,ping in ipairs(global['resource-scanner-pings']) do
+	for i,ping in pairs(global['resource-scanner-pings']) do
 		-- check if ping hasn't expired
 		if not rendering.is_valid(ping.graphics.background) then
 			table.remove(global['resource-scanner-pings'],i)

@@ -8,3 +8,16 @@ Version: 0.1.0
 Date: 2020.11.05
   Info:
     - Pre-release release
+---------------------------------------------------------------------------------------------------
+Version: 0.1.1
+Date: 2020.11.06
+  Features:
+    - Added a welcome message to point the player towards the Resource Scanner and first steps.
+  Combat Balancing:
+    - Resource deposits close to spawn will only be guarded by 1 or 2 weaker enemies max.
+    - Resource deposits close to spawn cannot have poison gas.
+  Ease of use:
+    - Added corpse tracker so that you can find your dead body after respawning.
+  Bugfixes:
+    - Rail (chain) signals could not be built outside of Creative mode and lacked dismantle option.
+    - Valve was not unlocked by the technology that was supposed to unlock it.

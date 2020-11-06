@@ -47,3 +47,67 @@ local recipe_undo = {
 	enabled = false
 }
 data:extend({recipe_undo})
+
+rail = data.raw.item['rail-signal']
+local signal = data.raw.recipe['rail-signal']
+signal.category = "building"
+signal.allow_intermediates = false
+signal.allow_as_intermediate = false
+signal.hide_from_stats = true
+signal.enabled = false
+_group = data.raw['item-subgroup'][rail.subgroup]
+recipe_undo = {
+	name = "rail-signal-undo",
+	localised_name = {"recipe-name.dismantle",{"item-name.rail-signal"}},
+	type = "recipe",
+	ingredients = {
+		{"rail-signal",1}
+	},
+	results = signal.ingredients,
+	energy_required = 0.5,
+	category = "unbuilding",
+	subgroup = _group.group .. "-undo",
+	order = _group.order .. "-" .. rail.order,
+	allow_decomposition = false,
+	allow_intermediates = false,
+	allow_as_intermediate = false,
+	hide_from_stats = true,
+	icons = {
+		{icon = "__base__/graphics/icons/deconstruction-planner.png", icon_size = 64},
+		{icon = "__base__/graphics/icons/rail-signal.png", icon_size = 64, icon_mipmaps = 4}
+	},
+	enabled = false
+}
+data:extend({recipe_undo})
+
+rail = data.raw.item['rail-chain-signal']
+signal = data.raw.recipe['rail-chain-signal']
+signal.category = "building"
+signal.allow_intermediates = false
+signal.allow_as_intermediate = false
+signal.hide_from_stats = true
+signal.enabled = false
+_group = data.raw['item-subgroup'][rail.subgroup]
+recipe_undo = {
+	name = "rail-chain-signal-undo",
+	localised_name = {"recipe-name.dismantle",{"item-name.rail-chain-signal"}},
+	type = "recipe",
+	ingredients = {
+		{"rail-chain-signal",1}
+	},
+	results = signal.ingredients,
+	energy_required = 0.5,
+	category = "unbuilding",
+	subgroup = _group.group .. "-undo",
+	order = _group.order .. "-" .. rail.order,
+	allow_decomposition = false,
+	allow_intermediates = false,
+	allow_as_intermediate = false,
+	hide_from_stats = true,
+	icons = {
+		{icon = "__base__/graphics/icons/deconstruction-planner.png", icon_size = 64},
+		{icon = "__base__/graphics/icons/rail-chain-signal.png", icon_size = 64, icon_mipmaps = 4}
+	},
+	enabled = false
+}
+data:extend({recipe_undo})

@@ -15,7 +15,14 @@ local function onInit()
 		end
 	end
 end
+local function onPlayerCreated(event)
+	local player = game.players[event.player_index]
+	player.print{"message.welcome-to-satisfactorio"}
+end
 
 return {
-	on_init = onInit
+	on_init = onInit,
+	events = {
+		[defines.events.on_player_created] = onPlayerCreated
+	}
 }
