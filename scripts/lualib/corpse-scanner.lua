@@ -1,17 +1,20 @@
 -- point out the player's corpse(s)
--- uses global['corpse-pings'] as table of player => {target, graphics} for active pings
+-- uses global.corpse_scanner.pings as table of player => {target, graphics} for active pings
 local util = require("util")
+
+local script_data = {
+	pings = {}
+}
 
 local function playerDied(corpse)
 	local player = game.players[corpse.character_corpse_player_index]
-	if not global['corpse-pings'] then global['corpse-pings'] = {} end
-	if not global['corpse-pings'][player.index] then global['corpse-pings'][player.index] = {} end
-	table.insert(global['corpse-pings'][player.index], {target=corpse})
+	if not script_data.pings[player.index] then script_data.pings[player.index] = {} end
+	table.insert(script_data.pings[player.index], {target=corpse})
 end
 
 local function onTick(event)
-	if not global['corpse-pings'] then return end
-	for pid,pings in pairs(global['corpse-pings']) do
+	if #script_data.pings == 0 then return end
+	for pid,pings in pairs(script_data.pings) do
 		local player = game.players[pid]
 		for i,ping in pairs(pings) do
 			if not (ping.target and ping.target.valid) then
@@ -111,6 +114,18 @@ local function onTick(event)
 end
 
 return {
+	on_init = function()
+		global.corpse_scanner = global.corpse_scanner or script_data
+	end,
+	on_load = function()
+		script_data = global.corpse_scanner or script_data
+	end,
+	on_configuration_changed = function()
+		if global['corpse-pings'] then
+			global.corpse_scanner.pings = table.deepcopy(global['corpse-pings'])
+			global['corpse-pings'] = nil
+		end
+	end,
 	events = {
 		[defines.events.on_tick] = onTick,
 		[defines.events.on_post_entity_died] = function(event)
