@@ -370,15 +370,15 @@ return {
 	end,
 	on_configuration_changed = function()
 		if global['lizard-doggos'] then
-			script_data.lizard_doggos = global['lizard-doggos']
+			script_data.lizard_doggos = table.deepcopy(global['lizard-doggos'])
 			global['lizard-doggos'] = nil
 		end
 		if global['lizard-doggo-gui'] then
-			script_data.lizard_doggo_gui = global['lizard-doggo-gui']
+			script_data.lizard_doggo_gui = table.deepcopy(global['lizard-doggo-gui'])
 			global['lizard-doggo-gui'] = nil
 		end
 		if global['dropped-bait'] then
-			script_data.dropped_bait = global['dropped-bait']
+			script_data.dropped_bait = table.deepcopy(global['dropped-bait'])
 			global['dropped-bait'] = nil
 		end
 	end,

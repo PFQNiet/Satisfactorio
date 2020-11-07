@@ -150,7 +150,7 @@ return {
 	end,
 	on_configuration_changed = function()
 		if global['jetpack-flight'] then
-			global.posion_damage = global['jetpack-flight']
+			global.posion_damage = table.deepcopy(global['jetpack-flight'])
 			script_data = global.jetpack_flight
 			global['jetpack-flight'] = nil
 		end

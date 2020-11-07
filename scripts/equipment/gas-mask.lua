@@ -65,7 +65,7 @@ return {
 	end,
 	on_configuration_changed = function()
 		if global['poison-damage'] then
-			global.posion_damage = global['poison-damage']
+			global.posion_damage = table.deepcopy(global['poison-damage'])
 			script_data = global.posion_damage
 			global['poison-damage'] = nil
 		end
