@@ -4,7 +4,6 @@
 local util = require("util")
 local math2d = require("math2d")
 local string = require("scripts.lualib.string")
-local omnilab = require("scripts.lualib.omnilab")
 local getitems = require("scripts.lualib.get-items-from")
 
 local base = "the-hub"
@@ -38,8 +37,6 @@ local powerpole_pos = {-5,0}
 local freighter_pos = {6,0}
 
 local function buildFloor(hub)
-	-- also build the Omnilab (which will check if this is the first time the HUB is being placed)
-	omnilab.setupOmnilab(hub.force)
 	return hub.surface.create_entity{
 		name = graphics[hub.direction],
 		position = hub.position,
@@ -338,58 +335,57 @@ local function updateMilestoneGUI(force)
 	for _,player in pairs(force.players) do
 		local gui = player.gui.left
 		local frame = gui['hub-milestone-tracking']
-		-- wait until the HUB has been built for the first time, as determined by the Omnilab being set up
-		if global['omnilab'] and global['omnilab'][player.force.index] then
-			-- create the GUI if it doesn't exist yet (should only happen once per player)
-			if not frame then
-				frame = gui.add{
-					type = "frame",
-					name = "hub-milestone-tracking",
-					direction = "vertical",
-					caption = {"gui.hub-milestone-tracking-caption"},
-					style = "inner_frame_in_outer_frame"
-				}
-				frame.style.horizontally_stretchable = false
-				frame.style.use_header_filler = false
-				frame.add{
-					type = "label",
-					name = "hub-milestone-tracking-name",
-					caption = {"","[font=heading-2]",{"gui.hub-milestone-tracking-none-selected"},"[/font]"}
-				}
-				local inner = frame.add{
-					type = "frame",
-					name = "hub-milestone-tracking-content",
-					style = "inside_shallow_frame",
-					direction = "vertical"
-				}
-				inner.style.horizontally_stretchable = true
-				inner.style.top_margin = 4
-				inner.style.bottom_margin = 4
-				inner.add{
-					type = "table",
-					name = "hub-milestone-tracking-table",
-					style = "bordered_table",
-					column_count = 3
-				}
-				local cooldown = frame.add{
-					type = "label",
-					name = "hub-milestone-tracking-cooldown"
-				}
-				cooldown.visible = false
-				local bottom = frame.add{
-					type = "flow",
-					name = "hub-milestone-tracking-bottom"
-				}
-				local pusher = bottom.add{type="empty-widget"}
-				pusher.style.horizontally_stretchable = true
-				bottom.add{
-					type = "button",
-					style = "confirm_button",
-					name = "hub-milestone-tracking-submit",
-					caption = {"gui.hub-milestone-submit-caption"}
-				}
-			end
+		-- create the GUI if it doesn't exist yet, but only once a HUB has been built for the first time
+		if not frame and force.technologies['the-hub'].researched then
+			frame = gui.add{
+				type = "frame",
+				name = "hub-milestone-tracking",
+				direction = "vertical",
+				caption = {"gui.hub-milestone-tracking-caption"},
+				style = "inner_frame_in_outer_frame"
+			}
+			frame.style.horizontally_stretchable = false
+			frame.style.use_header_filler = false
+			frame.add{
+				type = "label",
+				name = "hub-milestone-tracking-name",
+				caption = {"","[font=heading-2]",{"gui.hub-milestone-tracking-none-selected"},"[/font]"}
+			}
+			local inner = frame.add{
+				type = "frame",
+				name = "hub-milestone-tracking-content",
+				style = "inside_shallow_frame",
+				direction = "vertical"
+			}
+			inner.style.horizontally_stretchable = true
+			inner.style.top_margin = 4
+			inner.style.bottom_margin = 4
+			inner.add{
+				type = "table",
+				name = "hub-milestone-tracking-table",
+				style = "bordered_table",
+				column_count = 3
+			}
+			local cooldown = frame.add{
+				type = "label",
+				name = "hub-milestone-tracking-cooldown"
+			}
+			cooldown.visible = false
+			local bottom = frame.add{
+				type = "flow",
+				name = "hub-milestone-tracking-bottom"
+			}
+			local pusher = bottom.add{type="empty-widget"}
+			pusher.style.horizontally_stretchable = true
+			bottom.add{
+				type = "button",
+				style = "confirm_button",
+				name = "hub-milestone-tracking-submit",
+				caption = {"gui.hub-milestone-submit-caption"}
+			}
+		end
 
+		if frame then
 			-- gather up GUI element references
 			local name = frame['hub-milestone-tracking-name']
 			local inner = frame['hub-milestone-tracking-content']
@@ -516,6 +512,15 @@ local function onBuilt(event)
 		buildBiomassBurner1(entity)
 		buildBiomassBurner2(entity)
 		buildFreighter(entity)
+
+		-- if this is the first time building, then complete the "build the HUB" tech
+		local force = entity.force
+		if not force.technologies['the-hub'].researched then
+			force.research_queue = {"the-hub"}
+			force.technologies['the-hub'].researched = true
+			force.play_sound{path="utility/research_completed"}
+		end
+
 		-- remove base item
 		entity.destroy()
 	end
