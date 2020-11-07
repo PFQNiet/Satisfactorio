@@ -5,7 +5,7 @@ local pump = table.deepcopy(data.raw.pump[basename])
 pump.name = name
 pump.icon = "__Satisfactorio__/graphics/icons/"..name..".png"
 pump.pumping_speed = 600/60/60 -- 600/minute
-pump.energy_usage = "12MW"
+pump.energy_usage = "8MW"
 local box = pump.fluid_box
 for _,pic in pairs(pump.animations) do
 	pic.tint = {0.2,0.8,1}
@@ -21,7 +21,11 @@ pumpitem.icon = pump.icon
 pumpitem.place_result = name
 pumpitem.order = pumpitem.order.."-2"
 
-local ingredients = {{"motor",2},{"alclad-aluminium-sheet",4},{"plastic-bar",8}}
+local ingredients = {
+	{"motor",2},
+	{"encased-industrial-beam",4},
+	{"plastic-bar",8}
+}
 local pumprecipe = {
 	name = name,
 	type = "recipe",

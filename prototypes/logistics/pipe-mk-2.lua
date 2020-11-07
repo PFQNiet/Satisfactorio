@@ -23,7 +23,7 @@ pipeitem.place_result = name
 pipeitem.order = pipeitem.order.."-2"
 
 local ingredients = {
-	{"alclad-aluminium-sheet",1},
+	{"copper-plate",2},
 	{"plastic-bar",1}
 }
 local piperecipe = {

@@ -347,6 +347,7 @@ addTech("hub-tier5-oil-processing", "hub/factory", "hub-progressing", "hub-tier5
 }, {
 	{type="unlock-recipe",recipe="oil-extractor"},
 	{type="unlock-recipe",recipe="refinery"},
+	{type="unlock-recipe",recipe="valve"},
 	{type="unlock-recipe",recipe="plastic-bar"},
 	{type="unlock-recipe",recipe="residual-plastic"},
 	{type="unlock-recipe",recipe="rubber"},
@@ -405,7 +406,6 @@ addTech("hub-tier6-expanded-power-infrastructure", "hub/logistics", "hub-progres
 	{"rubber",400}
 }, {
 	{type="unlock-recipe",recipe="fuel-generator"},
-	{type="unlock-recipe",recipe="valve"},
 	{type="unlock-recipe",recipe="turbo-transport-belt"},
 	{type="unlock-recipe",recipe="turbo-underground-belt"},
 	{type="unlock-recipe",recipe="scanner-caterium-ore"}
@@ -436,6 +436,16 @@ addTech("hub-tier6-monorail-train-technology", "hub/vehicle", "hub-progressing",
 	{type="unlock-recipe",recipe="cargo-wagon"},
 	{type="unlock-recipe",recipe="fluid-wagon"}
 })
+addTech("hub-tier6-pipeline-engineering-mk2", "hub/logistics", "hub-progressing", "hub-tier6", "a-6-4", 600, {"space-elevator-phase2"}, {
+	{"copper-plate",1000},
+	{"plastic-bar",400},
+	{"rubber",400},
+	{"heavy-modular-frame",50}
+}, {
+	{type="unlock-recipe",recipe="pipeline-mk-2"},
+	{type="unlock-recipe",recipe="pipeline-junction-cross-mk-2"},
+	{type="unlock-recipe",recipe="pipeline-pump-mk-2"}
+})
 
 addTech("hub-tier7-bauxite-refinement", "hub/factory", "hub-progressing", "hub-tier7", "a-7-1", 900, {"space-elevator-phase3"}, {
 	{"motor",200},
@@ -448,9 +458,6 @@ addTech("hub-tier7-bauxite-refinement", "hub/factory", "hub-progressing", "hub-t
 	{type="unlock-recipe",recipe="aluminium-scrap"},
 	{type="unlock-recipe",recipe="aluminium-ingot"},
 	{type="unlock-recipe",recipe="alclad-aluminium-sheet"},
-	{type="unlock-recipe",recipe="pipeline-mk-2"},
-	{type="unlock-recipe",recipe="pipeline-junction-cross-mk-2"},
-	{type="unlock-recipe",recipe="pipeline-pump-mk-2"},
 	{type="unlock-recipe",recipe="scanner-bauxite"},
 	{type="unlock-recipe",recipe="scanner-raw-quartz"}
 })

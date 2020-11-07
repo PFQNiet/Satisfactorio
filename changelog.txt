@@ -23,6 +23,11 @@ Date: 2020.11.06
     - Valve was not unlocked by the technology that was supposed to unlock it.
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.2
-Date: 2020.11.??
+Date: 2020.11.07
+  Balancing:
+    - Valve is now unlocked in Tier 5, Oil Processing.
+    - Pipe/Pump Mk.2 are now their own Milestone in Tier 6
+    - Cost of Pipe/Pump Mk.2 have been adjusted accordingly.
+    - Pump Mk.2 power consumption reduced from 12MW to 8MW
   Combat Balancing:
     - Enemies that chase the player will disengage if you run far enough.
