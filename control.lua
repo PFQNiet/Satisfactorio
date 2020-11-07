@@ -1,6 +1,10 @@
 if script.active_mods.debugadapter then require("profiler") end
 local handler = require("event_handler")
 
+-- Add deepcopy for migrations
+local util = require('util')
+table.deepcopy = util.table.deepcopy
+
 handler.add_lib(require("scripts.freeplay"))
 handler.add_lib(require("scripts.indestructible"))
 handler.add_libraries(require("scripts.creatures"))
