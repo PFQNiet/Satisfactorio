@@ -9,7 +9,7 @@ local function onTick(event)
         local players = game.players
         for pidx, _ in pairs(health) do
             local character = players[pidx].character
-            if not (character.in_combat) then
+            if not character.in_combat then
                 players[pidx].character.health = players[pidx].character.health + healing_per_tick
             end
 
@@ -27,7 +27,7 @@ local function onDamaged(event)
 
     local health = global['character-health']
     if not health then 
-        global['character-health'] = {} 
+        global['character-health'] = {}
         health = global['character-health']
     end
     if not health[entity.player.index] then health[entity.player.index] = 1 end
