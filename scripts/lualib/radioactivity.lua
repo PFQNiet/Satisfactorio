@@ -135,7 +135,8 @@ local function addRadiationForTransportBelt(entity)
 end
 local function addRadiationForUnit(entity)
 	-- tamed Lizard Doggos may sometimes find Nuclear Waste, which should be accounted for
-	local stack = global['lizard-doggos'] and global['lizard-doggos'][entity.unit_number] and global['lizard-doggos'][entity.unit_number].helditem
+	local doggos = global.small_biter.lizard_doggos
+	local stack = doggos[entity.unit_number] and doggos[entity.unit_number].helditem
 	return stack and addRadiationForItemStack{
 		valid = true,
 		valid_for_read = true,
