@@ -69,6 +69,8 @@ local function onBuilt(event)
 	if not entity or not entity.valid then return end
 	if entity.name == mam then
 		entity.active = false
+		-- also build the Omnilab (which will check if this is the first time the MAM is being placed)
+		omnilab.setupOmnilab(entity.force)
 	end
 end
 

@@ -2,7 +2,7 @@
 local lab = "omnilab"
 
 local function setupOmnilab(force)
-	-- build a hidden Lab that secretly receives all of the HUB, Space Elevator and MAM upgrade items
+	-- build a hidden Lab that secretly receives all of MAM upgrade items
 	-- also sets the base "HUB research" to completed
 	if not global['omnilab'] then global['omnilab'] = {} end
 	if global['omnilab'][force.index] then return end
@@ -16,9 +16,6 @@ local function setupOmnilab(force)
 	omnilab.minable = false
 	omnilab.destructible = false
 	global[lab][force.index] = omnilab
-	force.research_queue = {"the-hub"}
-	force.technologies['the-hub'].researched = true
-	force.play_sound{path="utility/research_completed"}
 	return omnilab
 end
 local function getOmnilab(force)
