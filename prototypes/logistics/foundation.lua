@@ -114,6 +114,7 @@ data:extend({
 		type = "custom-input",
 		name = "deconstruct-foundation",
 		key_sequence = "ALT + F",
+		order = "d",
 		consuming = "game-only",
 		action = "create-blueprint-item",
 		-- action = "spawn-item", -- 1.1.0

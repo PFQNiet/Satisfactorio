@@ -183,6 +183,7 @@ data:extend({
 		type = "custom-input",
 		name = "recipe-browser",
 		key_sequence = "X",
+		order = "a",
 		consuming = "game-only",
 		action = "lua"
 	},
