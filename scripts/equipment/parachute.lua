@@ -106,8 +106,9 @@ local function onVehicle(event)
 end
 
 local function onTick(event)
-	if not global['parachute-flight'] then return end
-	for pid,struct in pairs(global['parachute-flight']) do
+	local flight = global['parachute-flight']
+	if not flight then return end
+	for pid,struct in pairs(flight) do
 		struct.time = struct.time+1
 
 		local altitude = 2*math.sin(struct.time/60*math.pi)
@@ -122,7 +123,7 @@ local function onTick(event)
 		rendering.set_y_scale(struct.shadow, 1-altitude/40)
 
 		if struct.time >= 60 then
-			global['parachute-flight'][struct.player.index] = nil
+			flight[struct.player.index] = nil
 			struct.car.destroy()
 			struct.player.teleport(struct.position)
 			local character = struct.player.character

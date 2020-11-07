@@ -80,9 +80,11 @@ local function onVehicle(event)
 			else
 				-- initiate YEETage
 				if not global['jump-pad-launch'] then global['jump-pad-launch'] = {} end
+				local launch = global['jump-pad-launch']
 				if not global['jump-pad-rebounce'] then global['jump-pad-rebounce'] = {} end
-				if not global['jump-pad-rebounce'][player.index] then global['jump-pad-rebounce'][player.index] = {} end
-				global['jump-pad-rebounce'][player.index][enter.unit_number] = true
+				local rebounce = global['jump-pad-rebounce']
+				if not rebounce[player.index] then rebounce[player.index] = {} end
+				rebounce[player.index][enter.unit_number] = true
 				local car2 = enter.surface.create_entity{
 					name = flying,
 					force = enter.force,
@@ -95,7 +97,7 @@ local function onVehicle(event)
 					surface = enter.surface,
 					target = car2
 				}
-				global['jump-pad-launch'][player.index] = {
+				rebounce[player.index] = {
 					player = player,
 					start = enter.position,
 					time = 0,
@@ -119,8 +121,9 @@ local function onVehicle(event)
 	end
 end
 local function onTick(event)
-	if not global['jump-pad-launch'] then return end
-	for pid,data in pairs(global['jump-pad-launch']) do
+	local launch = global['jump-pad-launch']
+	if not launch then return end
+	for pid,data in pairs(launch) do
 		local player = game.players[pid]
 		data.time = data.time + 1
 		local position = data.time / 120
@@ -137,7 +140,7 @@ local function onTick(event)
 		if data.time == 120 then
 			-- landing! check for collision and bump accordingly - should wind up close by at worst
 			local character = data.player.character
-			global['jump-pad-launch'][pid] = nil
+			launch[pid] = nil
 			car.destroy()
 			if character then
 				-- if we landed on water, just die XD
@@ -158,14 +161,15 @@ local function onTick(event)
 					character.teleport(surface.find_non_colliding_position("character",{x,y},0,0.05))
 					-- if we landed on another jump pad, re-bounce
 					local rebounce = surface.find_entity(launcher, character.position)
-					if rebounce and rebounce.energy > 0 and not global['jump-pad-rebounce'][data.player.index][rebounce.unit_number] then
+					local pad_rebounce = global['jump-pad-rebounce']
+					if rebounce and rebounce.energy > 0 and not pad_rebounce[data.player.index][rebounce.unit_number] then
 						local car = surface.find_entity(vehicle, rebounce.position)
 						if car then
-							global['jump-pad-rebounce'][data.player.index][rebounce.unit_number] = true
+							pad_rebounce[data.player.index][rebounce.unit_number] = true
 							car.set_driver(data.player)
 						end
 					else
-						global['jump-pad-rebounce'][data.player.index] = nil
+						rebounce[data.player.index] = nil
 						-- if we landed on jelly then we're good, otherwise take some fall damage (that'll just regen anyway so whatever lol XD)
 						local jelly = surface.find_entity(landing, character.position)
 						if not jelly or jelly.energy == 0 then
@@ -182,8 +186,9 @@ local function onInteract(event)
 	local player = game.players[event.player_index]
 	if player.selected and player.selected.name == launcher then
 		if not global['jump-pad-visualisation'] then global['jump-pad-visualisation'] = {} end
-		if global['jump-pad-visualisation'][player.index] then
-			for _,part in pairs(global['jump-pad-visualisation'][player.index]) do
+		local visualisation = global['jump-pad-visualisation']
+		if visualisation[player.index] then
+			for _,part in pairs(visualisation[player.index]) do
 				rendering.destroy(part)
 			end
 		end
@@ -256,14 +261,15 @@ local function onInteract(event)
 			players = {player}
 		})
 		
-		global['jump-pad-visualisation'][player.index] = tris
+		visualisation[player.index] = tris
 	end
 end
 local function onRangeDown(event)
 	local player = game.players[event.player_index]
 	if player.selected and player.selected.name == launcher then
 		local entity = player.selected
-		global['jump-pads'][entity.unit_number] = math.max(4,global['jump-pads'][entity.unit_number]-1)
+		local pads = global['jump-pads']
+		pads[entity.unit_number] = math.max(4,pads[entity.unit_number]-1)
 		onInteract(event)
 	end
 end
@@ -271,7 +277,8 @@ local function onRangeUp(event)
 	local player = game.players[event.player_index]
 	if player.selected and player.selected.name == launcher then
 		local entity = player.selected
-		global['jump-pads'][entity.unit_number] = math.min(40,global['jump-pads'][entity.unit_number]+1)
+		local pads = global['jump-pads']
+		pads[entity.unit_number] = math.min(40,pads[entity.unit_number]+1)
 		onInteract(event)
 	end
 end

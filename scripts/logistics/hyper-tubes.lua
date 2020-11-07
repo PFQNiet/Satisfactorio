@@ -47,7 +47,8 @@ local function onBuilt(event)
 			local player = entity.last_user
 			player.insert{name=entity.name,count=1}
 			if not global['player-build-error-debounce'] then global['player-build-error-debounce'] = {} end
-			if not global['player-build-error-debounce'][player.force.index] or global['player-build-error-debounce'][player.force.index] < event.tick then
+			local debounce = global['player-build-error-debounce']
+			if not debounce[player.force.index] or debounce[player.force.index] < event.tick then
 				player.surface.create_entity{
 					name = "flying-text",
 					position = entity.position,
@@ -57,7 +58,7 @@ local function onBuilt(event)
 				player.play_sound{
 					path = "utility/cannot_build"
 				}
-				global['player-build-error-debounce'][player.force.index] = event.tick + 60
+				debounce[player.force.index] = event.tick + 60
 			end
 			entity.destroy()
 			return
@@ -114,6 +115,8 @@ local function onVehicle(event)
 	local player = game.players[event.player_index]
 	local entity = event.entity
 	if entity and entity.valid and entity.name == car then
+		if not global['hyper-tube-travel'] then global['hyper-tube-travel'] = {} end
+		local travel = global['hyper-tube-travel']
 		if player.driving then
 			local enter = entity.surface.find_entity(entrance,entity.position)
 			if entity.get_driver() ~= player.character or enter.energy == 0 then
@@ -127,8 +130,7 @@ local function onVehicle(event)
 			else
 				-- initiate transport
 				local character = player.character
-				if not global['hyper-tube-travel'] then global['hyper-tube-travel'] = {} end
-				global['hyper-tube-travel'][player.index] = {
+				travel[player.index] = {
 					car = entity,
 					character = character,
 					entity = enter,
@@ -147,22 +149,23 @@ local function onVehicle(event)
 					raise_built = true
 				}
 			end
-		elseif global['hyper-tube-travel'] and global['hyper-tube-travel'][player.index] then
+		elseif travel and travel[player.index] then
 			-- player tried to get out, force them back in!
-			global['hyper-tube-travel'][player.index].car.set_driver(player.character)
+			travel[player.index].car.set_driver(player.character)
 		end
 	end
 end
 local SPEED = 24/60 -- tiles per tick, so 0.25 = 15 tiles per second
 local function onTick(event)
-	if not global['hyper-tube-travel'] then return end
-	for pid,data in pairs(global['hyper-tube-travel']) do
+	local travel = global['hyper-tube-travel']
+	if not travel then return end
+	for pid,data in pairs(travel) do
 		local player = game.players[pid]
 		data.offset = data.offset + SPEED
 		if not data.entity.valid then
 			-- entity was mined while we were in it, abort!
 			data.car.destroy() -- yeets the player
-			global['hyper-tube-travel'][pid] = nil
+			travel[pid] = nil
 		else
 			if data.offset - SPEED < 0.5 and data.offset >= 0.5 then
 				-- crossed the mid-point, so check for next direction
@@ -235,7 +238,7 @@ local function onTick(event)
 					}
 					data.car.destroy() -- player gets ejected
 					player.character.teleport(player.character.surface.find_non_colliding_position("wooden-chest",exitpos,0,1,true) or exitpos)
-					global['hyper-tube-travel'][pid] = nil
+					travel[pid] = nil
 				end
 			end
 		end
