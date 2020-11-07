@@ -5,6 +5,10 @@ char.crafting_categories = {"building","unbuilding"}
 char.mining_categories = {"solid"}
 char.mining_speed = 1
 
+-- character healing is handled by script and capped at 30 HP
+char.healing_per_tick = 0
+char.ticks_to_stay_in_combat = 50*60
+
 -- character can't damage targets without a weapon, but can at least "punch" them away and stun them
 char.tool_attack_distance = 3
 char.tool_attack_result = {

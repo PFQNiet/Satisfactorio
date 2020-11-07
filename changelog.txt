@@ -31,3 +31,15 @@ Date: 2020.11.07
     - Pump Mk.2 power consumption reduced from 12MW to 8MW
   Combat Balancing:
     - Enemies that chase the player will disengage if you run far enough.
+---------------------------------------------------------------------------------------------------
+Version: 0.1.3
+Date: 2020.11.07
+  Graphics:
+    - Ore nodes are now highlighted when a mining drill is in hand
+  Control:
+    - Localised "jump" control
+    - Added sort order to custom inputs
+  Combat Balancing:
+    - Player now only regenerates to 30HP
+    - Time before auto-heal kicks in increased to match Satisfactory (50s)
+    - Player now respawns at 30HP after dying
