@@ -43,13 +43,15 @@ local function onDroppedItem(event)
 	end
 end
 local function onEntityDestroyed(event)
-	if global['dropped-bait'] and global['dropped-bait'][event.registration_number] then
-		global['dropped-bait'][event.registration_number] = nil
+	local bait = global['dropped-bait']
+	if bait and bait[event.registration_number] then
+		bait[event.registration_number] = nil
 	end
 end
 local function onEntityDied(event)
 	if event.entity.valid and event.entity.name == doggo then
-		local item = global['lizard-doggos'][event.entity.unit_number] and global['lizard-doggos'][event.entity.unit_number].helditem
+		local doggos = global['lizard-doggos']
+		local item = doggos [event.entity.unit_number] and doggos[event.entity.unit_number].helditem
 		if item then
 			event.entity.surface.spill_item_stack(
 				event.entity.position,
@@ -57,7 +59,7 @@ local function onEntityDied(event)
 				true, nil, false
 			)
 		end
-		global['lizard-doggos'][event.entity.unit_number] = nil
+		doggos[event.entity.unit_number] = nil
 	end
 end
 local function onCommandCompleted(event)

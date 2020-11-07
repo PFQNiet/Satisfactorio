@@ -24,18 +24,19 @@ local function onDamaged(event)
 	if not (entity and entity.valid and entity.type == "character") then return end
 	if event.damage_type.name ~= "poison" then return end
 	if not global['poison-damage'] then global['poison-damage'] = {} end
-	if not global['poison-damage'][entity.player.index] then global['poison-damage'][entity.player.index] = -100 end
+	local posion_damage = global['poison-damage']
+	if not posion_damage[entity.player.index] then posion_damage[entity.player.index] = -100 end
 	local mask = entity.get_inventory(defines.inventory.character_armor)[1]
 	if not mask.valid_for_read or mask.name ~= "gas-mask" then
 		-- no mask so damage is taken in full, but only if it wasn't too recent
-		if global['poison-damage'][entity.player.index] + 12 > event.tick then
+		if posion_damage[entity.player.index] + 12 > event.tick then
 			-- heal the player for the damage taken
 			entity.health = entity.health + event.final_damage_amount
 		else
-			global['poison-damage'][entity.player.index] = event.tick
+			posion_damage[entity.player.index] = event.tick
 		end
 	else
-		if global['poison-damage'][entity.player.index] + 12 > event.tick then
+		if posion_damage[entity.player.index] + 12 > event.tick then
 			-- too recent, no effect
 		else
 			-- mask equipped, check for and consume filters if available
@@ -50,7 +51,7 @@ local function onDamaged(event)
 				local max_durability = game.item_prototypes["gas-filter"].durability
 				equipment.energy = filter.valid_for_read and (filter.durability / max_durability * equipment.max_energy) or 0
 			end
-			global['poison-damage'][entity.player.index] = event.tick
+			posion_damage[entity.player.index] = event.tick
 		end
 	end
 end
