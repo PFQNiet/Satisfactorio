@@ -51,20 +51,16 @@ local function onChunkGenerated(event)
 	global['rad-chunks-count'] = count+1
 end
 local function getRadiationForChunk(surface, cx, cy)
-	if not global['rad-chunks'] then return 0 end
-	if not global['rad-chunks'][surface.index] then return 0 end
-	if not global['rad-chunks'][surface.index][cy] then return 0 end
-	if not global['rad-chunks'][surface.index][cy][cx] then return 0 end
-	return global['rad-chunks'][surface.index][cy][cx].radioactivity
+	local obj = global['rad-chunks']
+	if not obj then return 0 end
+	obj = obj[surface.index]
+	if not obj then return 0 end
+	obj = obj[cy]
+	if not obj then return 0 end
+	obj = obj[cx]
+	if not obj then return 0 end
+	return obj.radioactivity
 end
-
-local radioactive_items = {
-	["uranium-ore"] = 15,
-	["uranium-pellet"] = 7.5,
-	["uranium-fuel-cell"] = 7.5,
-	["nuclear-fuel"] = 60,
-	["nuclear-waste"] = 20
-}
 
 local function addRadiationForResource(entity)
 	-- the only radioactive resource is uranium-ore
@@ -77,18 +73,27 @@ end
 local function addRadiationForInventory(inventory)
 	if not (inventory and inventory.valid) then return 0 end
 	-- once an inventory has been identified, check it for radioactive items
-	local rad = 0
 	local contents = inventory.get_contents()
-	for name,strength in pairs(radioactive_items) do
-		rad = rad + strength * (contents[name] or 0)
-	end
-	return rad
+	return (contents['uranium-ore'] or 0) * 15
+		+ (contents['uranium-pellet'] or 0) * 7.5
+		+ (contents['uranium-fuel-cell'] or 0) * 7.5
+		+ (contents['nuclear-fuel'] or 0) * 60
+		+ (contents['nuclear-waste'] or 0) * 20
 end
 local function addRadiationForItemStack(stack)
 	if not (stack and stack.valid and stack.valid_for_read) then return 0 end
+	local radioactive_items = {
+		["uranium-ore"] = 15,
+		["uranium-pellet"] = 7.5,
+		["uranium-fuel-cell"] = 7.5,
+		["nuclear-fuel"] = 60,
+		["nuclear-waste"] = 20
+	}
+	
 	if not radioactive_items[stack.name] then return 0 end
 	return radioactive_items[stack.name] * stack.count
 end
+
 local function addRadiationForContainer(entity)
 	return addRadiationForInventory(entity.get_inventory(defines.inventory.chest))
 end
