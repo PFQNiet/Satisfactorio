@@ -4,6 +4,7 @@ char.max_health = 100
 char.crafting_categories = {"building","unbuilding"}
 char.mining_categories = {"solid"}
 char.mining_speed = 1
+char.healing_per_tick = 0
 
 -- character can't damage targets without a weapon, but can at least "punch" them away and stun them
 char.tool_attack_distance = 3
