@@ -174,112 +174,125 @@ end
 
 local function onInteract(event)
 	local player = game.players[event.player_index]
-	if player.selected and player.selected.valid and player.selected.name == doggo and player.can_reach_entity(player.selected) then
-		local struct = global['lizard-doggos'] and global['lizard-doggos'][player.selected.unit_number]
-		if struct and struct.owner == player then
-			local gui = player.gui.screen['lizard-doggo']
-			if not gui then
-				gui = player.gui.screen.add{
-					type = "frame",
-					name = "lizard-doggo",
-					direction = "vertical",
-					style = "inner_frame_in_outer_frame"
-				}
-				local title_flow = gui.add{type = "flow", name = "title_flow"}
-				local title = title_flow.add{type = "label", caption = {"entity-name.small-biter"}, style = "frame_title"}
-				title.drag_target = gui
-				local pusher = title_flow.add{type = "empty-widget", style = "draggable_space_header"}
-				pusher.style.height = 24
-				pusher.style.horizontally_stretchable = true
-				pusher.drag_target = gui
-				title_flow.add{type = "sprite-button", style = "frame_action_button", sprite = "utility/close_white", name = "lizard-doggo-close"}
-		
-				local content = gui.add{
-					type = "frame",
-					style = "inside_shallow_frame_with_padding",
-					direction = "vertical",
-					name = "content"
-				}
-				local columns = content.add{
-					type = "flow",
-					direction = "horizontal",
-					name = "table"
-				}
-				columns.style.horizontal_spacing = 12
-				local col1 = columns.add{
-					type = "frame",
-					direction = "vertical",
-					name = "left",
-					style = "deep_frame_in_shallow_frame"
-				}
-				local preview = col1.add{
-					type = "entity-preview",
-					name = "preview",
-					style = "entity_button_base"
-				}
-				local col2 = columns.add{
-					type = "flow",
-					direction = "vertical",
-					name = "right"
-				}
-				col2.add{
-					type = "label",
-					style = "heading_2_label",
-					caption = {"gui.lizard-doggo-loot"}
-				}
-				local loot = col2.add{
-					type = "flow",
-					direction = "horizontal",
-					name = "loot"
-				}
-				loot.style.vertical_align = "center"
-				loot.add{
-					type = "sprite-button",
-					style = "slot_button_in_shallow_frame",
-					name = "view-lizard-doggo-loot",
-					mouse_button_filter = {"left"}
-				}
-				loot.add{
-					type = "button",
-					name = "take-lizard-doggo-loot",
-					caption = {"gui.lizard-doggo-take"}
-				}
-				col2.add{type="line",direction="horizontal"}
-				col2.add{
-					type = "button",
-					name = "stop-lizard-doggo",
-					caption = {"gui.lizard-doggo-stay"},
-					tooltip = {"gui.lizard-doggo-stay-description"}
-				}
-			end
+	if player.selected and player.selected.valid and player.selected.name == doggo then
+		if player.can_reach_entity(player.selected) then
+			local struct = global['lizard-doggos'] and global['lizard-doggos'][player.selected.unit_number]
+			if struct and struct.owner == player then
+				local gui = player.gui.screen['lizard-doggo']
+				if not gui then
+					gui = player.gui.screen.add{
+						type = "frame",
+						name = "lizard-doggo",
+						direction = "vertical",
+						style = "inner_frame_in_outer_frame"
+					}
+					local title_flow = gui.add{type = "flow", name = "title_flow"}
+					local title = title_flow.add{type = "label", caption = {"entity-name.small-biter"}, style = "frame_title"}
+					title.drag_target = gui
+					local pusher = title_flow.add{type = "empty-widget", style = "draggable_space_header"}
+					pusher.style.height = 24
+					pusher.style.horizontally_stretchable = true
+					pusher.drag_target = gui
+					title_flow.add{type = "sprite-button", style = "frame_action_button", sprite = "utility/close_white", name = "lizard-doggo-close"}
 			
-			-- roll for loot!
-			if not struct.helditem and struct.itemtimer < event.tick then
-				local rand = math.random()*100
-				for name,entry in pairs(loot) do
-					rand = rand - entry.probability
-					if rand < 0 then
-						struct.helditem = {
-							name = name,
-							count = math.random(entry.amount_min, entry.amount_max)
-						}
-						break
+					local content = gui.add{
+						type = "frame",
+						style = "inside_shallow_frame_with_padding",
+						direction = "vertical",
+						name = "content"
+					}
+					local columns = content.add{
+						type = "flow",
+						direction = "horizontal",
+						name = "table"
+					}
+					columns.style.horizontal_spacing = 12
+					local col1 = columns.add{
+						type = "frame",
+						direction = "vertical",
+						name = "left",
+						style = "deep_frame_in_shallow_frame"
+					}
+					local preview = col1.add{
+						type = "entity-preview",
+						name = "preview",
+						style = "entity_button_base"
+					}
+					local col2 = columns.add{
+						type = "flow",
+						direction = "vertical",
+						name = "right"
+					}
+					col2.add{
+						type = "label",
+						style = "heading_2_label",
+						caption = {"gui.lizard-doggo-loot"}
+					}
+					local loot = col2.add{
+						type = "flow",
+						direction = "horizontal",
+						name = "loot"
+					}
+					loot.style.vertical_align = "center"
+					loot.add{
+						type = "sprite-button",
+						style = "slot_button_in_shallow_frame",
+						name = "view-lizard-doggo-loot",
+						mouse_button_filter = {"left"}
+					}
+					loot.add{
+						type = "button",
+						name = "take-lizard-doggo-loot",
+						caption = {"gui.lizard-doggo-take"}
+					}
+					col2.add{type="line",direction="horizontal"}
+					col2.add{
+						type = "button",
+						name = "stop-lizard-doggo",
+						caption = {"gui.lizard-doggo-stay"},
+						tooltip = {"gui.lizard-doggo-stay-description"}
+					}
+				end
+				
+				-- roll for loot!
+				if not struct.helditem and struct.itemtimer < event.tick then
+					local rand = math.random()*100
+					for name,entry in pairs(loot) do
+						rand = rand - entry.probability
+						if rand < 0 then
+							struct.helditem = {
+								name = name,
+								count = math.random(entry.amount_min, entry.amount_max)
+							}
+							break
+						end
 					end
 				end
+
+				gui.content.table.left.preview.entity = struct.entity
+				local lootbtn = gui.content.table.right.loot['view-lizard-doggo-loot']
+				lootbtn.tooltip = struct.helditem and {"item-name."..struct.helditem.name} or ""
+				lootbtn.sprite = struct.helditem and "item/"..struct.helditem.name or nil
+				lootbtn.number = struct.helditem and struct.helditem.count or nil
+				gui.content.table.right.loot['take-lizard-doggo-loot'].enabled = struct.helditem and true or false
+
+				gui.visible = true
+				player.opened = gui
+				gui.force_auto_center()
+				if not global['lizard-doggo-gui'] then global['lizard-doggo-gui'] = {} end
+				global['lizard-doggo-gui'][player.index] = struct.entity.unit_number
 			end
-
-			gui.content.table.left.preview.entity = struct.entity
-			local lootbtn = gui.content.table.right.loot['view-lizard-doggo-loot']
-			lootbtn.tooltip = struct.helditem and {"item-name."..struct.helditem.name} or ""
-			lootbtn.sprite = struct.helditem and "item/"..struct.helditem.name or nil
-			lootbtn.number = struct.helditem and struct.helditem.count or nil
-			gui.content.table.right.loot['take-lizard-doggo-loot'].enabled = struct.helditem and true or false
-
-			gui.visible = true
-			player.opened = gui
-			gui.force_auto_center()
-			if not global['lizard-doggo-gui'] then global['lizard-doggo-gui'] = {} end
-			global['lizard-doggo-gui'][player.index] = struct.entity.unit_number
+		else
+			-- create flying text like when trying to mine normally
+			player.surface.create_entity{
+				name = "flying-text",
+				position = player.selected.position,
+				text = {"cant-reach"},
+				render_player_index = player.index
+			}
+			player.play_sound{
+				path = "utility/cannot_build"
+			}
 		end
 	end
 end

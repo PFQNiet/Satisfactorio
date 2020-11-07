@@ -18,7 +18,8 @@ data:extend(
 			mining_time = 1,
 			result = name
 		},
-		collision_box = {{ -2.1, -2.1}, {2.1, 2.1}},
+		highlight = true,
+		collision_box = {{ -1.6, -1.6}, {1.6, 1.6}},
 		selection_box = {{ -1.5, -1.5}, {1.5, 1.5}},
 		autoplace = nil,
 		stage_counts = {240,200,120,80,60,0,0,0},

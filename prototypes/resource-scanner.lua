@@ -23,6 +23,7 @@ data:extend({
 		type = "custom-input",
 		name = "resource-scanner",
 		key_sequence = "V",
+		order = "b",
 		consuming = "game-only",
 		action = "lua"
 	},

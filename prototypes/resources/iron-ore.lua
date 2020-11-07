@@ -16,7 +16,8 @@ ore.resource_patch_search_radius = 10
 ore.order = "a"
 -- if not ore.flags then ore.flags = {} end
 -- table.insert(ore.flags,"not-on-map")
-ore.collision_box = {{-2.1, -2.1}, {2.1, 2.1}}
+ore.highlight = true
+ore.collision_box = {{-1.6, -1.6}, {1.6, 1.6}}
 ore.selection_box = {{-1.5,-1.5},{1.5,1.5}}
 ore.stages.sheet.scale = 3
 ore.stages.sheet.hr_version.scale = 1.5

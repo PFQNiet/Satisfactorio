@@ -42,6 +42,7 @@ data:extend({
 		type = "custom-input",
 		name = "jump",
 		key_sequence = "J",
+		order = "c",
 		consuming = "game-only",
 		action = "lua"
 	}
