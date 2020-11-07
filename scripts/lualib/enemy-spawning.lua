@@ -10,6 +10,8 @@ local spawndata = {
 	[6] = {["behemoth-spitter"] = 1, ["big-spitter"] = 2}
 }
 
+local script_data = {}
+
 local function _guardSpawn(struct)
 	struct.entity.set_command{
 		type = defines.command.compound,
@@ -53,7 +55,6 @@ local function spawnGroup(surface,position,value,basedist)
 		value = 1
 	end
 
-	if not global['unit-tracking'] then global['unit-tracking'] = {} end
 	for name,count in pairs(spawndata[value]) do
 		count = count*(distance^(1/3)) * settings.frequency
 		if math.random()<count%1 then count = math.ceil(count) else count = math.floor(count) end
@@ -71,7 +72,7 @@ local function spawnGroup(surface,position,value,basedist)
 					spawn = position,
 					entity = entity
 				}
-				global['unit-tracking'][entity.unit_number] = struct
+				script_data[entity.unit_number] = struct
 				_guardSpawn(struct)
 			else
 				surface.create_entity{
@@ -115,20 +116,20 @@ local function spawnGroup(surface,position,value,basedist)
 	end
 end
 local function onCommandCompleted(event)
-	local struct = global['unit-tracking'] and global['unit-tracking'][event.unit_number]
+	local struct = script_data[event.unit_number]
 	if struct then
 		if struct.entity.valid then
 			_guardSpawn(struct)
 		else
 			-- died perhaps, clean up the struct
-			global['unit-tracking'][event.unit_number] = nil
+			script_data[event.unit_number] = nil
 		end
 	end
 end
 -- after attacking a player, check if we went too far from spawn and return there if so
 local function onDamaged(event)
 	if event.entity.type == "character" and event.cause and event.cause.valid and event.cause.type == "unit" then
-		local struct = global['unit-tracking'] and global['unit-tracking'][event.cause.unit_number]
+		local struct = script_data[event.cause.unit_number]
 		if struct then
 			local distance_from_home = math2d.position.distance(struct.entity.position, struct.spawn)
 			if distance_from_home > 50 then
@@ -138,13 +139,26 @@ local function onDamaged(event)
 	end
 end
 local function onEntityDied(event)
-	if event.entity.valid and event.entity.unit_number and global['unit-tracking'] and global['unit-tracking'][event.entity.unit_number] then
-		global['unit-tracking'][event.entity.unit_number] = nil
+	if event.entity.valid and event.entity.unit_number and script_data[event.entity.unit_number] then
+		script_data[event.entity.unit_number] = nil
 	end
 end
 
 return {
 	spawnGroup = spawnGroup,
+	on_init = function()
+		global.unit_tracking = global.unit_tracking or script_data
+	end,
+	on_load = function()
+		script_data = global.unit_tracking or script_data
+	end,
+	on_configuration_changed = function()
+		if global['unit-tracking'] then
+			global.unit_tracking = table.deepcopy(global['unit-tracking'])
+			script_data = global.unit_tracking
+			global['unit-tracking'] = nil
+		end
+	end,
 	lib = {
 		events = {
 			[defines.events.on_entity_died] = onEntityDied,
