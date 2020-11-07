@@ -176,9 +176,10 @@ local function onPaste(event)
 			end
 		end
 		local base = struct.base
+		local players = game.players
 		for pid,struct in pairs(global['gui-splitter']) do
 			if struct.base == base then
-				fullGuiUpdate(struct, game.players[pid].gui.screen['programmable-splitter'].columns)
+				fullGuiUpdate(struct, players[pid].gui.screen['programmable-splitter'].columns)
 			end
 		end
 	end
@@ -329,14 +330,15 @@ local function onGuiClick(event)
 	end
 end
 local function onGuiSelected(event)
-	local player = game.players[event.player_index]
+	local players = game.players
 	if event.element.valid and (
 		event.element.name == "programmable-splitter-left-selection"
 		or event.element.name == "programmable-splitter-forward-selection"
 		or event.element.name == "programmable-splitter-right-selection"
- 	) then
-		local struct = global['gui-splitter'][event.player_index]
-		updateSplitter(struct, game.players[event.player_index].gui.screen['programmable-splitter'].columns)
+	 ) then
+		local gui_splitter = global['gui-splitter']
+		local struct = gui_splitter[event.player_index]
+		updateSplitter(struct, players[event.player_index].gui.screen['programmable-splitter'].columns)
 
 		local index = event.element.selected_index
 		local itemsel = event.element.parent.children[2]
@@ -349,9 +351,9 @@ local function onGuiSelected(event)
 			["programmable-splitter-right-selection"] = "right"
 		})[event.element.name]
 		local filterid = event.element.parent.name
-		for pid,struct in pairs(global['gui-splitter']) do
+		for pid,struct in pairs(gui_splitter) do
 			if event.player_index ~= pid and struct.base == base then
-				local flow = game.players[pid].gui.screen['programmable-splitter'].columns["filter-"..dir].filters[filterid]
+				local flow = players[pid].gui.screen['programmable-splitter'].columns["filter-"..dir].filters[filterid]
 				flow.children[1].selected_index = index
 				flow.children[2].visible = index == 5
 			end
@@ -364,8 +366,10 @@ local function onGuiElemChanged(event)
 		or event.element.name == "programmable-splitter-forward-item"
 		or event.element.name == "programmable-splitter-right-item"
 	) then
-		local struct = global['gui-splitter'][event.player_index]
-		updateSplitter(struct, game.players[event.player_index].gui.screen['programmable-splitter'].columns)
+		local players = game.players
+		local gui_splitter = global['gui-splitter']
+		local struct = gui_splitter[event.player_index]
+		updateSplitter(struct, players[event.player_index].gui.screen['programmable-splitter'].columns)
 		-- mirror this change to other players with this entity open
 		local base = struct.base
 		local dir = ({
@@ -374,9 +378,9 @@ local function onGuiElemChanged(event)
 			["programmable-splitter-right-item"] = "right"
 		})[event.element.name]
 		local filterid = event.element.parent.name
-		for pid,struct in pairs(global['gui-splitter']) do
+		for pid,struct in pairs(gui_splitter) do
 			if event.player_index ~= pid and struct.base == base then
-				local flow = game.players[pid].gui.screen['programmable-splitter'].columns["filter-"..dir].filters[filterid]
+				local flow = players[pid].gui.screen['programmable-splitter'].columns["filter-"..dir].filters[filterid]
 				flow.children[2].elem_value = event.element.elem_value
 			end
 		end
