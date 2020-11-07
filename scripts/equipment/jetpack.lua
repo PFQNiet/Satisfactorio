@@ -6,6 +6,8 @@ local vehicle = item.."-flying"
 local shadow = item.."-flying-shadow"
 local fuel = "packaged-fuel"
 
+local script_data = {}
+
 local function onJump(event)
 	local player = game.players[event.player_index]
 	local armour = player.get_inventory(defines.inventory.character_armor)[1]
@@ -44,7 +46,6 @@ local function onVehicle(event)
 				}
 			else
 				inventory.remove{name=fuel,count=2}
-				if not global['jetpack-flight'] then global['jetpack-flight'] = {} end
 				local struct = {
 					player = player,
 					car = entity,
@@ -57,14 +58,14 @@ local function onVehicle(event)
 					position = {entity.position.x,entity.position.y},
 					momentum = {0,0}
 				}
-				global['jetpack-flight'][player.index] = struct
+				script_data[player.index] = struct
 				local shield = entity.grid.put{name = "jetpack-equipment"}
 				shield.shield = shield.max_shield
 			end
 		end
 	else
 		-- check if player is being yeeted and put them back in if so
-		local yeet = global['jetpack-flight'] and global['jetpack-flight'][player.index]
+		local yeet = script_data[player.index]
 		if yeet then
 			yeet.car.set_driver(player)
 		end
@@ -72,9 +73,8 @@ local function onVehicle(event)
 end
 
 local function onTick(event)
-	local flight = global['jetpack-flight']
-	if not flight then return end
-	for pid,struct in pairs(flight) do
+	if #script_data == 0 then return end
+	for pid,struct in pairs(script_data) do
 		struct.time = struct.time+1
 		local shield = struct.car.grid.get{0,0}
 		shield.shield = math.max(0,shield.max_shield-struct.time)
@@ -115,7 +115,7 @@ local function onTick(event)
 		rendering.set_y_scale(struct.shadow, 1-altitude/40)
 
 		if struct.time >= 420 then
-			flight[struct.player.index] = nil
+			script_data[struct.player.index] = nil
 			struct.car.destroy()
 			struct.player.teleport(struct.position)
 			local character = struct.player.character
@@ -142,6 +142,19 @@ local function onTick(event)
 end
 
 return {
+	on_init = function()
+		global.jetpack_flight = global.jetpack_flight or script_data
+	end,
+	on_load = function()
+		script_data = global.jetpack_flight or script_data
+	end,
+	on_configuration_changed = function()
+		if global['jetpack-flight'] then
+			global.posion_damage = global['jetpack-flight']
+			script_data = global.jetpack_flight
+			global['jetpack-flight'] = nil
+		end
+	end,
 	events = {
 		[defines.events.on_player_driving_changed_state] = onVehicle,
 		[defines.events.on_tick] = onTick,

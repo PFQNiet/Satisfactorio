@@ -8,6 +8,8 @@ local item = "parachute"
 local vehicle = item.."-flying"
 local shadow = item.."-flying-shadow"
 
+local script_data = {}
+
 local function onJump(event)
 	local player = game.players[event.player_index]
 	local armour = player.get_inventory(defines.inventory.character_armor)[1]
@@ -80,7 +82,6 @@ local function onVehicle(event)
 				}
 			else
 				inventory.remove{name=item,count=1}
-				if not global['parachute-flight'] then global['parachute-flight'] = {} end
 				local struct = {
 					player = player,
 					car = entity,
@@ -93,12 +94,12 @@ local function onVehicle(event)
 					position = entity.position,
 					direction = direction
 				}
-				global['parachute-flight'][player.index] = struct
+				script_data[player.index] = struct
 			end
 		end
 	else
 		-- check if player is being yeeted and put them back in if so
-		local yeet = global['parachute-flight'] and global['parachute-flight'][player.index]
+		local yeet = script_data[player.index]
 		if yeet then
 			yeet.car.set_driver(player)
 		end
@@ -106,9 +107,8 @@ local function onVehicle(event)
 end
 
 local function onTick(event)
-	local flight = global['parachute-flight']
-	if not flight then return end
-	for pid,struct in pairs(flight) do
+	if #script_data == 0 then return end
+	for pid,struct in pairs(script_data) do
 		struct.time = struct.time+1
 
 		local altitude = 2*math.sin(struct.time/60*math.pi)
@@ -138,6 +138,19 @@ local function onTick(event)
 end
 
 return {
+	on_init = function()
+		global.parachute_flight = global.parachute_flight or script_data
+	end,
+	on_load = function()
+		script_data = global.parachute_flight or script_data
+	end,
+	on_configuration_changed = function()
+		if global['parachute-flight'] then
+			global.posion_damage = global['parachute-flight']
+			script_data = global.parachute_flight
+			global['parachute-flight'] = nil
+		end
+	end,
 	events = {
 		[defines.events.on_player_driving_changed_state] = onVehicle,
 		[defines.events.on_tick] = onTick,
