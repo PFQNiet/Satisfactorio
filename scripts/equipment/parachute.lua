@@ -146,7 +146,7 @@ return {
 	end,
 	on_configuration_changed = function()
 		if global['parachute-flight'] then
-			global.posion_damage = table.deepcopy(global['parachute-flight'])
+			global.parachute_flight = table.deepcopy(global['parachute-flight'])
 			script_data = global.parachute_flight
 			global['parachute-flight'] = nil
 		end

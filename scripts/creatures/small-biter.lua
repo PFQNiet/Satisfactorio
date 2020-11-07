@@ -4,9 +4,9 @@
 -- Once tamed it will follow its owner and gains a GUI. The GUI sometimes gives a free item, and can also be used to give "follow" and "stay" commands
 -- If a tamed doggo gets too far from its owner it will go back to wandering but will be on the lookout for its owner to follow them again
 
--- uses global['lizard-doggos'] to track all of this, indexed by unit_number
--- uses global['dropped-bait'] to track dropped berries, as they sadly lack a "last_user"
--- uses global['lizard-doggo-gui'] to track which doggo a player has opened
+-- uses global.small_biter.lizard-doggos to track all of this, indexed by unit_number
+-- uses global.small_biter.dropped-bait to track dropped berries, as they sadly lack a "last_user"
+-- uses global.small_biter.lizard-doggo-gui to track which doggo a player has opened
 
 local loot = require("constants.doggo-loot")
 

@@ -1,6 +1,6 @@
 -- with jetpack equipped, player can press J to jump and fly for 6 seconds in any direction, consuming 2 Packaged Fuel from the inventory
 -- riding_state can be used to get player's directional inputs to apply thrust
--- uses global['jetpack-flight'] to track player > {fake car, shadow, flight time, momentum}
+-- uses global.jetpack_flight to track player > {fake car, shadow, flight time, momentum}
 local item = "jetpack"
 local vehicle = item.."-flying"
 local shadow = item.."-flying-shadow"
@@ -150,7 +150,7 @@ return {
 	end,
 	on_configuration_changed = function()
 		if global['jetpack-flight'] then
-			global.posion_damage = table.deepcopy(global['jetpack-flight'])
+			global.jetpack_flight = table.deepcopy(global['jetpack-flight'])
 			script_data = global.jetpack_flight
 			global['jetpack-flight'] = nil
 		end

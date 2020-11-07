@@ -1,7 +1,7 @@
 -- when damage is taken from poison gas, if the gas mask is equipped...
 -- - if there are gas filters in the player's inventory, then drain 1 durability from it
 -- - otherwise damage the player despite resistance
--- uses global['poison-damage'] to track player > last tick poison damage was taken, to prevent multiple clouds from stacking
+-- uses global.poison_damage to track player > last tick poison damage was taken, to prevent multiple clouds from stacking
 local script_data = {}
 
 local function onEquipBody(event)

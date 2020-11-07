@@ -1,14 +1,19 @@
 -- uses tick events from smart-splitter, just with a table of filters instead of just one (up to 32 per side)
--- uses global['smart-splitters'] to track structures {base, buffer, filters, {left1, left2}, {middle1, middle2}, {right1, right2}}
--- GUI uses global['gui-splitter'] to track player > opened programmable splitter
+-- uses global.splitters.splitters to track structures {base, buffer, filters, {left1, left2}, {middle1, middle2}, {right1, right2}}
+-- GUI uses global.splitters.gui to track player > opened programmable splitter
 local io = require("scripts.lualib.input-output")
 local getitems = require("scripts.lualib.get-items-from")
 
 local splitter = "programmable-splitter"
 local buffer = "programmable-splitter-box"
 
+local script_data = {
+	splitters = {},
+	gui = {}
+}
+
 local function findStruct(entity)
-	return global['smart-splitters'] and global['smart-splitters'][entity.unit_number]
+	return script_data.splitters[entity.unit_number]
 end
 local function signalIndex(side, index)
 	return ({left=0,forward=1,right=2})[side]*32+index
@@ -62,8 +67,7 @@ local function onBuilt(event)
 		struct.right = {inserter1, inserter2}
 
 		entity.rotatable = false
-		if not global['smart-splitters'] then global['smart-splitters'] = {} end
-		global['smart-splitters'][entity.unit_number] = struct
+		script_data.splitters[entity.unit_number] = struct
 	end
 end
 
@@ -76,7 +80,7 @@ local function onRemoved(event)
 			getitems.storage(box, event.buffer)
 			io.remove(entity, event)
 			box.destroy()
-			global['smart-splitters'][entity.unit_number] = nil
+			script_data.splitters[entity.unit_number] = nil
 		else
 			game.print("Could not find the buffer")
 		end
@@ -177,7 +181,7 @@ local function onPaste(event)
 		end
 		local base = struct.base
 		local players = game.players
-		for pid,struct in pairs(global['gui-splitter']) do
+		for pid,struct in pairs(script_data.gui) do
 			if struct.base == base then
 				fullGuiUpdate(struct, players[pid].gui.screen['programmable-splitter'].columns)
 			end
@@ -204,7 +208,7 @@ local function onGuiOpened(event)
 	if event.gui_type == defines.gui_type.entity and event.entity.name == splitter then
 		-- create the custom gui and open that instead
 		local gui = player.gui.screen['programmable-splitter']
-		local column
+		local columns
 		if not gui then
 			gui = player.gui.screen.add{
 				type = "frame",
@@ -278,8 +282,7 @@ local function onGuiOpened(event)
 
 		gui.visible = true
 		player.opened = gui
-		if not global['gui-splitter'] then global['gui-splitter'] = {} end
-		global['gui-splitter'][player.index] = struct
+		script_data.gui[player.index] = struct
 		gui.force_auto_center()
 	end
 end
@@ -287,7 +290,7 @@ local function _closeGui(player)
 	local gui = player.gui.screen['programmable-splitter']
 	if gui then gui.visible = false end
 	player.opened = nil
-	global['gui-splitter'][player.index] = nil
+	script_data.gui[player.index] = nil
 end
 local function onGuiClosed(event)
 	if event.element and event.element.valid and event.element.name == "programmable-splitter" then
@@ -305,7 +308,7 @@ local function onGuiClick(event)
 			or event.element.name == "programmable-splitter-forward-add"
 			or event.element.name == "programmable-splitter-right-add"
 	 	) then
-			local struct = global['gui-splitter'][event.player_index]
+			local struct = script_data.gui[event.player_index]
 			-- apply this change to other players with this entity open, including the current player
 			local base = struct.base
 			local dir = ({
@@ -313,14 +316,16 @@ local function onGuiClick(event)
 				["programmable-splitter-forward-add"] = "forward",
 				["programmable-splitter-right-add"] = "right"
 			})[event.element.name]
-			for pid,struct in pairs(global['gui-splitter']) do
+			local players = game.players
+			for pid,struct in pairs(script_data.gui) do
 				if struct.base == base then
-					local list = game.players[pid].gui.screen['programmable-splitter'].columns["filter-"..dir].filters
+					local player = players[pid]
+					local list = player.gui.screen['programmable-splitter'].columns["filter-"..dir].filters
 					local i = #list.children+1
 					if i > 32 then
 						break
 					elseif i == 32 then
-						game.players[pid].gui.screen['programmable-splitter'].columns["filter-"..dir].title[event.element.name].enabled = false
+						player.gui.screen['programmable-splitter'].columns["filter-"..dir].title[event.element.name].enabled = false
 					end
 					addFilterEntry(list, struct, dir, i)
 					if event.player_index == pid then list.scroll_to_bottom() end
@@ -330,13 +335,13 @@ local function onGuiClick(event)
 	end
 end
 local function onGuiSelected(event)
-	local players = game.players
 	if event.element.valid and (
 		event.element.name == "programmable-splitter-left-selection"
 		or event.element.name == "programmable-splitter-forward-selection"
 		or event.element.name == "programmable-splitter-right-selection"
 	 ) then
-		local gui_splitter = global['gui-splitter']
+		local players = game.players
+		local gui_splitter = script_data.gui
 		local struct = gui_splitter[event.player_index]
 		updateSplitter(struct, players[event.player_index].gui.screen['programmable-splitter'].columns)
 
@@ -367,7 +372,7 @@ local function onGuiElemChanged(event)
 		or event.element.name == "programmable-splitter-right-item"
 	) then
 		local players = game.players
-		local gui_splitter = global['gui-splitter']
+		local gui_splitter = script_data.gui
 		local struct = gui_splitter[event.player_index]
 		updateSplitter(struct, players[event.player_index].gui.screen['programmable-splitter'].columns)
 		-- mirror this change to other players with this entity open
@@ -388,6 +393,12 @@ local function onGuiElemChanged(event)
 end
 
 return {
+	on_init = function()
+		global.splitters = global.splitters or script_data
+	end,
+	on_load = function()
+		script_data = global.splitters or script_data
+	end,
 	events = {
 		[defines.events.on_gui_opened] = onGuiOpened,
 		[defines.events.on_gui_closed] = onGuiClosed,

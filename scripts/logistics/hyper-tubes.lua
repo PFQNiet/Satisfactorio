@@ -1,7 +1,7 @@
 -- hypertube travel is initiated by entering the pseudo-vehicle
 -- this auto-drives the car along the path of the hyper tube until it reaches an exit, ie. an entity with only one connection
--- uses global['hyper-tube-travel'] to track player -> movement data
--- uses global['player-build-error-debounce'] to track force -> last error tick to de-duplicate placement errors
+-- uses global.hyper_tube to track player -> movement data
+-- uses global.player_build_error_debounce to track force -> last error tick to de-duplicate placement errors
 
 local tube = "hyper-tube"
 local underground = "underground-hyper-tube"

@@ -1,8 +1,8 @@
 -- jump pad launch is initiated by entering the pseudo-vehicle
 -- uses global.jump_pads.pads to record the range setting for a given jump pad (max = 40, default = max)
 -- uses global.jump_pads.visualisation to track player -> arrow
--- uses global.jump-pad.launch to track player -> movement data
--- uses global.jump-pad.rebounce to track visited jump pads in a chain, to detect a loop and break out of it
+-- uses global.jump_pads.launch to track player -> movement data
+-- uses global.jump_pads.rebounce to track visited jump pads in a chain, to detect a loop and break out of it
 -- on landing, player takes "fall damage" unless they land on U-Jelly Landing Pad. If they land on water, they die instantly.
 
 local launcher = "jump-pad"
@@ -291,16 +291,20 @@ return {
 	end,
 	on_configuration_changed = function()
 		if global['jump-pads'] then
-			global.pads = table.deepcopy(global['jump-pads'])
+			global.launch_pads.pads = table.deepcopy(global['jump-pads'])
 			global['jump-pads'] = nil
 		end
 		if global['jump-pad-launch'] then
-			global.pads = table.deepcopy(global['jump-pad-launch'])
+			global.launch_pads.launch = table.deepcopy(global['jump-pad-launch'])
 			global['jump-pad-launch'] = nil
 		end
 		if global['jump-pad-rebounce'] then
-			global.pads = table.deepcopy(global['jump-pad-rebounce'])
+			global.launch_pads.rebounce = table.deepcopy(global['jump-pad-rebounce'])
 			global['jump-pad-rebounce'] = nil
+		end
+		if global['jump-pad-visualisation'] then
+			global.launch_pads.visualisation = table.deepcopy(global['jump-pad-visualisation'])
+			global['jump-pad-visualisation'] = nil
 		end
 	end,
 	events = {

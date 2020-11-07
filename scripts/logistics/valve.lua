@@ -1,20 +1,24 @@
--- uses global['valves'] to track valves, which consist of an input and output. the script then averages their contents but only in the forward direction
--- uses global['gui-valve'] to track which valve a player has open, for syncronisation purposes
+-- uses global.valves.valves to track valves, which consist of an input and output. the script then averages their contents but only in the forward direction
+-- uses global.valves.gui to track which valve a player has open, for syncronisation purposes
 local math2d = require("math2d")
 
 local valve = "valve"
 local valvein = valve.."-input"
 local valveout = valve.."-output"
 
+local script_data = {
+	valves = {},
+	gui = {}
+}
+
 local function findStruct(entity)
-	return global['valves'] and global['valves'][entity.unit_number]
+	return script_data.valves[entity.unit_number]
 end
 
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not entity or not entity.valid then return end
 	if entity.name == valve then
-		if not global['valves'] then global['valves'] = {} end
 		local struct = {
 			base = entity,
 			flow = entity.force.recipes['pipeline-mk-2'].enabled and 600 or 300,
@@ -42,7 +46,7 @@ local function onBuilt(event)
 				only_in_alt_mode = true
 			}
 		}
-		global['valves'][entity.unit_number] = struct
+		script_data.valves[entity.unit_number] = struct
 	end
 end
 
@@ -53,7 +57,7 @@ local function onRemoved(event)
 		local struct = findStruct(entity)
 		struct.input.destroy()
 		struct.output.destroy()
-		global['valves'][entity.unit_number] = nil
+		script_data.valves[entity.unit_number] = nil
 	end
 end
 
@@ -72,9 +76,9 @@ local function onRotated(event)
 end
 
 local function onTick(event)
-	if not global['valves'] then return end
+	if #script_data.valves == 0 then return end
 	local polltime = 30
-	for i,struct in pairs(global['valves']) do
+	for i,struct in pairs(script_data.valves) do
 		if event.tick%polltime == i%polltime then
 			-- transfer half the difference between input and output in the forward direction, if fluids match
 			local input_name, input_count = next(struct.input.get_fluid_contents())
@@ -184,8 +188,7 @@ local function onGuiOpened(event)
 		
 		gui.visible = true
 		player.opened = gui
-		if not global['gui-valve'] then global['gui-valve'] = {} end
-		global['gui-valve'][player.index] = struct
+		script_data.gui[player.index] = struct
 		gui.force_auto_center()
 	end
 end
@@ -193,7 +196,7 @@ local function _closeGui(player)
 	local gui = player.gui.screen['valve']
 	if gui then gui.visible = false end
 	player.opened = nil
-	global['gui-valve'][player.index] = nil
+	script_data.gui[player.index] = nil
 end
 local function onGuiClosed(event)
 	if event.element and event.element.valid and event.element.name == "valve" then
@@ -211,11 +214,11 @@ local function onGuiValueChanged(event)
 	if event.element and event.element.valid and event.element.name == "valve-flow-slider" then
 		local player = game.players[event.player_index]
 		local val = event.element.slider_value
-		local struct = global['gui-valve'][player.index]
+		local struct = script_data.gui[player.index]
 		struct.flow = val
 		-- push change to anyone else with the same valve open
 		local base = struct.base
-		for pid,struct in pairs(global['gui-valve']) do
+		for pid,struct in pairs(script_data.gui) do
 			if struct.base == base then
 				local gui = player.gui.screen['valve'].frame.content.right
 				if pid ~= player.index then
@@ -230,11 +233,11 @@ local function onGuiConfirmed(event)
 	if event.element and event.element.valid and event.element.name == "valve-flow-input" then
 		local player = game.players[event.player_index]
 		local val = tonumber(event.element.text)
-		local struct = global['gui-valve'][player.index]
+		local struct = script_data.gui[player.index]
 		struct.flow = val
 		-- push change to anyone else with the same valve open
 		local base = struct.base
-		for pid,struct in pairs(global['gui-valve']) do
+		for pid,struct in pairs(script_data.gui) do
 			if struct.base == base then
 				local gui = player.gui.screen['valve'].frame.content.right
 				if pid ~= player.index then
@@ -247,6 +250,22 @@ local function onGuiConfirmed(event)
 end
 
 return {
+	on_init = function()
+		global.valves = global.valves or script_data
+	end,
+	on_load = function()
+		script_data = global.valves or script_data
+	end,
+	on_configuration_changed = function()
+		if global['valves'] then
+			global.valves.valves = table.deepcopy(global['smart-splitters'])
+			global['smart-splitters'] = nil
+		end
+		if global['gui-splitter'] then
+			global.valves.gui = table.deepcopy(global['gui-splitter'])
+			global['gui-splitter'] = nil
+		end
+	end,
 	events = {
 		[defines.events.on_built_entity] = onBuilt,
 		[defines.events.on_robot_built_entity] = onBuilt,

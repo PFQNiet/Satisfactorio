@@ -7,8 +7,13 @@ local getitems = require("scripts.lualib.get-items-from")
 local splitter = "smart-splitter"
 local buffer = "smart-splitter-box"
 
+local script_data = {
+	splitters = {},
+	gui = {}
+}
+
 local function findStruct(entity)
-	return global['smart-splitters'] and global['smart-splitters'][entity.unit_number]
+	return script_data.splitters[entity.unit_number]
 end
 
 local function onBuilt(event)
@@ -59,8 +64,7 @@ local function onBuilt(event)
 		struct.right = {inserter1, inserter2}
 
 		entity.rotatable = false
-		if not global['smart-splitters'] then global['smart-splitters'] = {} end
-		global['smart-splitters'][entity.unit_number] = struct
+		script_data.splitters[entity.unit_number] = struct
 	end
 end
 
@@ -73,7 +77,7 @@ local function onRemoved(event)
 			getitems.storage(box, event.buffer)
 			io.remove(entity, event)
 			box.destroy()
-			global['smart-splitters'][entity.unit_number] = nil
+			script_data.splitters[entity.unit_number] = nil
 		else
 			game.print("Could not find the buffer")
 		end
@@ -145,8 +149,8 @@ local function checkOverflow(look, valid, struct)
 	return true
 end
 local function onTick(event)
-	if not global['smart-splitters'] then return end
-	for i,struct in pairs(global['smart-splitters']) do
+	if #script_data.splitters == 0 then return end
+	for i,struct in pairs(script_data.splitters) do
 		local contents = struct.buffer.get_inventory(defines.inventory.chest)[1]
 		if contents.valid_for_read then
 			local valid = {}
@@ -189,6 +193,8 @@ local function onTick(event)
 end
 
 local function fullGuiUpdate(struct, columns)
+	local prototypes = game.item_prototypes
+
 	for _,dir in pairs({"left","forward","right"}) do
 		local list = columns["filter-"..dir].filters
 		list.clear()
@@ -216,7 +222,7 @@ local function fullGuiUpdate(struct, columns)
 			type = "choose-elem-button",
 			name = "smart-splitter-"..dir.."-item",
 			elem_type = "item",
-			item = struct.filters[dir] and game.item_prototypes[struct.filters[dir]] and struct.filters[dir] or nil
+			item = struct.filters[dir] and prototypes[struct.filters[dir]] and struct.filters[dir] or nil
 		}
 		item.visible = menu.selected_index == 5
 	end
@@ -244,6 +250,7 @@ end
 local function onPaste(event)
 	if event.destination.name == splitter then
 		-- read signals and update struct accordingly
+		local players = game.players
 		local struct = findStruct(event.destination)
 		local control = struct.base.get_control_behavior()
 		for slot,dir in pairs({"left","forward","right"}) do
@@ -261,9 +268,9 @@ local function onPaste(event)
 			end
 		end
 		local base = struct.base
-		for pid,struct in pairs(global['gui-splitter']) do
+		for pid,struct in pairs(script_data.gui) do
 			if struct.base == base then
-				fullGuiUpdate(struct, game.players[pid].gui.screen['programmable-splitter'].columns)
+				fullGuiUpdate(struct, players[pid].gui.screen['programmable-splitter'].columns)
 			end
 		end
 	end
@@ -343,8 +350,7 @@ local function onGuiOpened(event)
 		
 		gui.visible = true
 		player.opened = gui
-		if not global['gui-splitter'] then global['gui-splitter'] = {} end
-		global['gui-splitter'][player.index] = struct
+		script_data.gui[player.index] = struct
 		gui.force_auto_center()
 	end
 end
@@ -352,7 +358,7 @@ local function _closeGui(player)
 	local gui = player.gui.screen['smart-splitter']
 	if gui then gui.visible = false end
 	player.opened = nil
-	global['gui-splitter'][player.index] = nil
+	script_data.gui[player.index] = nil
 end
 local function onGuiClosed(event)
 	if event.element and event.element.valid and event.element.name == "smart-splitter" then
@@ -367,13 +373,13 @@ local function onGuiClick(event)
 	end
 end
 local function onGuiSelected(event)
-	local player = game.players[event.player_index]
 	if event.element.valid and (
 		event.element.name == "smart-splitter-left-selection"
 		or event.element.name == "smart-splitter-forward-selection"
 		or event.element.name == "smart-splitter-right-selection"
  	) then
-		local struct = global['gui-splitter'][event.player_index]
+		local players = game.players
+		local struct = script_data.gui[event.player_index]
 		updateSplitter(struct, game.players[event.player_index].gui.screen['smart-splitter'].columns)
 
 		local index = event.element.selected_index
@@ -386,9 +392,10 @@ local function onGuiSelected(event)
 			["smart-splitter-forward-selection"] = "forward",
 			["smart-splitter-right-selection"] = "right"
 		})[event.element.name]
-		for pid,struct in pairs(global['gui-splitter']) do
+
+		for pid,struct in pairs(script_data.gui) do
 			if event.player_index ~= pid and struct.base == base then
-				local flow = game.players[pid].gui.screen['smart-splitter'].columns["filter-"..dir].filters.children[1]
+				local flow = players[pid].gui.screen['smart-splitter'].columns["filter-"..dir].filters.children[1]
 				flow.children[1].selected_index = index
 				flow.children[2].visible = index == 5
 			end
@@ -401,7 +408,7 @@ local function onGuiElemChanged(event)
 		or event.element.name == "smart-splitter-forward-item"
 		or event.element.name == "smart-splitter-right-item"
 	) then
-		local struct = global['gui-splitter'][event.player_index]
+		local struct = script_data.gui[event.player_index]
 		updateSplitter(struct, game.players[event.player_index].gui.screen['smart-splitter'].columns)
 		-- mirror this change to other players with this entity open
 		local base = struct.base
@@ -410,7 +417,7 @@ local function onGuiElemChanged(event)
 			["smart-splitter-forward-item"] = "forward",
 			["smart-splitter-right-item"] = "right"
 		})[event.element.name]
-		for pid,struct in pairs(global['gui-splitter']) do
+		for pid,struct in pairs(script_data.gui) do
 			if event.player_index ~= pid and struct.base == base then
 				local flow = game.players[pid].gui.screen['smart-splitter'].columns["filter-"..dir].filters.children[1]
 				flow.children[2].elem_value = event.element.elem_value
@@ -420,6 +427,22 @@ local function onGuiElemChanged(event)
 end
 
 return {
+	on_init = function()
+		global.splitters = global.splitters or script_data
+	end,
+	on_load = function()
+		script_data = global.splitters or script_data
+	end,
+	on_configuration_changed = function()
+		if global['smart-splitters'] then
+			global.splitters.splitters = table.deepcopy(global['smart-splitters'])
+			global['smart-splitters'] = nil
+		end
+		if global['gui-splitter'] then
+			global.splitters.gui = table.deepcopy(global['gui-splitter'])
+			global['gui-splitter'] = nil
+		end
+	end,
 	on_nth_tick = {
 		[4] = onTick
 	},
