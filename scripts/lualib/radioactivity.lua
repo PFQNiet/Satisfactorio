@@ -78,8 +78,9 @@ local function addRadiationForInventory(inventory)
 	if not (inventory and inventory.valid) then return 0 end
 	-- once an inventory has been identified, check it for radioactive items
 	local rad = 0
+	local contents = inventory.get_contents()
 	for name,strength in pairs(radioactive_items) do
-		rad = rad + strength * inventory.get_item_count(name)
+		rad = rad + strength * (contents[name] or 0)
 	end
 	return rad
 end
