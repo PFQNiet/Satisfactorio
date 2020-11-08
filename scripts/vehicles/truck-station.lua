@@ -33,7 +33,10 @@ local function onBuilt(event)
 		io.toggle(entity, {2,3.5}, false)
 		entity.rotatable = false
 		if not global['truck-stations'] then global['truck-stations'] = {} end
-		global['truck-stations'][entity.unit_number] = entity
+		global['truck-stations'][entity.unit_number] = {
+			entity = entity,
+			mode = "input"
+		}
 	end
 end
 
@@ -69,7 +72,8 @@ local function onGuiOpened(event)
 	end
 	if event.gui_type == defines.gui_type.entity and event.entity.name == storage then
 		local floor = event.entity.surface.find_entity(base, event.entity.position)
-		local unloading = io.isEnabled(floor,{2,3.5})
+		local struct = global['truck-stations'][floor.unit_number]
+		local unloading = struct.mode == "output"
 		-- create additional GUI for switching input/output mode
 		local gui = player.gui.left
 		if not gui['truck-station-gui'] then
@@ -101,7 +105,9 @@ local function onGuiSwitch(event)
 		local player = game.players[event.player_index]
 		if player.opened.name == storage then
 			local floor = player.opened.surface.find_entity(base, player.opened.position)
+			local struct = global['truck-stations'][floor.unit_number]
 			local unload = event.element.switch_state == "right"
+			struct.mode = unload and "output" or "input"
 			io.toggle(floor,{0,3.5},not unload)
 			io.toggle(floor,{2,3.5},unload)
 		end
@@ -117,7 +123,9 @@ end
 
 local function onTick(event)
 	if not global['truck-stations'] then return end
-	for i,station in pairs(global['truck-stations']) do
+	for i,struct in pairs(global['truck-stations']) do
+		local station = struct.entity
+		local mode = struct.mode
 		if event.tick%30 == i%30 and station.energy >= 10*1000*1000 then
 			-- each station will "tick" once every 30 in-game ticks, ie. every half-second
 			-- power consumption is 20MW, so each "tick" consumes 10MJ if a vehicle is present
@@ -129,7 +137,7 @@ local function onTick(event)
 			local done = false
 			for _,vehicle in pairs(vehicles) do
 				if vehicle.speed == 0 then
-					local is_output = io.isEnabled(station,{2,3.5})
+					local is_output = mode == "output"
 					local vehicleinventory = vehicle.get_inventory(defines.inventory.car_trunk)
 					local store = station.surface.find_entity(storage, math2d.position.add(station.position, math2d.position.rotate_vector(storage_pos, station.direction*45)))
 					local storeinventory = store.get_inventory(defines.inventory.chest)
@@ -160,12 +168,27 @@ local function onTick(event)
 					break
 				end
 			end
+			-- disable input if a vehicle is present, enable it if not
 			io.toggle(station,{0,3.5},done)
 		end
 	end
 end
 
 return {
+	on_configuration_changed = function()
+		-- migrate platforms
+		if global['truck-stations'] then
+			local _,first = next(global['truck-stations'])
+			if first.unit_number then -- previously just the entity, now a table with {entity, mode}
+				for i,station in pairs(global['truck-stations']) do
+					global['truck-stations'][i] = {
+						entity = station,
+						mode = io.isEnabled(entity,{2,3.5}) and "output" or "input"
+					}
+				end
+			end
+		end
+	end,
 	events = {
 		[defines.events.on_built_entity] = onBuilt,
 		[defines.events.on_robot_built_entity] = onBuilt,
