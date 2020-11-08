@@ -1,6 +1,6 @@
 -- a splitter that allows setting a single filter on each output
--- uses global['smart-splitters'] to track structures {base, buffer, filters, {left1, left2}, {middle1, middle2}, {right1, right2}}
--- GUI uses global['gui-splitter'] to track player > opened smart splitter
+-- uses global.splitter.splitters to track structures {base, buffer, filters, {left1, left2}, {middle1, middle2}, {right1, right2}}
+-- GUI uses global.splitter.gui to track player > opened smart splitter
 local io = require("scripts.lualib.input-output")
 local getitems = require("scripts.lualib.get-items-from")
 

@@ -1,6 +1,8 @@
 -- provides both a recipe browser and an ingredient-gathering list for the player
--- uses global['wanted-items'] to track a player's list of things
+-- uses global.wanted_items to track a player's list of things
 local util = require("util")
+
+local script_data = {}
 
 local function getRecipeYield(recipe)
 	return (recipe.main_product and recipe.main_product.amount or recipe.products[1].amount) or 1
@@ -149,8 +151,10 @@ local function updateWantedList(player)
 	local ingredients = {}
 
 	wanted.clear()
-	for name,count in pairs(global['wanted-items'][player.index]) do
-		local recipe = game.recipe_prototypes[name]
+	local game = game
+	local recipe_proto = game.recipe_prototypes
+	for name,count in pairs(script_data[player.index]) do
+		local recipe = recipe_proto[name]
 		wanted.add{
 			type = "sprite-button",
 			style = "slot_button",
@@ -238,7 +242,7 @@ local function editItemRequestCount(player,source)
 
 	local name
 	local count = index
-	for key,_ in pairs(global['wanted-items'][player.index]) do
+	for key,_ in pairs(script_data[player.index]) do
 		count = count - 1
 		if count == 0 then
 			name = key
@@ -310,16 +314,16 @@ local function closeItemRequestCount(player)
 end
 local function updateItemRequestCount(player, name, count)
 	if count == 0 then
-		global['wanted-items'][player.index][name] = nil
-		if table_size(global['wanted-items'][player.index]) == 0 then
+		script_data[player.index][name] = nil
+		if table_size(script_data[player.index]) == 0 then
 			player.gui.screen['to-do-list'].visible = false
-			global['wanted-items'][player.index] = nil
+			script_data[player.index] = nil
 		else
 			updateWantedList(player)
 		end
 	else
 		local yield = getRecipeYield(game.recipe_prototypes[name])
-		global['wanted-items'][player.index][name] = math.ceil(count / yield) * yield
+		script_data[player.index][name] = math.ceil(count / yield) * yield
 		updateWantedList(player)
 	end
 	closeItemRequestCount(player)
@@ -541,10 +545,10 @@ local function onGuiClick(event)
 		player.open_technology_gui(event.element.parent.name)
 	elseif event.element.name == "recipe-browser-add-to-list" then
 		local recipe = game.recipe_prototypes[event.element.parent.parent.parent.name]
-		if not global['wanted-items'] then global['wanted-items'] = {} end
-		if not global['wanted-items'][player.index] then global['wanted-items'][player.index] = {} end
+		if not script_data[player.index] then script_data[player.index] = {} end
+		local wanted = script_data[player.index]
 		local yield = getRecipeYield(recipe)
-		global['wanted-items'][player.index][recipe.name] = (global['wanted-items'][player.index][recipe.name] or 0) + yield
+		wanted[recipe.name] = (wanted[recipe.name] or 0) + yield
 		updateWantedList(player)
 	elseif event.element.name == "to-do-list-toggle" then
 		local elem = player.gui.screen['to-do-list'].content
@@ -557,7 +561,7 @@ local function onGuiClick(event)
 		end
 	elseif event.element.name == "to-do-list-close" then
 		player.gui.screen['to-do-list'].visible = false
-		global['wanted-items'][player.index] = nil
+		script_data[player.index] = nil
 	elseif event.element.parent and event.element.parent.valid and event.element.parent.name == "to-do-list-wanted" then
 		editItemRequestCount(player, event.element)
 	elseif event.element.name == "to-do-request-confirm" then
@@ -582,12 +586,25 @@ end
 
 local function onInventoryChanged(event)
 	local player = game.players[event.player_index]
-	if global['wanted-items'] and global['wanted-items'][player.index] then
+	if script_data[player.index] then
 		updateWantedList(player)
 	end
 end
 
 return {
+	on_init = function()
+		global.wanted_items = global.wanted_items or script_data
+	end,
+	on_load = function()
+		script_data = global.wanted_items or script_data
+	end,
+	on_configuration_changed = function()
+		if global['wanted-items'] then
+			global.wanted_items = table.deepcopy(global['wanted-items'])
+			script_data = global.wanted_items
+			global['wanted-items'] = nil
+		end
+	end,
 	events = {
 		["recipe-browser"] = function(event)
 			openRecipeGui(game.players[event.player_index])

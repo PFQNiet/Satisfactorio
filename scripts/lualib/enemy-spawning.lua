@@ -1,4 +1,4 @@
--- uses global['unit-tracking'] to track units unit_number = {spawn, entity}
+-- uses global.unit_tracking to track units unit_number = {spawn, entity}
 local math2d = require("math2d")
 
 local spawndata = {
@@ -30,23 +30,26 @@ local function _guardSpawn(struct)
 		}
 	}
 end
+
 local function getRandomOffset(position)
 	local r = (math.random()*100)^0.5
 	local theta = math.random()*math.pi*2
 	return {position[1]+math.cos(theta)*r, position[2]-math.sin(theta)*r}
 end
+
 local function spawnGroup(surface,position,value,basedist)
 	local settings = game.default_map_gen_settings.autoplace_controls["enemy-base"] or {frequency=1,richness=1,size=1}
 	if settings.size == 0 then return end
 	-- size = strength, frequency = number
 
 	-- scale value based on distance from spawn
+	local random = math.random
 	local realdist = math.sqrt(position[1]*position[1] + position[2]*position[2])
 	local distance = math.ceil(realdist/basedist + 0.5)
 	-- sometimes shift up or down a tier
-	if math.random()<0.25 then
+	if random()<0.25 then
 		value = value - 1
-	elseif math.random()<0.25 then
+	elseif random()<0.25 then
 		value = value + 1
 	end
 	value = math.min(6,math.max(1,math.floor(value*settings.size+0.5))) -- minimum setting always yields 1, maximum setting always yields 6
@@ -57,7 +60,7 @@ local function spawnGroup(surface,position,value,basedist)
 
 	for name,count in pairs(spawndata[value]) do
 		count = count*(distance^(1/3)) * settings.frequency
-		if math.random()<count%1 then count = math.ceil(count) else count = math.floor(count) end
+		if random()<count%1 then count = math.ceil(count) else count = math.floor(count) end
 		if realdist < 240 then count = math.min(2,count) end
 		for i=1,count do
 			local offset = getRandomOffset(position)
@@ -83,9 +86,9 @@ local function spawnGroup(surface,position,value,basedist)
 			end
 		end
 	end
-	if realdist > 240 and math.random()<math.min(10,value*distance)/20 then
+	if realdist > 240 and random()<math.min(10,value*distance)/20 then
 		-- add some gas clouds
-		local name = math.random() < 0.85 and "big-worm-turret" or "behemoth-worm-turret"
+		local name = random() < 0.85 and "big-worm-turret" or "behemoth-worm-turret"
 		for i=1,4 do
 			-- find_non_collising_position doesn't support the map gen box, which is needed for worm turrets to give ore nodes some space
 			for _=1,10 do
@@ -102,7 +105,7 @@ local function spawnGroup(surface,position,value,basedist)
 		end
 	end
 	-- and very rarely some uranium deposits
-	if value*distance > 5 and math.random() < 0.02 then
+	if value*distance > 5 and random() < 0.02 then
 		for i=1,4 do
 			local pos = surface.find_non_colliding_position("rock-big-uranium-ore", getRandomOffset(position), 10, 0.1)
 			if pos then
@@ -146,20 +149,20 @@ end
 
 return {
 	spawnGroup = spawnGroup,
-	on_init = function()
-		global.unit_tracking = global.unit_tracking or script_data
-	end,
-	on_load = function()
-		script_data = global.unit_tracking or script_data
-	end,
-	on_configuration_changed = function()
-		if global['unit-tracking'] then
-			global.unit_tracking = table.deepcopy(global['unit-tracking'])
-			script_data = global.unit_tracking
-			global['unit-tracking'] = nil
-		end
-	end,
 	lib = {
+		on_init = function()
+			global.unit_tracking = global.unit_tracking or script_data
+		end,
+		on_load = function()
+			script_data = global.unit_tracking or script_data
+		end,
+		on_configuration_changed = function()
+			if global['unit-tracking'] then
+				global.unit_tracking = table.deepcopy(global['unit-tracking'])
+				script_data = global.unit_tracking
+				global['unit-tracking'] = nil
+			end
+		end,
 		events = {
 			[defines.events.on_entity_died] = onEntityDied,
 			[defines.events.on_entity_damaged] = onDamaged,

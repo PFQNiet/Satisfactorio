@@ -2,8 +2,14 @@
 -- if the accumulator ever runs out of power, then the network is overdrawn and should be shut down
 -- generators on the network are disabled, and a GUI allows re-enabling them
 
--- uses global['accumulators'] to track the hidden accumulators
--- uses global['last-power-trip'] to track per-force when the last power outage was, to de-duplicate FX
+-- uses global.power_trip.accumulators to track the hidden accumulators
+-- uses global.power_trip.last_outage to track per-force when the last power outage was, to de-duplicate FX
+
+local script_data = {
+	accumulators = {},
+	last_outage = {}
+}
+
 local function registerGenerator(burner, generator, accumulator_name)
 	local accumulator = generator.surface.create_entity{
 		name = accumulator_name,
@@ -22,27 +28,26 @@ local function registerGenerator(burner, generator, accumulator_name)
 		accumulator = accumulator,
 		active = true
 	}
-	if not global['accumulators'] then global['accumulators'] = {} end
 	-- store the struct under the index of the accumulator, and record the burner and generator as pointers to it
-	if burner then global['accumulators'][burner.unit_number] = accumulator.unit_number end
-	global['accumulators'][generator.unit_number] = accumulator.unit_number
-	global['accumulators'][accumulator.unit_number] = struct
+	if burner then script_data.accumulators[burner.unit_number] = accumulator.unit_number end
+	script_data.accumulators[generator.unit_number] = accumulator.unit_number
+	script_data.accumulators[accumulator.unit_number] = struct
 end
 local function findRegistration(entity)
-	if not global['accumulators'] then return nil end
+	if #script_data.accumulators == 0 then return nil end
 	-- look up a struct based on any of its components
-	local lookup = global['accumulators'][entity.unit_number]
+	local lookup = script_data.accumulators[entity.unit_number]
 	if type(lookup) == "number" then
 		-- pointer to the accumulator
-		lookup = global['accumulators'][lookup]
+		lookup = script_data.accumulators[lookup]
 	end
 	return lookup
 end
 local function unregisterGenerator(entity)
 	local struct = findRegistration(entity)
-	if struct.burner then global['accumulators'][struct.burner.unit_number] = nil end
-	global['accumulators'][struct.generator.unit_number] = nil
-	global['accumulators'][struct.accumulator.unit_number] = nil
+	if struct.burner then script_data.accumulators[struct.burner.unit_number] = nil end
+	script_data.accumulators[struct.generator.unit_number] = nil
+	script_data.accumulators[struct.accumulator.unit_number] = nil
 	struct.accumulator.destroy()
 end
 
@@ -76,8 +81,8 @@ local function toggle(entry, enabled)
 
 end
 local function onTick(event)
-	if not global['accumulators'] then return end
-	for _,entry in pairs(global['accumulators']) do
+	if #script_data.accumulators == 0 then return end
+	for _,entry in pairs(script_data.accumulators) do
 		if type(entry) == "table" then -- skip numeric pointers
 			if entry.generator.active and entry.accumulator.energy == 0 then
 				-- don't count running out of fuel as a power trip
@@ -89,17 +94,16 @@ local function onTick(event)
 					-- power failure!
 					toggle(entry,false)
 					local force = entry.accumulator.force
-					if not global['last-power-trip'] then global['last-power-trip'] = {} end
-					if not global['last-power-trip'][force.index] then global['last-power-trip'][force.index] = -5000 end
-					if global['last-power-trip'][force.index]+60 < event.tick then
+					if not script_data.last_outage[force.index] then script_data.last_outage[force.index] = -5000 end
+					if script_data.last_outage[force.index]+60 < event.tick then
 						-- only play sound at most once a second
 						force.play_sound{path="power-failure"}
 					end
-					if global['last-power-trip'][force.index]+3600 < event.tick then
+					if script_data.last_outage[force.index]+3600 < event.tick then
 						-- only show console message at most once a minute
 						force.print({"message.power-failure"})
 					end
-					global['last-power-trip'][force.index] = event.tick
+					script_data.last_outage[force.index] = event.tick
 					-- see if any player on this entity's force has this generator opened
 					for _,player in pairs(force.players) do
 						if player.opened and (player.opened == entry.burner or player.opened == entry.generator) then
@@ -136,8 +140,9 @@ local function onGuiClick(event)
 		if not entry then return end
 		local force = entry.generator.force
 		local network = entry.generator.electric_network_id
+		local fl_proto = game.fluid_prototypes
 		-- seek out all generators with this network ID and re-enable them
-		for _,entry in pairs(global['accumulators']) do
+		for _,entry in pairs(script_data.accumulators) do
 			if type(entry) == "table" then -- ignore pointers to accumulators, just do actual entries
 				if entry.generator.force == force and entry.generator.electric_network_id == network then
 					toggle(entry, true)
@@ -145,7 +150,7 @@ local function onGuiClick(event)
 						-- immediately perform a fuel transfer
 						local fluid_type, fluid_amount = next(entry.burner.get_fluid_contents())
 						if fluid_type and fluid_amount > 0 then
-							local fuel_value = game.fluid_prototypes[fluid_type].fuel_value
+							local fuel_value = fl_proto[fluid_type].fuel_value
 							if fuel_value > 0 then
 								local energy_to_full_charge = entry.generator.electric_buffer_size - entry.generator.energy
 								local fuel_to_full_charge = energy_to_full_charge / fuel_value
@@ -161,14 +166,32 @@ local function onGuiClick(event)
 			end
 		end
 		-- set last power outage time to a short moment in the past, so that the sound effect can still play if it insta-trips again but the console message won't appear
-		global['last-power-trip'][player.force.index] = event.tick-600
+		script_data.last_outage[player.force.index] = event.tick-600
 		player.force.play_sound{path="power-startup"}
 		onGuiClosed(event)
 	end
 end
 
 return {
+	registerGenerator = registerGenerator,
+	unregisterGenerator = unregisterGenerator,
 	lib = {
+		on_init = function()
+			global.power_trip = global.power_trip or script_data
+		end,
+		on_load = function()
+			script_data = global.power_trip or script_data
+		end,
+		on_configuration_changed = function()
+			if global['accumulators'] then
+				global.power_trip.accumulators = table.deepcopy(global['accumulators'])
+				global['accumulators'] = nil
+			end
+			if global['last-power-trip'] then
+				global.power_trip.last_outage = table.deepcopy(global['last-power-trip'])
+				global['last-power-trip'] = nil
+			end
+		end,
 		on_nth_tick = {
 			[60] = onTick
 		},
@@ -178,6 +201,4 @@ return {
 			[defines.events.on_gui_click] = onGuiClick
 		}
 	},
-	registerGenerator = registerGenerator,
-	unregisterGenerator = unregisterGenerator
 }

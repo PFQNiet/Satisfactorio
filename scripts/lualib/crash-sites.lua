@@ -1,5 +1,5 @@
--- uses global['crash-sites'] to track requirements for unlocking the spaceship
--- uses global['opened-crash-site'] to track last opened crash site GUI
+-- uses global.crash_site.sites to track requirements for unlocking the spaceship
+-- uses global.crash_site.opened to track last opened crash site GUI
 
 local data = require("constants.crash-sites")
 local loot_table = data.loot
@@ -275,23 +275,23 @@ end
 
 return {
 	createCrashSite = createCrashSite,
-	on_init = function()
-		global.crash_site = global.crash_site or script_data
-	end,
-	on_load = function()
-		script_data = global.crash_site or script_data
-	end,
-	on_configuration_changed = function()
-		if global['crash-sites'] then
-			global.crash_site.sites = table.deepcopy(global['crash-sites'])
-			global['crash-sites'] = nil
-		end
-		if global['opened-crash-site'] then
-			global.crash_site.opened = table.deepcopy(global['opened-crash-site'])
-			global['opened-crash-site'] = nil
-		end
-	end,
 	lib = {
+		on_init = function()
+			global.crash_site = global.crash_site or script_data
+		end,
+		on_load = function()
+			script_data = global.crash_site or script_data
+		end,
+		on_configuration_changed = function()
+			if global['crash-sites'] then
+				global.crash_site.sites = table.deepcopy(global['crash-sites'])
+				global['crash-sites'] = nil
+			end
+			if global['opened-crash-site'] then
+				global.crash_site.opened = table.deepcopy(global['opened-crash-site'])
+				global['opened-crash-site'] = nil
+			end
+		end,
 		events = {
 			[defines.events.on_gui_opened] = onGuiOpened,
 			[defines.events.on_gui_closed] = onGuiClosed,
