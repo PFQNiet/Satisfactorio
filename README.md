@@ -35,3 +35,5 @@ Being an overhaul mod, compatibility with QoL mods is probably fine but it obvio
 - The M.A.M. replaces the Factorio tech tree. Deposit the requested items to begin research, then wait.
 - The Space Elevator allows automated delivery of items. The items are relatively complex and cannot be crafted at the Craft Bench. Successful launch of the Space Elevator unlocks additional tiers of Milestones.
 
+## Known issues
+- Unloading a fluid freight car doesn't play nicely with inactivity as a train condition. This is a bug in Factorio and has been fixed for 1.1
