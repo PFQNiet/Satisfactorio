@@ -1,6 +1,6 @@
 local script_data = {
     resources = {},
-    node_count = {}
+    node_count = 0
 }
 
 return {
@@ -11,7 +11,12 @@ return {
 		script_data = global.resources or script_data
 	end,
     resources = script_data.resources,
-    node_count = script_data.node_count,
+    node_count = function(default)
+        if script_data.node_count > 0 then
+            return script_data.node_count
+        end
+        return default == nil and 0 or default
+    end,
     add_node = function(name, value)
         script_data.resources[name] = value
     end,

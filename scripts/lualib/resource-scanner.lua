@@ -109,12 +109,13 @@ local function onGuiClick(event)
 		if not index then
 			return
 		end
-		if #resources.resources == 0 then
+		local resource_list = resources.resources
+		if table_size(resource_list) == 0 then
 			player.print("Resource entities not loaded yet")
 			return
 		end
 		local type = getUnlockedScans(player.force)[index].products[1].name
-		local rdata = resources.resources[type]
+		local rdata = resource_list[type]
 		if not rdata then
 			player.print("Selected resource "..type.." has no resource data")
 			return

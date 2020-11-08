@@ -63,7 +63,7 @@ local function registerResource(name, radius, min, max, value)
 		grid = {},
 		nodes = {},
 		sleep = {}
-	}
+	})
 end
 local function registerSurface(surface)
 	for _,struct in pairs(resources.resources) do
@@ -336,9 +336,10 @@ local function existsNear(mytype, surface, x, y)
 end
 local function scanForResources()
 	-- pick a random number and iterate the groups again until that many have passed
-	local rand = math.random(1,resources.node_count)
+	local rand = math.random(1,resources.node_count())
+	local resource_list = resources.resources
 	for _,surface in pairs(game.surfaces) do
-		for name,data in pairs(resources.resources) do
+		for name,data in pairs(resource_list) do
 			if not data.nodes[surface.index] then break end
 
 			if rand <= #data.nodes[surface.index] then
@@ -458,7 +459,7 @@ local function onResolutionChanged(event)
 	end
 end
 local function onTick(event)
-	local count = resources.node_count
+	local count = resources.node_count()
 	-- run more often the more open nodes there are
 	if count > 30 or (count > 20 and event.tick%4 == 0) or (count > 10 and event.tick%6 == 0) or (count > 5 and event.tick%8 == 0) or (count > 0 and event.tick%10 == 0) then
 		scanForResources()
@@ -478,7 +479,7 @@ local function onTick(event)
 		end
 	elseif event.tick == 3 then
 		-- process all nodes
-		while count > 2 do
+		while resources.node_count() > 2 do
 			scanForResources()
 		end
 	end
