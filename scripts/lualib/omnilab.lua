@@ -3,7 +3,6 @@ local lab = "omnilab"
 
 local function setupOmnilab(force)
 	-- build a hidden Lab that secretly receives all of MAM upgrade items
-	-- also sets the base "HUB research" to completed
 	if not global['omnilab'] then global['omnilab'] = {} end
 	if global['omnilab'][force.index] then return end
 	local omnilab = game.surfaces.nauvis.create_entity{

@@ -1,4 +1,5 @@
 -- uses global['train-stations'] to list all train stations {station, stop}
+-- uses global['train-platforms'] to list freight platforms {entity, mode}
 -- uses global['player-build-error-debounce'] to track force -> last error tick to de-duplicate placement errors
 -- uses global['trains-accounted-for'] to track train IDs that have already been counted by a station in the last cycle
 local io = require("scripts.lualib.input-output")
@@ -169,6 +170,9 @@ local function onBuilt(event)
 				pump.rotatable = false
 				pump.active = false
 			end
+
+			if not global['train-platforms'] then global['train-platforms'] = {} end
+			global['train-platforms'][entity.unit_number] = {platform=entity, mode="input"}
 		end
 		entity.rotatable = false
 
@@ -204,8 +208,6 @@ local function onRemoved(event)
 		local names
 		if entity.name == station then
 			names = {entity.name.."-walkable", trainstop}
-			-- remove from global table
-			global['train-stations'][entity.unit_number] = nil
 		elseif entity.name == freight then
 			names = {entity.name.."-walkable", entity.name.."-collision", entity.name.."-box"}
 			io.remove(entity, event)
@@ -225,6 +227,13 @@ local function onRemoved(event)
 			end
 			block.destroy()
 		end
+
+		-- remove from global table
+		if entity.name == station then
+			global['train-stations'][entity.unit_number] = nil
+		else
+			global['train-platforms'][entity.unit_number] = nil
+		end
 	end
 end
 
@@ -240,15 +249,8 @@ local function onGuiOpened(event)
 	end
 	if event.entity.name == freight.."-box" or event.entity.name == fluid.."-tank" then
 		local floor = event.entity.surface.find_entity(event.entity.name == freight.."-box" and freight or fluid, event.entity.position)
-		local unloading
-		if event.entity.name == freight.."-box" then
-			unloading = io.isEnabled(floor,{6.5,-2})
-		else
-			unloading = floor.surface.find_entity(
-				fluid.."-pump",
-				math2d.position.add(floor.position, math2d.position.rotate_vector({6.5,-2}, floor.direction*45))
-			).active
-		end
+		local struct = global['train-platforms'][floor.unit_number]
+		local unloading = struct.mode == "output"
 		-- create additional GUI for switching input/output mode (re-use truck station GUI)
 		local gui = player.gui.left
 		if not gui['truck-station-gui'] then
@@ -285,6 +287,8 @@ local function onGuiSwitch(event)
 			io.toggle(floor,{6.5,-1},not unload)
 			io.toggle(floor,{6.5,1},not unload)
 			io.toggle(floor,{6.5,2},unload)
+			local struct = global['train-platforms'][floor.unit_number]
+			struct.mode = unload and "output" or "input"
 		end
 		if player.opened.name == fluid.."-tank" then
 			local floor = player.opened.surface.find_entity(fluid, player.opened.position)
@@ -305,6 +309,8 @@ local function onGuiSwitch(event)
 				fluid.."-pump",
 				math2d.position.add(floor.position, math2d.position.rotate_vector({6.5,2}, floor.direction*45))
 			).active = unload
+			local struct = global['train-platforms'][floor.unit_number]
+			struct.mode = unload and "output" or "input"
 		end
 	end
 end
@@ -371,10 +377,11 @@ local function onTick(event)
 				}[1]
 				if not assertPosition(platform, position) then break end
 				
+				local struct = global['train-platforms'][platform.unit_number]
+				local is_output = struct.mode == "output"
 				if platform.name == freight and platform.energy >= energy_used then
 					local wagon = station.surface.find_entity("cargo-wagon", position)
 					if train and wagon then
-						local is_output = io.isEnabled(platform,{6.5,-2})
 						local wagoninventory = wagon.get_inventory(defines.inventory.cargo_wagon)
 						local store = station.surface.find_entity(freight.."-box", math2d.position.add(platform.position, math2d.position.rotate_vector(storage_pos, platform.direction*45)))
 						local storeinventory = store.get_inventory(defines.inventory.chest)
@@ -397,10 +404,6 @@ local function onTick(event)
 				elseif platform.name == fluid and platform.energy >= energy_used then
 					local wagon = station.surface.find_entity("fluid-wagon", position)
 					if train and wagon then
-						local is_output = station.surface.find_entity(
-							fluid.."-pump",
-							math2d.position.add(platform.position, math2d.position.rotate_vector({6.5,-2}, platform.direction*45))
-						).active
 						local store = station.surface.find_entity(fluid.."-tank", math2d.position.add(platform.position, math2d.position.rotate_vector(storage_pos, platform.direction*45)))
 						-- transfer 50 units
 						local from = is_output and wagon or store
@@ -432,6 +435,30 @@ local function onTick(event)
 end
 
 return {
+	on_configuration_changed = function()
+		-- migrate platforms
+		if not global['train-platforms'] then
+			global['train-platforms'] = {}
+			for _,surface in pairs(game.surfaces) do
+				local platforms = surface.find_entities_filtered{name={freight,fluid}}
+				for _,platform in pairs(platforms) do
+					local is_output
+					if platform.name == freight then
+						is_output = io.isEnabled(platform,{6.5,-2})
+					else
+						is_output = surface.find_entity(
+							fluid.."-pump",
+							math2d.position.add(platform.position, math2d.position.rotate_vector({6.5,-2}, platform.direction*45))
+						).active
+					end
+					global['train-platforms'][platform.unit_number] = {
+						platform = platform,
+						mode = is_output and "output" or "input"
+					}
+				end
+			end
+		end
+	end,
 	events = {
 		[defines.events.on_built_entity] = onBuilt,
 		[defines.events.on_robot_built_entity] = onBuilt,
