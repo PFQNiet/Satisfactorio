@@ -120,6 +120,9 @@ return {
 		script_data = global.corpse_scanner or script_data
 	end,
 	on_configuration_changed = function()
+		if not global.corpse_scanner then
+			global.corpse_scanner = script_data
+		end
 		if global['corpse-pings'] then
 			global.corpse_scanner.pings = table.deepcopy(global['corpse-pings'])
 			global['corpse-pings'] = nil

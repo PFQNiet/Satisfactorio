@@ -433,6 +433,9 @@ return {
 		script_data = global.splitters or script_data
 	end,
 	on_configuration_changed = function()
+		if not global.splitters then
+			global.splitters = script_data
+		end
 		if global['smart-splitters'] then
 			global.splitters.splitters = table.deepcopy(global['smart-splitters'])
 			global['smart-splitters'] = nil

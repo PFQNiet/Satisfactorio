@@ -64,6 +64,9 @@ return {
 		script_data = global.poison_damage or script_data
 	end,
 	on_configuration_changed = function()
+		if not global.poison_damage then
+			global.poison_damage = script_data
+		end
 		if global['poison-damage'] then
 			global.posion_damage = table.deepcopy(global['poison-damage'])
 			script_data = global.posion_damage

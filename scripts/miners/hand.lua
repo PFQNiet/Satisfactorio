@@ -117,6 +117,9 @@ return {
 		script_data = global.plant_regen or script_data
 	end,
 	on_configuration_changed = function()
+		if not global.plant_regen then
+			global.plant_regen = script_data
+		end
 		if global['plant-regen'] then
 			global.plant_regen= table.deepcopy(global['plant-regen'])
 			script_data = global.plant_regen

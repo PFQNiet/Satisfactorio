@@ -256,13 +256,14 @@ return {
 		script_data = global.valves or script_data
 	end,
 	on_configuration_changed = function()
-		if global['valves'] then
-			global.valves.valves = table.deepcopy(global['smart-splitters'])
-			global['smart-splitters'] = nil
+		if global.valves and not global.valves.valves then
+			local copy = table.deepcopy(global['valves'])
+			global.valves = script_data
+			global.valves.valves = copy
 		end
-		if global['gui-splitter'] then
-			global.valves.gui = table.deepcopy(global['gui-splitter'])
-			global['gui-splitter'] = nil
+		if global['gui-valve'] then
+			global.valves.gui = table.deepcopy(global['gui-valve'])
+			global['gui-valve'] = nil
 		end
 	end,
 	events = {

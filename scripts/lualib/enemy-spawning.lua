@@ -157,6 +157,9 @@ return {
 			script_data = global.unit_tracking or script_data
 		end,
 		on_configuration_changed = function()
+			if not global.unit_tracking then
+				global.unit_tracking = script_data
+			end
 			if global['unit-tracking'] then
 				global.unit_tracking = table.deepcopy(global['unit-tracking'])
 				script_data = global.unit_tracking

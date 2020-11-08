@@ -282,6 +282,9 @@ return {
 			script_data = global.crash_site or script_data
 		end,
 		on_configuration_changed = function()
+			if not global.crash_site then
+				global.crash_site = script_data
+			end
 			if global['crash-sites'] then
 				global.crash_site.sites = table.deepcopy(global['crash-sites'])
 				global['crash-sites'] = nil

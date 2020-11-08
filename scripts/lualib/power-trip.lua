@@ -183,6 +183,9 @@ return {
 			script_data = global.power_trip or script_data
 		end,
 		on_configuration_changed = function()
+			 if not global.power_trip then
+				global.power_trip = script_data
+			 end
 			if global['accumulators'] then
 				global.power_trip.accumulators = table.deepcopy(global['accumulators'])
 				global['accumulators'] = nil

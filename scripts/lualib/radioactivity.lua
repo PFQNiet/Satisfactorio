@@ -311,6 +311,9 @@ return {
 		setmetatable(script_data.buckets, bucket_metatable)
 	end,
 	on_configuration_changed = function()
+		if not global.radioactivity then
+			global.radioactivity = script_data
+		end
 		if global['rad-chunks'] then
 			global.radioactivity.chunks = table.deepcopy(global['rad-chunks'])
 			global['rad-chunks'] = nil

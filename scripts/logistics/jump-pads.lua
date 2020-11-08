@@ -289,6 +289,9 @@ return {
 		script_data = global.launch_pads or script_data
 	end,
 	on_configuration_changed = function()
+		if not global.launch_pads then
+			global.launch_pads = script_data
+		end
 		if global['jump-pads'] then
 			global.launch_pads.pads = table.deepcopy(global['jump-pads'])
 			global['jump-pads'] = nil

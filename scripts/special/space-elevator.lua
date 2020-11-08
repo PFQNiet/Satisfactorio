@@ -372,6 +372,12 @@ return {
 		debounce_error = global.player_build_error_debounce or debounce_error
 	end,
 	on_configuration_changed = function()
+		if not global.space_elevator then
+			global.space_elevator = script_data
+		end
+		if not global.player_build_error_debounce then
+			global.player_build_error_debounce = debounce_error
+		end
 		if global['space-elevator'] then
 			global.space_elevator.elevator = table.deepcopy(global['space-elevator'])
 			global['space-elevator'] = nil

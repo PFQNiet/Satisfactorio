@@ -144,6 +144,9 @@ return {
 		script_data = global.parachute_flight or script_data
 	end,
 	on_configuration_changed = function()
+		if not global.parachute_flight then
+			global.parachute_flight = script_data
+		end
 		if global['parachute-flight'] then
 			global.parachute_flight = table.deepcopy(global['parachute-flight'])
 			script_data = global.parachute_flight

@@ -369,6 +369,9 @@ return {
 		script_data = global.small_biter or script_data
 	end,
 	on_configuration_changed = function()
+		if not global.small_biter then
+			global.small_biter = script_data
+		end
 		if global['lizard-doggos'] then
 			script_data.lizard_doggos = table.deepcopy(global['lizard-doggos'])
 			global['lizard-doggos'] = nil
