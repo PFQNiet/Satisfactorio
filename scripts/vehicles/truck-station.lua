@@ -1,4 +1,4 @@
--- uses global['truck-stations'] to list all truck stations
+-- uses global.trucks.stations to list all truck stations
 local io = require("scripts.lualib.input-output")
 local getitems = require("scripts.lualib.get-items-from")
 local math2d = require("math2d")
@@ -8,6 +8,10 @@ local storage = base.."-box"
 local storage_pos = {1,-0.5}
 local fuelbox = base.."-fuelbox"
 local fuelbox_pos = {-4,2.5}
+
+local script_data = {
+	stations = {}
+}
 
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
@@ -32,8 +36,7 @@ local function onBuilt(event)
 		-- default to Input mode
 		io.toggle(entity, {2,3.5}, false)
 		entity.rotatable = false
-		if not global['truck-stations'] then global['truck-stations'] = {} end
-		global['truck-stations'][entity.unit_number] = {
+		script_data.stations[entity.unit_number] = {
 			entity = entity,
 			mode = "input"
 		}
@@ -57,7 +60,7 @@ local function onRemoved(event)
 			fuel.destroy()
 		end
 		io.remove(floor, event)
-		global['truck-stations'][floor.unit_number] = nil
+		script_data.stations[floor.unit_number] = nil
 		if entity.name ~= base then
 			floor.destroy()
 		end
@@ -72,7 +75,7 @@ local function onGuiOpened(event)
 	end
 	if event.gui_type == defines.gui_type.entity and event.entity.name == storage then
 		local floor = event.entity.surface.find_entity(base, event.entity.position)
-		local struct = global['truck-stations'][floor.unit_number]
+		local struct = script_data.stations[floor.unit_number]
 		local unloading = struct.mode == "output"
 		-- create additional GUI for switching input/output mode
 		local gui = player.gui.left
@@ -105,7 +108,7 @@ local function onGuiSwitch(event)
 		local player = game.players[event.player_index]
 		if player.opened.name == storage then
 			local floor = player.opened.surface.find_entity(base, player.opened.position)
-			local struct = global['truck-stations'][floor.unit_number]
+			local struct = script_data.stations[floor.unit_number]
 			local unload = event.element.switch_state == "right"
 			struct.mode = unload and "output" or "input"
 			io.toggle(floor,{0,3.5},not unload)
@@ -122,8 +125,7 @@ local function onGuiClosed(event)
 end
 
 local function onTick(event)
-	if not global['truck-stations'] then return end
-	for i,struct in pairs(global['truck-stations']) do
+	for i,struct in pairs(script_data.stations) do
 		local station = struct.entity
 		local mode = struct.mode
 		if event.tick%30 == i%30 and station.energy >= 10*1000*1000 then
@@ -175,7 +177,16 @@ local function onTick(event)
 end
 
 return {
+	on_init = function()
+		global.trucks = global.trucks or script_data
+	end,
+	on_load = function()
+		script_data = global.trucks or script_data
+	end,
 	on_configuration_changed = function()
+		if not global.trucks then
+			global.trucks = script_data
+		end
 		-- migrate platforms
 		if global['truck-stations'] then
 			local _,first = next(global['truck-stations'])
@@ -187,6 +198,9 @@ return {
 					}
 				end
 			end
+
+			global.trucks.stations = table.deepcopy(global['truck-stations'])
+			global['truck-stations'] = nil
 		end
 	end,
 	events = {

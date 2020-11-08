@@ -1,7 +1,7 @@
--- uses global['train-stations'] to list all train stations {station, stop}
--- uses global['train-platforms'] to list freight platforms {entity, mode}
--- uses global['player-build-error-debounce'] to track force -> last error tick to de-duplicate placement errors
--- uses global['trains-accounted-for'] to track train IDs that have already been counted by a station in the last cycle
+-- uses global.train.stations to list all train stations {station, stop}
+-- uses global.train.platforms to list freight platforms {entity, mode}
+-- uses global.player_build_error_debounce to track force -> last error tick to de-duplicate placement errors
+-- uses global.train.accounted to track train IDs that have already been counted by a station in the last cycle
 local io = require("scripts.lualib.input-output")
 local getitems = require("scripts.lualib.get-items-from")
 local math2d = require("math2d")
@@ -14,6 +14,14 @@ local trainstop = "train-stop"
 local stop_pos = {2,-2.5}
 local storage_pos = {3.5,0}
 
+local script_data = {
+	stations = {},
+	platforms = {},
+	accounted = {}
+}
+
+local debounce_error = {}
+
 local function refundEntity(entity, reason, event)
 	-- refund the entity and trigger an error message flying text (but only if event.tick is not too recent from the last one)
 	local player = entity.last_user
@@ -23,8 +31,7 @@ local function refundEntity(entity, reason, event)
 		else
 			player.insert{name=entity.name,count=1}
 		end
-		if not global['player-build-error-debounce'] then global['player-build-error-debounce'] = {} end
-		if not global['player-build-error-debounce'][player.force.index] or global['player-build-error-debounce'][player.force.index] < event.tick then
+		if not debounce_error[player.force.index] or debounce_error[player.force.index] < event.tick then
 			player.surface.create_entity{
 				name = "flying-text",
 				position = entity.position,
@@ -34,7 +41,7 @@ local function refundEntity(entity, reason, event)
 			player.play_sound{
 				path = "utility/cannot_build"
 			}
-			global['player-build-error-debounce'][player.force.index] = event.tick + 60
+			debounce_error[player.force.index] = event.tick + 60
 		end
 	else
 		entity.surface.spill_item_stack(entity.position, {name=entity.name,count=1}, false, nil, false)
@@ -99,8 +106,7 @@ local function onBuilt(event)
 			}
 			stop.rotatable = false
 
-			if not global['train-stations'] then global['train-stations'] = {} end
-			global['train-stations'][entity.unit_number] = {station=entity, stop=stop}
+			script_data.stations[entity.unit_number] = {station=entity, stop=stop}
 		else
 			-- platforms must be adjacent to another platform or a station
 			local before = math2d.position.add(entity.position, math2d.position.rotate_vector({0,-7}, entity.direction*45))
@@ -171,8 +177,7 @@ local function onBuilt(event)
 				pump.active = false
 			end
 
-			if not global['train-platforms'] then global['train-platforms'] = {} end
-			global['train-platforms'][entity.unit_number] = {platform=entity, mode="input"}
+			script_data.stations[entity.unit_number] = {platform=entity, mode="input"}
 		end
 		entity.rotatable = false
 
@@ -228,11 +233,10 @@ local function onRemoved(event)
 			block.destroy()
 		end
 
-		-- remove from global table
 		if entity.name == station then
-			global['train-stations'][entity.unit_number] = nil
+			script_data.stations[entity.unit_number] = nil
 		else
-			global['train-platforms'][entity.unit_number] = nil
+			script_data.platforms[entity.unit_number] = nil
 		end
 	end
 end
@@ -249,7 +253,7 @@ local function onGuiOpened(event)
 	end
 	if event.entity.name == freight.."-box" or event.entity.name == fluid.."-tank" then
 		local floor = event.entity.surface.find_entity(event.entity.name == freight.."-box" and freight or fluid, event.entity.position)
-		local struct = global['train-platforms'][floor.unit_number]
+		local struct = script_data.platforms[floor.unit_number]
 		local unloading = struct.mode == "output"
 		-- create additional GUI for switching input/output mode (re-use truck station GUI)
 		local gui = player.gui.left
@@ -287,7 +291,7 @@ local function onGuiSwitch(event)
 			io.toggle(floor,{6.5,-1},not unload)
 			io.toggle(floor,{6.5,1},not unload)
 			io.toggle(floor,{6.5,2},unload)
-			local struct = global['train-platforms'][floor.unit_number]
+			local struct = script_data.platforms[floor.unit_number]
 			struct.mode = unload and "output" or "input"
 		end
 		if player.opened.name == fluid.."-tank" then
@@ -309,7 +313,7 @@ local function onGuiSwitch(event)
 				fluid.."-pump",
 				math2d.position.add(floor.position, math2d.position.rotate_vector({6.5,2}, floor.direction*45))
 			).active = unload
-			local struct = global['train-platforms'][floor.unit_number]
+			local struct = script_data.platforms[floor.unit_number]
 			struct.mode = unload and "output" or "input"
 		end
 	end
@@ -323,11 +327,9 @@ local function onGuiClosed(event)
 end
 
 local function onTick(event)
-	if not global['train-stations'] then return end
-	
-	if not global['trains-accounted-for'] or event.tick%60 == 0 then global['trains-accounted-for'] = {} end
+	if event.tick%60 == 0 then script_data.accounted = {} end
 	-- poll every station once per second
-	for i,struct in pairs(global['train-stations']) do
+	for i,struct in pairs(script_data.stations) do
 		local station = struct.station
 		local stop = struct.stop
 		if event.tick%60 == i%60 and station.energy >= 1000 then
@@ -337,8 +339,8 @@ local function onTick(event)
 			for i,train in pairs(trains) do
 				-- ensure trains are only accounted for by one station
 				-- this is reset every half-second, ie. every modulo
-				if not global['trains-accounted-for'][train.id] then
-					global['trains-accounted-for'][train.id] = true
+				if not script_data.accounted[train.id] then
+					script_data.accounted[train.id] = true
 					-- each train consumes 25MW normally, plus up to 85MW more to recharge its power
 					for _,dir in pairs({"front_movers","back_movers"}) do
 						for _,loco in pairs(train.locomotives[dir]) do
@@ -360,7 +362,7 @@ local function onTick(event)
 
 	-- one transfer every 45 ticks = 24 seconds for a 32-stack freight car
 	local energy_used = (50/60*45)*1000*1000
-	for i,struct in pairs(global['train-stations']) do
+	for i,struct in pairs(script_data.stations) do
 		local station = struct.station
 		local stop = struct.stop
 		if event.tick%45 == i%45 and station.energy >= 1000 then
@@ -377,7 +379,7 @@ local function onTick(event)
 				}[1]
 				if not assertPosition(platform, position) then break end
 				
-				local struct = global['train-platforms'][platform.unit_number]
+				local struct = script_data.platforms[platform.unit_number]
 				local is_output = struct.mode == "output"
 				if platform.name == freight and platform.energy >= energy_used then
 					local wagon = station.surface.find_entity("cargo-wagon", position)
@@ -435,28 +437,56 @@ local function onTick(event)
 end
 
 return {
+	on_init = function()
+		global.trains = global.trains or script_data
+		debounce_error = global.player_build_error_debounce or debounce_error
+	end,
+	on_load = function()
+		script_data = global.trains or script_data
+		debounce_error = global.player_build_error_debounce or debounce_error
+	end,
 	on_configuration_changed = function()
+		if not global.trains then
+			global.trains = script_data
+		end
+
 		-- migrate platforms
-		if not global['train-platforms'] then
-			global['train-platforms'] = {}
-			for _,surface in pairs(game.surfaces) do
-				local platforms = surface.find_entities_filtered{name={freight,fluid}}
-				for _,platform in pairs(platforms) do
-					local is_output
-					if platform.name == freight then
-						is_output = io.isEnabled(platform,{6.5,-2})
-					else
-						is_output = surface.find_entity(
-							fluid.."-pump",
-							math2d.position.add(platform.position, math2d.position.rotate_vector({6.5,-2}, platform.direction*45))
-						).active
-					end
-					global['train-platforms'][platform.unit_number] = {
-						platform = platform,
-						mode = is_output and "output" or "input"
-					}
+		for _,surface in pairs(game.surfaces) do
+			local platforms = surface.find_entities_filtered{name={freight,fluid}}
+			for _,platform in pairs(platforms) do
+				local is_output
+				if platform.name == freight then
+					is_output = io.isEnabled(platform,{6.5,-2})
+				else
+					is_output = surface.find_entity(
+						fluid.."-pump",
+						math2d.position.add(platform.position, math2d.position.rotate_vector({6.5,-2}, platform.direction*45))
+					).active
 				end
+				script_data.platforms[platform.unit_number] = {
+					platform = platform,
+					mode = is_output and "output" or "input"
+				}
 			end
+		end
+
+		if global['player-build-error-debounce'] then
+			global.player_build_error_debounce = table.deepcopy(global['player-debounce-error-debounce'])
+			debounce_error = global.player_build_error_debounce
+			global['player-debounce-error-debounce'] = nil
+		end
+
+		if global['train-stations'] then
+			global.trains.stations = table.deepcopy(global['train-stations'])
+			global['train-stations'] = nil
+		end
+		if global['train-platforms'] then
+			global.trains.platforms = table.deepcopy(global['train-platforms'])
+			global['train-platforms'] = nil
+		end
+		if global['train-accounted-for'] then
+			global.trains.accounted = table.deepcopy(global['train-accounted-for'])
+			global['train-accounted-for'] = nil
 		end
 	end,
 	events = {
