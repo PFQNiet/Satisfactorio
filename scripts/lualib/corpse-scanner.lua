@@ -13,7 +13,6 @@ local function playerDied(corpse)
 end
 
 local function onTick(event)
-	if #script_data.pings == 0 then return end
 	for pid,pings in pairs(script_data.pings) do
 		local player = game.players[pid]
 		for i,ping in pairs(pings) do

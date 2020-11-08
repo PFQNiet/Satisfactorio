@@ -41,7 +41,7 @@ local function onRemoved(event)
 			car.destroy()
 		end
 		script_data.pads[entity.unit_number] = nil
-	elseif entity.name == 'car' then
+	elseif entity.name == vehicle then
 		local floor = entity.surface.find_entity(launcher, entity.position)
 		if floor and floor.valid then
 			script_data.pads[floor.unit_number] = nil
@@ -125,7 +125,6 @@ local function onVehicle(event)
 end
 local function onTick(event)
 	local launch = 	script_data.launch
-	if #launch == 0 then return end
 	for pid,data in pairs(launch) do
 		data.time = data.time + 1
 		local position = data.time / 120

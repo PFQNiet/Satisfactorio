@@ -5,6 +5,7 @@
 -- uses global.power_trip.accumulators to track the hidden accumulators
 -- uses global.power_trip.last_outage to track per-force when the last power outage was, to de-duplicate FX
 
+local table_size = table_size
 local script_data = {
 	accumulators = {},
 	last_outage = {}
@@ -34,7 +35,7 @@ local function registerGenerator(burner, generator, accumulator_name)
 	script_data.accumulators[accumulator.unit_number] = struct
 end
 local function findRegistration(entity)
-	if #script_data.accumulators == 0 then return nil end
+	if table_size(script_data.accumulators) == 0 then return nil end
 	-- look up a struct based on any of its components
 	local lookup = script_data.accumulators[entity.unit_number]
 	if type(lookup) == "number" then
@@ -81,7 +82,6 @@ local function toggle(entry, enabled)
 
 end
 local function onTick(event)
-	if #script_data.accumulators == 0 then return end
 	for _,entry in pairs(script_data.accumulators) do
 		if type(entry) == "table" then -- skip numeric pointers
 			if entry.generator.active and entry.accumulator.energy == 0 then

@@ -1,4 +1,5 @@
 local math2d = require("math2d")
+local table_size = table_size
 local script_data = {}
 
 -- uses global.cars to store all data
@@ -145,7 +146,6 @@ local function refreshPathRender(car)
 end
 
 local function onTick(event)
-	if #script_data == 0 then return end
 	for i,car in pairs(script_data) do
 		if not (car.car and car.car.valid) then
 			script_data[i] = nil

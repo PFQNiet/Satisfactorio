@@ -96,14 +96,12 @@ local function onHarvest(event)
 	end
 end
 local function checkForRegrowth(event)
-	if #script_data == 0 then return end
-	local neutral_force = game.forces.neutral
 	for i,plant in pairs(script_data) do
 		if plant.regen_at < event.tick then
 			plant.entity.surface.create_entity{
 				name = string.remove_suffix(plant.entity.name, "-harvested"),
 				position = plant.entity.position,
-				force = neutral_force
+				force = "neutral"
 			}
 			plant.entity.destroy()
 			script_data[i] = nil

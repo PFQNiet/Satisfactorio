@@ -76,7 +76,6 @@ local function onRotated(event)
 end
 
 local function onTick(event)
-	if #script_data.valves == 0 then return end
 	local polltime = 30
 	for i,struct in pairs(script_data.valves) do
 		if event.tick%polltime == i%polltime then

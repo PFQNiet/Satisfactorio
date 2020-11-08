@@ -107,7 +107,6 @@ local function onVehicle(event)
 end
 
 local function onTick(event)
-	if #script_data == 0 then return end
 	for pid,struct in pairs(script_data) do
 		struct.time = struct.time+1
 

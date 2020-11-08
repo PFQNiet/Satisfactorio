@@ -149,7 +149,6 @@ local function checkOverflow(look, valid, struct)
 	return true
 end
 local function onTick(event)
-	if #script_data.splitters == 0 then return end
 	for i,struct in pairs(script_data.splitters) do
 		local contents = struct.buffer.get_inventory(defines.inventory.chest)[1]
 		if contents.valid_for_read then

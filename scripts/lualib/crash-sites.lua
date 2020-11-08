@@ -92,7 +92,6 @@ local function onGuiOpened(event)
 	local player = game.players[event.player_index]
 	if event.gui_type ~= defines.gui_type.entity then return end
 	if event.entity.name ~= spaceship then return end
-	if #script_data.sites == 0 then return end
 	local struct = script_data.sites[event.entity.unit_number]
 	if not struct then return end
 	script_data.opened[player.index] = event.entity.unit_number

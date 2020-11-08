@@ -1,6 +1,7 @@
 -- uses global.resource_scanner.fx as a queue of effects
 -- uses global.resource_scanner.pings as table of player => {pos, graphics}[] for active pings
 local util = require("util")
+local table_size = table_size
 local script_data = {
 	fx = {},
 	pings = {}
@@ -170,7 +171,6 @@ local function onGuiClick(event)
 end
 
 local function updatePings()
-	if #script_data.pings == 0 then return end
 	local rendering = rendering
 	for i,ping in pairs(script_data.pings) do
 		-- check if ping hasn't expired

@@ -7,6 +7,7 @@ local shadow = item.."-flying-shadow"
 local fuel = "packaged-fuel"
 
 local script_data = {}
+local table_size = table_size
 
 local function onJump(event)
 	local player = game.players[event.player_index]
@@ -73,7 +74,6 @@ local function onVehicle(event)
 end
 
 local function onTick(event)
-	if #script_data == 0 then return end
 	for pid,struct in pairs(script_data) do
 		struct.time = struct.time+1
 		local shield = struct.car.grid.get{0,0}
