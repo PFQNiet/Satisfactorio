@@ -1,10 +1,10 @@
 local math2d = require("math2d")
+local script_data = {}
 
--- uses global['cars'] to store all data
+-- uses global.cars to store all data
 local function getCar(car)
-	if not global['cars'] then global['cars'] = {} end
-	if not global['cars'][car.unit_number] then
-		global['cars'][car.unit_number] = {
+	if not script_data[car.unit_number] then
+		script_data[car.unit_number] = {
 			car = car,
 			waypoints = {}, -- points defined by the player, (position, wait)
 			waypoint_index = 1, -- which waypoint we're going to next
@@ -14,7 +14,7 @@ local function getCar(car)
 			rendering = {}
 		}
 	end
-	return global['cars'][car.unit_number]
+	return script_data[car.unit_number]
 end
 
 local function turn(myvector, targetvector)
@@ -145,10 +145,10 @@ local function refreshPathRender(car)
 end
 
 local function onTick(event)
-	if not global['cars'] then return end
-	for i,car in pairs(global['cars']) do
+	if #script_data == 0 then return end
+	for i,car in pairs(script_data) do
 		if not (car.car and car.car.valid) then
-			global['cars'][i] = nil
+			script_data[i] = nil
 		elseif car.recording then
 			-- if driving straight, don't bother recording waypoints
 			if event.tick%5 == 0 and car.car.riding_state.direction ~= defines.riding.direction.straight then
@@ -452,6 +452,12 @@ end
 
 
 return {
+	on_init = function()
+		global.cars = global.cars or script_data
+	end,
+	on_load = function()
+		script_data = global.cars or script_data
+	end,
 	events = {
 		[defines.events.on_tick] = onTick,
 		[defines.events.on_player_driving_changed_state] = onDriving,

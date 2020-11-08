@@ -1,5 +1,5 @@
--- uses global['resource-scanner-fx'] as a queue of effects
--- uses global['resource-scanner-pings'] as table of player => {pos, graphics}[] for active pings
+-- uses global.resource_scanner.fx as a queue of effects
+-- uses global.resource_scanner.pings as table of player => {pos, graphics}[] for active pings
 local util = require("util")
 local script_data = {
 	fx = {},

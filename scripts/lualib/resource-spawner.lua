@@ -1,9 +1,9 @@
 --[[
 	Resources are spawned using a poisson-disc distribution, with the small change that nodes outside the bounding box of the generated map are "asleep"
 	Sleeping nodes won't be considered for expansion until the bounding box of generated chunks contains them
-	Uses global['queued-nodes'] to track nodes that should have spawned, but whose location wasn't generated yet
-	Uses global['resource-node-count'] to store a running total of open nodes
-	Uses global['resources'] to store data relating to resource generation
+	Uses global.resource_spawner.queued to track nodes that should have spawned, but whose location wasn't generated yet
+	Uses global.resource.add_count to store a running total of open nodes
+	Uses global.resources.resources to store data relating to resource generation
 	Each resource is a table: {
 		r = radius, nodes will spawn between r and 2r tiles away from any other nodes
 		k = attempts to spawn a node before considering the node "closed" (30)

@@ -8,6 +8,8 @@ local dead_trees = {
 	["dry-tree"] = true
 }
 
+local script_data = {}
+
 local function onMined(event)
 	local entity = event.entity
 	if not (entity and entity.valid) then return end
@@ -55,7 +57,7 @@ local function onMined(event)
 end
 
 -- plants may be harvested, and may leave behind a "harvested" entity which can later regenerate
--- uses global['plant-regen'] to track when such plants should regenerate
+-- uses global.plant_regen to track when such plants should regenerate
 local function onHarvest(event)
 	-- check if the "open GUI" event is intended for a plant...
 	local player = game.players[event.player_index]
@@ -70,8 +72,7 @@ local function onHarvest(event)
 					position = entity.position,
 					force = game.forces.neutral
 				}
-				if not global['plant-regen'] then global['plant-regen'] = {} end
-				table.insert(global['plant-regen'], {
+				table.insert(script_data, {
 					entity = remains,
 					regen_at = event.tick + math.random(3*3600*60,4*3600*60) -- plant regrows after 3-4 hours
 				})
@@ -95,21 +96,35 @@ local function onHarvest(event)
 	end
 end
 local function checkForRegrowth(event)
-	if not global['plant-regen'] then return end
-	for i,plant in pairs(global['plant-regen']) do
+	if #script_data == 0 then return end
+	local neutral_force = game.forces.neutral
+	for i,plant in pairs(script_data) do
 		if plant.regen_at < event.tick then
 			plant.entity.surface.create_entity{
 				name = string.remove_suffix(plant.entity.name, "-harvested"),
 				position = plant.entity.position,
-				force = game.forces.neutral
+				force = neutral_force
 			}
 			plant.entity.destroy()
-			table.remove(global['plant-regen'],i)
+			script_data[i] = nil
 		end
 	end
 end
 
 return {
+	on_init = function()
+		global.plant_regen = global.plant_regen or script_data
+	end,
+	on_load = function()
+		script_data = global.plant_regen or script_data
+	end,
+	on_configuration_changed = function()
+		if global['plant-regen'] then
+			global.plant_regen= table.deepcopy(global['plant-regen'])
+			script_data = global.plant_regen
+			global['plant-regen'] = nil
+		end
+	end,
 	on_nth_tick = {
 		[600] = checkForRegrowth
 	},
