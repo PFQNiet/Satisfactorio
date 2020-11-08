@@ -8,6 +8,8 @@ local storage = "fuel-generator"
 local buffer = storage.."-eei"
 local accumulator = storage.."-accumulator"
 
+local script_data = {}
+
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not entity or not entity.valid then return end
@@ -22,8 +24,7 @@ local function onBuilt(event)
 		entity.rotatable = false
 		eei.rotatable = false
 		powertrip.registerGenerator(entity, eei, accumulator)
-		if not global['fuel-generators'] then global['fuel-generators'] = {} end
-		global['fuel-generators'][entity.unit_number] = entity
+		script_data[entity.unit_number] = entity
 	end
 end
 
@@ -34,7 +35,7 @@ local function onRemoved(event)
 		-- find components
 		local store = entity.name == storage and entity or entity.surface.find_entity(storage, entity.position)
 		local gen = entity.name == buffer and entity or entity.surface.find_entity(buffer, entity.position)
-		global['fuel-generators'][store.unit_number] = nil
+		script_data[store.unit_number] = nil
 		powertrip.unregisterGenerator(store)
 		if entity.name ~= storage then
 			store.destroy()
@@ -46,10 +47,8 @@ local function onRemoved(event)
 end
 
 local function onTick(event)
-	if not global['fuel-generators'] then return end
-	for i,storage in pairs(global['fuel-generators']) do
+	for i,storage in pairs(script_data) do
 		if event.tick%60 == i%60 then
-			local storage = global['fuel-generators'][i]
 			-- each station will "tick" once every 60 in-game ticks, ie. every second
 			-- power production is 150MW, so each "tick" can buffer up to 150MJ given enough fuel
 			local eei = storage.surface.find_entity(buffer, storage.position)
@@ -77,6 +76,22 @@ local function onGuiOpened(event)
 end
 
 return {
+	on_init = function()
+		global.fuel_generators = global.fuel_generators or script_data
+	end,
+	on_load = function()
+		script_data = global.fuel_generators or script_data
+    end,
+    on_configuration_change = function()
+        if not global.fuel_generators then
+            global.fuel_generators = script_data
+		end
+
+		if global['fuel-generators'] then
+			global.fuel_generators = table.deepcopy(global['fuel-generators'])
+			global['fuel-generators'] = nil
+		end
+    end,
 	events = {
 		[defines.events.on_built_entity] = onBuilt,
 		[defines.events.on_robot_built_entity] = onBuilt,

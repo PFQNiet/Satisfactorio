@@ -1,5 +1,7 @@
--- uses global['beacon-opened'] as Player index -> opened beacon GUI
-local beacon = "map-marker"
+-- uses global.beacons.opened as Player index -> opened beacon GUI
+local item_name = "map-marker"
+
+local beacons = require('scripts.organisation.beacon')
 
 local function findBeaconTag(beacon)
 	return beacon.force.find_chart_tags(beacon.surface, {{beacon.position.x-0.1,beacon.position.y-0.1},{beacon.position.x+0.1,beacon.position.y+0.1}})[1]
@@ -61,8 +63,7 @@ local function openBeaconGUI(beacon, player)
 	}
 	player.opened = gui
 	gui.force_auto_center()
-	if not global['beacon-opened'] then global['beacon-opened'] = {} end
-	global['beacon-opened'][player.index] = beacon
+	beacons.opened[player.index] = item_name 
 end
 local function closeBeaconGUI(player)
 	local gui = player.gui.screen['beacon-naming']
@@ -71,7 +72,7 @@ local function closeBeaconGUI(player)
 	player.opened = nil
 end
 local function onGuiOpened(event)
-	if event.entity and event.entity.valid and event.entity.name == beacon then
+	if event.entity and event.entity.valid and event.entity.name == item_name then
 		openBeaconGUI(event.entity, game.players[event.player_index])
 	end
 end
@@ -79,7 +80,7 @@ local function onGuiClick(event)
 	if not (event.element and event.element.valid) then return end
 	local player = game.players[event.player_index]
 	if event.element.name == "beacon-naming-confirm" then
-		local beacon = global['beacon-opened'][player.index] -- can be assumed to exist, otherwise how did we get here?
+		local beacon = beacons.opened[player.index] -- can be assumed to exist, otherwise how did we get here?
 		local tag = findBeaconTag(beacon)
 		if tag and tag.valid then
 			local gui = player.gui.screen['beacon-naming']['beacon-naming-inner']['beacon-naming-table']
@@ -95,7 +96,7 @@ end
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not entity or not entity.valid then return end
-	if entity.name == beacon then
+	if entity.name == item_name then
 		entity.force.add_chart_tag(entity.surface, {position=entity.position,icon={type="item",name="map-marker"}})
 		if event.type == defines.events.on_build_entity then
 			local player = game.players[event.player_index]
@@ -106,7 +107,7 @@ end
 local function onRemoved(event)
 	local entity = event.entity
 	if not entity or not entity.valid then return end
-	if entity.name == beacon then
+	if entity.name == item_name then
 		local tag = findBeaconTag(entity)
 		if tag and tag.valid then
 			tag.destroy()

@@ -1,6 +1,6 @@
--- uses global['space-elevator'] as table of Force index -> elevator
--- uses global['space-elevator-phase'] as table of Force index -> phase shown in GUI - if different to current selection then GUI needs refresh, otherwise just update counts
--- uses global['player-build-error-debounce'] to track force -> last error tick to de-duplicate placement errors
+-- uses global.space_elevator.elevator as table of Force index -> elevator
+-- uses global.space-elevator.phase as table of Force index -> phase shown in GUI - if different to current selection then GUI needs refresh, otherwise just update counts
+-- uses global.player_build_error_debounce'] to track force -> last error tick to de-duplicate placement errors
 local util = require("util")
 local string = require("scripts.lualib.string")
 local io = require("scripts.lualib.input-output")
@@ -14,7 +14,7 @@ local script_data = {
 local debounce_error = {}
 
 local function findElevatorForForce(force)
-	return global['space-elevator'] and global['space-elevator'][force.index]
+	return script_data.elevator[force.index]
 end
 
 local function refundEntity(entity, reason, event)

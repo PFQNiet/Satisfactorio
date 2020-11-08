@@ -2,15 +2,20 @@
 -- chest has a single slot and is frequently checked for contents - if found they are voided and points are awarded
 -- points earned according to data in constants.sink-tradein
 -- n = tickets earned so far, next ticket earned at 500*floor(n/3)^2+1000 points
--- uses global['awesome-sinks'] to track sinks to iterate through
--- uses global['awesome-coupons'] to track force => {earned, printed, points}
+-- uses global.awesome.sinks'] to track sinks to iterate through
+-- uses global.awesome.coupons'] to track force => {earned, printed, points}
+
+local script_data = {
+	sinks = {},
+	coupons = {}
+}
+
 local function pointsToNext(earned)
 	return 500 * math.floor(earned / 3)^2 + 1000
 end
 local function gainPoints(force, points)
-	if not global['awesome-coupons'] then global['awesome-coupons'] = {} end
-	if not global['awesome-coupons'][force.index] then global['awesome-coupons'][force.index] = {0,0,0} end
-	local entry = global['awesome-coupons'][force.index]
+	if not script_data.coupons[force.index] then script_data.coupons[force.index] = {0,0,0} end
+	local entry = script_data.coupons[force.index]
 	entry[3] = entry[3] + points
 	force.item_production_statistics.on_flow("awesome-points",points)
 	local tonext = pointsToNext(entry[1])
@@ -41,8 +46,7 @@ local function onBuilt(event)
 		}
 		io.addInput(entity, {-0.5,3}, store)
 		entity.rotatable = false
-		if not global['awesome-sinks'] then global['awesome-sinks'] = {} end
-		global['awesome-sinks'][entity.unit_number] = entity
+		script_data.sinks[entity.unit_number] = entity
 	end
 end
 
@@ -54,7 +58,7 @@ local function onRemoved(event)
 		local floor = entity.name == base and entity or entity.surface.find_entity(base, entity.position)
 		local store = entity.name == storage and entity or entity.surface.find_entity(storage, entity.position)
 		io.remove(floor, event)
-		global['awesome-sinks'][floor.unit_number] = nil
+		script_data.sinks[floor.unit_number] = nil
 		(entity == floor and store or floor).destroy()
 	end
 end
@@ -69,6 +73,7 @@ local function onGuiOpened(event)
 		-- create additional GUI for switching input/output mode
 		local gui = player.gui.left
 		if not gui['awesome-sink-gui'] then
+			local force_idx = player.force.index
 			local frame = gui.add{
 				type = "frame",
 				name = "awesome-sink-gui",
@@ -115,7 +120,7 @@ local function onGuiOpened(event)
 				type = "label",
 				name = "awesome-sink-count",
 				caption = util.format_number(
-					global['awesome-coupons'] and global['awesome-coupons'][player.force.index] and global['awesome-coupons'][player.force.index][2] or 0
+					script_data.coupons[force_idx] and script_data.coupons[force_idx][2] or 0
 				)
 			}
 			table.add{type="empty-widget"}
@@ -133,8 +138,8 @@ local function onGuiOpened(event)
 				type = "label",
 				name = "awesome-sink-to-next",
 				caption = util.format_number(
-					pointsToNext(global['awesome-coupons'] and global['awesome-coupons'][player.force.index] and global['awesome-coupons'][player.force.index][1] or 0)
-					-(global['awesome-coupons'] and global['awesome-coupons'][player.force.index] and global['awesome-coupons'][player.force.index][3] or 0)
+					pointsToNext(script_data.coupons[force_idx] and script_data.coupons[force_idx][1] or 0)
+					-(script_data.coupons[force_idx] and script_data.coupons[force_idx][3] or 0)
 				)
 			}
 			local bottom = frame.add{
@@ -155,9 +160,10 @@ end
 local function onGuiClick(event)
 	if event.element.valid and event.element.name == "awesome-sink-print" then
 		local player = game.players[event.player_index]
+		local force_idx = player.force.index
 		local inventory = player.get_main_inventory()
 		local caninsert = inventory.get_insertable_count("coin")
-		local print = global['awesome-coupons'] and global['awesome-coupons'][player.force.index] and global['awesome-coupons'][player.force.index][2] or 0
+		local print = script_data.coupons[force_idx] and script_data.coupons[force_idx][2] or 0
 		if print > 0 then
 			if caninsert == 0 then
 				print = 0
@@ -171,7 +177,7 @@ local function onGuiClick(event)
 			if print > 0 then
 				inventory.insert{name="coin",count=print}
 			end
-			global['awesome-coupons'][player.force.index][2] = global['awesome-coupons'][player.force.index][2] - print
+			script_data.coupons[force_idx][2] = script_data.coupons[force_idx][2] - print
 		end
 	end
 end
@@ -184,8 +190,7 @@ local function onGuiClosed(event)
 end
 
 local function on4thTick(event)
-	if not global['awesome-sinks'] then return end
-	for i,sink in pairs(global['awesome-sinks']) do
+	for i,sink in pairs(script_data.sinks) do
 		-- the fastest belt carries a max of 1 item every 4.5 ticks, so this should easily keep up with that
 		if sink.energy >= 30*1000*1000 then
 			-- entity can charge at 40MW and store 30MW, with a drain of 30MW, so it'll take a few seconds to power up, which is fine
@@ -210,19 +215,40 @@ local function on60thTick(event)
 		if player.opened and player.opened_gui_type == defines.gui_type.entity and player.opened.valid and player.opened.name == storage then
 			-- GUI can be assumed to exist
 			local gui = player.gui.left['awesome-sink-gui']['awesome-sink-content']['awesome-sink-table']['awesome-sink-count-flow1']['awesome-sink-count']
+			local force_idx = player.force.index
 			gui.caption = util.format_number(
-				global['awesome-coupons'] and global['awesome-coupons'][player.force.index] and global['awesome-coupons'][player.force.index][2] or 0
+				script_data.coupons[force_idx] and script_data.coupons[force_idx][2] or 0
 			)
 			gui = player.gui.left['awesome-sink-gui']['awesome-sink-content']['awesome-sink-table']['awesome-sink-count-flow2']['awesome-sink-to-next']
 			gui.caption = util.format_number(
-				pointsToNext(global['awesome-coupons'] and global['awesome-coupons'][player.force.index] and global['awesome-coupons'][player.force.index][1] or 0)
-				-(global['awesome-coupons'] and global['awesome-coupons'][player.force.index] and global['awesome-coupons'][player.force.index][3] or 0)
+				pointsToNext(script_data.coupons[force_idx] and script_data.coupons[force_idx][1] or 0)
+				-(script_data.coupons[force_idx] and script_data.coupons[force_idx][3] or 0)
 			)
 		end
 	end
 end
 
 return {
+	on_init = function()
+		global.awesome = global.awesome or script_data
+	end,
+	on_load = function()
+		script_data = global.awesome or script_data
+    end,
+    on_configuration_change = function()
+        if not global.awesome then
+            global.awesome = script_data
+		end
+
+		if global['awesome-sinks'] then
+			global.awesome.sinks = table.deepcopy(global['awesome-sinks'])
+			global['awesome-sinks'] = nil
+		end
+		if global['awesome-coupons'] then
+			global.awesome.sinks = table.deepcopy(global['awesome-coupons'])
+			global['awesome-coupons'] = nil
+		end
+    end,
 	on_nth_tick = {
 		[4] = on4thTick,
 		[60] = on60thTick
