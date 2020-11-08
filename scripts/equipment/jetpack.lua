@@ -7,7 +7,6 @@ local shadow = item.."-flying-shadow"
 local fuel = "packaged-fuel"
 
 local script_data = {}
-local table_size = table_size
 
 local function onJump(event)
 	local player = game.players[event.player_index]
@@ -60,7 +59,17 @@ local function onVehicle(event)
 					momentum = {0,0}
 				}
 				script_data[player.index] = struct
-				local shield = entity.grid.put{name = "jetpack-equipment"}
+				local shield = nil
+				for _, equipment in pairs(entity.grid.equipment) do
+					if equipment.name == 'jetpack-equipment' then
+						shield = equipment
+						break
+					end
+				end
+
+				if not shield then
+					shield = entity.grid.put{name = "jetpack-equipment"}
+				end
 				shield.shield = shield.max_shield
 			end
 		end
