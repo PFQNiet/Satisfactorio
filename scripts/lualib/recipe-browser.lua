@@ -548,6 +548,11 @@ local function onGuiClick(event)
 		if not script_data[player.index] then script_data[player.index] = {} end
 		local wanted = script_data[player.index]
 		local yield = getRecipeYield(recipe)
+		if event.button == defines.mouse_button_type.right then
+			yield = yield * 5
+		elseif event.shift then
+			yield = math.floor((game.item_prototypes[recipe.main_product.name or recipe.products[1].name] or {stack_size = 100}).stack_size / yield) * yield
+		end
 		wanted[recipe.name] = (wanted[recipe.name] or 0) + yield
 		updateWantedList(player)
 	elseif event.element.name == "to-do-list-toggle" then
