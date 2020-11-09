@@ -20,8 +20,8 @@
 	Special resource "types": x-plant, x-deposit, x-powerslug, x-crashsite
 ]]
 local script_data = {
-    resources = {},
-    node_count = 0
+	resources = {},
+	node_count = 0
 }
 
 return {
@@ -31,17 +31,27 @@ return {
 	on_load = function()
 		script_data = global.resources or script_data
 	end,
-    resources = script_data.resources,
-    node_count = function(default)
-        if script_data.node_count > 0 then
-            return script_data.node_count
-        end
-        return default == nil and 0 or default
-    end,
-    add_node = function(name, value)
-        script_data.resources[name] = value
-    end,
-    add_count = function(add)
-        script_data.node_count = script_data.node_count + add
-    end
+	on_configuration_changed = function()
+		if global.resources and not global.resources.resources then
+			script_data = {
+				resources = table.deepcopy(global.resources),
+				node_count = 0
+			}
+			global.resources = script_data
+		end
+	end,
+
+	resources = script_data.resources,
+	node_count = function(default)
+		if script_data.node_count > 0 then
+			return script_data.node_count
+		end
+		return default == nil and 0 or default
+	end,
+	add_node = function(name, value)
+		script_data.resources[name] = value
+	end,
+	add_count = function(add)
+		script_data.node_count = script_data.node_count + add
+	end
 }
