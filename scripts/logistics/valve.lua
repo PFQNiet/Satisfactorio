@@ -14,6 +14,12 @@ local script_data = {
 local function findStruct(entity)
 	return script_data.valves[entity.unit_number]
 end
+local function closeGui(player)
+	local gui = player.gui.screen['valve']
+	if gui then gui.visible = false end
+	player.opened = nil
+	script_data.gui[player.index] = nil
+end
 
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
@@ -58,6 +64,12 @@ local function onRemoved(event)
 		struct.input.destroy()
 		struct.output.destroy()
 		script_data.valves[entity.unit_number] = nil
+		-- find any players that had this GUI open and close it
+		for pid,struct in pairs(script_data.gui) do
+			if struct.base == entity then
+				closeGui(game.players[pid])
+			end
+		end
 	end
 end
 
@@ -191,22 +203,16 @@ local function onGuiOpened(event)
 		gui.force_auto_center()
 	end
 end
-local function _closeGui(player)
-	local gui = player.gui.screen['valve']
-	if gui then gui.visible = false end
-	player.opened = nil
-	script_data.gui[player.index] = nil
-end
 local function onGuiClosed(event)
 	if event.element and event.element.valid and event.element.name == "valve" then
 		local player = game.players[event.player_index]
-		_closeGui(player)
+		closeGui(player)
 	end
 end
 local function onGuiClick(event)
 	if event.element and event.element.valid and event.element.name == "valve-close" then
 		local player = game.players[event.player_index]
-		_closeGui(player)
+		closeGui(player)
 	end
 end
 local function onGuiValueChanged(event)
@@ -248,6 +254,17 @@ local function onGuiConfirmed(event)
 	end
 end
 
+local function onMove(event)
+	-- if the player moves and has a valve open, check that the valve can still be reached
+	local player = game.players[event.player_index]
+	local struct = script_data.gui[player.index]
+	if struct then
+		if not player.can_reach_entity(struct.base) then
+			closeGui(player)
+		end
+	end
+end
+
 return {
 	on_init = function()
 		global.valves = global.valves or script_data
@@ -284,6 +301,8 @@ return {
 		[defines.events.on_gui_click] = onGuiClick,
 		[defines.events.on_gui_value_changed] = onGuiValueChanged,
 		[defines.events.on_gui_confirmed] = onGuiConfirmed,
+
+		[defines.events.on_player_changed_position] = onMove,
 
 		[defines.events.on_tick] = onTick
 	}

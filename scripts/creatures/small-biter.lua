@@ -18,6 +18,12 @@ local script_data = {
 	lizard_doggo_gui = {},
 	dropped_bait = {}
 }
+local function closeGui(player)
+	local gui = player.gui.screen['lizard-doggo']
+	if gui then gui.visible = false end
+	player.opened = nil
+	script_data.lizard_doggo_gui[player.index] = nil
+end
 
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
@@ -63,6 +69,12 @@ local function onEntityDied(event)
 			)
 		end
 		doggos[event.entity.unit_number] = nil
+		-- find any players that had this pet's GUI open and close it
+		for pid,uid in pairs(script_data.lizard_doggo_gui) do
+			if uid == event.entity.unit_number then
+				closeGui(game.players[pid])
+			end
+		end
 	end
 end
 local function onCommandCompleted(event)
@@ -299,12 +311,6 @@ local function onInteract(event)
 		end
 	end
 end
-local function closeGui(player)
-	local gui = player.gui.screen['lizard-doggo']
-	if gui then gui.visible = false end
-	player.opened = nil
-	script_data.lizard_doggo_gui[player.index] = nil
-end
 local function onGuiClosed(event)
 	if event.element and event.element.valid and event.element.name == "lizard-doggo" then
 		closeGui(game.players[event.player_index])
@@ -361,6 +367,16 @@ local function onGuiClick(event)
 	end
 end
 
+local function onMove(event)
+	-- if the player moves and has a pet open, check that the pet can still be reached
+	local player = game.players[event.player_index]
+	if script_data.lizard_doggo_gui[player.index] then
+		if not player.can_reach_entity(script_data.lizard_doggos[script_data.lizard_doggo_gui[player.index]].entity) then
+			closeGui(player)
+		end
+	end
+end
+
 return {
 	on_init = function()
 		global.small_biter = global.small_biter or script_data
@@ -398,6 +414,8 @@ return {
 		[defines.events.on_ai_command_completed] = onCommandCompleted,
 		["interact"] = onInteract,
 		[defines.events.on_gui_closed] = onGuiClosed,
-		[defines.events.on_gui_click] = onGuiClick
+		[defines.events.on_gui_click] = onGuiClick,
+
+		[defines.events.on_player_changed_position] = onMove
 	}
 }
