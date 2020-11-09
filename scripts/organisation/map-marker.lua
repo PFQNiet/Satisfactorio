@@ -63,7 +63,7 @@ local function openBeaconGUI(beacon, player)
 	}
 	player.opened = gui
 	gui.force_auto_center()
-	beacons.opened[player.index] = item_name 
+	beacons.opened[player.index] = beacon
 end
 local function closeBeaconGUI(player)
 	local gui = player.gui.screen['beacon-naming']
@@ -100,6 +100,8 @@ local function onBuilt(event)
 		entity.force.add_chart_tag(entity.surface, {position=entity.position,icon={type="item",name="map-marker"}})
 		if event.type == defines.events.on_build_entity then
 			local player = game.players[event.player_index]
+			player.clean_cursor()
+			-- player.clear_cursor() -- 1.1.0
 			openBeaconGUI(entity, player)
 		end
 	end
@@ -111,6 +113,12 @@ local function onRemoved(event)
 		local tag = findBeaconTag(entity)
 		if tag and tag.valid then
 			tag.destroy()
+		end
+		-- if a player had this beacon's GUI open, close it
+		for pid,beacon in pairs(beacons.opened) do
+			if beacon == entity then
+				closeBeaconGUI(game.players[pid])
+			end
 		end
 	end
 end

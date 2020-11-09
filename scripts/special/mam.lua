@@ -424,7 +424,7 @@ return {
 	on_load = function()
 		script_data = global.hard_drive or script_data
     end,
-    on_configuration_change = function()
+    on_configuration_changed = function()
         if not global.hard_drive then
             global.hard_drive = script_data
 		end

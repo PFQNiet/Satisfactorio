@@ -82,7 +82,7 @@ return {
 	on_load = function()
 		script_data = global.fuel_generators or script_data
     end,
-    on_configuration_change = function()
+    on_configuration_changed = function()
         if not global.fuel_generators then
             global.fuel_generators = script_data
 		end

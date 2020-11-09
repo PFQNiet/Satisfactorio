@@ -69,12 +69,13 @@ local function openObjectScanner(player)
 	local index = menu.selected_index or 0
 	if index == 0 then index = 1 end
 	menu.clear_items()
+	local selected = script_data.pings[player.index].type
 	for i,recipe in ipairs(getUnlockedScans(player.force)) do
 		local product = recipe.products[1]
 		local scan_for = game[product.type.."_prototypes"][product.name].localised_name
 		if product.name == "green-power-slug" then scan_for = {"gui.object-scanner-power-slugs"} end
 		menu.add_item({"","[img="..product.type.."."..product.name.."] ",scan_for})
-		if script_data.pings[player.index].type == product.name then
+		if selected == product.name then
 			index = i
 		end
 	end
@@ -102,8 +103,6 @@ local function openBeaconScanner(player)
 	local gui = player.gui.screen['beacon-scanner']
 	local menu
 	if not gui then
-		if not beacons.beacons[player.index] then beacons.beacons[player.index] = {} end
-		
 		gui = player.gui.screen.add{
 			type = "frame",
 			name = "beacon-scanner",
@@ -149,13 +148,13 @@ local function openBeaconScanner(player)
 	local index = menu.selected_index or 0
 	if index == 0 then index = 1 end
 	menu.clear_items()
-	local beacons = player.surface.find_entities_filtered{name="map-marker",force=player.force}
+	local entities = player.surface.find_entities_filtered{name="map-marker",force=player.force}
 	local tags = {}
-	for i,beacon in pairs(beacons) do
+	for i,beacon in pairs(entities) do
 		tags[beacon.unit_number] = findBeaconTag(beacon)
 	end
 	-- sort beacons alphabetically... to help :D
-	table.sort(beacons, function(a,b)
+	table.sort(entities, function(a,b)
 		if tags[a.unit_number].text ~= tags[b.unit_number].text then
 			return tags[a.unit_number].text < tags[b.unit_number].text
 		elseif tags[a.unit_number].icon.type ~= tags[b.unit_number].icon.type then
@@ -166,7 +165,8 @@ local function openBeaconScanner(player)
 			return a.unit_number < b.unit_number
 		end
 	end)
-	for i,beacon in pairs(beacons) do
+	beacons.beacons[player.index] = {}
+	for i,beacon in pairs(entities) do
 		local tag = tags[beacon.unit_number]
 		menu.add_item({"","[img="..tag.icon.type.."."..tag.icon.name.."] ",tag.text == "" and {"item-name.map-marker"} or tag.text})
 		table.insert(beacons.beacons[player.index], beacon)
@@ -274,7 +274,7 @@ local function onTick(event)
 				if ping.type == "enemies" then
 					entities = player.surface.find_enemy_units(player.position, 250, player.force)
 				elseif ping.type == "map-marker" then
-					entities = ping.beacon and ping.beacon.surface == player.surface and {ping.beacon} or nil
+					entities = ping.beacon and ping.beacon.surface == player.surface and {ping.beacon} or {}
 				else
 					entities = player.surface.find_entities_filtered{
 						name = search_for,
@@ -384,7 +384,7 @@ return {
 	on_load = function()
 		script_data = global.object_scanner or script_data
     end,
-    on_configuration_change = function()
+    on_configuration_changed = function()
         if not global.object_scanner then
             global.object_scanner = script_data
 		end
