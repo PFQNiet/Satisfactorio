@@ -4,18 +4,40 @@
 -- ^ then again maybe this doesn't need to be updated too often - if you drop radioactive items, they're still right there at your feet!
 -- the player takes damage if the chunk they are in is polluted, proportional to pollution but capped to 20dps
 -- the hazmat suit protects the player from radiation damage, provided the player has filters (similar to the Gas Mask)
--- uses global['rad-chunks'] to store chunks in a surface-Y-X array
--- uses global['rad-buckets'] to spread chunks out over the course of a minute rather than trying to do them all at once
--- uses global['rad-chunks-count'] to count the total number of chunks being tracked
+-- uses global.radioactivity.chunks to store chunks in a surface-Y-X array
+-- uses global.radioactivity.buckets to spread chunks out over the course of a minute rather than trying to do them all at once
+-- uses global.radioactivity.count to count the total number of chunks being tracked
+
+local script_data = {
+	chunks = {},
+	buckets = {},
+	count = 0
+}
+
+local bucket_metatable = {
+	__index = function(tab, key)
+		local raw = rawget(tab, key)
+		if raw == nil then
+			raw = {}
+			rawset(tab, key, raw)
+		end
+		return raw
+	end
+}
 
 -- using a 10-bit number for 1024 buckets
 local function bitrev10(n)
-	n = bit32.bor(bit32.rshift(bit32.band(n,0xFF00),8), bit32.lshift(bit32.band(n,0x00FF),8))
-	n = bit32.bor(bit32.rshift(bit32.band(n,0xF0F0),4), bit32.lshift(bit32.band(n,0x0F0F),4))
-	n = bit32.bor(bit32.rshift(bit32.band(n,0xCCCC),2), bit32.lshift(bit32.band(n,0x3333),2))
-	n = bit32.bor(bit32.rshift(bit32.band(n,0xAAAA),1), bit32.lshift(bit32.band(n,0x5555),1))
+	local rshift = bit32.rshift
+	local bor = bit32.bor
+	local band = bit32.band
+	local lshift = bit32.lshift
+
+	n = bor(rshift(band(n,0xFF00),8), lshift(band(n,0x00FF),8))
+	n = bor(rshift(band(n,0xF0F0),4), lshift(band(n,0x0F0F),4))
+	n = bor(rshift(band(n,0xCCCC),2), lshift(band(n,0x3333),2))
+	n = bor(rshift(band(n,0xAAAA),1), lshift(band(n,0x5555),1))
 	-- that flips a 16-bit number, so shift the result right by 6 bits to make it 10-bit again
-	return bit32.rshift(n,6)
+	return rshift(n,6)
 end
 
 local function onChunkGenerated(event)
@@ -28,9 +50,9 @@ local function onChunkGenerated(event)
 	area[2] = area[2] or area.right_bottom
 	area[2][1] = area[2][1] or area[2].x
 	area[2][2] = area[2][2] or area[2].y
-	if not global['rad-chunks'] then global['rad-chunks'] = {} end
-	if not global['rad-chunks'][surface.index] then global['rad-chunks'][surface.index] = {} end
-	if not global['rad-chunks'][surface.index][pos.y] then global['rad-chunks'][surface.index][pos.y] = {} end
+	if not script_data.chunks[surface.index] then script_data.chunks[surface.index] = {} end
+	local chunk = script_data.chunks[surface.index]
+	if not chunk[pos.y] then chunk[pos.y] = {} end
 	local entry = {
 		x = pos.x,
 		y = pos.y,
@@ -39,19 +61,17 @@ local function onChunkGenerated(event)
 		radioactivity = 0,
 		entities = {}
 	}
-	global['rad-chunks'][surface.index][pos.y][pos.x] = entry
+	chunk[pos.y][pos.x] = entry
 	-- convert count to Grey number and reverse bits to get index into buckets
 	-- this optimally spreads chunks out among the buckets, although honestly... 1024 buckets is gonna get filled with chunks fast so I dunno why I bothered LMAO
-	local count = (global['rad-chunks-count'] or 0) % 1024
+	local count = (script_data.count or 0) % 1024
 	local grey = bit32.bxor(count, bit32.rshift(count, 1))
 	local bucketindex = bitrev10(grey)
-	if not global['rad-buckets'] then global['rad-buckets'] = {} end
-	if not global['rad-buckets'][bucketindex] then global['rad-buckets'][bucketindex] = {} end
-	table.insert(global['rad-buckets'][bucketindex], entry)
-	global['rad-chunks-count'] = count+1
+	table.insert(script_data.buckets[bucketindex], entry)
+	script_data.count = count+1
 end
 local function getRadiationForChunk(surface, cx, cy)
-	local obj = global['rad-chunks']
+	local obj = script_data.chunks
 	if not obj then return 0 end
 	obj = obj[surface.index]
 	if not obj then return 0 end
@@ -135,7 +155,8 @@ local function addRadiationForTransportBelt(entity)
 end
 local function addRadiationForUnit(entity)
 	-- tamed Lizard Doggos may sometimes find Nuclear Waste, which should be accounted for
-	local stack = global['lizard-doggos'] and global['lizard-doggos'][entity.unit_number] and global['lizard-doggos'][entity.unit_number].helditem
+	local doggos = global.small_biter.lizard_doggos
+	local stack = doggos[entity.unit_number] and doggos[entity.unit_number].helditem
 	return stack and addRadiationForItemStack{
 		valid = true,
 		valid_for_read = true,
@@ -174,8 +195,8 @@ end
 local function onTick(event)
 	local tick = event.tick
 	local bucket = tick % 1024
-	if global['rad-buckets'] and global['rad-buckets'][bucket] then
-		for _,entry in pairs(global['rad-buckets'][bucket]) do
+	if #script_data.buckets[bucket] ~= 0 then
+		for _,entry in pairs(script_data.buckets[bucket]) do
 			local area = entry.area
 			local entities = entry.surface.find_entities_filtered{
 				area = area,
@@ -278,6 +299,34 @@ local function onTick(event)
 end
 
 return {
+	on_init = function()
+		if not global.radioactivity then
+			setmetatable(script_data.buckets, bucket_metatable)
+		end
+
+		global.radioactivity = global.radioactivity or script_data
+	end,
+	on_load = function()
+		script_data = global.radioactivity or script_data
+		setmetatable(script_data.buckets, bucket_metatable)
+	end,
+	on_configuration_changed = function()
+		if not global.radioactivity then
+			global.radioactivity = script_data
+		end
+		if global['rad-chunks'] then
+			global.radioactivity.chunks = table.deepcopy(global['rad-chunks'])
+			global['rad-chunks'] = nil
+		end
+		if global['rad-chunks-count'] then
+			global.radioactivity.count= table.deepcopy(global['rad-chunks-count'])
+			global['rad-chunks-count'] = nil
+		end
+		if global['rad-buckets'] then
+			global.radioactivity.buckets = table.deepcopy(global['rad-buckets'])
+			global['rad-buckets'] = nil
+		end
+	end,
 	events = {
 		[defines.events.on_chunk_generated] = onChunkGenerated,
 		[defines.events.on_tick] = onTick,

@@ -1,6 +1,11 @@
--- uses global['object-scanner-pings'] as table of player => {type, target, graphics} for active pings
--- uses global['beacon-list'] to temporary store the order of beacons in the beacon selector list
+-- uses global.object_scanner.pings as table of player => {type, target, graphics} for active pings
+-- uses global.beacons.beacons to temporary store the order of beacons in the beacon selector list
 local scanner = "object-scanner"
+
+local script_data = {
+	pings = {}
+}
+local beacons = require('scripts.organisation.beacon')
 
 local util = require("util")
 
@@ -18,8 +23,7 @@ local function openObjectScanner(player)
 	local gui = player.gui.screen['object-scanner']
 	local menu
 	if not gui then
-		if not global['object-scanner-pings'] then global['object-scanner-pings'] = {} end
-		if not global['object-scanner-pings'][player.index] then global['object-scanner-pings'][player.index] = {} end
+		if not script_data.pings[player.index] then script_data.pings[player.index] = {} end
 
 		gui = player.gui.screen.add{
 			type = "frame",
@@ -65,12 +69,13 @@ local function openObjectScanner(player)
 	local index = menu.selected_index or 0
 	if index == 0 then index = 1 end
 	menu.clear_items()
+	local selected = script_data.pings[player.index].type
 	for i,recipe in ipairs(getUnlockedScans(player.force)) do
 		local product = recipe.products[1]
 		local scan_for = game[product.type.."_prototypes"][product.name].localised_name
 		if product.name == "green-power-slug" then scan_for = {"gui.object-scanner-power-slugs"} end
 		menu.add_item({"","[img="..product.type.."."..product.name.."] ",scan_for})
-		if global['object-scanner-pings'][player.index].type == product.name then
+		if selected == product.name then
 			index = i
 		end
 	end
@@ -98,9 +103,6 @@ local function openBeaconScanner(player)
 	local gui = player.gui.screen['beacon-scanner']
 	local menu
 	if not gui then
-		if not global['beacon-list'] then global['beacon-list'] = {} end
-		if not global['beacon-list'][player.index] then global['beacon-list'][player.index] = {} end
-		
 		gui = player.gui.screen.add{
 			type = "frame",
 			name = "beacon-scanner",
@@ -146,13 +148,13 @@ local function openBeaconScanner(player)
 	local index = menu.selected_index or 0
 	if index == 0 then index = 1 end
 	menu.clear_items()
-	local beacons = player.surface.find_entities_filtered{name="map-marker",force=player.force}
+	local entities = player.surface.find_entities_filtered{name="map-marker",force=player.force}
 	local tags = {}
-	for i,beacon in pairs(beacons) do
+	for i,beacon in pairs(entities) do
 		tags[beacon.unit_number] = findBeaconTag(beacon)
 	end
 	-- sort beacons alphabetically... to help :D
-	table.sort(beacons, function(a,b)
+	table.sort(entities, function(a,b)
 		if tags[a.unit_number].text ~= tags[b.unit_number].text then
 			return tags[a.unit_number].text < tags[b.unit_number].text
 		elseif tags[a.unit_number].icon.type ~= tags[b.unit_number].icon.type then
@@ -163,11 +165,12 @@ local function openBeaconScanner(player)
 			return a.unit_number < b.unit_number
 		end
 	end)
-	for i,beacon in pairs(beacons) do
+	beacons.beacons[player.index] = {}
+	for i,beacon in pairs(entities) do
 		local tag = tags[beacon.unit_number]
 		menu.add_item({"","[img="..tag.icon.type.."."..tag.icon.name.."] ",tag.text == "" and {"item-name.map-marker"} or tag.text})
-		table.insert(global['beacon-list'][player.index], beacon)
-		if global['object-scanner-pings'][player.index].beacon == beacon then
+		table.insert(beacons.beacons[player.index], beacon)
+		if script_data.pings[player.index].beacon == beacon then
 			index = i
 		end
 	end
@@ -186,7 +189,7 @@ end
 local function closeBeaconScanner(player)
 	local gui = player.gui.screen['beacon-scanner']
 	if gui then gui.visible = false end
-	global['beacon-list'][player.index] = {}
+	beacons.beacons[player.index] = {}
 	player.opened = nil
 end
 
@@ -202,7 +205,7 @@ local function onGuiClick(event)
 			return
 		end
 		local type = getUnlockedScans(player.force)[index].products[1].name
-		local struct = global['object-scanner-pings'][player.index]
+		local struct = script_data.pings[player.index]
 		struct.type = type
 		struct.target = nil
 		if type == "map-marker" then
@@ -224,12 +227,12 @@ local function onGuiClick(event)
 			closeBeaconScanner(player)
 			return
 		end
-		local beacon = global['beacon-list'][player.index][index]
+		local beacon = beacons.beacons[player.index][index]
 		closeBeaconScanner(player)
 		if not beacon or not beacon.valid then
 			return
 		end
-		local struct = global['object-scanner-pings'][player.index]
+		local struct = script_data.pings[player.index]
 		local tag = findBeaconTag(beacon)
 		struct.beacon = beacon
 		struct.icon = tag.icon.type.."/"..tag.icon.name
@@ -245,8 +248,8 @@ local function onGuiClick(event)
 end
 
 local function onTick(event)
-	if not global['object-scanner-pings'] then return end
-	for pid,ping in pairs(global['object-scanner-pings']) do
+	local rendering = rendering
+	for pid,ping in pairs(script_data.pings) do
 		local player = game.players[pid]
 		if not (ping.type and player.cursor_stack and player.cursor_stack.valid_for_read and player.cursor_stack.name == scanner) then
 			if ping.graphics then
@@ -271,7 +274,7 @@ local function onTick(event)
 				if ping.type == "enemies" then
 					entities = player.surface.find_enemy_units(player.position, 250, player.force)
 				elseif ping.type == "map-marker" then
-					entities = ping.beacon and ping.beacon.surface == player.surface and {ping.beacon} or nil
+					entities = ping.beacon and ping.beacon.surface == player.surface and {ping.beacon} or {}
 				else
 					entities = player.surface.find_entities_filtered{
 						name = search_for,
@@ -375,6 +378,22 @@ local function onTick(event)
 end
 
 return {
+	on_init = function()
+		global.object_scanner = global.object_scanner or script_data
+	end,
+	on_load = function()
+		script_data = global.object_scanner or script_data
+	end,
+	on_configuration_changed = function()
+		if not global.object_scanner then
+			global.object_scanner = script_data
+		end
+
+		if global['object-scanner-pings'] then
+			global.object_scanner.pings = table.deepcopy(global['object-scanner-pings'])
+			global['object-scanner-pings'] = nil
+		end
+	end,
 	events = {
 		[defines.events.on_mod_item_opened] = function(event)
 			local player = game.players[event.player_index]

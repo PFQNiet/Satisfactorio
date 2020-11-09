@@ -1,12 +1,16 @@
 -- hypertube travel is initiated by entering the pseudo-vehicle
 -- this auto-drives the car along the path of the hyper tube until it reaches an exit, ie. an entity with only one connection
--- uses global['hyper-tube-travel'] to track player -> movement data
--- uses global['player-build-error-debounce'] to track force -> last error tick to de-duplicate placement errors
+-- uses global.hyper_tube to track player -> movement data
+-- uses global.player_build_error_debounce to track force -> last error tick to de-duplicate placement errors
 
 local tube = "hyper-tube"
 local underground = "underground-hyper-tube"
 local entrance = "hyper-tube-entrance"
 local car = entrance.."-car"
+
+local script_data = {}
+local debounce_error = {}
+
 local function isHyperTube(entity)
 	return entity.name == tube or entity.name == underground or entity.name == entrance
 end
@@ -46,9 +50,7 @@ local function onBuilt(event)
 		if not isValidHyperTube(entity) then
 			local player = entity.last_user
 			player.insert{name=entity.name,count=1}
-			if not global['player-build-error-debounce'] then global['player-build-error-debounce'] = {} end
-			local debounce = global['player-build-error-debounce']
-			if not debounce[player.force.index] or debounce[player.force.index] < event.tick then
+			if not debounce_error[player.force.index] or debounce_error[player.force.index] < event.tick then
 				player.surface.create_entity{
 					name = "flying-text",
 					position = entity.position,
@@ -58,7 +60,7 @@ local function onBuilt(event)
 				player.play_sound{
 					path = "utility/cannot_build"
 				}
-				debounce[player.force.index] = event.tick + 60
+				debounce_error[player.force.index] = event.tick + 60
 			end
 			entity.destroy()
 			return
@@ -115,8 +117,7 @@ local function onVehicle(event)
 	local player = game.players[event.player_index]
 	local entity = event.entity
 	if entity and entity.valid and entity.name == car then
-		if not global['hyper-tube-travel'] then global['hyper-tube-travel'] = {} end
-		local travel = global['hyper-tube-travel']
+		local travel = script_data
 		if player.driving then
 			local enter = entity.surface.find_entity(entrance,entity.position)
 			if entity.get_driver() ~= player.character or enter.energy == 0 then
@@ -157,7 +158,7 @@ local function onVehicle(event)
 end
 local SPEED = 24/60 -- tiles per tick, so 0.25 = 15 tiles per second
 local function onTick(event)
-	local travel = global['hyper-tube-travel']
+	local travel = script_data
 	if not travel then return end
 	for pid,data in pairs(travel) do
 		local player = game.players[pid]
@@ -246,6 +247,32 @@ local function onTick(event)
 end
 
 return {
+	on_init = function()
+		global.hyper_tube = global.hyper_tube or script_data
+		global.debounce_error = global.player_build_error_debounce or debounce_error
+	end,
+	on_load = function()
+		script_data = global.hyper_tube or script_data
+		debounce_error = global.player_build_error_debounce or debounce_error
+	end,
+	on_configuration_changed = function()
+		if not global.hyper_tube then
+			global.hyper_tube = script_data
+		end
+		if not global.player_build_error_debounce then
+			global.player_build_error_debounce = debounce_error
+		end
+		if global['hyper-tube-travel'] then
+			global.hyper_tube = table.deepcopy(global['hyper-tube-travel'])
+			script_data = global.hyper_tube
+			global['hyper-tube-travel'] = nil
+		end
+		if global['player-build-error-debounce'] then
+			global.player_build_error_debounce = table.deepcopy(global['player-debounce-error-debounce'])
+			debounce_error = global.player_build_error_debounce
+			global['player-debounce-error-debounce'] = nil
+		end
+	end,
 	events = {
 		[defines.events.on_built_entity] = onBuilt,
 		[defines.events.on_robot_built_entity] = onBuilt,

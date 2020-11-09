@@ -6,6 +6,11 @@ local detonator = "nobelisk-detonator"
 local sticker = name.."-armed"
 local onground = name.."-on-ground"
 
+local script_data = {
+	queue = {},
+	explosions = {}
+}
+
 local function onScriptTriggerEffect(event)
 	local source = event.source_entity and event.source_entity.type == "character" and event.source_entity.player and event.source_entity.player.index or 0
 	if event.effect_id == name then
@@ -31,9 +36,8 @@ local function onScriptTriggerEffect(event)
 			target.destructible = false
 			offset = {0,0}
 		end
-		if not global['nobelisk-queue'] then global['nobelisk-queue'] = {} end
-		if not global['nobelisk-queue'][source] then global['nobelisk-queue'][source] = {} end
-		table.insert(global['nobelisk-queue'][source], {
+		if not script_data.queue[source] then script_data.queue[source] = {} end
+		table.insert(script_data.queue[source], {
 			entity = target,
 			offset = offset,
 			force = event.source_entity and event.source_entity.force or "player",
@@ -42,54 +46,36 @@ local function onScriptTriggerEffect(event)
 	end
 	if event.effect_id == detonator then
 		-- transfer player's queued nobelisks into the explosion queue
-		local queue = global['nobelisk-queue'] and global['nobelisk-queue'][source]
+		local queue = script_data.queue[source]
 		if queue then
-			if not global['nobelisk-explosions'] then global['nobelisk-explosions'] = {} end
 			for i,exp in pairs(queue) do
 				local tick = event.tick + 18 + i*12
-				if not global['nobelisk-explosions'][tick] then global['nobelisk-explosions'][tick] = {} end
-				table.insert(global['nobelisk-explosions'][tick], exp)
+				if not script_data.explosions[tick] then script_data.explosions[tick] = {} end
+				table.insert(script_data.explosions[tick], exp)
 			end
 			(source > 0 and game.players[source] or game).play_sound{path="nobelisk-detonator"}
-			global['nobelisk-queue'][source] = {}
+			script_data.queue[source] = {}
 		end
 	end
 end
 local function onEntityDied(event)
-	if global['nobelisk-queue'] then
-		for pid,explosions in pairs(global['nobelisk-explosions']) do
-			for _,exp in pairs(explosions) do
-				if exp.entity == event.entity then
-					-- drop nobelisk on the ground instead
-					exp.entity = event.entity.surface.create_entity{
-						name = onground,
-						position = event.entity.position,
-						force = exp.force
-					}
-					exp.entity.destructible = false
-				end
-			end
-		end
-	end
-	if global['nobelisk-explosions'] then
-		for tick,explosions in pairs(global['nobelisk-explosions']) do
-			for _,exp in pairs(explosions) do
-				if exp.entity == event.entity then
-					-- drop nobelisk on the ground instead
-					exp.entity = event.entity.surface.create_entity{
-						name = onground,
-						position = event.entity.position,
-						force = exp.force
-					}
-					exp.entity.destructible = false
-				end
+	for pid,explosions in pairs(script_data.explosions) do
+		for _,exp in pairs(explosions) do
+			if exp.entity == event.entity then
+				-- drop nobelisk on the ground instead
+				exp.entity = event.entity.surface.create_entity{
+					name = onground,
+					position = event.entity.position,
+					force = exp.force
+				}
+				exp.entity.destructible = false
 			end
 		end
 	end
 end
 local function onTick(event)
-	if global['nobelisk-explosions'] and global['nobelisk-explosions'][event.tick] then
-		for _,explosion in pairs(global['nobelisk-explosions'][event.tick]) do
+	if script_data.explosions[event.tick] then
+		for _,explosion in pairs(script_data.explosions[event.tick]) do
 			local pos = explosion.offset
 			if explosion.entity and explosion.entity.valid then
 				pos[1] = pos[1] + explosion.entity.position.x
@@ -147,7 +133,7 @@ local function onTick(event)
 				else
 					-- if entity survived and nobody else has stickied it, remove its sticker
 					local clean = true
-					for _,q in pairs(global['nobelisk-queue']) do
+					for _,q in pairs(script_data.queue) do
 						if q.target and q.target.valid and q.target == explosion.entity then
 							clean = false
 							break
@@ -163,11 +149,31 @@ local function onTick(event)
 				end
 			end
 		end
-		global['nobelisk-explosions'][event.tick] = nil
+		script_data.explosions[event.tick] = nil
 	end
 end
 
 return {
+	on_init = function()
+		global.nobelisk = global.nobelisk or script_data
+	end,
+	on_load = function()
+		script_data = global.nobelisk or script_data
+	end,
+	on_configuration_changed = function()
+		if not global.nobelisk then
+			global.nobelisk = script_data
+		end
+
+		if global['nobelisk-queue'] then
+			global.nobelisk.queue = table.deepcopy(global['nobelisk-queue'])
+			global['nobelisk-queue'] = nil
+		end
+		if global['nobelisk-explosions'] then
+			global.nobelisk.explosions = table.deepcopy(global['nobelisk-explosions'])
+			global['nobelisk-explosions'] = nil
+		end
+	end,
 	events = {
 		[defines.events.on_script_trigger_effect] = onScriptTriggerEffect,
 		[defines.events.on_tick] = onTick,

@@ -1,9 +1,13 @@
--- uses global['hard-drive-research'] to record which alt recipes have been selected as rewards
+-- uses global.hard_drive.research to record which alt recipes have been selected as rewards
 local util = require("util")
 local string = require("scripts.lualib.string")
 local omnilab = require("scripts.lualib.omnilab")
 
 local mam = "mam"
+
+local script_data = {
+	research = {}
+}
 
 local function prepareHardDriveTech(force)
 	-- check hard drive techs that have been unlocked but not completed...
@@ -30,19 +34,18 @@ local function prepareHardDriveTech(force)
 			table.remove(valid, rand)
 		end
 	end
-	if not global['hard-drive-research'] then global['hard-drive-research'] = {} end
-	global['hard-drive-research'][force.index] = {
+	script_data.research[force.index] = {
 		done = false,
 		options = selected
 	}
 end
 local function completeHardDriveTech(force)
-	if global['hard-drive-research'] and global['hard-drive-research'][force.index] then
-		global['hard-drive-research'][force.index].done = true
+	if script_data.research[force.index] then
+		script_data.research[force.index].done = true
 	end
 end
 local function clearHardDriveTech(force)
-	global['hard-drive-research'][force.index] = nil
+	script_data.research[force.index] = nil
 	force.recipes["mam-hard-drive"].enabled = true
 	force.recipes["mam-hard-drive-done"].enabled = false
 end
@@ -252,8 +255,7 @@ local function onGuiOpened(event)
 	local player = game.players[event.player_index]
 	if event.gui_type ~= defines.gui_type.entity then return end
 	if event.entity.name ~= mam then return end
-	if not global['hard-drive-research'] then return end
-	local struct = global['hard-drive-research'][player.force.index]
+	local struct = script_data.research[player.force.index]
 	if not struct or not struct.done then return end
 
 	if #struct.options == 0 then
@@ -416,6 +418,22 @@ local function onGuiClick(event)
 end
 
 return {
+	on_init = function()
+		global.hard_drive = global.hard_drive or script_data
+	end,
+	on_load = function()
+		script_data = global.hard_drive or script_data
+	end,
+	on_configuration_changed = function()
+		if not global.hard_drive then
+			global.hard_drive = script_data
+		end
+
+		if global['hard-drive-research'] then
+			global.hard_drive.research = table.deepcopy(global['hard-drive-research'])
+			global['hard-drive-research'] = nil
+		end
+	end,
 	on_nth_tick = {
 		[6] = function(event) manageMamGUI() end
 	},

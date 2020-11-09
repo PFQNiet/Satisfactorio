@@ -1,8 +1,8 @@
 -- jump pad launch is initiated by entering the pseudo-vehicle
--- uses global['jump-pads'] to record the range setting for a given jump pad (max = 40, default = max)
--- uses global['jump-pad-visualisation'] to track player -> arrow
--- uses global['jump-pad-launch'] to track player -> movement data
--- uses global['jump-pad-rebounce'] to track visited jump pads in a chain, to detect a loop and break out of it
+-- uses global.jump_pads.pads to record the range setting for a given jump pad (max = 40, default = max)
+-- uses global.jump_pads.visualisation to track player -> arrow
+-- uses global.jump_pads.launch to track player -> movement data
+-- uses global.jump_pads.rebounce to track visited jump pads in a chain, to detect a loop and break out of it
 -- on landing, player takes "fall damage" unless they land on U-Jelly Landing Pad. If they land on water, they die instantly.
 
 local launcher = "jump-pad"
@@ -10,6 +10,13 @@ local vehicle = launcher.."-car"
 local flying = launcher.."-flying"
 local shadow = launcher.."-flying-shadow"
 local landing = "u-jelly-landing-pad"
+
+local script_data = {
+	pads = {},
+	launch = {},
+	rebounce = {},
+	visualisation = {}
+}
 
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
@@ -22,8 +29,7 @@ local function onBuilt(event)
 			force = entity.force,
 			raise_built = true
 		}
-		if not global['jump-pads'] then global['jump-pads'] = {} end
-		global['jump-pads'][entity.unit_number] = 40
+		script_data.pads[entity.unit_number] = 40
 	end
 end
 local function onRemoved(event)
@@ -34,11 +40,11 @@ local function onRemoved(event)
 		if car and car.valid then
 			car.destroy()
 		end
-		global['jump-pads'][entity.unit_number] = nil
-	elseif entity.name == car then
+		script_data.pads[entity.unit_number] = nil
+	elseif entity.name == vehicle then
 		local floor = entity.surface.find_entity(launcher, entity.position)
 		if floor and floor.valid then
-			global['jump-pads'][floor.unit_number] = nil
+			script_data.pads[floor.unit_number] = nil
 			floor.destroy()
 		end
 	end
@@ -79,10 +85,7 @@ local function onVehicle(event)
 				end
 			else
 				-- initiate YEETage
-				if not global['jump-pad-launch'] then global['jump-pad-launch'] = {} end
-				local launch = global['jump-pad-launch']
-				if not global['jump-pad-rebounce'] then global['jump-pad-rebounce'] = {} end
-				local rebounce = global['jump-pad-rebounce']
+				local rebounce = script_data.rebounce
 				if not rebounce[player.index] then rebounce[player.index] = {} end
 				rebounce[player.index][enter.unit_number] = true
 				local car2 = enter.surface.create_entity{
@@ -102,7 +105,7 @@ local function onVehicle(event)
 					start = enter.position,
 					time = 0,
 					direction = enter.direction,
-					range = global['jump-pads'][enter.unit_number],
+					range = script_data.pads[enter.unit_number],
 					car = car2,
 					shadow = graphic
 				}
@@ -114,17 +117,15 @@ local function onVehicle(event)
 		end
 	else
 		-- check if player is being yeeted and put them back in if so
-		local yeet = global['jump-pad-launch'] and global['jump-pad-launch'][player.index]
+		local yeet = script_data.launch[player.index]
 		if yeet then
 			yeet.car.set_driver(player)
 		end
 	end
 end
 local function onTick(event)
-	local launch = global['jump-pad-launch']
-	if not launch then return end
+	local launch = 	script_data.launch
 	for pid,data in pairs(launch) do
-		local player = game.players[pid]
 		data.time = data.time + 1
 		local position = data.time / 120
 		local x = data.start.x + vectors[data.direction][1] * position * data.range
@@ -161,7 +162,7 @@ local function onTick(event)
 					character.teleport(surface.find_non_colliding_position("character",{x,y},0,0.05))
 					-- if we landed on another jump pad, re-bounce
 					local rebounce = surface.find_entity(launcher, character.position)
-					local pad_rebounce = global['jump-pad-rebounce']
+					local pad_rebounce = script_data.rebounce
 					if rebounce and rebounce.energy > 0 and not pad_rebounce[data.player.index][rebounce.unit_number] then
 						local car = surface.find_entity(vehicle, rebounce.position)
 						if car then
@@ -185,8 +186,7 @@ end
 local function onInteract(event)
 	local player = game.players[event.player_index]
 	if player.selected and player.selected.name == launcher then
-		if not global['jump-pad-visualisation'] then global['jump-pad-visualisation'] = {} end
-		local visualisation = global['jump-pad-visualisation']
+		local visualisation = script_data.visualisation
 		if visualisation[player.index] then
 			for _,part in pairs(visualisation[player.index]) do
 				rendering.destroy(part)
@@ -194,7 +194,7 @@ local function onInteract(event)
 		end
 		local entity = player.selected
 		local tris = {}
-		local range = global['jump-pads'][entity.unit_number]
+		local range = script_data.pads[entity.unit_number]
 		local vector = vectors[entity.direction]
 		local max_z = 80-range
 		local prev = {0,0,0.25}
@@ -268,8 +268,7 @@ local function onRangeDown(event)
 	local player = game.players[event.player_index]
 	if player.selected and player.selected.name == launcher then
 		local entity = player.selected
-		local pads = global['jump-pads']
-		pads[entity.unit_number] = math.max(4,pads[entity.unit_number]-1)
+		script_data.pads[entity.unit_number] = math.max(4,script_data.pads[entity.unit_number]-1)
 		onInteract(event)
 	end
 end
@@ -277,13 +276,39 @@ local function onRangeUp(event)
 	local player = game.players[event.player_index]
 	if player.selected and player.selected.name == launcher then
 		local entity = player.selected
-		local pads = global['jump-pads']
-		pads[entity.unit_number] = math.min(40,pads[entity.unit_number]+1)
+		script_data.pads[entity.unit_number] = math.min(40,script_data.pads[entity.unit_number]+1)
 		onInteract(event)
 	end
 end
 
 return {
+	on_init = function()
+		global.launch_pads = global.launch_pads or script_data
+	end,
+	on_load = function()
+		script_data = global.launch_pads or script_data
+	end,
+	on_configuration_changed = function()
+		if not global.launch_pads then
+			global.launch_pads = script_data
+		end
+		if global['jump-pads'] then
+			global.launch_pads.pads = table.deepcopy(global['jump-pads'])
+			global['jump-pads'] = nil
+		end
+		if global['jump-pad-launch'] then
+			global.launch_pads.launch = table.deepcopy(global['jump-pad-launch'])
+			global['jump-pad-launch'] = nil
+		end
+		if global['jump-pad-rebounce'] then
+			global.launch_pads.rebounce = table.deepcopy(global['jump-pad-rebounce'])
+			global['jump-pad-rebounce'] = nil
+		end
+		if global['jump-pad-visualisation'] then
+			global.launch_pads.visualisation = table.deepcopy(global['jump-pad-visualisation'])
+			global['jump-pad-visualisation'] = nil
+		end
+	end,
 	events = {
 		[defines.events.on_built_entity] = onBuilt,
 		[defines.events.on_robot_built_entity] = onBuilt,

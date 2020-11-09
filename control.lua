@@ -1,6 +1,10 @@
 if script.active_mods.debugadapter then require("profiler") end
 local handler = require("event_handler")
 
+-- Add deepcopy for migrations
+local util = require('util')
+table.deepcopy = util.table.deepcopy
+
 handler.add_lib(require("scripts.freeplay"))
 handler.add_lib(require("scripts.indestructible"))
 handler.add_libraries(require("scripts.creatures"))
@@ -13,7 +17,9 @@ handler.add_libraries(require("scripts.organisation"))
 handler.add_libraries(require("scripts.power"))
 handler.add_libraries(require("scripts.vehicles"))
 handler.add_libraries(require("scripts.weapons"))
+handler.add_lib(require("scripts.lualib.input-output").lib)
 handler.add_lib(require("scripts.lualib.recipe-browser"))
+handler.add_lib(require("scripts.lualib.resources"))
 handler.add_lib(require("scripts.lualib.resource-spawner"))
 handler.add_lib(require("scripts.lualib.resource-scanner"))
 handler.add_lib(require("scripts.lualib.character-healing"))
@@ -23,6 +29,7 @@ handler.add_lib(require("scripts.lualib.crash-sites").lib)
 handler.add_lib(require("scripts.lualib.enemy-spawning").lib)
 handler.add_lib(require("scripts.lualib.self-driving"))
 handler.add_lib(require("scripts.lualib.radioactivity"))
+handler.add_lib(require("scripts.lualib.omnilab"))
 handler.add_lib(require("scripts.tech-extras"))
 handler.add_lib(require("scripts.map-tweaks"))
 

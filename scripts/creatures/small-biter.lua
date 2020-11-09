@@ -4,21 +4,26 @@
 -- Once tamed it will follow its owner and gains a GUI. The GUI sometimes gives a free item, and can also be used to give "follow" and "stay" commands
 -- If a tamed doggo gets too far from its owner it will go back to wandering but will be on the lookout for its owner to follow them again
 
--- uses global['lizard-doggos'] to track all of this, indexed by unit_number
--- uses global['dropped-bait'] to track dropped berries, as they sadly lack a "last_user"
--- uses global['lizard-doggo-gui'] to track which doggo a player has opened
+-- uses global.small_biter.lizard-doggos to track all of this, indexed by unit_number
+-- uses global.small_biter.dropped-bait to track dropped berries, as they sadly lack a "last_user"
+-- uses global.small_biter.lizard-doggo-gui to track which doggo a player has opened
 
 local loot = require("constants.doggo-loot")
 
 local doggo = "small-biter"
 local bait = "paleberry"
 
+local script_data = {
+	lizard_doggos = {},
+	lizard_doggo_gui = {},
+	dropped_bait = {}
+}
+
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not entity or not entity.valid then return end
 	if entity.name == doggo then
-		if not global['lizard-doggos'] then global['lizard-doggos'] = {} end
-		global['lizard-doggos'][entity.unit_number] = {
+		script_data.lizard_doggos[entity.unit_number] = {
 			entity = entity,
 			owner = nil, -- no owner = wild
 			itemtimer = nil,
@@ -34,24 +39,22 @@ local function onBuilt(event)
 end
 local function onDroppedItem(event)
 	if event.entity.stack.name == bait then
-		if not global['dropped-bait'] then global['dropped-bait'] = {} end
 		local reg = script.register_on_entity_destroyed(event.entity)
-		global['dropped-bait'][reg] = {
+		script_data.dropped_bait[reg] = {
 			entity = event.entity,
 			player = game.players[event.player_index]
 		}
 	end
 end
 local function onEntityDestroyed(event)
-	local bait = global['dropped-bait']
-	if bait and bait[event.registration_number] then
-		bait[event.registration_number] = nil
+	if script_data.dropped_bait[event.registration_number] then
+		script_data.dropped_bait[event.registration_number] = nil
 	end
 end
 local function onEntityDied(event)
 	if event.entity.valid and event.entity.name == doggo then
-		local doggos = global['lizard-doggos']
-		local item = doggos [event.entity.unit_number] and doggos[event.entity.unit_number].helditem
+		local doggos = script_data.lizard_doggos
+		local item = doggos[event.entity.unit_number] and doggos[event.entity.unit_number].helditem
 		if item then
 			event.entity.surface.spill_item_stack(
 				event.entity.position,
@@ -63,7 +66,7 @@ local function onEntityDied(event)
 	end
 end
 local function onCommandCompleted(event)
-	local struct = global['lizard-doggos'] and global['lizard-doggos'][event.unit_number]
+	local struct = script_data.lizard_doggos[event.unit_number]
 	if struct then
 		if struct.entity.valid then
 			if not struct.owner then
@@ -78,7 +81,7 @@ local function onCommandCompleted(event)
 				for _,item in pairs(itemsonground) do
 					if item.valid and item.stack.valid_for_read and item.stack.name == bait then
 						-- ensure berry item is in dropped bait list, so it's assigned to a player
-						for _,bait in pairs(global['dropped-bait']) do
+						for _,bait in pairs(script_data.dropped_bait) do
 							if bait.entity == item then
 								berry = item
 								player = bait.player
@@ -167,7 +170,7 @@ local function onCommandCompleted(event)
 			end
 		else
 			-- died perhaps, clean up the struct
-			global['lizard-doggos'][event.unit_number] = nil
+			script_data.lizard_doggos[event.unit_number] = nil
 		end
 	end
 end
@@ -176,7 +179,7 @@ local function onInteract(event)
 	local player = game.players[event.player_index]
 	if player.selected and player.selected.valid and player.selected.name == doggo then
 		if player.can_reach_entity(player.selected) then
-			local struct = global['lizard-doggos'] and global['lizard-doggos'][player.selected.unit_number]
+			local struct = script_data.lizard_doggos[player.selected.unit_number]
 			if struct and struct.owner == player then
 				local gui = player.gui.screen['lizard-doggo']
 				if not gui then
@@ -256,13 +259,14 @@ local function onInteract(event)
 				
 				-- roll for loot!
 				if not struct.helditem and struct.itemtimer < event.tick then
-					local rand = math.random()*100
+					local random = math.random
+					local rand = random()*100
 					for name,entry in pairs(loot) do
 						rand = rand - entry.probability
 						if rand < 0 then
 							struct.helditem = {
 								name = name,
-								count = math.random(entry.amount_min, entry.amount_max)
+								count = random(entry.amount_min, entry.amount_max)
 							}
 							break
 						end
@@ -279,8 +283,7 @@ local function onInteract(event)
 				gui.visible = true
 				player.opened = gui
 				gui.force_auto_center()
-				if not global['lizard-doggo-gui'] then global['lizard-doggo-gui'] = {} end
-				global['lizard-doggo-gui'][player.index] = struct.entity.unit_number
+				script_data.lizard_doggo_gui[player.index] = struct.entity.unit_number
 			end
 		else
 			-- create flying text like when trying to mine normally
@@ -300,7 +303,7 @@ local function closeGui(player)
 	local gui = player.gui.screen['lizard-doggo']
 	if gui then gui.visible = false end
 	player.opened = nil
-	global['lizard-doggo-gui'][player.index] = nil
+	script_data.lizard_doggo_gui[player.index] = nil
 end
 local function onGuiClosed(event)
 	if event.element and event.element.valid and event.element.name == "lizard-doggo" then
@@ -313,7 +316,7 @@ local function onGuiClick(event)
 	if event.element.name == "lizard-doggo-close" then
 		closeGui(player)
 	elseif event.element.name == "take-lizard-doggo-loot" or (event.element.name == "view-lizard-doggo-loot" and event.shift) then
-		local struct = global['lizard-doggos'][global['lizard-doggo-gui'][player.index]]
+		local struct = script_data.lizard_doggos[script_data.lizard_doggo_gui[player.index]]
 		if struct and struct.owner == player and struct.entity and struct.entity.valid and struct.helditem then
 			local transferred = player.insert(struct.helditem)
 			local gui = player.gui.screen['lizard-doggo'].content.table.right.loot
@@ -332,7 +335,7 @@ local function onGuiClick(event)
 			end
 		end
 	elseif event.element.name == "view-lizard-doggo-loot" then -- click without shift
-		local struct = global['lizard-doggos'][global['lizard-doggo-gui'][player.index]]
+		local struct = script_data.lizard_doggos[script_data.lizard_doggo_gui[player.index]]
 		if struct and struct.owner == player and player.cursor_stack and not player.cursor_stack.valid_for_read and struct.entity and struct.entity.valid and struct.helditem then
 			player.cursor_stack.set_stack(struct.helditem)
 			local gui = player.gui.screen['lizard-doggo'].content.table.right.loot
@@ -346,7 +349,7 @@ local function onGuiClick(event)
 			gui['take-lizard-doggo-loot'].enabled = false
 		end
 	elseif event.element.name == "stop-lizard-doggo" then
-		local struct = global['lizard-doggos'][global['lizard-doggo-gui'][player.index]]
+		local struct = script_data.lizard_doggos[script_data.lizard_doggo_gui[player.index]]
 		if struct and struct.owner == player and struct.entity and struct.entity.valid then
 			struct.entity.set_command{
 				type = defines.command.stop,
@@ -359,6 +362,29 @@ local function onGuiClick(event)
 end
 
 return {
+	on_init = function()
+		global.small_biter = global.small_biter or script_data
+	end,
+	on_load = function()
+		script_data = global.small_biter or script_data
+	end,
+	on_configuration_changed = function()
+		if not global.small_biter then
+			global.small_biter = script_data
+		end
+		if global['lizard-doggos'] then
+			script_data.lizard_doggos = table.deepcopy(global['lizard-doggos'])
+			global['lizard-doggos'] = nil
+		end
+		if global['lizard-doggo-gui'] then
+			script_data.lizard_doggo_gui = table.deepcopy(global['lizard-doggo-gui'])
+			global['lizard-doggo-gui'] = nil
+		end
+		if global['dropped-bait'] then
+			script_data.dropped_bait = table.deepcopy(global['dropped-bait'])
+			global['dropped-bait'] = nil
+		end
+	end,
 	events = {
 		[defines.events.on_built_entity] = onBuilt,
 		[defines.events.on_robot_built_entity] = onBuilt,

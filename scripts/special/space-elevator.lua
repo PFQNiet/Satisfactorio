@@ -1,13 +1,20 @@
--- uses global['space-elevator'] as table of Force index -> elevator
--- uses global['space-elevator-phase'] as table of Force index -> phase shown in GUI - if different to current selection then GUI needs refresh, otherwise just update counts
--- uses global['player-build-error-debounce'] to track force -> last error tick to de-duplicate placement errors
+-- uses global.space_elevator.elevator as table of Force index -> elevator
+-- uses global.space-elevator.phase as table of Force index -> phase shown in GUI - if different to current selection then GUI needs refresh, otherwise just update counts
+-- uses global.player_build_error_debounce'] to track force -> last error tick to de-duplicate placement errors
 local util = require("util")
 local string = require("scripts.lualib.string")
 local io = require("scripts.lualib.input-output")
 
 local elevator = "space-elevator"
+
+local script_data = {
+	elevator = {},
+	phase = {}
+}
+local debounce_error = {}
+
 local function findElevatorForForce(force)
-	return global['space-elevator'] and global['space-elevator'][force.index]
+	return script_data.elevator[force.index]
 end
 
 local function refundEntity(entity, reason, event)
@@ -19,8 +26,7 @@ local function refundEntity(entity, reason, event)
 		else
 			player.insert{name=entity.name,count=1}
 		end
-		if not global['player-build-error-debounce'] then global['player-build-error-debounce'] = {} end
-		if not global['player-build-error-debounce'][player.force.index] or global['player-build-error-debounce'][player.force.index] < event.tick then
+		if not debounce_error[player.force.index] or debounce_error[player.force.index] < event.tick then
 			player.surface.create_entity{
 				name = "flying-text",
 				position = entity.position,
@@ -30,7 +36,7 @@ local function refundEntity(entity, reason, event)
 			player.play_sound{
 				path = "utility/cannot_build"
 			}
-			global['player-build-error-debounce'][player.force.index] = event.tick + 60
+			debounce_error[player.force.index] = event.tick + 60
 		end
 	else
 		entity.surface.spill_item_stack(entity.position, {name=entity.name,count=1}, false, nil, false)
@@ -74,8 +80,7 @@ local function onBuilt(event)
 			inserter.minable = false
 			inserter.destructible = false
 
-			if not global['space-elevator'] then global['space-elevator'] = {} end
-			global['space-elevator'][entity.force.index] = entity
+			script_data.elevator[entity.force.index] = entity
 			entity.active = false
 		end
 	end
@@ -99,7 +104,7 @@ local function onRemoved(event)
 			inserter.destroy()
 			silo.destroy()
 		end
-		global['space-elevator'][entity.force.index] = nil
+		script_data.elevator[entity.force.index] = nil
 	end
 end
 
@@ -137,8 +142,6 @@ local function updateElevatorGUI(force)
 		end
 		return
 	end
-
-	if not global['space-elevator-phase'] then global['space-elevator-phase'] = {} end
 
 	local hub = findElevatorForForce(force)
 	local phase = {name="none"}
@@ -250,8 +253,8 @@ local function updateElevatorGUI(force)
 			local button = bottom['space-elevator-tracking-submit']
 
 			-- check if the selected milestone has been changed
-			if phase.name ~= global['space-elevator-phase'][force.index] then
-				global['space-elevator-phase'][force.index] = phase.name
+			if phase.name ~= script_data.phase[force.index] then
+				script_data.phase[force.index] = phase.name
 				inner.visible = phase.name ~= "none"
 				bottom.visible = inner.visible
 				button.enabled = false
@@ -360,6 +363,37 @@ local function onGuiClick(event)
 end
 
 return {
+	on_init = function()
+		global.space_elevator = global.space_elevator or script_data
+		global.debounce_error = global.player_build_error_debounce or debounce_error
+	end,
+	on_load = function()
+		script_data = global.space_elevator or script_data
+		debounce_error = global.player_build_error_debounce or debounce_error
+	end,
+	on_configuration_changed = function()
+		if not global.space_elevator then
+			global.space_elevator = script_data
+		end
+		if not global.player_build_error_debounce then
+			global.player_build_error_debounce = debounce_error
+		end
+		if global['space-elevator'] then
+			global.space_elevator.elevator = table.deepcopy(global['space-elevator'])
+			global['space-elevator'] = nil
+		end
+
+		if global['space-elevator-phase'] then
+			global.space_elevator.phase = table.deepcopy(global['space-elevator-phase'])
+			global['space-elevator-phase'] = nil
+		end
+
+		if global['player-build-error-debounce'] then
+			global.player_build_error_debounce = table.deepcopy(global['player-debounce-error-debounce'])
+			debounce_error = global.player_build_error_debounce
+			global['player-debounce-error-debounce'] = nil
+		end
+	end,
 	on_nth_tick = {
 		[6] = onTick
 	},

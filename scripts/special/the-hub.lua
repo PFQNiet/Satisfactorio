@@ -1,6 +1,6 @@
--- uses global['hub-terminal'] as table of Force index -> HUB terminal
--- uses global['hub-milestone-selected'] as table of Force index -> milestone shown in GUI - if different to current selection then GUI needs refresh, otherwise just update counts
--- uses global['hub-cooldown'] as table of Force index -> tick at which the Freighter returns
+-- uses global.hub.terminal as table of Force index -> HUB terminal
+-- uses global.hub.milestone_selected as table of Force index -> milestone shown in GUI - if different to current selection then GUI needs refresh, otherwise just update counts
+-- uses global.hub.cooldown as table of Force index -> tick at which the Freighter returns
 local util = require("util")
 local math2d = require("math2d")
 local string = require("scripts.lualib.string")
@@ -20,8 +20,14 @@ local graphics = {
 	[defines.direction.west] = base.."-west"
 }
 
+local script_data = {
+	terminal = {},
+	milestone_selected = {},
+	cooldown = {}
+}
+
 local function findHubForForce(force)
-	return global['hub-terminal'] and global['hub-terminal'][force.index]
+	return script_data.terminal[force.index]
 end
 
 local function position(offset,entity) -- entity's position and direction are used
@@ -54,7 +60,7 @@ local function removeFloor(hub)
 	end
 	dec.destroy()
 	-- remove terminal entity from global list
-	global['hub-terminal'][hub.force.index] = nil
+	script_data.terminal[hub.force.index] = nil
 end
 local function buildTerminal(hub)
 	local terminal = hub.surface.create_entity{
@@ -65,8 +71,7 @@ local function buildTerminal(hub)
 		raise_built = true
 	}
 	terminal.active = false -- "crafting" is faked :D
-	if not global['hub-terminal'] then global['hub-terminal'] = {} end
-	global['hub-terminal'][terminal.force.index] = terminal
+	script_data.terminal[terminal.force.index] = terminal
 	hub.force.set_spawn_position(position(spawn_pos,hub), hub.surface)
 	return terminal
 end
@@ -268,8 +273,7 @@ local function completeMilestone(technology)
 		local time = technology.research_unit_energy
 		if time > 30*60 then
 			launchFreighter(findHubForForce(technology.force), technology.research_unit_ingredients[1].name)
-			if not global['hub-cooldown'] then global['hub-cooldown'] = {} end
-			global['hub-cooldown'][technology.force.index] = game.tick + time
+			script_data.cooldown[technology.force.index] = game.tick + time
 		end
 	end
 end
@@ -281,8 +285,6 @@ local function updateMilestoneGUI(force)
 		end
 		return
 	end
-
-	if not global['hub-milestone-selected'] then global['hub-milestone-selected'] = {} end
 
 	local hub = findHubForForce(force)
 	local milestone = {name="none"}
@@ -395,8 +397,8 @@ local function updateMilestoneGUI(force)
 			local button = bottom['hub-milestone-tracking-submit']
 
 			-- check if the selected milestone has been changed
-			if milestone.name ~= global['hub-milestone-selected'][force.index] then
-				global['hub-milestone-selected'][force.index] = milestone.name
+			if milestone.name ~= script_data.milestone_selected[force.index] then
+				script_data.milestone_selected[force.index] = milestone.name
 				inner.visible = milestone.name ~= "none"
 				bottom.visible = inner.visible
 				button.enabled = false
@@ -436,10 +438,11 @@ local function updateMilestoneGUI(force)
 
 			-- so now we've established the GUI exists, and is populated with a table for the currently selected milestone... if there is one, update the counts now
 			local ready = true
-			if global['hub-cooldown'] and global['hub-cooldown'][player.force.index] then
-				if global['hub-cooldown'][player.force.index] > game.tick then
+			local current_cooldown = script_data.cooldown[player.force.index]
+			if current_cooldown then
+				if current_cooldown > game.tick then
 					ready = false
-					local ticks = global['hub-cooldown'][player.force.index] - game.tick
+					local ticks = current_cooldown - game.tick
 					local tenths = math.floor(ticks/6)%10
 					local seconds = math.floor(ticks/60)
 					local minutes = math.floor(seconds/60)
@@ -553,6 +556,31 @@ local function onGuiClick(event)
 end
 
 return {
+	on_init = function()
+		global.hub = global.hub or script_data
+	end,
+	on_load = function()
+		script_data = global.hub or script_data
+	end,
+	on_configuration_changed = function()
+		if not global.hub then
+			global.hub = script_data
+		end
+		if global['hub-terminal'] then
+			global.hub.terminal = table.deepcopy(global['hub-terminal'])
+			global['hub-terminal'] = nil
+		end
+
+		if global['hub-milestone-selected'] then
+			global.hub.milestone_selected = table.deepcopy(global['hub-milestone-selected'])
+			global['hub-milestone-selected'] = nil
+		end
+
+		if global['hub-cooldown'] then
+			global.hub.cooldown = table.deepcopy(global['hub-cooldown'])
+			global['hub-cooldown'] = nil
+		end
+	end,
 	on_nth_tick = {
 		[6] = onTick
 	},

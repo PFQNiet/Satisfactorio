@@ -1,11 +1,16 @@
--- uses global['resource-scanner-fx'] as a queue of effects
--- uses global['resource-scanner-pings'] as table of player => {pos, graphics}[] for active pings
+-- uses global.resource_scanner.fx as a queue of effects
+-- uses global.resource_scanner.pings as table of player => {pos, graphics}[] for active pings
 local util = require("util")
+local table_size = table_size
+local script_data = {
+	fx = {},
+	pings = {}
+}
+local resources = require('scripts.lualib.resources')
 
 local function queueEffect(tick, effect)
-	if not global['resource-scanner-fx'] then global['resource-scanner-fx'] = {} end
-	if not global['resource-scanner-fx'][tick] then global['resource-scanner-fx'][tick] = {} end
-	table.insert(global['resource-scanner-fx'][tick], effect)
+	if not script_data.fx[tick] then script_data.fx[tick] = {} end
+	table.insert(script_data.fx[tick], effect)
 end
 
 local function getUnlockedScans(force)
@@ -105,18 +110,19 @@ local function onGuiClick(event)
 		if not index then
 			return
 		end
-		if not global['resources'] then
+		local resource_list = resources.resources
+		if table_size(resource_list) == 0 then
 			player.print("Resource entities not loaded yet")
 			return
 		end
 		local type = getUnlockedScans(player.force)[index].products[1].name
-		if not global['resources'][type] then
+		local rdata = resource_list[type]
+		if not rdata then
 			player.print("Selected resource "..type.." has no resource data")
 			return
 		end
 
 		queueEffect(event.tick + 30, {type="pulse", player=player})
-		local rdata = global['resources'][type]
 		-- find nearest grid squares having nodes
 		local nodes = {}
 		local origin = {math.floor(player.position.x/rdata.gridsize), math.floor(player.position.y/rdata.gridsize)}
@@ -165,11 +171,11 @@ local function onGuiClick(event)
 end
 
 local function updatePings()
-	if not global['resource-scanner-pings'] then return end
-	for i,ping in pairs(global['resource-scanner-pings']) do
+	local rendering = rendering
+	for i,ping in pairs(script_data.pings) do
 		-- check if ping hasn't expired
 		if not rendering.is_valid(ping.graphics.background) then
-			table.remove(global['resource-scanner-pings'],i)
+			table.remove(script_data.pings,i)
 		else
 			local dx = ping.position[1] - ping.player.position.x
 			local dy = ping.player.position.y - ping.position[2]
@@ -213,8 +219,9 @@ local function updatePings()
 	end
 end
 local function onTick(event)
-	if global['resource-scanner-fx'] and global['resource-scanner-fx'][event.tick] then
-		for _,effect in pairs(global['resource-scanner-fx'][event.tick]) do
+	if script_data.fx[event.tick] then
+		local rendering = rendering
+		for _,effect in pairs(script_data.fx[event.tick]) do
 			if effect.type == "pulse" then
 				effect.player.surface.create_trivial_smoke{
 					name = "resource-scanner-pulse",
@@ -222,10 +229,9 @@ local function onTick(event)
 				}
 			elseif effect.type == "ping" then
 				local ttl = 20*60
-				if not global['resource-scanner-pings'] then global['resource-scanner-pings'] = {} end
 				-- graphics are created with no offset and placeholder text, as they are immediately updated in updatePings()
 				-- TODO make it compatible with Sandbox, where there is no effect.player.character
-				table.insert(global['resource-scanner-pings'], {
+				table.insert(script_data.pings, {
 					player = effect.player,
 					position = effect.position,
 					graphics = {
@@ -264,12 +270,18 @@ local function onTick(event)
 				})
 			end
 		end
-		global['resource-scanner-fx'][event.tick] = nil
+		script_data.fx[event.tick] = nil
 	end
 	updatePings()
 end
 
 return {
+	on_init = function()
+		global.resource_scanner = global.resource_scanner or script_data
+	end,
+	on_load = function()
+		script_data = global.resource_scanner or script_data
+	end,
 	events = {
 		["resource-scanner"] = toggleResourceScanner,
 		[defines.events.on_lua_shortcut] = toggleResourceScanner,

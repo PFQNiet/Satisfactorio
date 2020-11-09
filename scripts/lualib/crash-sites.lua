@@ -1,5 +1,5 @@
--- uses global['crash-sites'] to track requirements for unlocking the spaceship
--- uses global['opened-crash-site'] to track last opened crash site GUI
+-- uses global.crash_site.sites to track requirements for unlocking the spaceship
+-- uses global.crash_site.opened to track last opened crash site GUI
 
 local data = require("constants.crash-sites")
 local loot_table = data.loot
@@ -7,25 +7,32 @@ local requirement_table = data.requirements
 local crash_site = require("crash-site")
 local spaceship = "crash-site-spaceship"
 
+local script_data = {
+	sites = {},
+	opened = {}
+}
+
 local function generateLoot()
 	local loot = {}
+	local random = math.random
 	for item,data in pairs(loot_table) do
-		if math.random() < data.probability then
-			loot[item] = math.random(data.amount[1],data.amount[2])
+		if random() < data.probability then
+			loot[item] = random(data.amount[1],data.amount[2])
 		end
 	end
 	return loot
 end
 local function generateRequirements()
-	local selected = math.random(requirement_table.total)
-	local power = math.random(2,20)*5
+	local random = math.random
+	local selected = random(requirement_table.total)
+	local power = random(2,20)*5
 	for item,frequency in pairs(requirement_table.items) do
 		selected = selected - frequency
 		if selected <= 0 then
 			return {
 				item = item,
-				count = math.random(4,20),
-				power = math.random(0,1) == 0 and power or 0 -- 50% chance of also needing power
+				count = random(4,20),
+				power = random(0,1) == 0 and power or 0 -- 50% chance of also needing power
 			}
 		end
 	end
@@ -72,8 +79,7 @@ local function createCrashSite(surface, position)
 		eei.electric_buffer_size = eei.power_usage
 	end
 	-- register ship's requirements
-	if not global['crash-sites'] then global['crash-sites'] = {} end
-	global['crash-sites'][ship.unit_number] = {
+	script_data.sites[ship.unit_number] = {
 		ship = ship,
 		eei = eei,
 		requirements = reqs
@@ -86,11 +92,9 @@ local function onGuiOpened(event)
 	local player = game.players[event.player_index]
 	if event.gui_type ~= defines.gui_type.entity then return end
 	if event.entity.name ~= spaceship then return end
-	if not global['crash-sites'] then return end
-	local struct = global['crash-sites'][event.entity.unit_number]
+	local struct = script_data.sites[event.entity.unit_number]
 	if not struct then return end
-	if not global['opened-crash-site'] then global['opened-crash-site'] = {} end
-	global['opened-crash-site'][player.index] = event.entity.unit_number
+	script_data.opened[player.index] = event.entity.unit_number
 	
 	local gui = player.gui.screen['crash-site-locked']
 	if not gui then
@@ -237,7 +241,7 @@ local function onGuiClick(event)
 		closeGui(player)
 	end
 	if event.element.name == "crash-site-repair-submit" then
-		local struct = global['crash-sites'][global['opened-crash-site'][player.index]]
+		local struct = script_data.sites[script_data.opened[player.index]]
 		if struct then
 			-- struct may be gone if say another player completed it for you, but if it's still here then it's mine
 			local ready = true
@@ -261,7 +265,7 @@ local function onGuiClick(event)
 				end
 				inventory.insert{name="hard-drive",count=1}
 				-- delete entry from global table to mark it as unlocked
-				global['crash-sites'][global['opened-crash-site'][player.index]] = nil
+				script_data.sites[script_data.opened[player.index]] = nil
 				player.opened = struct.ship
 			end
 		end
@@ -271,6 +275,25 @@ end
 return {
 	createCrashSite = createCrashSite,
 	lib = {
+		on_init = function()
+			global.crash_site = global.crash_site or script_data
+		end,
+		on_load = function()
+			script_data = global.crash_site or script_data
+		end,
+		on_configuration_changed = function()
+			if not global.crash_site then
+				global.crash_site = script_data
+			end
+			if global['crash-sites'] then
+				global.crash_site.sites = table.deepcopy(global['crash-sites'])
+				global['crash-sites'] = nil
+			end
+			if global['opened-crash-site'] then
+				global.crash_site.opened = table.deepcopy(global['opened-crash-site'])
+				global['opened-crash-site'] = nil
+			end
+		end,
 		events = {
 			[defines.events.on_gui_opened] = onGuiOpened,
 			[defines.events.on_gui_closed] = onGuiClosed,

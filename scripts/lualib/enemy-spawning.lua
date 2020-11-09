@@ -1,4 +1,4 @@
--- uses global['unit-tracking'] to track units unit_number = {spawn, entity}
+-- uses global.unit_tracking to track units unit_number = {spawn, entity}
 local math2d = require("math2d")
 
 local spawndata = {
@@ -9,6 +9,8 @@ local spawndata = {
 	[5] = {["behemoth-biter"] = 1, ["big-biter"] = 2},
 	[6] = {["behemoth-spitter"] = 1, ["big-spitter"] = 2}
 }
+
+local script_data = {}
 
 local function _guardSpawn(struct)
 	struct.entity.set_command{
@@ -28,23 +30,26 @@ local function _guardSpawn(struct)
 		}
 	}
 end
+
 local function getRandomOffset(position)
 	local r = (math.random()*100)^0.5
 	local theta = math.random()*math.pi*2
 	return {position[1]+math.cos(theta)*r, position[2]-math.sin(theta)*r}
 end
+
 local function spawnGroup(surface,position,value,basedist)
 	local settings = game.default_map_gen_settings.autoplace_controls["enemy-base"] or {frequency=1,richness=1,size=1}
 	if settings.size == 0 then return end
 	-- size = strength, frequency = number
 
 	-- scale value based on distance from spawn
+	local random = math.random
 	local realdist = math.sqrt(position[1]*position[1] + position[2]*position[2])
 	local distance = math.ceil(realdist/basedist + 0.5)
 	-- sometimes shift up or down a tier
-	if math.random()<0.25 then
+	if random()<0.25 then
 		value = value - 1
-	elseif math.random()<0.25 then
+	elseif random()<0.25 then
 		value = value + 1
 	end
 	value = math.min(6,math.max(1,math.floor(value*settings.size+0.5))) -- minimum setting always yields 1, maximum setting always yields 6
@@ -53,10 +58,9 @@ local function spawnGroup(surface,position,value,basedist)
 		value = 1
 	end
 
-	if not global['unit-tracking'] then global['unit-tracking'] = {} end
 	for name,count in pairs(spawndata[value]) do
 		count = count*(distance^(1/3)) * settings.frequency
-		if math.random()<count%1 then count = math.ceil(count) else count = math.floor(count) end
+		if random()<count%1 then count = math.ceil(count) else count = math.floor(count) end
 		if realdist < 240 then count = math.min(2,count) end
 		for i=1,count do
 			local offset = getRandomOffset(position)
@@ -71,7 +75,7 @@ local function spawnGroup(surface,position,value,basedist)
 					spawn = position,
 					entity = entity
 				}
-				global['unit-tracking'][entity.unit_number] = struct
+				script_data[entity.unit_number] = struct
 				_guardSpawn(struct)
 			else
 				surface.create_entity{
@@ -82,9 +86,9 @@ local function spawnGroup(surface,position,value,basedist)
 			end
 		end
 	end
-	if realdist > 240 and math.random()<math.min(10,value*distance)/20 then
+	if realdist > 240 and random()<math.min(10,value*distance)/20 then
 		-- add some gas clouds
-		local name = math.random() < 0.85 and "big-worm-turret" or "behemoth-worm-turret"
+		local name = random() < 0.85 and "big-worm-turret" or "behemoth-worm-turret"
 		for i=1,4 do
 			-- find_non_collising_position doesn't support the map gen box, which is needed for worm turrets to give ore nodes some space
 			for _=1,10 do
@@ -101,7 +105,7 @@ local function spawnGroup(surface,position,value,basedist)
 		end
 	end
 	-- and very rarely some uranium deposits
-	if value*distance > 5 and math.random() < 0.02 then
+	if value*distance > 5 and random() < 0.02 then
 		for i=1,4 do
 			local pos = surface.find_non_colliding_position("rock-big-uranium-ore", getRandomOffset(position), 10, 0.1)
 			if pos then
@@ -115,20 +119,20 @@ local function spawnGroup(surface,position,value,basedist)
 	end
 end
 local function onCommandCompleted(event)
-	local struct = global['unit-tracking'] and global['unit-tracking'][event.unit_number]
+	local struct = script_data[event.unit_number]
 	if struct then
 		if struct.entity.valid then
 			_guardSpawn(struct)
 		else
 			-- died perhaps, clean up the struct
-			global['unit-tracking'][event.unit_number] = nil
+			script_data[event.unit_number] = nil
 		end
 	end
 end
 -- after attacking a player, check if we went too far from spawn and return there if so
 local function onDamaged(event)
 	if event.entity.type == "character" and event.cause and event.cause.valid and event.cause.type == "unit" then
-		local struct = global['unit-tracking'] and global['unit-tracking'][event.cause.unit_number]
+		local struct = script_data[event.cause.unit_number]
 		if struct then
 			local distance_from_home = math2d.position.distance(struct.entity.position, struct.spawn)
 			if distance_from_home > 50 then
@@ -138,14 +142,30 @@ local function onDamaged(event)
 	end
 end
 local function onEntityDied(event)
-	if event.entity.valid and event.entity.unit_number and global['unit-tracking'] and global['unit-tracking'][event.entity.unit_number] then
-		global['unit-tracking'][event.entity.unit_number] = nil
+	if event.entity.valid and event.entity.unit_number and script_data[event.entity.unit_number] then
+		script_data[event.entity.unit_number] = nil
 	end
 end
 
 return {
 	spawnGroup = spawnGroup,
 	lib = {
+		on_init = function()
+			global.unit_tracking = global.unit_tracking or script_data
+		end,
+		on_load = function()
+			script_data = global.unit_tracking or script_data
+		end,
+		on_configuration_changed = function()
+			if not global.unit_tracking then
+				global.unit_tracking = script_data
+			end
+			if global['unit-tracking'] then
+				global.unit_tracking = table.deepcopy(global['unit-tracking'])
+				script_data = global.unit_tracking
+				global['unit-tracking'] = nil
+			end
+		end,
 		events = {
 			[defines.events.on_entity_died] = onEntityDied,
 			[defines.events.on_entity_damaged] = onDamaged,
