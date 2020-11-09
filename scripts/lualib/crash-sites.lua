@@ -11,6 +11,11 @@ local script_data = {
 	sites = {},
 	opened = {}
 }
+local function closeGui(player)
+	local gui = player.gui.screen['crash-site-locked']
+	if gui then gui.visible = false end
+	player.opened = nil
+end
 
 local function generateLoot()
 	local loot = {}
@@ -224,11 +229,6 @@ local function onGuiOpened(event)
 	player.opened = gui
 	gui.force_auto_center()
 end
-local function closeGui(player)
-	local gui = player.gui.screen['crash-site-locked']
-	if gui then gui.visible = false end
-	player.opened = nil
-end
 local function onGuiClosed(event)
 	if event.element and event.element.valid and event.element.name == "crash-site-locked" then
 		closeGui(game.players[event.player_index])
@@ -272,6 +272,17 @@ local function onGuiClick(event)
 	end
 end
 
+local function onMove(event)
+	-- if the player moves and has a site open, check that the site can still be reached
+	local player = game.players[event.player_index]
+	local site = script_data.opened[player.index]
+	if site and script_data.sites[site] then
+		if not player.can_reach_entity(script_data.sites[site].ship) then
+			closeGui(player)
+		end
+	end
+end
+
 return {
 	createCrashSite = createCrashSite,
 	lib = {
@@ -297,7 +308,9 @@ return {
 		events = {
 			[defines.events.on_gui_opened] = onGuiOpened,
 			[defines.events.on_gui_closed] = onGuiClosed,
-			[defines.events.on_gui_click] = onGuiClick
+			[defines.events.on_gui_click] = onGuiClick,
+
+			[defines.events.on_player_changed_position] = onMove
 		}
 	}
 }

@@ -67,8 +67,8 @@ local function openBeaconGUI(beacon, player)
 end
 local function closeBeaconGUI(player)
 	local gui = player.gui.screen['beacon-naming']
-	if gui then gui.visible = false end
-	gui.destroy()
+	if gui then gui.destroy() end
+	beacons.opened[player.index] = nil
 	player.opened = nil
 end
 local function onGuiOpened(event)
@@ -123,6 +123,15 @@ local function onRemoved(event)
 	end
 end
 
+local function onMove(event)
+	-- if the player moves and has a beacon open, check that the beacon can still be reached
+	local player = game.players[event.player_index]
+	local open = beacons.opened[player.index]
+	if open and not player.can_reach_entity(open) then
+		closeBeaconGUI(player)
+	end
+end
+
 return {
 	events = {
 		[defines.events.on_built_entity] = onBuilt,
@@ -141,6 +150,8 @@ return {
 			if event.gui_type == defines.gui_type.custom and event.element and event.element.valid and event.element.name == "beacon-naming" then
 				closeBeaconGUI(game.players[event.player_index])
 			end
-		end
+		end,
+
+		[defines.events.on_player_changed_position] = onMove
 	}
 }

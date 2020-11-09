@@ -7,10 +7,13 @@ local getitems = require("scripts.lualib.get-items-from")
 local splitter = "programmable-splitter"
 local buffer = "programmable-splitter-box"
 
-local script_data = {
-	splitters = {},
-	gui = {}
-}
+local script_data = require("scripts.logistics.splitters")
+local function closeGui(player)
+	local gui = player.gui.screen['programmable-splitter']
+	if gui then gui.visible = false end
+	player.opened = nil
+	script_data.gui[player.index] = nil
+end
 
 local function findStruct(entity)
 	return script_data.splitters[entity.unit_number]
@@ -81,6 +84,12 @@ local function onRemoved(event)
 			io.remove(entity, event)
 			box.destroy()
 			script_data.splitters[entity.unit_number] = nil
+			-- find any players that had this GUI open and close it
+			for pid,struct in pairs(script_data.gui) do
+				if struct.base == entity then
+					closeGui(game.players[pid])
+				end
+			end
 		else
 			game.print("Could not find the buffer")
 		end
@@ -286,23 +295,17 @@ local function onGuiOpened(event)
 		gui.force_auto_center()
 	end
 end
-local function _closeGui(player)
-	local gui = player.gui.screen['programmable-splitter']
-	if gui then gui.visible = false end
-	player.opened = nil
-	script_data.gui[player.index] = nil
-end
 local function onGuiClosed(event)
 	if event.element and event.element.valid and event.element.name == "programmable-splitter" then
 		local player = game.players[event.player_index]
-		_closeGui(player)
+		closeGui(player)
 	end
 end
 local function onGuiClick(event)
 	if event.element and event.element.valid then
 		if event.element.name == "programmable-splitter-close" then
 			local player = game.players[event.player_index]
-			_closeGui(player)
+			closeGui(player)
 		elseif (
 			event.element.name == "programmable-splitter-left-add"
 			or event.element.name == "programmable-splitter-forward-add"
@@ -392,13 +395,18 @@ local function onGuiElemChanged(event)
 	end
 end
 
+local function onMove(event)
+	-- if the player moves and has a splitter open, check that the splitter can still be reached
+	local player = game.players[event.player_index]
+	local struct = script_data.gui[player.index]
+	if struct and struct.base.name == splitter then
+		if not player.can_reach_entity(struct.base) then
+			closeGui(player)
+		end
+	end
+end
+
 return {
-	on_init = function()
-		global.splitters = global.splitters or script_data
-	end,
-	on_load = function()
-		script_data = global.splitters or script_data
-	end,
 	events = {
 		[defines.events.on_gui_opened] = onGuiOpened,
 		[defines.events.on_gui_closed] = onGuiClosed,
@@ -416,6 +424,8 @@ return {
 		[defines.events.on_entity_died] = onRemoved,
 		[defines.events.script_raised_destroy] = onRemoved,
 
-		[defines.events.on_entity_settings_pasted] = onPaste
+		[defines.events.on_entity_settings_pasted] = onPaste,
+
+		[defines.events.on_player_changed_position] = onMove
 	}
 }
