@@ -2,8 +2,8 @@
 	Resources are spawned using a poisson-disc distribution, with the small change that nodes outside the bounding box of the generated map are "asleep"
 	Sleeping nodes won't be considered for expansion until the bounding box of generated chunks contains them
 	Uses global.resource_spawner.queued to track nodes that should have spawned, but whose location wasn't generated yet
-	Uses global.resource.add_count to store a running total of open nodes
-	Uses global.resources.resources to store data relating to resource generation
+	Uses global.resources.add_count() to store a running total of open nodes
+	Uses global.resources.resources() to store data relating to resource generation
 	Each resource is a table: {
 		r = radius, nodes will spawn between r and 2r tiles away from any other nodes
 		k = attempts to spawn a node before considering the node "closed" (30)
@@ -30,7 +30,7 @@ local script_data = {
 }
 
 local function registerResource(name, radius, min, max, value)
-	if resources.resources[name] then return end
+	if resources.resources()[name] then return end
 	local settings = game.default_map_gen_settings.autoplace_controls[name] or {frequency=1,richness=1,size=1}
 	if settings.size == 0 then return end
 
@@ -66,7 +66,7 @@ local function registerResource(name, radius, min, max, value)
 	})
 end
 local function registerSurface(surface)
-	for _,struct in pairs(resources.resources) do
+	for _,struct in pairs(resources.resources()) do
 		struct.nodes[surface.index] = {{0,0}}
 		struct.sleep[surface.index] = {}
 		struct.grid[surface.index] = {[0]={[0]={0,0}}}
@@ -310,7 +310,7 @@ end
 local function existsNear(mytype, surface, x, y)
 	-- scan the grid cells near the target (x,y) position to see if another resource node is too close
 	-- this is going to be checking ALL other resources to ensure there's enough space to spawn a cluster, but different node types are allowed much closer together
-	for type,resource in pairs(resources.resources) do
+	for type,resource in pairs(resources.resources()) do
 		local gx = math.floor(x/resource.gridsize);
 		local gy = math.floor(y/resource.gridsize);
 		local r = type == mytype and resource.r or (resource.border*2+2)
@@ -337,7 +337,7 @@ end
 local function scanForResources()
 	-- pick a random number and iterate the groups again until that many have passed
 	local rand = math.random(1,resources.node_count())
-	local resource_list = resources.resources
+	local resource_list = resources.resources()
 	for _,surface in pairs(game.surfaces) do
 		for name,data in pairs(resource_list) do
 			if not data.nodes[surface.index] then break end
@@ -409,22 +409,20 @@ local function onChunkGenerated(event)
 	local bbox = {event.area.left_top or event.area[1], event.area.right_bottom or event.area[2]}
 	bbox[1] = {bbox[1].x or bbox[1][1], bbox[1].y or bbox[1][2]}
 	bbox[2] = {bbox[2].x or bbox[2][1], bbox[2].y or bbox[2][2]}
-	if #resources.resources then
-		local awaken = 0
-		for _,data in pairs(resources.resources) do
-			for surfid,nodes in pairs(data.sleep) do
-				for k,v in pairs(nodes) do
-					if v[1] >= bbox[1][1] and v[1] <= bbox[2][1] and v[2] >= bbox[1][2] and v[2] <= bbox[2][2] then
-						table.remove(data.sleep[surfid],k)
-						table.insert(data.nodes[surfid],v)
-						awaken = awaken + 1
-					end
+	local awaken = 0
+	for _,data in pairs(resources.resources()) do
+		for surfid,nodes in pairs(data.sleep) do
+			for k,v in pairs(nodes) do
+				if v[1] >= bbox[1][1] and v[1] <= bbox[2][1] and v[2] >= bbox[1][2] and v[2] <= bbox[2][2] then
+					table.remove(data.sleep[surfid],k)
+					table.insert(data.nodes[surfid],v)
+					awaken = awaken + 1
 				end
 			end
 		end
-		if awaken > 0 then
-			resources.add_count(awaken)
-		end
+	end
+	if awaken > 0 then
+		resources.add_count(awaken)
 	end
 end
 
