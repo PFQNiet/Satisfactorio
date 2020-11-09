@@ -122,7 +122,7 @@ local function onTick(event)
 		rendering.set_y_scale(struct.shadow, 1-altitude/40)
 
 		if struct.time >= 60 then
-			flight[struct.player.index] = nil
+			script_data[struct.player.index] = nil
 			struct.car.destroy()
 			struct.player.teleport(struct.position)
 			local character = struct.player.character
