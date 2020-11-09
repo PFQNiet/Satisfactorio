@@ -88,6 +88,7 @@ local function onVehicle(event)
 				local rebounce = script_data.rebounce
 				if not rebounce[player.index] then rebounce[player.index] = {} end
 				rebounce[player.index][enter.unit_number] = true
+
 				local car2 = enter.surface.create_entity{
 					name = flying,
 					force = enter.force,
@@ -100,7 +101,11 @@ local function onVehicle(event)
 					surface = enter.surface,
 					target = car2
 				}
-				rebounce[player.index] = {
+				player.surface.play_sound{
+					path = "jump-pad-launch",
+					position = enter.position
+				}
+				script_data.launch[player.index] = {
 					player = player,
 					start = enter.position,
 					time = 0,
@@ -108,10 +113,6 @@ local function onVehicle(event)
 					range = script_data.pads[enter.unit_number],
 					car = car2,
 					shadow = graphic
-				}
-				player.surface.play_sound{
-					path = "jump-pad-launch",
-					position = enter.position
 				}
 			end
 		end
@@ -170,11 +171,11 @@ local function onTick(event)
 							car.set_driver(data.player)
 						end
 					else
-						rebounce[data.player.index] = nil
+						pad_rebounce[data.player.index] = nil
 						-- if we landed on jelly then we're good, otherwise take some fall damage (that'll just regen anyway so whatever lol XD)
 						local jelly = surface.find_entity(landing, character.position)
 						if not jelly or jelly.energy == 0 then
-							character.damage(40, game.forces.neutral) -- so you can unsafe-jump twice but the third time is death
+							character.damage(29, game.forces.neutral) -- so you can unsafe-jump a few times but death is possible
 						end
 					end
 				end
