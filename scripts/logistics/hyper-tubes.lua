@@ -119,40 +119,44 @@ local function onVehicle(event)
 	if entity and entity.valid and entity.name == car then
 		local travel = script_data
 		if player.driving then
-			local enter = entity.surface.find_entity(entrance,entity.position)
-			if entity.get_driver() ~= player.character or enter.energy == 0 then
-				-- eject passengers, driver only; must have power
-				player.driving = false
-				local exitpos = {
-					entity.position.x + vectors[(enter.direction+4)%8][1],
-					entity.position.y + vectors[(enter.direction+4)%8][2]
-				}
-				player.character.teleport(player.character.surface.find_non_colliding_position("wooden-chest",exitpos,0,1,true) or exitpos)
-			else
-				-- initiate transport
-				local character = player.character
-				travel[player.index] = {
-					car = entity,
-					character = character,
-					entity = enter,
-					entity_last = nil,
-					offset = 0.5,
-					direction = enter.direction,
-					direction_last = enter.direction
-				}
-				entity.direction = enter.direction
-				entity.operable = false
-				-- create another car for this entrance
-				enter.surface.create_entity{
-					name = car,
-					position = enter.position,
-					force = enter.force,
-					raise_built = true
-				}
+			if not travel[player.index] then
+				local enter = entity.surface.find_entity(entrance,entity.position)
+				local driver = entity.get_driver()
+				if driver ~= (driver.is_player() and player or player.character) or enter.energy == 0 then
+					-- eject passengers, driver only; must have power
+					player.driving = false
+					player.teleport(entity.position)
+					local exitpos = {
+						entity.position.x + vectors[(enter.direction+4)%8][1],
+						entity.position.y + vectors[(enter.direction+4)%8][2]
+					}
+					player.teleport(player.surface.find_non_colliding_position("character",exitpos,0,1,true) or exitpos)
+				else
+					-- initiate transport
+					local character = player.character
+					travel[player.index] = {
+						car = entity,
+						character = character,
+						entity = enter,
+						entity_last = nil,
+						offset = 0.5,
+						direction = enter.direction,
+						direction_last = enter.direction
+					}
+					entity.direction = enter.direction
+					entity.operable = false
+					-- create another car for this entrance
+					enter.surface.create_entity{
+						name = car,
+						position = enter.position,
+						force = enter.force,
+						raise_built = true
+					}
+				end
 			end
-		elseif travel and travel[player.index] then
+		elseif travel[player.index] then
 			-- player tried to get out, force them back in!
-			travel[player.index].car.set_driver(player.character)
+			travel[player.index].car.set_driver(player)
 		end
 	end
 end
@@ -165,8 +169,8 @@ local function onTick(event)
 		data.offset = data.offset + SPEED
 		if not data.entity.valid then
 			-- entity was mined while we were in it, abort!
-			data.car.destroy() -- yeets the player
 			travel[pid] = nil
+			data.car.destroy() -- yeets the player
 		else
 			if data.offset - SPEED < 0.5 and data.offset >= 0.5 then
 				-- crossed the mid-point, so check for next direction
@@ -233,13 +237,13 @@ local function onTick(event)
 					end
 				end
 				if data.direction == nil then -- not "else" because this may change in the above block
+					travel[pid] = nil
 					local exitpos = {
 						data.entity.position.x + vectors[data.direction_last][1],
 						data.entity.position.y + vectors[data.direction_last][2]
 					}
 					data.car.destroy() -- player gets ejected
 					player.character.teleport(player.character.surface.find_non_colliding_position("wooden-chest",exitpos,0,1,true) or exitpos)
-					travel[pid] = nil
 				end
 			end
 		end
