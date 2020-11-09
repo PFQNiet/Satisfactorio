@@ -7,73 +7,58 @@ local shadow = item.."-flying-shadow"
 local fuel = "packaged-fuel"
 
 local script_data = {}
+local sqrt2 = math.sqrt(2)
 
 local function onJump(event)
 	local player = game.players[event.player_index]
 	local armour = player.get_inventory(defines.inventory.character_armor)[1]
 	if armour.valid_for_read and armour.name == item and not player.driving then
-		-- spawn a car and get into it
-		local car = player.surface.create_entity{
-			name = vehicle,
-			position = player.position,
-			force = player.force,
-			direction = player.character and player.character.direction or defines.direction.north,
-			raise_built = true
-		}
-		car.set_driver(player)
+		-- check for fuel
+		local inventory = player.get_main_inventory()
+		if inventory.get_item_count(fuel) < 2 then
+			player.surface.create_entity{
+				name = "flying-text",
+				position = player.position,
+				text = {"message.jetpack-no-fuel"},
+				render_player_index = player.index
+			}
+			player.play_sound{
+				path = "utility/cannot_build"
+			}
+		else
+			inventory.remove{name=fuel,count=2}
+			-- spawn a car and get into it
+			local car = player.surface.create_entity{
+				name = vehicle,
+				position = player.position,
+				force = player.force,
+				direction = player.character and player.character.direction or defines.direction.north,
+				raise_built = true
+			}
+			car.set_driver(player)
+			local struct = {
+				player = player,
+				car = car,
+				shield = car.grid.put{name="jetpack-equipment"},
+				shadow = rendering.draw_sprite{
+					sprite = shadow.."-"..car.direction,
+					surface = car.surface,
+					target = car
+				},
+				time = 0,
+				position = {car.position.x,car.position.y},
+				momentum = {0,0}
+			}
+			script_data[player.index] = struct
+			struct.shield.shield = struct.shield.max_shield
+		end
 	end
 end
 
 local function onVehicle(event)
 	local player = game.players[event.player_index]
 	local entity = event.entity
-	if player.driving then
-		if entity and entity.valid and entity.name == vehicle then
-			-- entered "jetpack car" so check for fuel in player's inventory and load it into the car
-			local inventory = player.get_main_inventory()
-			if inventory.get_item_count(fuel) < 2 then
-				local pos = entity.position
-				entity.destroy()
-				player.teleport(pos)
-				player.surface.create_entity{
-					name = "flying-text",
-					position = player.position,
-					text = {"message.jetpack-no-fuel"},
-					render_player_index = player.index
-				}
-				player.play_sound{
-					path = "utility/cannot_build"
-				}
-			else
-				inventory.remove{name=fuel,count=2}
-				local struct = {
-					player = player,
-					car = entity,
-					shadow = rendering.draw_sprite{
-						sprite = shadow.."-"..entity.direction,
-						surface = entity.surface,
-						target = entity
-					},
-					time = 0,
-					position = {entity.position.x,entity.position.y},
-					momentum = {0,0}
-				}
-				script_data[player.index] = struct
-				local shield = nil
-				for _, equipment in pairs(entity.grid.equipment) do
-					if equipment.name == 'jetpack-equipment' then
-						shield = equipment
-						break
-					end
-				end
-
-				if not shield then
-					shield = entity.grid.put{name = "jetpack-equipment"}
-				end
-				shield.shield = shield.max_shield
-			end
-		end
-	else
+	if not player.driving then
 		-- check if player is being yeeted and put them back in if so
 		local yeet = script_data[player.index]
 		if yeet then
@@ -85,7 +70,7 @@ end
 local function onTick(event)
 	for pid,struct in pairs(script_data) do
 		struct.time = struct.time+1
-		local shield = struct.car.grid.get{0,0}
+		local shield = struct.shield
 		shield.shield = math.max(0,shield.max_shield-struct.time)
 
 		local altitude = 5
@@ -105,8 +90,8 @@ local function onTick(event)
 			-- since the car isn't moving on its own power, S will always be "reversing". "braking" isn't used.
 			if acceleration[1] ~= 0 and acceleration[2] ~= 0 then
 				-- diagonal movement, scale down by sqrt(2)
-				acceleration[1] = acceleration[1]/math.sqrt(2)
-				acceleration[2] = acceleration[2]/math.sqrt(2)
+				acceleration[1] = acceleration[1]/sqrt2
+				acceleration[2] = acceleration[2]/sqrt2
 			end
 		end
 		struct.momentum[1] = struct.momentum[1] * 0.95 + acceleration[1] * 0.04
