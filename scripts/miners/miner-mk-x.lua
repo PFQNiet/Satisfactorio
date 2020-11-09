@@ -2,21 +2,21 @@ local io = require("scripts.lualib.input-output")
 local getitems = require("scripts.lualib.get-items-from")
 
 local box_map = {
-    ["miner-mk-1-box"] = "miner-mk-1",
-    ["miner-mk-2-box"] = "miner-mk-2",
-    ["miner-mk-3-box"] = "miner-mk-3"
+	["miner-mk-1-box"] = "miner-mk-1",
+	["miner-mk-2-box"] = "miner-mk-2",
+	["miner-mk-3-box"] = "miner-mk-3"
 }
 
 local miner_map = {
-    ["miner-mk-1"] = "miner-mk-1-box",
-    ["miner-mk-2"] = "miner-mk-2-box",
-    ["miner-mk-3"] = "miner-mk-3-box"
+	["miner-mk-1"] = "miner-mk-1-box",
+	["miner-mk-2"] = "miner-mk-2-box",
+	["miner-mk-3"] = "miner-mk-3-box"
 }
 
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
-    if not entity or not entity.valid then return end
-    local name = entity.name
+	if not entity or not entity.valid then return end
+	local name = entity.name
 	if miner_map[name] then
 		-- spawn a box for this drill
 		local store = entity.surface.create_entity{
@@ -32,8 +32,8 @@ end
 
 local function onRemoved(event)
 	local entity = event.entity
-    if not entity or not entity.valid then return end
-    local name = entity.name
+	if not entity or not entity.valid then return end
+	local name = entity.name
 	if miner_map[name] then
 		local store = entity.surface.find_entity(miner_map[name], entity.position)
 		getitems.storage(store, event and event.buffer or nil)

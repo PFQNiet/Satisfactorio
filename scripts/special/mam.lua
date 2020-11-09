@@ -423,17 +423,17 @@ return {
 	end,
 	on_load = function()
 		script_data = global.hard_drive or script_data
-    end,
-    on_configuration_changed = function()
-        if not global.hard_drive then
-            global.hard_drive = script_data
+	end,
+	on_configuration_changed = function()
+		if not global.hard_drive then
+			global.hard_drive = script_data
 		end
 
 		if global['hard-drive-research'] then
 			global.hard_drive.research = table.deepcopy(global['hard-drive-research'])
 			global['hard-drive-research'] = nil
 		end
-    end,
+	end,
 	on_nth_tick = {
 		[6] = function(event) manageMamGUI() end
 	},

@@ -81,17 +81,17 @@ return {
 	end,
 	on_load = function()
 		script_data = global.fuel_generators or script_data
-    end,
-    on_configuration_changed = function()
-        if not global.fuel_generators then
-            global.fuel_generators = script_data
+	end,
+	on_configuration_changed = function()
+		if not global.fuel_generators then
+			global.fuel_generators = script_data
 		end
 
 		if global['fuel-generators'] then
 			global.fuel_generators = table.deepcopy(global['fuel-generators'])
 			global['fuel-generators'] = nil
 		end
-    end,
+	end,
 	events = {
 		[defines.events.on_built_entity] = onBuilt,
 		[defines.events.on_robot_built_entity] = onBuilt,
