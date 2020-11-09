@@ -536,6 +536,16 @@ return {
 	on_load = function()
 		script_data = global.resource_spawner or script_data
 	end,
+	on_configuration_changed = function()
+		if not global.resource_spawner then
+			global.resource_spawner = script_data
+		end
+		if global['queued-nodes'] then
+			script_data.queued = table.deepcopy(global['queued-nodes'])
+			global['queued-nodes'] = nil
+		end
+	end,
+
 	events = {
 		[defines.events.on_tick] = onTick,
 		[defines.events.on_chunk_generated] = onChunkGenerated,

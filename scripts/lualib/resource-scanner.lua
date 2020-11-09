@@ -282,6 +282,20 @@ return {
 	on_load = function()
 		script_data = global.resource_scanner or script_data
 	end,
+	on_configuration_changed = function()
+		if not global.resource_scanner then
+			global.resource_scanner = script_data
+		end
+		if global['resource-scanner-fx'] then
+			script_data.fx = table.deepcopy(global['resource-scanner-fx'])
+			global['resource-scanner-fx'] = nil
+		end
+		if global['resource-scanner-pings'] then
+			script_data.pings = table.deepcopy(global['resource-scanner-pings'])
+			global['resource-scanner-pings'] = nil
+		end
+	end,
+
 	events = {
 		["resource-scanner"] = toggleResourceScanner,
 		[defines.events.on_lua_shortcut] = toggleResourceScanner,
