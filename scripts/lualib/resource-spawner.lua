@@ -304,7 +304,7 @@ local function addNode(resource, surface, x, y)
 	if not resource.grid[surface.index][gy] then resource.grid[surface.index][gy] = {} end
 	resource.grid[surface.index][gy][gx] = {x,y}
 	table.insert(resource.nodes[surface.index], {x,y})
-	resources.add_count(-1)
+	resources.add_count(1)
 	spawnNode(resource, surface, x, y)
 end
 local function existsNear(mytype, surface, x, y)
