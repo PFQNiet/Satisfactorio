@@ -43,3 +43,14 @@ Date: 2020.11.07
     - Player now only regenerates to 30HP
     - Time before auto-heal kicks in increased to match Satisfactory (50s)
     - Player now respawns at 30HP after dying
+---------------------------------------------------------------------------------------------------
+Version: 0.1.4
+Date: 2020.11.10
+  Ease of use:
+    - "Add 5" and "Add Stack" options added to Recipe Browser buttons
+  Bugfixes:
+    - Various optimisations and performance improvements
+    - Exiting a Jetpack or Parachute or Hyper Tube would crash the game
+    - Xeno-basher didn't affect flying enemies
+    - Entities with custom GUIs now auto-close when you move away or the entity is destroyed
+    - Fixed some crashes with the Object Scanner and Beacons
