@@ -110,7 +110,7 @@ local function onGuiClick(event)
 		if not index then
 			return
 		end
-		local resource_list = resources.resources
+		local resource_list = resources.resources()
 		if table_size(resource_list) == 0 then
 			player.print("Resource entities not loaded yet")
 			return
