@@ -20,7 +20,7 @@ local function onBuilt(event)
 	if miner_map[name] then
 		-- spawn a box for this drill
 		local store = entity.surface.create_entity{
-			name = box_map[name],
+			name = miner_map[name],
 			position = entity.position,
 			force = entity.force,
 			raise_built = true
