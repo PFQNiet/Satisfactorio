@@ -54,3 +54,10 @@ Date: 2020.11.10
     - Xeno-basher didn't affect flying enemies
     - Entities with custom GUIs now auto-close when you move away or the entity is destroyed
     - Fixed some crashes with the Object Scanner and Beacons
+---------------------------------------------------------------------------------------------------
+Version: 0.1.5
+Date: 2020.11.11
+  Gui:
+    - Added Tier markers for the HUB tiers
+  Bugfixes:
+    - Better handling of "research recipes" that are already done
