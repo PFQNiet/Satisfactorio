@@ -34,6 +34,11 @@ local function onResearch(event)
 			end
 		end
 	end
+	if technology.force.recipes[technology.name] and technology.force.recipes[technology.name.."-done"] then
+		-- disable the recipe and enable the "-done" recipe
+		technology.force.recipes[technology.name].enabled = false
+		technology.force.recipes[technology.name.."-done"].enabled = true
+	end
 end
 local function onTechEffectsReset(event)
 	-- if/when a force's tech effects are reset, re-apply the unlocks above for all researched techs

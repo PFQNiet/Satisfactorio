@@ -214,3 +214,30 @@ local siloitem = {
 }
 
 data:extend({silo,siloitem})
+
+-- Dummy recipes that can be used to designate the tiers of HUB progress
+for i=0,7 do
+	data:extend{{
+		type = "recipe",
+		name = "hub-tier"..i,
+		ingredients = {},
+		result = "hub-tier"..i,
+		energy_required = 1,
+		category = "hub-progressing",
+		allow_intermediates = false,
+		allow_as_intermediate = false,
+		hide_from_stats = true,
+		hide_from_player_crafting = true,
+		enabled = i == 0
+	},{
+		type = "item",
+		name = "hub-tier"..i,
+		icon = "__base__/graphics/icons/signal/signal_"..i..".png",
+		icon_mipmaps = 4,
+		icon_size = 64,
+		stack_size = 1,
+		flags = {"hidden"},
+		subgroup = "hub-tier"..i,
+		order = "0"
+	}}
+end
