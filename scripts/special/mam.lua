@@ -130,7 +130,10 @@ local function manageMamGUI(player)
 		if frame then frame.destroy() end
 	else
 		local research = game.item_prototypes[recipe.products[1].name]
-		if not entity.force.recipes[research.name].enabled then
+		local force = entity.force
+		if force.technologies[research.name].researched
+		or (force.current_research and force.current_research.name == research.name and force.research_progress > 0)
+		or ((force.get_saved_technology_progress(research.name) or 0) > 0) then
 			-- research already completed, so reject it
 			if frame then frame.destroy() end
 			local spill = entity.set_recipe(nil)
@@ -141,10 +144,14 @@ local function manageMamGUI(player)
 						name = name,
 						count = count,
 					},
-					true, entity.force, false
+					true, force, false
 				)
 			end
-			entity.force.print({"message.mam-already-done",research.name,research.localised_name})
+			if research.name == recipe.name then
+				force.recipes[recipe.name].enabled = false
+				force.recipes[recipe.name.."-done"].enabled = true
+			end
+			force.print({"message.mam-already-done",research.name,research.localised_name})
 		else
 			if frame and frame['mam-tracking-name'..research.name] then
 				-- research has changed, re-create GUI
@@ -204,7 +211,7 @@ local function submitMam(event)
 	local force = player.force
 	
 	local research = recipe.products[1].name
-	if not force.recipes[research].enabled then return end
+	if force.technologies[research].researched then return end
 	local inventory = entity.get_inventory(defines.inventory.assembling_machine_input)
 	local submitted = inventory.get_contents()
 	for _,ingredient in pairs(recipe.ingredients) do

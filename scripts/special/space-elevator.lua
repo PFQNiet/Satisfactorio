@@ -126,10 +126,6 @@ end
 
 local function completeElevator(technology)
 	if string.starts_with(technology.name, "space-elevator") then
-		-- disable the recipe and enable the "-done" recipe
-		technology.force.recipes[technology.name].enabled = false
-		technology.force.recipes[technology.name.."-done"].enabled = true
-
 		local message = {"message.space-elevator-complete",technology.name,technology.localised_name}
 		technology.force.print(message)
 		launchFreighter(findElevatorForForce(technology.force), technology.research_unit_ingredients[1].name)
@@ -152,7 +148,7 @@ local function updateElevatorGUI(force)
 		recipe = hub.get_recipe()
 		if recipe then
 			phase = game.item_prototypes[recipe.products[1].name]
-			if not force.recipes[phase.name].enabled then
+			if force.technologies[phase.name].reserached then
 				-- phase already completed, so reject it
 				local spill = hub.set_recipe(nil)
 				for name,count in pairs(spill) do
@@ -162,8 +158,12 @@ local function updateElevatorGUI(force)
 							name = name,
 							count = count,
 						},
-						true, hub.force, false
+						true, force, false
 					)
+				end
+				if phase.name == recipe.name then
+					force.recipes[recipe.name].enabled = false
+					force.recipes[recipe.name.."-done"].enabled = true
 				end
 				force.print({"message.space-elevator-already-done",phase.name,phase.localised_name})
 				phase = {name="none"}
@@ -319,7 +319,7 @@ local function submitElevator(force)
 	local recipe = hub.get_recipe()
 	if not recipe then return end
 	local phase = recipe.products[1].name
-	if not force.recipes[phase].enabled then return end
+	if force.technologies[phase].researched then return end
 	local inventory = hub.get_inventory(defines.inventory.assembling_machine_input)
 	local submitted = inventory.get_contents()
 	for _,ingredient in pairs(recipe.ingredients) do

@@ -246,9 +246,6 @@ local function completeMilestone(technology)
 				upgrades[technology.name](hub)
 			end
 		end
-		-- disable the recipe and enable the "-done" recipe
-		technology.force.recipes[technology.name].enabled = false
-		technology.force.recipes[technology.name.."-done"].enabled = true
 
 		local message = {"", {"message.milestone-reached",technology.name,technology.localised_name}}
 		-- use "real" technology effects for console message
@@ -299,7 +296,7 @@ local function updateMilestoneGUI(force)
 				-- is a Tier marker
 				hub.set_recipe(nil)
 				milestone = {name="none"}
-			elseif not force.recipes[milestone.name].enabled then
+			elseif force.technologies[milestone.name].researched then
 				-- milestone already completed, so reject it
 				local spill = hub.set_recipe(nil)
 				for name,count in pairs(spill) do
@@ -309,8 +306,12 @@ local function updateMilestoneGUI(force)
 							name = name,
 							count = count,
 						},
-						true, hub.force, false
+						true, force, false
 					)
+				end
+				if milestone.name == recipe.name then
+					force.recipes[recipe.name].enabled = false
+					force.recipes[recipe.name.."-done"].enabled = true
 				end
 				force.print({"message.milestone-already-researched",milestone.name,milestone.localised_name})
 				milestone = {name="none"}
@@ -478,7 +479,7 @@ local function submitMilestone(force)
 	local recipe = hub.get_recipe()
 	if not recipe then return end
 	local milestone = recipe.products[1].name
-	if not force.recipes[milestone].enabled then return end
+	if force.technologies[milestone].researched then return end
 	local inventory = hub.get_inventory(defines.inventory.assembling_machine_input)
 	local submitted = inventory.get_contents()
 	for _,ingredient in pairs(recipe.ingredients) do
