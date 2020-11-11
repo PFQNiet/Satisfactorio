@@ -57,6 +57,8 @@ Date: 2020.11.10
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.5
 Date: 2020.11.11
+  Changes:
+    - A Parachute can now also be used to avoid damage when unsafe-landing from a Jump Pad
   Gui:
     - Added Tier markers for the HUB tiers
   Bugfixes:
