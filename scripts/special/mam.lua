@@ -262,6 +262,17 @@ local function onGuiOpened(event)
 	local player = game.players[event.player_index]
 	if event.gui_type ~= defines.gui_type.entity then return end
 	if event.entity.name ~= mam then return end
+	if event.entity.get_recipe() == nil then
+		-- double-check for, and disable, any recipes that have completed technologies
+		local force = event.entity.force
+		for _,recipe in pairs(force.recipes) do
+			if force.technologies[recipe.name] and force.recipes[recipe.name.."-done"] and force.technologies[recipe.name].researched then
+				force.recipes[recipe.name].enabled = false
+				force.recipes[recipe.name.."-done"].enabled = true
+			end
+		end
+	end
+	
 	local struct = script_data.research[player.force.index]
 	if not struct or not struct.done then return end
 

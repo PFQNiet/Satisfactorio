@@ -554,6 +554,18 @@ local function onResearch(event)
 	-- can just pass all researches to the HUB library, since that already checks if it's a HUB tech.
 	completeMilestone(event.research)
 end
+local function onGuiOpened(event)
+	if event.entity and event.entity.name == terminal and event.entity.get_recipe() == nil then
+		-- double-check for, and disable, any recipes that have completed technologies
+		local force = event.entity.force
+		for _,recipe in pairs(force.recipes) do
+			if force.technologies[recipe.name] and force.recipes[recipe.name.."-done"] and force.technologies[recipe.name].researched then
+				force.recipes[recipe.name].enabled = false
+				force.recipes[recipe.name.."-done"].enabled = true
+			end
+		end
+	end
+end
 local function onGuiClick(event)
 	if event.element.name == "hub-milestone-tracking-submit" then
 		submitMilestone(game.players[event.player_index].force)
@@ -601,6 +613,7 @@ return {
 		[defines.events.script_raised_destroy] = onRemoved,
 		
 		[defines.events.on_research_finished] = onResearch,
+		[defines.events.on_gui_opened] = onGuiOpened,
 		[defines.events.on_gui_click] = onGuiClick
 	}
 }
