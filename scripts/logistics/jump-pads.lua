@@ -175,7 +175,14 @@ local function onTick(event)
 						-- if we landed on jelly then we're good, otherwise take some fall damage (that'll just regen anyway so whatever lol XD)
 						local jelly = surface.find_entity(landing, character.position)
 						if not jelly or jelly.energy == 0 then
-							character.damage(29, game.forces.neutral) -- so you can unsafe-jump a few times but death is possible
+							-- last thing to check is a parachute - using one will nullify fall damage
+							local inventory = data.player.get_inventory(defines.inventory.character_armor)
+							local armour = inventory[1]
+							if armour.valid_for_read and armour.name == "parachute" then
+								inventory.remove{name="parachute",count=1}
+							else
+								character.damage(29, game.forces.neutral) -- so you can unsafe-jump a few times but death is possible
+							end
 						end
 					end
 				end
