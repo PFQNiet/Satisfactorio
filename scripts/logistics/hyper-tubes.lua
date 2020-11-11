@@ -239,8 +239,8 @@ local function onTick(event)
 				if data.direction == nil then -- not "else" because this may change in the above block
 					travel[pid] = nil
 					local exitpos = {
-						data.entity.position.x + vectors[data.direction_last][1],
-						data.entity.position.y + vectors[data.direction_last][2]
+						data.entity.position.x + vectors[data.direction_last][1]*nextoffset,
+						data.entity.position.y + vectors[data.direction_last][2]*nextoffset
 					}
 					data.car.destroy() -- player gets ejected
 					player.character.teleport(player.character.surface.find_non_colliding_position("wooden-chest",exitpos,0,1,true) or exitpos)
