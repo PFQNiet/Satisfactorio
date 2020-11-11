@@ -295,7 +295,11 @@ local function updateMilestoneGUI(force)
 		recipe = hub.get_recipe()
 		if recipe then
 			milestone = game.item_prototypes[recipe.products[1].name]
-			if not force.recipes[milestone.name].enabled then
+			if #recipe.ingredients == 0 then
+				-- is a Tier marker
+				hub.set_recipe(nil)
+				milestone = {name="none"}
+			elseif not force.recipes[milestone.name].enabled then
 				-- milestone already completed, so reject it
 				local spill = hub.set_recipe(nil)
 				for name,count in pairs(spill) do

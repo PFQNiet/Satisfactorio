@@ -183,7 +183,9 @@ addTech("hub-tier0-hub-upgrade-6", "hub/hub-upgrade-6", "hub-progressing", "hub-
 	{type="unlock-recipe",recipe="biomass-burner"},
 	{type="unlock-recipe",recipe="biomass-from-leaves"},
 	{type="unlock-recipe",recipe="biomass-from-wood"},
-	{type="nothing",effect_description={"technology-effect.add-ficsit-freighter-to-hub"}}
+	{type="nothing",effect_description={"technology-effect.add-ficsit-freighter-to-hub"}},
+	{type="unlock-recipe",recipe="hub-tier1"},
+	{type="unlock-recipe",recipe="hub-tier2"}
 })
 
 addTech("hub-tier1-base-building", "hub/structure", "hub-progressing", "hub-tier1", "a-1-1", 120, {"hub-tier0-hub-upgrade-6"}, {
@@ -500,17 +502,23 @@ addTech("hub-tier7-nuclear-power", "hub/factory", "hub-progressing", "hub-tier7"
 addTech("space-elevator-phase1", "space/smart-plating", "space-elevator", "space-parts", "e-1", 1, {"hub-tier0-hub-upgrade-6"}, {
 	{"smart-plating",50}
 }, {
-	-- HUB recipes are handled separately
+	{type="unlock-recipe",recipe="hub-tier3"},
+	{type="unlock-recipe",recipe="hub-tier4"}
 })
 addTech("space-elevator-phase2", "space/versatile-framework", "space-elevator", "space-parts", "e-2", 1, {"space-elevator-phase1"}, {
 	{"smart-plating",500},
 	{"versatile-framework",500},
 	{"automated-wiring",100}
-}, {})
+}, {
+	{type="unlock-recipe",recipe="hub-tier5"},
+	{type="unlock-recipe",recipe="hub-tier6"}
+})
 addTech("space-elevator-phase3", "space/adaptive-control-unit", "space-elevator", "space-parts", "e-3", 1, {"space-elevator-phase2"}, {
 	{"versatile-framework",2500},
 	{"modular-engine",500},
 	{"adaptive-control-unit",100}
+}, {
+	{type="unlock-recipe",recipe="hub-tier7"}
 })
 
 --[[ MAM ]]--
