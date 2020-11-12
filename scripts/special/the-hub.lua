@@ -250,7 +250,12 @@ local function completeMilestone(technology)
 		local message = {"", {"message.milestone-reached",technology.name,technology.localised_name}}
 		-- use "real" technology effects for console message
 		for _,effect in pairs(technology.effects) do
-			if effect.type == "unlock-recipe" then
+			if effect.type == "unlock-recipe" and (effect.recipe == "hub-tier1" or effect.recipe == "hub-tier2") then
+				if effect.recipe == "hub-tier1" then
+					-- only register it once
+					table.insert(message, {"message.hub-new-tiers-available"})
+				end
+			elseif effect.type == "unlock-recipe" then
 				-- if it has an associated "undo" recipe, it's a Building, otherwise it's an Equipment
 				local subtype = "equipment"
 				if technology.force.recipes[effect.recipe.."-undo"] then subtype = "building" end

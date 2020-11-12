@@ -127,7 +127,7 @@ end
 local function completeElevator(technology)
 	if string.starts_with(technology.name, "space-elevator") then
 		local message = {"message.space-elevator-complete",technology.name,technology.localised_name}
-		technology.force.print(message)
+		technology.force.print({"",message,"message.hub-new-tiers-available"})
 		launchFreighter(findElevatorForForce(technology.force), technology.research_unit_ingredients[1].name)
 	end
 end
