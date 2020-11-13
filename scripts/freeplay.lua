@@ -68,7 +68,7 @@ local function onPlayerCreated(event)
 		name = "story-continue-button",
 		caption = {"story-message.continue"}
 	}
-	flow.visible = script_data.step < 4 or script_data.step == 7 or script_data.step == 14
+	flow.visible = script_data.step < 4 or script_data.step == 7 or script_data.step >= 14
 	gui.visible = script_data.message ~= ""
 
 	if script_data.step == 0 and script_data.wait_until == 0 then
@@ -117,7 +117,7 @@ local function onSecond(event)
 			setMessage("")
 			script_data.step = 999
 		else
-			setMessage({"story-message."..messages[script_data.step]}, script_data.step < 4 or script_data.step == 7 or script_data.step == 14)
+			setMessage({"story-message."..messages[script_data.step]}, script_data.step < 4 or script_data.step == 7 or script_data.step >= 14)
 			script_data.wait_until = 0 -- "pause"
 
 			if script_data.step == 4 then
@@ -130,7 +130,7 @@ end
 local function onGuiClick(event)
 	if event.element and event.element.valid and event.element.name == "story-continue-button" and script_data.wait_until == 0 then
 		-- double-check it's a continuable step
-		if script_data.step < 4 or script_data.step == 7 or script_data.step == 14 then
+		if script_data.step < 4 or script_data.step == 7 or script_data.step >= 14 then
 			script_data.wait_until = event.tick
 			onSecond(event) -- process it immediately
 		end
