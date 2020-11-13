@@ -193,7 +193,7 @@ data:extend({
 		action = "lua",
 		associated_control_input = "recipe-browser",
 		icon = {
-			filename = "__core__/graphics/icons/mip/grid-view.png",
+			filename = "__core__/graphics/icons/mip/list-view.png",
 			size = 32,
 			mipmap_count = 2
 		},
