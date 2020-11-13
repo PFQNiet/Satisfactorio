@@ -14,6 +14,7 @@ local script_data = {
 local function closeGui(player)
 	local gui = player.gui.screen['crash-site-locked']
 	if gui then gui.visible = false end
+	script_data.opened[player.index] = nil
 	player.opened = nil
 end
 

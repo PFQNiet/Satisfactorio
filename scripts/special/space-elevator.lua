@@ -369,7 +369,7 @@ local function onGuiOpened(event)
 	end
 end
 local function onGuiClick(event)
-	if event.element.name == "space-elevator-tracking-submit" then
+	if event.element and event.element.valid and event.element.name == "space-elevator-tracking-submit" then
 		submitElevator(game.players[event.player_index].force)
 	end
 end

@@ -572,7 +572,7 @@ local function onGuiOpened(event)
 	end
 end
 local function onGuiClick(event)
-	if event.element.name == "hub-milestone-tracking-submit" then
+	if event.element and event.element.valid and event.element.name == "hub-milestone-tracking-submit" then
 		submitMilestone(game.players[event.player_index].force)
 	end
 end
