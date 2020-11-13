@@ -63,16 +63,6 @@ return {
 	on_load = function()
 		script_data = global.poison_damage or script_data
 	end,
-	on_configuration_changed = function()
-		if not global.poison_damage then
-			global.poison_damage = script_data
-		end
-		if global['poison-damage'] then
-			global.poison_damage = table.deepcopy(global['poison-damage'])
-			script_data = global.poison_damage
-			global['poison-damage'] = nil
-		end
-	end,
 	events = {
 		[defines.events.on_player_armor_inventory_changed] = onEquipBody,
 		[defines.events.on_entity_damaged] = onDamaged

@@ -384,23 +384,6 @@ return {
 	on_load = function()
 		script_data = global.small_biter or script_data
 	end,
-	on_configuration_changed = function()
-		if not global.small_biter then
-			global.small_biter = script_data
-		end
-		if global['lizard-doggos'] then
-			script_data.lizard_doggos = table.deepcopy(global['lizard-doggos'])
-			global['lizard-doggos'] = nil
-		end
-		if global['lizard-doggo-gui'] then
-			script_data.lizard_doggo_gui = table.deepcopy(global['lizard-doggo-gui'])
-			global['lizard-doggo-gui'] = nil
-		end
-		if global['dropped-bait'] then
-			script_data.dropped_bait = table.deepcopy(global['dropped-bait'])
-			global['dropped-bait'] = nil
-		end
-	end,
 	events = {
 		[defines.events.on_built_entity] = onBuilt,
 		[defines.events.on_robot_built_entity] = onBuilt,

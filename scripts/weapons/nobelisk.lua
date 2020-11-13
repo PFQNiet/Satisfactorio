@@ -160,20 +160,6 @@ return {
 	on_load = function()
 		script_data = global.nobelisk or script_data
 	end,
-	on_configuration_changed = function()
-		if not global.nobelisk then
-			global.nobelisk = script_data
-		end
-
-		if global['nobelisk-queue'] then
-			global.nobelisk.queue = table.deepcopy(global['nobelisk-queue'])
-			global['nobelisk-queue'] = nil
-		end
-		if global['nobelisk-explosions'] then
-			global.nobelisk.explosions = table.deepcopy(global['nobelisk-explosions'])
-			global['nobelisk-explosions'] = nil
-		end
-	end,
 	events = {
 		[defines.events.on_script_trigger_effect] = onScriptTriggerEffect,
 		[defines.events.on_tick] = onTick,

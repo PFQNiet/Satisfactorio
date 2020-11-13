@@ -183,26 +183,6 @@ return {
 	on_load = function()
 		script_data = global.trucks or script_data
 	end,
-	on_configuration_changed = function()
-		if not global.trucks then
-			global.trucks = script_data
-		end
-		-- migrate platforms
-		if global['truck-stations'] then
-			local _,first = next(global['truck-stations'])
-			if first.unit_number then -- previously just the entity, now a table with {entity, mode}
-				for i,station in pairs(global['truck-stations']) do
-					global['truck-stations'][i] = {
-						entity = station,
-						mode = io.isEnabled(entity,{2,3.5}) and "output" or "input"
-					}
-				end
-			end
-
-			global.trucks.stations = table.deepcopy(global['truck-stations'])
-			global['truck-stations'] = nil
-		end
-	end,
 	events = {
 		[defines.events.on_built_entity] = onBuilt,
 		[defines.events.on_robot_built_entity] = onBuilt,

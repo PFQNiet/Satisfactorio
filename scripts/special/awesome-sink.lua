@@ -235,20 +235,6 @@ return {
 	on_load = function()
 		script_data = global.awesome or script_data
 	end,
-	on_configuration_changed = function()
-		if not global.awesome then
-			global.awesome = script_data
-		end
-
-		if global['awesome-sinks'] then
-			global.awesome.sinks = table.deepcopy(global['awesome-sinks'])
-			global['awesome-sinks'] = nil
-		end
-		if global['awesome-coupons'] then
-			global.awesome.coupons = table.deepcopy(global['awesome-coupons'])
-			global['awesome-coupons'] = nil
-		end
-	end,
 	on_nth_tick = {
 		[4] = on4thTick,
 		[60] = on60thTick

@@ -310,23 +310,6 @@ return {
 		script_data = global.radioactivity or script_data
 		setmetatable(script_data.buckets, bucket_metatable)
 	end,
-	on_configuration_changed = function()
-		if not global.radioactivity then
-			global.radioactivity = script_data
-		end
-		if global['rad-chunks'] then
-			global.radioactivity.chunks = table.deepcopy(global['rad-chunks'])
-			global['rad-chunks'] = nil
-		end
-		if global['rad-chunks-count'] then
-			global.radioactivity.count= table.deepcopy(global['rad-chunks-count'])
-			global['rad-chunks-count'] = nil
-		end
-		if global['rad-buckets'] then
-			global.radioactivity.buckets = table.deepcopy(global['rad-buckets'])
-			global['rad-buckets'] = nil
-		end
-	end,
 	events = {
 		[defines.events.on_chunk_generated] = onChunkGenerated,
 		[defines.events.on_tick] = onTick,

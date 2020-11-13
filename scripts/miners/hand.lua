@@ -116,16 +116,6 @@ return {
 	on_load = function()
 		script_data = global.plant_regen or script_data
 	end,
-	on_configuration_changed = function()
-		if not global.plant_regen then
-			global.plant_regen = script_data
-		end
-		if global['plant-regen'] then
-			global.plant_regen= table.deepcopy(global['plant-regen'])
-			script_data = global.plant_regen
-			global['plant-regen'] = nil
-		end
-	end,
 	on_nth_tick = {
 		[600] = checkForRegrowth
 	},

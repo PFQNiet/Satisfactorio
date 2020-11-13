@@ -129,16 +129,6 @@ return {
 	on_load = function()
 		script_data = global.parachute_flight or script_data
 	end,
-	on_configuration_changed = function()
-		if not global.parachute_flight then
-			global.parachute_flight = script_data
-		end
-		if global['parachute-flight'] then
-			global.parachute_flight = table.deepcopy(global['parachute-flight'])
-			script_data = global.parachute_flight
-			global['parachute-flight'] = nil
-		end
-	end,
 	events = {
 		[defines.events.on_player_driving_changed_state] = onVehicle,
 		[defines.events.on_tick] = onTick,

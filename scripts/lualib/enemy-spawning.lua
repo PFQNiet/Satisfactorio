@@ -149,27 +149,16 @@ end
 
 return {
 	spawnGroup = spawnGroup,
-	lib = {
-		on_init = function()
-			global.unit_tracking = global.unit_tracking or script_data
-		end,
-		on_load = function()
-			script_data = global.unit_tracking or script_data
-		end,
-		on_configuration_changed = function()
-			if not global.unit_tracking then
-				global.unit_tracking = script_data
-			end
-			if global['unit-tracking'] then
-				global.unit_tracking = table.deepcopy(global['unit-tracking'])
-				script_data = global.unit_tracking
-				global['unit-tracking'] = nil
-			end
-		end,
-		events = {
-			[defines.events.on_entity_died] = onEntityDied,
-			[defines.events.on_entity_damaged] = onDamaged,
-			[defines.events.on_ai_command_completed] = onCommandCompleted
-		}
+
+	on_init = function()
+		global.unit_tracking = global.unit_tracking or script_data
+	end,
+	on_load = function()
+		script_data = global.unit_tracking or script_data
+	end,
+	events = {
+		[defines.events.on_entity_died] = onEntityDied,
+		[defines.events.on_entity_damaged] = onDamaged,
+		[defines.events.on_ai_command_completed] = onCommandCompleted
 	}
 }

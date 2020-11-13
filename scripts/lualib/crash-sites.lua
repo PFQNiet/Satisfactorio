@@ -286,32 +286,18 @@ end
 
 return {
 	createCrashSite = createCrashSite,
-	lib = {
-		on_init = function()
-			global.crash_site = global.crash_site or script_data
-		end,
-		on_load = function()
-			script_data = global.crash_site or script_data
-		end,
-		on_configuration_changed = function()
-			if not global.crash_site then
-				global.crash_site = script_data
-			end
-			if global['crash-sites'] then
-				global.crash_site.sites = table.deepcopy(global['crash-sites'])
-				global['crash-sites'] = nil
-			end
-			if global['opened-crash-site'] then
-				global.crash_site.opened = table.deepcopy(global['opened-crash-site'])
-				global['opened-crash-site'] = nil
-			end
-		end,
-		events = {
-			[defines.events.on_gui_opened] = onGuiOpened,
-			[defines.events.on_gui_closed] = onGuiClosed,
-			[defines.events.on_gui_click] = onGuiClick,
 
-			[defines.events.on_player_changed_position] = onMove
-		}
+	on_init = function()
+		global.crash_site = global.crash_site or script_data
+	end,
+	on_load = function()
+		script_data = global.crash_site or script_data
+	end,
+	events = {
+		[defines.events.on_gui_opened] = onGuiOpened,
+		[defines.events.on_gui_closed] = onGuiClosed,
+		[defines.events.on_gui_click] = onGuiClick,
+
+		[defines.events.on_player_changed_position] = onMove
 	}
 }

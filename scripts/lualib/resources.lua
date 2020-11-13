@@ -31,23 +31,6 @@ return {
 	on_load = function()
 		script_data = global.resources or script_data
 	end,
-	on_configuration_changed = function()
-		if global.resources and not global.resources.resources then
-			local resources = {}
-			for i,res in pairs(script_data) do
-				res = table.deepcopy(res)
-				if not res.border then
-					res.border = 8
-				end
-				resources[i] = res
-				script_data[i] = nil
-			end
-			script_data.resources = resources
-			script_data.node_count = global['resource-node-count']
-			global['resource-node-count'] = nil
-			global.resources = script_data
-		end
-	end,
 
 	resources = function() return script_data.resources end,
 	node_count = function(default)

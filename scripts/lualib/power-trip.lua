@@ -175,33 +175,19 @@ end
 return {
 	registerGenerator = registerGenerator,
 	unregisterGenerator = unregisterGenerator,
-	lib = {
-		on_init = function()
-			global.power_trip = global.power_trip or script_data
-		end,
-		on_load = function()
-			script_data = global.power_trip or script_data
-		end,
-		on_configuration_changed = function()
-			 if not global.power_trip then
-				global.power_trip = script_data
-			 end
-			if global['accumulators'] then
-				global.power_trip.accumulators = table.deepcopy(global['accumulators'])
-				global['accumulators'] = nil
-			end
-			if global['last-power-trip'] then
-				global.power_trip.last_outage = table.deepcopy(global['last-power-trip'])
-				global['last-power-trip'] = nil
-			end
-		end,
-		on_nth_tick = {
-			[60] = onTick
-		},
-		events = {
-			[defines.events.on_gui_opened] = onGuiOpened,
-			[defines.events.on_gui_closed] = onGuiClosed,
-			[defines.events.on_gui_click] = onGuiClick
-		}
+
+	on_init = function()
+		global.power_trip = global.power_trip or script_data
+	end,
+	on_load = function()
+		script_data = global.power_trip or script_data
+	end,
+	on_nth_tick = {
+		[60] = onTick
 	},
+	events = {
+		[defines.events.on_gui_opened] = onGuiOpened,
+		[defines.events.on_gui_closed] = onGuiClosed,
+		[defines.events.on_gui_click] = onGuiClick
+	}
 }

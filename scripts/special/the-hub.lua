@@ -584,25 +584,6 @@ return {
 	on_load = function()
 		script_data = global.hub or script_data
 	end,
-	on_configuration_changed = function()
-		if not global.hub then
-			global.hub = script_data
-		end
-		if global['hub-terminal'] then
-			global.hub.terminal = table.deepcopy(global['hub-terminal'])
-			global['hub-terminal'] = nil
-		end
-
-		if global['hub-milestone-selected'] then
-			global.hub.milestone_selected = table.deepcopy(global['hub-milestone-selected'])
-			global['hub-milestone-selected'] = nil
-		end
-
-		if global['hub-cooldown'] then
-			global.hub.cooldown = table.deepcopy(global['hub-cooldown'])
-			global['hub-cooldown'] = nil
-		end
-	end,
 	on_nth_tick = {
 		[6] = onTick
 	},

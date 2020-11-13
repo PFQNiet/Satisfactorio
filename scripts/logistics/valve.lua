@@ -272,17 +272,6 @@ return {
 	on_load = function()
 		script_data = global.valves or script_data
 	end,
-	on_configuration_changed = function()
-		if global.valves and not global.valves.valves then
-			local copy = table.deepcopy(global['valves'])
-			global.valves = script_data
-			global.valves.valves = copy
-		end
-		if global['gui-valve'] then
-			global.valves.gui = table.deepcopy(global['gui-valve'])
-			global['gui-valve'] = nil
-		end
-	end,
 	events = {
 		[defines.events.on_built_entity] = onBuilt,
 		[defines.events.on_robot_built_entity] = onBuilt,

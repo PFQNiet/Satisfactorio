@@ -383,29 +383,6 @@ return {
 		script_data = global.space_elevator or script_data
 		debounce_error = global.player_build_error_debounce or debounce_error
 	end,
-	on_configuration_changed = function()
-		if not global.space_elevator then
-			global.space_elevator = script_data
-		end
-		if not global.player_build_error_debounce then
-			global.player_build_error_debounce = debounce_error
-		end
-		if global['space-elevator'] then
-			global.space_elevator.elevator = table.deepcopy(global['space-elevator'])
-			global['space-elevator'] = nil
-		end
-
-		if global['space-elevator-phase'] then
-			global.space_elevator.phase = table.deepcopy(global['space-elevator-phase'])
-			global['space-elevator-phase'] = nil
-		end
-
-		if global['player-build-error-debounce'] then
-			global.player_build_error_debounce = table.deepcopy(global['player-debounce-error-debounce'])
-			debounce_error = global.player_build_error_debounce
-			global['player-debounce-error-debounce'] = nil
-		end
-	end,
 	on_nth_tick = {
 		[6] = onTick
 	},

@@ -384,16 +384,6 @@ return {
 	on_load = function()
 		script_data = global.object_scanner or script_data
 	end,
-	on_configuration_changed = function()
-		if not global.object_scanner then
-			global.object_scanner = script_data
-		end
-
-		if global['object-scanner-pings'] then
-			global.object_scanner.pings = table.deepcopy(global['object-scanner-pings'])
-			global['object-scanner-pings'] = nil
-		end
-	end,
 	events = {
 		[defines.events.on_mod_item_opened] = function(event)
 			local player = game.players[event.player_index]

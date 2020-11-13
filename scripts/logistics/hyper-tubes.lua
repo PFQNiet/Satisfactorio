@@ -259,24 +259,6 @@ return {
 		script_data = global.hyper_tube or script_data
 		debounce_error = global.player_build_error_debounce or debounce_error
 	end,
-	on_configuration_changed = function()
-		if not global.hyper_tube then
-			global.hyper_tube = script_data
-		end
-		if not global.player_build_error_debounce then
-			global.player_build_error_debounce = debounce_error
-		end
-		if global['hyper-tube-travel'] then
-			global.hyper_tube = table.deepcopy(global['hyper-tube-travel'])
-			script_data = global.hyper_tube
-			global['hyper-tube-travel'] = nil
-		end
-		if global['player-build-error-debounce'] then
-			global.player_build_error_debounce = table.deepcopy(global['player-debounce-error-debounce'])
-			debounce_error = global.player_build_error_debounce
-			global['player-debounce-error-debounce'] = nil
-		end
-	end,
 	events = {
 		[defines.events.on_built_entity] = onBuilt,
 		[defines.events.on_robot_built_entity] = onBuilt,

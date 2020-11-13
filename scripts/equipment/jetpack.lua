@@ -142,16 +142,6 @@ return {
 	on_load = function()
 		script_data = global.jetpack_flight or script_data
 	end,
-	on_configuration_changed = function()
-		if not global.jetpack_flight then
-			global.jetpack_flight = script_data
-		end
-		if global['jetpack-flight'] then
-			global.jetpack_flight = table.deepcopy(global['jetpack-flight'])
-			script_data = global.jetpack_flight
-			global['jetpack-flight'] = nil
-		end
-	end,
 	events = {
 		[defines.events.on_player_driving_changed_state] = onVehicle,
 		[defines.events.on_tick] = onTick,

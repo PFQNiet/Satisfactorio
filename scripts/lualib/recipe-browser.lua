@@ -603,16 +603,6 @@ return {
 	on_load = function()
 		script_data = global.wanted_items or script_data
 	end,
-	on_configuration_changed = function()
-		if not global.wanted_items then
-			global.wanted_items = script_data
-		end
-		if global['wanted-items'] then
-			global.wanted_items = table.deepcopy(global['wanted-items'])
-			script_data = global.wanted_items
-			global['wanted-items'] = nil
-		end
-	end,
 	events = {
 		["recipe-browser"] = function(event)
 			openRecipeGui(game.players[event.player_index])

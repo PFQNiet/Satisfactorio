@@ -65,7 +65,9 @@ Date: 2020.11.11
     - Better handling of "research recipes" that are already done
     - When the last entity of a Hypertube is an Underground, you exited at the wrong spot
 ---------------------------------------------------------------------------------------------------
-Version: 0.1.6
-Date: 2020.11.??
+Version: 0.2.0
+Date: 2020.11.13
   Features:
     - The start of Freeplay is now Onboarding, with objective-based tutorial to get you started.
+  Bugfixes:
+    - Catastrophic bug after save/load! Whoops! So all save files are kinda knackered...

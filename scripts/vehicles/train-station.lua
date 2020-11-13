@@ -445,50 +445,6 @@ return {
 		script_data = global.trains or script_data
 		debounce_error = global.player_build_error_debounce or debounce_error
 	end,
-	on_configuration_changed = function()
-		if not global.trains then
-			global.trains = script_data
-		end
-
-		-- migrate platforms
-		for _,surface in pairs(game.surfaces) do
-			local platforms = surface.find_entities_filtered{name={freight,fluid}}
-			for _,platform in pairs(platforms) do
-				local is_output
-				if platform.name == freight then
-					is_output = io.isEnabled(platform,{6.5,-2})
-				else
-					is_output = surface.find_entity(
-						fluid.."-pump",
-						math2d.position.add(platform.position, math2d.position.rotate_vector({6.5,-2}, platform.direction*45))
-					).active
-				end
-				script_data.platforms[platform.unit_number] = {
-					platform = platform,
-					mode = is_output and "output" or "input"
-				}
-			end
-		end
-
-		if global['player-build-error-debounce'] then
-			global.player_build_error_debounce = table.deepcopy(global['player-debounce-error-debounce'])
-			debounce_error = global.player_build_error_debounce
-			global['player-debounce-error-debounce'] = nil
-		end
-
-		if global['train-stations'] then
-			global.trains.stations = table.deepcopy(global['train-stations'])
-			global['train-stations'] = nil
-		end
-		if global['train-platforms'] then
-			global.trains.platforms = table.deepcopy(global['train-platforms'])
-			global['train-platforms'] = nil
-		end
-		if global['train-accounted-for'] then
-			global.trains.accounted = table.deepcopy(global['train-accounted-for'])
-			global['train-accounted-for'] = nil
-		end
-	end,
 	events = {
 		[defines.events.on_built_entity] = onBuilt,
 		[defines.events.on_robot_built_entity] = onBuilt,

@@ -296,27 +296,6 @@ return {
 	on_load = function()
 		script_data = global.launch_pads or script_data
 	end,
-	on_configuration_changed = function()
-		if not global.launch_pads then
-			global.launch_pads = script_data
-		end
-		if global['jump-pads'] then
-			global.launch_pads.pads = table.deepcopy(global['jump-pads'])
-			global['jump-pads'] = nil
-		end
-		if global['jump-pad-launch'] then
-			global.launch_pads.launch = table.deepcopy(global['jump-pad-launch'])
-			global['jump-pad-launch'] = nil
-		end
-		if global['jump-pad-rebounce'] then
-			global.launch_pads.rebounce = table.deepcopy(global['jump-pad-rebounce'])
-			global['jump-pad-rebounce'] = nil
-		end
-		if global['jump-pad-visualisation'] then
-			global.launch_pads.visualisation = table.deepcopy(global['jump-pad-visualisation'])
-			global['jump-pad-visualisation'] = nil
-		end
-	end,
 	events = {
 		[defines.events.on_built_entity] = onBuilt,
 		[defines.events.on_robot_built_entity] = onBuilt,
