@@ -74,6 +74,8 @@ Date: 2020.11.13
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.1
 Date: 2020.11.??
+  Features:
+    - "Starting area size" now affects the distance at which nodes are only minimally guarded
   Gui:
     - Added "flow rate" GUI when opening pipes
   Bugfixes:
