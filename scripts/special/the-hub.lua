@@ -26,6 +26,16 @@ local script_data = {
 	cooldown = {}
 }
 
+local function ejectColliders(entity)
+	local colliders = entity.surface.find_entities_filtered{
+		area = entity.bounding_box,
+		collision_mask = "train-layer"
+	}
+	for _,other in pairs(colliders) do
+		other.teleport(other.surface.find_non_colliding_position(other.name, other.position, 0, 0.1, false))
+	end
+end
+
 local function findHubForForce(force)
 	return script_data.terminal[force.index]
 end
@@ -111,6 +121,7 @@ local function buildStorageChest(hub)
 		raise_built = true
 	}
 	box.minable = false
+	ejectColliders(box)
 	return box
 end
 local function removeStorageChest(hub, buffer) -- only if it exists
@@ -142,6 +153,8 @@ local function buildBiomassBurner1(hub)
 		raise_built = true
 	}
 	pole.minable = false
+	ejectColliders(burner)
+	ejectColliders(pole)
 	return burner, pole
 end
 local function removeBiomassBurner1(hub, buffer) -- only if it exists
@@ -169,6 +182,7 @@ local function buildBiomassBurner2(hub)
 		raise_built = true
 	}
 	burner.minable = false
+	ejectColliders(burner)
 	return burner
 end
 local function removeBiomassBurner2(hub, buffer) -- only if it exists
@@ -205,6 +219,8 @@ local function buildFreighter(hub)
 	inserter.operable = false
 	inserter.minable = false
 	inserter.destructible = false
+
+	ejectColliders(silo)
 end
 local function removeFreighter(hub, buffer)
 	local silo = hub.surface.find_entity(freighter,position(freighter_pos,hub))
