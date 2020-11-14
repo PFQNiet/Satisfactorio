@@ -74,5 +74,7 @@ Date: 2020.11.13
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.1
 Date: 2020.11.??
+  Gui:
+    - Added "flow rate" GUI when opening pipes
   Bugfixes:
     - As HUB Upgrade milestones are completed, the HUB now checks for collision with the player.

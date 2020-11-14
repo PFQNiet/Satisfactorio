@@ -6,5 +6,6 @@ return {
 	require("scripts.logistics.valve"),
 	require("scripts.logistics.foundation"),
 	require("scripts.logistics.jump-pads"),
-	require("scripts.logistics.hyper-tubes")
+	require("scripts.logistics.hyper-tubes"),
+	require("scripts.logistics.pipe-flow")
 }
