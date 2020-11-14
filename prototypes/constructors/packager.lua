@@ -21,7 +21,7 @@ local packager = {
 			size = {160,160}
 		}
 	},
-	collision_box = {{-2.2,-2.2},{2.2,2.2}},
+	collision_box = {{-2.21,-2.2},{2.21,2.2}},
 	corpse = "big-remnants",
 	crafting_categories = {"packaging"},
 	crafting_speed = 1,
