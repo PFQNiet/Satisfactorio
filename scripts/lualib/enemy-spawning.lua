@@ -41,6 +41,7 @@ local function spawnGroup(surface,position,value,basedist)
 	local settings = game.default_map_gen_settings.autoplace_controls["enemy-base"] or {frequency=1,richness=1,size=1}
 	if settings.size == 0 then return end
 	-- size = strength, frequency = number
+	local saferange = 240 * game.default_map_gen_settings.starting_area
 
 	-- scale value based on distance from spawn
 	local random = math.random
@@ -53,7 +54,7 @@ local function spawnGroup(surface,position,value,basedist)
 		value = value + 1
 	end
 	value = math.min(6,math.max(1,math.floor(value*settings.size+0.5))) -- minimum setting always yields 1, maximum setting always yields 6
-	if realdist < 240 then
+	if realdist < saferange then
 		-- early spawns should be super easy since you only have the Xeno-Basher
 		value = 1
 	end
@@ -61,7 +62,7 @@ local function spawnGroup(surface,position,value,basedist)
 	for name,count in pairs(spawndata[value]) do
 		count = count*(distance^(1/3)) * settings.frequency
 		if random()<count%1 then count = math.ceil(count) else count = math.floor(count) end
-		if realdist < 240 then count = math.min(2,count) end
+		if realdist < saferange then count = math.min(2,count) end
 		for i=1,count do
 			local offset = getRandomOffset(position)
 			local pos = surface.find_non_colliding_position(name, offset, 10, 0.1)
@@ -86,7 +87,7 @@ local function spawnGroup(surface,position,value,basedist)
 			end
 		end
 	end
-	if realdist > 240 and random()<math.min(10,value*distance)/20 then
+	if realdist > saferange and random()<math.min(10,value*distance)/20 then
 		-- add some gas clouds
 		local name = random() < 0.85 and "big-worm-turret" or "behemoth-worm-turret"
 		for i=1,4 do
