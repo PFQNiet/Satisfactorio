@@ -10,9 +10,9 @@ return {
 		global.splitters = global.splitters or script_data
 	end,
 	on_load = function()
-		script_data = global.splitters or script_data
+		script_data.splitters = (global.splitters or script_data).splitters
+		script_data.gui = (global.splitters or script_data).gui
 	end,
 
-	splitters = script_data.splitters,
-	gui = script_data.gui
+	data = script_data
 }

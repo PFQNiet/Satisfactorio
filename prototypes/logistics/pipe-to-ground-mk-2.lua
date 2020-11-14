@@ -4,6 +4,7 @@ local basename = "pipe-to-ground"
 -- flow rate calculated as 300/min over 20 pipes
 local pipe = table.deepcopy(data.raw['pipe-to-ground'][basename])
 pipe.name = name
+pipe.minable.result = name
 pipe.icon = "__Satisfactorio__/graphics/icons/"..name..".png"
 local box = pipe.fluid_box
 box.height = 0.0093

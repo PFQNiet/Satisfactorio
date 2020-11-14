@@ -80,3 +80,5 @@ Date: 2020.11.??
     - Added "flow rate" GUI when opening pipes
   Bugfixes:
     - As HUB Upgrade milestones are completed, the HUB now checks for collision with the player.
+    - Smart/Programmable splitters weren't saved correctly.
+    - Mk.2 pipes etc. were giving back Mk.1 items on removal

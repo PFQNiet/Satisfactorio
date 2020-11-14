@@ -8,8 +8,9 @@ return {
 		global.beacons = global.beacons or script_data
 	end,
 	on_load = function()
-		script_data = global.beacons or script_data
+		script_data.opened = (global.beacons or script_data).opened
+		script_data.beacons = (global.beacons or script_data).beacons
 	end,
-	opened = script_data.opened,
-	beacons = script_data.beacons
+
+	data = script_data
 }

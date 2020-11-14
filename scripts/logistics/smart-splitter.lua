@@ -5,7 +5,7 @@ local getitems = require("scripts.lualib.get-items-from")
 local splitter = "smart-splitter"
 local buffer = "smart-splitter-box"
 
-local script_data = require("scripts.logistics.splitters")
+local script_data = require("scripts.logistics.splitters").data
 
 local function findStruct(entity)
 	return script_data.splitters[entity.unit_number]

@@ -3,6 +3,7 @@ local basename = "pump"
 
 local pump = table.deepcopy(data.raw.pump[basename])
 pump.name = name
+pump.minable.result = name
 pump.icon = "__Satisfactorio__/graphics/icons/"..name..".png"
 pump.pumping_speed = 600/60/60 -- 600/minute
 pump.energy_usage = "8MW"

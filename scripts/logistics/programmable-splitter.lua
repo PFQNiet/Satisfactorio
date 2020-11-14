@@ -7,19 +7,19 @@ local getitems = require("scripts.lualib.get-items-from")
 local splitter = "programmable-splitter"
 local buffer = "programmable-splitter-box"
 
-local script_data = require("scripts.logistics.splitters")
-local function closeGui(player)
-	local gui = player.gui.screen['programmable-splitter']
-	if gui then gui.visible = false end
-	player.opened = nil
-	script_data.gui[player.index] = nil
-end
+local script_data = require("scripts.logistics.splitters").data
 
 local function findStruct(entity)
 	return script_data.splitters[entity.unit_number]
 end
 local function signalIndex(side, index)
 	return ({left=0,forward=1,right=2})[side]*32+index
+end
+local function closeGui(player)
+	local gui = player.gui.screen['programmable-splitter']
+	if gui then gui.visible = false end
+	player.opened = nil
+	script_data.gui[player.index] = nil
 end
 
 local function onBuilt(event)
