@@ -73,7 +73,7 @@ Date: 2020.11.13
     - Catastrophic bug after save/load! Whoops! So all save files are kinda knackered...
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.1
-Date: 2020.11.??
+Date: 2020.11.14
   Features:
     - "Starting area size" now affects the distance at which nodes are only minimally guarded
   Gui:
