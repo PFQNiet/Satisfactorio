@@ -87,6 +87,7 @@ data.raw['item-group']['combat'].icon = "__Satisfactorio__/graphics/item-group/c
 table.insert(data.raw['god-controller'].default.crafting_categories, "building")
 table.insert(data.raw['god-controller'].default.crafting_categories, "unbuilding")
 table.insert(data.raw['god-controller'].default.mining_categories, "solid")
+data.raw['god-controller'].default.mining_speed = 2
 
 require("prototypes.fonts")
 require("prototypes.vanilla-cleanup")
