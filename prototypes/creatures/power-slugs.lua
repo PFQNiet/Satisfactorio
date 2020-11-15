@@ -38,7 +38,7 @@ local green = {
 	},
 	name = name,
 	selection_box = {{-1,-1},{1,1}},
-	render_layer = "object",
+	render_layer = "lower-object",
 	max_health = 1,
 	type = "simple-entity-with-owner"
 }
@@ -62,7 +62,7 @@ local greendec = {
 	},
 	name = name.."-decorative",
 	selection_box = {{-1,-1},{1,1}},
-	render_layer = "object",
+	render_layer = "lower-object",
 	max_health = 1,
 	type = "simple-entity-with-owner"
 }
@@ -135,7 +135,7 @@ local yellow = {
 	},
 	name = name,
 	selection_box = {{-1,-1},{1,1}},
-	render_layer = "object",
+	render_layer = "lower-object",
 	max_health = 1,
 	type = "simple-entity-with-owner"
 }
@@ -159,7 +159,7 @@ local yellowdec = {
 	},
 	name = name.."-decorative",
 	selection_box = {{-1,-1},{1,1}},
-	render_layer = "object",
+	render_layer = "lower-object",
 	max_health = 1,
 	type = "simple-entity-with-owner"
 }
@@ -232,7 +232,7 @@ local purple = {
 	},
 	name = name,
 	selection_box = {{-1,-1},{1,1}},
-	render_layer = "object",
+	render_layer = "lower-object",
 	max_health = 1,
 	type = "simple-entity-with-owner"
 }
@@ -256,7 +256,7 @@ local purpledec = {
 	},
 	name = name.."-decorative",
 	selection_box = {{-1,-1},{1,1}},
-	render_layer = "object",
+	render_layer = "lower-object",
 	max_health = 1,
 	type = "simple-entity-with-owner"
 }
