@@ -6,13 +6,15 @@ local valve = "valve"
 local valvein = valve.."-input"
 local valveout = valve.."-output"
 
+local polltime = 30
 local script_data = {
 	valves = {},
 	gui = {}
 }
+for i=0,polltime-1 do script_data.valves[i] = {} end
 
 local function findStruct(entity)
-	return script_data.valves[entity.unit_number]
+	return script_data.valves[entity.unit_number%polltime][entity.unit_number]
 end
 local function closeGui(player)
 	local gui = player.gui.screen['valve']
@@ -52,7 +54,7 @@ local function onBuilt(event)
 				only_in_alt_mode = true
 			}
 		}
-		script_data.valves[entity.unit_number] = struct
+		script_data.valves[entity.unit_number%polltime][entity.unit_number] = struct
 	end
 end
 
@@ -63,7 +65,7 @@ local function onRemoved(event)
 		local struct = findStruct(entity)
 		struct.input.destroy()
 		struct.output.destroy()
-		script_data.valves[entity.unit_number] = nil
+		script_data.valves[entity.unit_number%polltime][entity.unit_number] = nil
 		-- find any players that had this GUI open and close it
 		for pid,struct in pairs(script_data.gui) do
 			if struct.base == entity then
@@ -88,21 +90,18 @@ local function onRotated(event)
 end
 
 local function onTick(event)
-	local polltime = 30
-	for i,struct in pairs(script_data.valves) do
-		if event.tick%polltime == i%polltime then
-			-- transfer half the difference between input and output in the forward direction, if fluids match
-			local input_name, input_count = next(struct.input.get_fluid_contents())
-			local output_name, output_count = next(struct.output.get_fluid_contents())
-			if input_name and (not output_name or input_name == output_name) and input_count > (output_count or 0) then
-				local transfer = (input_count - (output_count or 0)) / 2
-				-- set max flow rate... (flow/minute / 60seconds/minute / 60ticks/second * ticks/update = flow/update)
-				if transfer > struct.flow/60/60*polltime then transfer = struct.flow/60/60*polltime end
-				struct.input.remove_fluid{name=input_name, amount=transfer}
-				struct.output.insert_fluid{name=input_name, amount=transfer}
-				-- for rendering purposes, show fluid being transferred per minute in the base
-				struct.base.fluidbox[1] = {name=input_name, amount=transfer*60/polltime*60}
-			end
+	for _,struct in pairs(script_data.valves[event.tick%polltime]) do
+		-- transfer half the difference between input and output in the forward direction, if fluids match
+		local input_name, input_count = next(struct.input.get_fluid_contents())
+		local output_name, output_count = next(struct.output.get_fluid_contents())
+		if input_name and (not output_name or input_name == output_name) and input_count > (output_count or 0) then
+			local transfer = (input_count - (output_count or 0)) / 2
+			-- set max flow rate... (flow/minute / 60seconds/minute / 60ticks/second * ticks/update = flow/update)
+			if transfer > struct.flow/60/60*polltime then transfer = struct.flow/60/60*polltime end
+			struct.input.remove_fluid{name=input_name, amount=transfer}
+			struct.output.insert_fluid{name=input_name, amount=transfer}
+			-- for rendering purposes, show fluid being transferred per minute in the base
+			struct.base.fluidbox[1] = {name=input_name, amount=transfer*60/polltime*60}
 		end
 	end
 end
@@ -271,6 +270,23 @@ return {
 	end,
 	on_load = function()
 		script_data = global.valves or script_data
+	end,
+	on_configuration_changed = function()
+		local valves = script_data.valves
+		if not valves[0] then
+			for i=0,polltime-1 do
+				if valves[i] then
+					valves[i] = {[i]=valves[i]}
+				else
+					valves[i] = {}
+				end
+			end
+			for i,struct in pairs(valves) do
+				if i >= polltime then
+					valves[i%polltime][i] = struct
+				end
+			end
+		end
 	end,
 	events = {
 		[defines.events.on_built_entity] = onBuilt,
