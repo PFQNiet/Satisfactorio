@@ -12,6 +12,7 @@ local fuelbox_pos = {-4,2.5}
 local script_data = {
 	stations = {}
 }
+for i=0,30-1 do script_data.stations[i] = {} end
 
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
@@ -36,7 +37,7 @@ local function onBuilt(event)
 		-- default to Input mode
 		io.toggle(entity, {2,3.5}, false)
 		entity.rotatable = false
-		script_data.stations[entity.unit_number] = {
+		script_data.stations[entity.unit_number%30][entity.unit_number] = {
 			entity = entity,
 			mode = "input"
 		}
@@ -60,7 +61,7 @@ local function onRemoved(event)
 			fuel.destroy()
 		end
 		io.remove(floor, event)
-		script_data.stations[floor.unit_number] = nil
+		script_data.stations[floor.unit_number%30][floor.unit_number] = nil
 		if entity.name ~= base then
 			floor.destroy()
 		end
@@ -75,7 +76,7 @@ local function onGuiOpened(event)
 	end
 	if event.gui_type == defines.gui_type.entity and event.entity.name == storage then
 		local floor = event.entity.surface.find_entity(base, event.entity.position)
-		local struct = script_data.stations[floor.unit_number]
+		local struct = script_data.stations[floor.unit_number%30][floor.unit_number]
 		local unloading = struct.mode == "output"
 		-- create additional GUI for switching input/output mode
 		local gui = player.gui.left
@@ -108,7 +109,7 @@ local function onGuiSwitch(event)
 		local player = game.players[event.player_index]
 		if player.opened.name == storage then
 			local floor = player.opened.surface.find_entity(base, player.opened.position)
-			local struct = script_data.stations[floor.unit_number]
+			local struct = script_data.stations[floor.unit_number%30][floor.unit_number]
 			local unload = event.element.switch_state == "right"
 			struct.mode = unload and "output" or "input"
 			io.toggle(floor,{0,3.5},not unload)
@@ -125,10 +126,10 @@ local function onGuiClosed(event)
 end
 
 local function onTick(event)
-	for i,struct in pairs(script_data.stations) do
+	for i,struct in pairs(script_data.stations[event.tick%30]) do
 		local station = struct.entity
 		local mode = struct.mode
-		if event.tick%30 == i%30 and station.energy >= 10*1000*1000 then
+		if station.energy >= 10*1000*1000 then
 			-- each station will "tick" once every 30 in-game ticks, ie. every half-second
 			-- power consumption is 20MW, so each "tick" consumes 10MJ if a vehicle is present
 			local centre = math2d.position.add(station.position, math2d.position.rotate_vector({-0.5,-8}, station.direction*45))
@@ -182,6 +183,23 @@ return {
 	end,
 	on_load = function()
 		script_data = global.trucks or script_data
+	end,
+	on_configuration_changed = function()
+		local stations = script_data.stations
+		if not stations[0] then
+			for i=0,45-1 do
+				if stations[i] then
+					stations[i] = {[i]=stations[i]}
+				else
+					stations[i] = {}
+				end
+			end
+			for i,struct in pairs(stations) do
+				if i >= 45 then
+					stations[i%45][i] = struct
+				end
+			end
+		end
 	end,
 	events = {
 		[defines.events.on_built_entity] = onBuilt,

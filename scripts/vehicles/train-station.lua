@@ -1,4 +1,4 @@
--- uses global.train.stations to list all train stations {station, stop}
+-- uses global.train.stations to list all train stations {station, stop} - in buckets modulo 45
 -- uses global.train.platforms to list freight platforms {entity, mode}
 -- uses global.player_build_error_debounce to track force -> last error tick to de-duplicate placement errors
 -- uses global.train.accounted to track train IDs that have already been counted by a station in the last cycle
@@ -19,6 +19,7 @@ local script_data = {
 	platforms = {},
 	accounted = {}
 }
+for i=0,45-1 do script_data.stations[i] = {} end
 
 local debounce_error = {}
 
@@ -106,7 +107,7 @@ local function onBuilt(event)
 			}
 			stop.rotatable = false
 
-			script_data.stations[entity.unit_number] = {station=entity, stop=stop}
+			script_data.stations[entity.unit_number%45][entity.unit_number] = {station=entity, stop=stop}
 		else
 			-- platforms must be adjacent to another platform or a station
 			local before = math2d.position.add(entity.position, math2d.position.rotate_vector({0,-7}, entity.direction*45))
@@ -234,7 +235,7 @@ local function onRemoved(event)
 		end
 
 		if entity.name == station then
-			script_data.stations[entity.unit_number] = nil
+			script_data.stations[entity.unit_number%45][entity.unit_number] = nil
 		else
 			script_data.platforms[entity.unit_number] = nil
 		end
@@ -327,18 +328,17 @@ local function onGuiClosed(event)
 end
 
 local function onTick(event)
-	if event.tick%60 == 0 then script_data.accounted = {} end
-	-- poll every station once per second
-	for i,struct in pairs(script_data.stations) do
+	if event.tick%45 == 0 then script_data.accounted = {} end
+	for i,struct in pairs(script_data.stations[event.tick%45]) do
 		local station = struct.station
 		local stop = struct.stop
-		if event.tick%60 == i%60 and station.energy >= 1000 then
-			-- each station will "tick" once every second
+		if station.energy >= 1000 then
+			-- each station will "tick" once 45 ticks
 			local trains = stop.get_train_stop_trains()
-			local power = 50 -- MJ consumed this second
+			local power = 50 -- MW
 			for i,train in pairs(trains) do
 				-- ensure trains are only accounted for by one station
-				-- this is reset every half-second, ie. every modulo
+				-- this is reset every round
 				if not script_data.accounted[train.id] then
 					script_data.accounted[train.id] = true
 					-- each train consumes 25MW normally, plus up to 85MW more to recharge its power
@@ -357,15 +357,9 @@ local function onTick(event)
 			end
 			station.power_usage = power*1000*1000/60 -- set power usage for the next second based on power consumed in the last second
 			station.electric_buffer_size = math.max(station.electric_buffer_size, station.power_usage)
-		end
-	end
 
-	-- one transfer every 45 ticks = 24 seconds for a 32-stack freight car
-	local energy_used = (50/60*45)*1000*1000
-	for i,struct in pairs(script_data.stations) do
-		local station = struct.station
-		local stop = struct.stop
-		if event.tick%45 == i%45 and station.energy >= 1000 then
+			-- one transfer every 45 ticks = 24 seconds for a 32-stack freight car
+			local energy_used = (50/60*45)*1000*1000
 			local train = stop.get_stopped_train()
 			-- scan attached platforms and, if a matching wagon is present, handle loading/unloading
 			local delta = math2d.position.rotate_vector({0,7},station.direction*45)
@@ -416,7 +410,7 @@ local function onTick(event)
 								amount = to.insert_fluid{name=name,amount=amount}
 								if amount > 0 then
 									from.remove_fluid{name=name,amount=amount}
-									platform.energy = platform.energy - energy_used*amount/50 -- uses less power if not all fluid is transferred
+									platform.energy = platform.energy - energy_used
 								end
 								break
 							end
@@ -444,6 +438,23 @@ return {
 	on_load = function()
 		script_data = global.trains or script_data
 		debounce_error = global.player_build_error_debounce or debounce_error
+	end,
+	on_configuration_changed = function()
+		local stations = script_data.stations
+		if not stations[0] then
+			for i=0,45-1 do
+				if stations[i] then
+					stations[i] = {[i]=stations[i]}
+				else
+					stations[i] = {}
+				end
+			end
+			for i,struct in pairs(stations) do
+				if i >= 45 then
+					stations[i%45][i] = struct
+				end
+			end
+		end
 	end,
 	events = {
 		[defines.events.on_built_entity] = onBuilt,

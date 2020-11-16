@@ -9,6 +9,7 @@ local buffer = storage.."-eei"
 local accumulator = storage.."-accumulator"
 
 local script_data = {}
+for i=0,60-1 do script_data[i] = {} end
 
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
@@ -24,7 +25,7 @@ local function onBuilt(event)
 		entity.rotatable = false
 		eei.rotatable = false
 		powertrip.registerGenerator(entity, eei, accumulator)
-		script_data[entity.unit_number] = entity
+		script_data[entity.unit_number%60][entity.unit_number] = entity
 	end
 end
 
@@ -35,7 +36,7 @@ local function onRemoved(event)
 		-- find components
 		local store = entity.name == storage and entity or entity.surface.find_entity(storage, entity.position)
 		local gen = entity.name == buffer and entity or entity.surface.find_entity(buffer, entity.position)
-		script_data[store.unit_number] = nil
+		script_data[store.unit_number%60][store.unit_number] = nil
 		powertrip.unregisterGenerator(store)
 		if entity.name ~= storage then
 			store.destroy()
@@ -47,22 +48,20 @@ local function onRemoved(event)
 end
 
 local function onTick(event)
-	for i,storage in pairs(script_data) do
-		if event.tick%60 == i%60 then
-			-- each station will "tick" once every 60 in-game ticks, ie. every second
-			-- power production is 150MW, so each "tick" can buffer up to 150MJ given enough fuel
-			local eei = storage.surface.find_entity(buffer, storage.position)
-			local fluid_type, fluid_amount = next(storage.get_fluid_contents())
-			if fluid_type and fluid_amount > 0 and eei.active then
-				local fuel_value = game.fluid_prototypes[fluid_type].fuel_value
-				if fuel_value > 0 then
-					local energy_to_full_charge = eei.electric_buffer_size - eei.energy
-					local fuel_to_full_charge = energy_to_full_charge / fuel_value
-					-- attempt to remove the full amount - if it's limited by the amount actually present then the return value will reflect that
-					local fuel_consumed_this_tick = storage.remove_fluid{name=fluid_type, amount=fuel_to_full_charge}
-					local energy_gained_this_tick = fuel_consumed_this_tick * fuel_value
-					eei.energy = eei.energy + energy_gained_this_tick
-				end
+	for i,storage in pairs(script_data[event.tick%60]) do
+		-- each station will "tick" once every 60 in-game ticks, ie. every second
+		-- power production is 150MW, so each "tick" can buffer up to 150MJ given enough fuel
+		local eei = storage.surface.find_entity(buffer, storage.position)
+		local fluid_type, fluid_amount = next(storage.get_fluid_contents())
+		if fluid_type and fluid_amount > 0 and eei.active then
+			local fuel_value = game.fluid_prototypes[fluid_type].fuel_value
+			if fuel_value > 0 then
+				local energy_to_full_charge = eei.electric_buffer_size - eei.energy
+				local fuel_to_full_charge = energy_to_full_charge / fuel_value
+				-- attempt to remove the full amount - if it's limited by the amount actually present then the return value will reflect that
+				local fuel_consumed_this_tick = storage.remove_fluid{name=fluid_type, amount=fuel_to_full_charge}
+				local energy_gained_this_tick = fuel_consumed_this_tick * fuel_value
+				eei.energy = eei.energy + energy_gained_this_tick
 			end
 		end
 	end
@@ -81,6 +80,22 @@ return {
 	end,
 	on_load = function()
 		script_data = global.fuel_generators or script_data
+	end,
+	on_configuration_changed = function()
+		if not script_data[0] then
+			for i=0,60-1 do
+				if script_data[i] then
+					script_data[i] = {[i]=script_data[i]}
+				else
+					script_data[i] = {}
+				end
+			end
+			for i,struct in pairs(script_data) do
+				if i >= 60 then
+					script_data[i%60][i] = struct
+				end
+			end
+		end
 	end,
 	events = {
 		[defines.events.on_built_entity] = onBuilt,
