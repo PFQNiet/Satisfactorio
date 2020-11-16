@@ -228,7 +228,7 @@ local function submitMam(event)
 	local lab = omnilab.getOmnilab(force)
 	lab.insert{name=research,count=1}
 	force.research_queue = {research}
-	force.print({"message.mam-research-started",research,{"item-name."..research}})
+	force.print({"message.mam-research-started",research,game.technology_prototypes[research].localised_name})
 
 	local spill = entity.set_recipe(nil)
 	for name,count in pairs(spill) do
