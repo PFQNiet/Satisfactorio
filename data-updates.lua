@@ -54,3 +54,5 @@ for _,car in pairs(data.raw.car) do
 		car.resistances = resists
 	end
 end
+
+require("prototypes.alt-recipes")

@@ -1,78 +1,886 @@
--- map alt recipe names to prerequisites
-return {
-	["copper-alloy-ingot"] = {},
-	["fine-black-powder"] = {"alt-compacted-coal"},
-	["caterium-wire"] = {"mam-caterium-caterium"},
-	["fused-quickwire"] = {"mam-caterium-caterium-ingots"},
-	["fused-wire"] = {"mam-caterium-caterium"},
-	["fine-concrete"] = {"mam-quartz-quartz"},
-	["radio-control-system"] = {"mam-quartz-radio-control-unit","mam-caterium-high-speed-connector"},
-	["cheap-silica"] = {"mam-quartz-silica"},
-	["seismic-nobelisk"] = {"mam-sulfur-nobelisk","mam-quartz-quartz-crystals"},
-	["casted-screw"] = {},
-	["iron-wire"] = {},
-	["iron-alloy-ingot"] = {},
-	["bolted-iron-plate"] = {},
-	["stitched-iron-plate"] = {},
-	["bolted-frame"] = {"hub-tier2-part-assembly"},
-	["copper-rotor"] = {"hub-tier2-part-assembly"},
-	["steel-rod"] = {"hub-tier3-basic-steel-production"},
-	["steeled-frame"] = {"hub-tier3-basic-steel-production"},
-	["steel-rotor"] = {"hub-tier3-basic-steel-production"},
-	["steel-screw"] = {"hub-tier3-basic-steel-production"},
-	["solid-steel-ingot"] = {"hub-tier3-basic-steel-production"},
-	["compacted-steel-ingot"] = {"hub-tier3-basic-steel-production","alt-compacted-coal"},
-	["signal-beacon"] = {"hub-tier3-basic-steel-production","mam-quartz-quartz-crystals"},
-	["biocoal"] = {"hub-tier3-coal-power"},
-	["charcoal"] = {"hub-tier3-coal-power"},
-	["wet-concrete"] = {"hub-tier3-coal-power"},
-	["pure-copper-ingot"] = {"hub-tier3-coal-power"},
-	["steamed-copper-sheet"] = {"hub-tier3-coal-power"},
-	["pure-iron-ingot"] = {"hub-tier3-coal-power"},
-	["pure-caterium-ingot"] = {"hub-tier3-coal-power","mam-caterium-caterium"},
-	["pure-quartz-crystal"] = {"hub-tier3-coal-power","mam-quartz-quartz-crystals"},
-	["compacted-coal"] = {"hub-tier3-coal-power","mam-sulfur-sulfur"},
-	["encased-industrial-pipe"] = {"hub-tier4-advanced-steel-production"},
-	["high-speed-wiring"] = {"hub-tier4-advanced-steel-production","mam-caterium-ai-limiter"},
-	["quickwire-stator"] = {"hub-tier4-advanced-steel-production","mam-caterium-caterium-ingots"},
-	["rigour-motor"] = {"hub-tier4-advanced-steel-production","mam-quartz-quartz-crystals"},
-	["coated-iron-canister"] = {"hub-tier5-alternative-fluid-transport"},
-	["steel-canister"] = {"hub-tier5-alternative-fluid-transport"},
-	["heavy-encased-frame"] = {"hub-tier5-industrial-manufacturing"},
-	["heavy-flexible-frame"] = {"hub-tier5-industrial-manufacturing"},
-	["caterium-computer"] = {"hub-tier5-industrial-manufacturing","mam-caterium-caterium-ingots"},
-	["crystal-computer"] = {"hub-tier5-industrial-manufacturing","mam-quartz-quartz-crystals"},
-	["coated-cable"] = {"hub-tier5-oil-processing"},
-	["rubber-cable"] = {"hub-tier5-oil-processing"},
-	["electrode-circuit-board"] = {"hub-tier5-oil-processing"},
-	["rubber-concrete"] = {"hub-tier5-oil-processing"},
-	["heavy-oil-residue"] = {"hub-tier5-oil-processing"},
-	["coated-iron-plate"] = {"hub-tier5-oil-processing"},
-	["steel-coated-plate"] = {"hub-tier5-oil-processing"},
-	["diluted-packaged-fuel"] = {"hub-tier5-oil-processing"},
-	["recycled-plastic"] = {"hub-tier5-oil-processing"},
-	["polymer-resin"] = {"hub-tier5-oil-processing"},
-	["adhered-iron-plate"] = {"hub-tier5-oil-processing"},
-	["recycled-rubber"] = {"hub-tier5-oil-processing"},
-	["plastic-smart-plating"] = {"hub-tier5-oil-processing"},
-	["coke-steel-ingot"] = {"hub-tier5-oil-processing"},
-	["flexible-framework"] = {"hub-tier5-oil-processing"},
-	["turbofuel"] = {"hub-tier5-oil-processing","alt-compacted-coal"},
-	["turbo-heavy-fuel"] = {"hub-tier5-oil-processing","alt-compacted-coal"},
-	["quickwire-cable"] = {"hub-tier5-oil-processing","mam-caterium-caterium-ingots"},
-	["caterium-circuit-board"] = {"hub-tier5-oil-processing","mam-caterium-caterium-ingots"},
-	["silicone-high-speed-connector"] = {"hub-tier5-oil-processing","mam-caterium-high-speed-connector","mam-quartz-quartz"},
-	["polyester-fabric"] = {"hub-tier5-oil-processing","mam-mycelia-fabric"},
-	["insulated-crystal-oscillator"] = {"hub-tier5-oil-processing","mam-quartz-crystal-oscillator","mam-caterium-caterium-electronics"},
-	["silicone-circuit-board"] = {"hub-tier5-oil-processing","mam-quartz-quartz"},
-	["heat-exchanger"] = {"hub-tier7-advanced-aluminium-production"},
-	["turbo-rigour-motor"] = {"hub-tier7-advanced-aluminium-production","mam-caterium-caterium-electronics"},
-	["pure-aluminium-ingot"] = {"hub-tier7-bauxite-refinement"},
-	["electrode-aluminium-scrap"] = {"hub-tier7-bauxite-refinement"},
-	["electromagnetic-connection-rod"] = {"hub-tier7-nuclear-power","mam-caterium-ai-limiter"},
-	["infused-uranium-cell"] = {"hub-tier7-nuclear-power","mam-caterium-caterium-ingots","mam-quartz-quartz","mam-sulfur-sulfur"},
-	["nuclear-fuel-unit"] = {"hub-tier7-nuclear-power","mam-quartz-quartz"},
-
-	["expanded-pocket-dimension"] = {},
-	["inflated-pocket-dimension"] = {"hub-tier5-industrial-manufacturing"}
+local recipes = {
+	{
+		name = "copper-alloy-ingot",
+		ingredients = {
+			{"copper-ore",10},
+			{"iron-ore",5}
+		},
+		result = "copper-ingot",
+		result_count = 20,
+		energy_required = 12,
+		category = "foundry",
+		icons = {"iron-ore"}
+	},
+	{
+		name = "fine-black-powder",
+		ingredients = {
+			{"sulfur",2},
+			{"compacted-coal",1}
+		},
+		result = "black-powder",
+		result_count = 4,
+		energy_required = 16,
+		category = "assembling",
+		icons = {"compacted-coal"}
+	},
+	{
+		name = "caterium-wire",
+		ingredients = {
+			{"caterium-ingot",1}
+		},
+		result = "wire",
+		result_count = 8,
+		energy_required = 4,
+		category = "constructing",
+		icons = {"caterium-ingot"}
+	},
+	{
+		name = "fused-quickwire",
+		ingredients = {
+			{"caterium-ingot",1},
+			{"copper-ingot",5}
+		},
+		result = "quickwire",
+		result_count = 12,
+		energy_required = 8,
+		category = "assembling",
+		icons = {"copper-ingot"}
+	},
+	{
+		name = "fused-wire",
+		ingredients = {
+			{"copper-ingot",4},
+			{"caterium-ingot",1}
+		},
+		result = "wire",
+		result_count = 30,
+		energy_required = 20,
+		category = "assembling",
+		icons = {"copper-ingot","caterium-ingot"}
+	},
+	{
+		name = "fine-concrete",
+		ingredients = {
+			{"silica",3},
+			{"stone",12}
+		},
+		result = "concrete",
+		result_count = 10,
+		energy_required = 24,
+		category = "assembling",
+		icons = {"silica"}
+	},
+	{
+		name = "radio-control-system",
+		ingredients = {
+			{"heat-sink",10},
+			{"supercomputer",1},
+			{"quartz-crystal",30}
+		},
+		result = "radio-control-unit",
+		result_count = 3,
+		energy_required = 48,
+		category = "manufacturing",
+		icons = {"supercomputer"}
+	},
+	{
+		name = "cheap-silica",
+		ingredients = {
+			{"raw-quartz",3},
+			{"stone",5}
+		},
+		result = "silica",
+		result_count = 7,
+		energy_required = 16,
+		category = "assembling",
+		icons = {"limestone"}
+	},
+	{
+		name = "seismic-nobelisk",
+		ingredients = {
+			{"black-powder",8},
+			{"steel-pipe",8},
+			{"crystal-oscillator",1}
+		},
+		result = "nobelisk",
+		result_count = 4,
+		energy_required = 40,
+		category = "manufacturing",
+		icons = {"crystal-oscillator"}
+	},
+	{
+		name = "casted-screw",
+		ingredients = {
+			{"iron-ingot",5}
+		},
+		result = "screw",
+		result_count = 20,
+		energy_required = 24,
+		category = "constructing",
+		icons = {"iron-ingot"}
+	},
+	{
+		name = "iron-wire",
+		ingredients = {
+			{"iron-ingot",5}
+		},
+		result = "wire",
+		result_count = 9,
+		energy_required = 24,
+		category = "constructing",
+		icons = {"iron-ingot"}
+	},
+	{
+		name = "iron-alloy-ingot",
+		ingredients = {
+			{"iron-ore",2},
+			{"copper-ore",2}
+		},
+		result = "iron-ingot",
+		result_count = 5,
+		energy_required = 6,
+		category = "foundry",
+		icons = {"copper-ore"}
+	},
+	{
+		name = "bolted-iron-plate",
+		ingredients = {
+			{"iron-plate",18},
+			{"screw",50}
+		},
+		result = "reinforced-iron-plate",
+		result_count = 3,
+		energy_required = 12,
+		category = "assembling",
+		icons = {"screw"}
+	},
+	{
+		name = "stitched-iron-plate",
+		ingredients = {
+			{"iron-plate",10},
+			{"wire",20}
+		},
+		result = "reinforced-iron-plate",
+		result_count = 3,
+		energy_required = 32,
+		category = "assembling",
+		icons = {"wire"}
+	},
+	{
+		name = "bolted-frame",
+		ingredients = {
+			{"reinforced-iron-plate",3},
+			{"screw",56}
+		},
+		result = "modular-frame",
+		result_count = 2,
+		energy_required = 24,
+		category = "assembling",
+		icons = {"screw"}
+	},
+	{
+		name = "copper-rotor",
+		ingredients = {
+			{"copper-plate",6},
+			{"screw",52}
+		},
+		result = "rotor",
+		result_count = 3,
+		energy_required = 16,
+		category = "assembling",
+		icons = {"copper-sheet"}
+	},
+	{
+		name = "steel-rod",
+		ingredients = {
+			{"steel-ingot",1}
+		},
+		result = "iron-stick",
+		result_count = 4,
+		energy_required = 5,
+		category = "constructing",
+		icons = {"steel-ingot"}
+	},
+	{
+		name = "steeled-frame",
+		ingredients = {
+			{"reinforced-iron-plate",2},
+			{"steel-pipe",10}
+		},
+		result = "modular-frame",
+		result_count = 3,
+		energy_required = 60,
+		category = "assembling",
+		icons = {"steel-pipe"}
+	},
+	{
+		name = "steel-rotor",
+		ingredients = {
+			{"steel-pipe",2},
+			{"wire",6}
+		},
+		result = "rotor",
+		result_count = 1,
+		energy_required = 12,
+		category = "assembling",
+		icons = {"steel-pipe"}
+	},
+	{
+		name = "steel-screw",
+		ingredients = {
+			{"steel-plate",1}
+		},
+		result = "screw",
+		result_count = 52,
+		energy_required = 12,
+		category = "constructing",
+		icons = {"steel-beam"}
+	},
+	{
+		name = "solid-steel-ingot",
+		ingredients = {
+			{"iron-ingot",2},
+			{"coal",2}
+		},
+		result = "steel-ingot",
+		result_count = 3,
+		energy_required = 3,
+		category = "foundry",
+		icons = {"iron-ingot"}
+	},
+	{
+		name = "compacted-steel-ingot",
+		ingredients = {
+			{"iron-ore",6},
+			{"compacted-coal",3}
+		},
+		result = "steel-ingot",
+		result_count = 10,
+		energy_required = 16,
+		category = "foundry",
+		icons = {"compacted-coal"}
+	},
+	{
+		name = "signal-beacon",
+		ingredients = {
+			{"steel-plate",4},
+			{"steel-pipe",16},
+			{"crystal-oscillator",1}
+		},
+		result = "map-marker",
+		result_count = 20,
+		energy_required = 120,
+		category = "manufacturing",
+		icons = {"crystal-oscillator"}
+	},
+	{
+		name = "biocoal",
+		ingredients = {
+			{"biomass",5}
+		},
+		result = "coal",
+		result_count = 6,
+		energy_required = 8,
+		category = "constructing",
+		icons = {"biomass"}
+	},
+	{
+		name = "charcoal",
+		ingredients = {
+			{"wood",1}
+		},
+		result = "coal",
+		result_count = 10,
+		energy_required = 4,
+		category = "constructing",
+		icons = {"wood"}
+	},
+	{
+		name = "wet-concrete",
+		ingredients = {
+			{"stone",6},
+			{type="fluid",name="water",amount=5}
+		},
+		result = "concrete",
+		result_count = 4,
+		energy_required = 3,
+		category = "refining",
+		icons = {"water"}
+	},
+	{
+		name = "pure-copper-ingot",
+		ingredients = {
+			{"copper-ore",6},
+			{type="fluid",name="water",amount=4}
+		},
+		result = "copper-ingot",
+		result_count = 15,
+		energy_required = 24,
+		category = "refining",
+		icons = {"water"}
+	},
+	{
+		name = "steamed-copper-sheet",
+		ingredients = {
+			{"copper-ingot",3},
+			{type="fluid",name="water",amount=3}
+		},
+		result = "copper-plate",
+		result_count = 3,
+		energy_required = 8,
+		category = "refining",
+		icons = {"water"}
+	},
+	{
+		name = "pure-iron-ingot",
+		ingredients = {
+			{"iron-ore",7},
+			{type="fluid",name="water",amount=4}
+		},
+		result = "iron-ingot",
+		result_count = 13,
+		energy_required = 12,
+		category = "refining",
+		icons = {"water"}
+	},
+	{
+		name = "pure-caterium-ingot",
+		ingredients = {
+			{"caterium-ore",2},
+			{type="fluid",name="water",amount=2}
+		},
+		result = "caterium-ingot",
+		result_count = 1,
+		energy_required = 5,
+		category = "refining",
+		icons = {"water"}
+	},
+	{
+		name = "pure-quartz-crystal",
+		ingredients = {
+			{"raw-quartz",9},
+			{type="fluid",name="water",amount=5}
+		},
+		result = "quartz-crystal",
+		result_count = 7,
+		energy_required = 8,
+		category = "refining",
+		icons = {"water"}
+	},
+	{
+		name = "compacted-coal",
+		ingredients = {
+			{"coal",5},
+			{"sulfur",5}
+		},
+		result = "compacted-coal",
+		result_count = 5,
+		energy_required = 12,
+		category = "assembling",
+		icons = {}
+	},
+	{
+		name = "encased-industrial-pipe",
+		ingredients = {
+			{"steel-pipe",7},
+			{"concrete",5}
+		},
+		result = "encased-industrial-beam",
+		result_count = 1,
+		energy_required = 15,
+		category = "assembling",
+		icons = {"steel-pipe"}
+	},
+	{
+		name = "high-speed-wiring",
+		ingredients = {
+			{"stator",2},
+			{"wire",40},
+			{"advanced-circuit",1}
+		},
+		result = "automated-wiring",
+		result_count = 4,
+		energy_required = 32,
+		category = "manufacturing",
+		icons = {"high-speed-connector"}
+	},
+	{
+		name = "quickwire-stator",
+		ingredients = {
+			{"steel-pipe",4},
+			{"quickwire",15}
+		},
+		result = "stator",
+		result_count = 2,
+		energy_required = 15,
+		category = "assembling",
+		icons = {"quickwire"}
+	},
+	{
+		name = "rigour-motor",
+		ingredients = {
+			{"rotor",3},
+			{"stator",3},
+			{"crystal-oscillator",1}
+		},
+		result = "motor",
+		result_count = 6,
+		energy_required = 48,
+		category = "manufacturing",
+		icons = {"crystal-oscillator"}
+	},
+	{
+		name = "coated-iron-canister",
+		ingredients = {
+			{"iron-plate",2},
+			{"copper-plate",1}
+		},
+		result = "empty-canister",
+		result_count = 4,
+		energy_required = 4,
+		category = "assembling",
+		icons = {"iron-plate"}
+	},
+	{
+		name = "steel-canister",
+		ingredients = {
+			{"steel-ingot",3}
+		},
+		result = "empty-canister",
+		result_count = 2,
+		energy_required = 3,
+		category = "constructing",
+		icons = {"steel-ingot"}
+	},
+	{
+		name = "heavy-encased-frame",
+		ingredients = {
+			{"modular-frame",8},
+			{"encased-industrial-beam",10},
+			{"steel-pipe",36},
+			{"concrete",22}
+		},
+		result = "heavy-modular-frame",
+		result_count = 3,
+		energy_required = 64,
+		category = "manufacturing",
+		icons = {"concrete"}
+	},
+	{
+		name = "heavy-flexible-frame",
+		ingredients = {
+			{"modular-frame",5},
+			{"encased-industrial-beam",3},
+			{"rubber",20},
+			{"screw",104}
+		},
+		result = "heavy-modular-frame",
+		result_count = 1,
+		energy_required = 16,
+		category = "manufacturing",
+		icons = {"rubber"}
+	},
+	{
+		name = "caterium-computer",
+		ingredients = {
+			{"electronic-circuit",7},
+			{"quickwire",28},
+			{"rubber",12}
+		},
+		result = "computer",
+		result_count = 1,
+		energy_required = 16,
+		category = "manufacturing",
+		icons = {"quickwire"}
+	},
+	{
+		name = "crystal-computer",
+		ingredients = {
+			{"electronic-circuit",8},
+			{"crystal-oscillator",3}
+		},
+		result = "computer",
+		result_count = 3,
+		energy_required = 64,
+		category = "assembling",
+		icons = {"crystal-oscillator"}
+	},
+	{
+		name = "coated-cable",
+		ingredients = {
+			{"wire",5},
+			{type="fluid",name="heavy-oil",amount=2}
+		},
+		result = "copper-cable",
+		result_count = 9,
+		energy_required = 8,
+		category = "refining",
+		icons = {"heavy-oil-residue"}
+	},
+	{
+		name = "rubber-cable",
+		ingredients = {
+			{"wire",9},
+			{"rubber",6}
+		},
+		result = "copper-cable",
+		result_count = 20,
+		energy_required = 12,
+		category = "assembling",
+		icons = {"rubber"}
+	},
+	{
+		name = "electrode-circuit-board",
+		ingredients = {
+			{"rubber",6},
+			{"petroleum-coke",9}
+		},
+		result = "electronic-circuit",
+		result_count = 1,
+		energy_required = 12,
+		category = "assembling",
+		icons = {"petroleum-coke"}
+	},
+	{
+		name = "rubber-concrete",
+		ingredients = {
+			{"stone",10},
+			{"rubber",2}
+		},
+		result = "concrete",
+		result_count = 9,
+		energy_required = 12,
+		category = "assembling",
+		icons = {"rubber"}
+	},
+	{
+		name = "heavy-oil-residue",
+		ingredients = {
+			{type="fluid",name="crude-oil",amount=3}
+		},
+		results = {
+			{type="fluid",name="heavy-oil",amount=4},
+			{"polymer-resin",2}
+		},
+		main_product = "heavy-oil",
+		energy_required = 6,
+		category = "refining",
+		icons = {}
+	},
+	{
+		name = "coated-iron-plate",
+		ingredients = {
+			{"iron-ingot",10},
+			{"plastic-bar",2}
+		},
+		result = "iron-plate",
+		result_count = 15,
+		energy_required = 12,
+		category = "assembling",
+		icons = {"plastic"}
+	},
+	{
+		name = "steel-coated-plate",
+		ingredients = {
+			{"steel-ingot",2},
+			{"plastic-bar",2}
+		},
+		result = "iron-plate",
+		result_count = 18,
+		energy_required = 24,
+		category = "assembling",
+		icons = {"steel-ingot"}
+	},
+	{
+		name = "diluted-packaged-fuel",
+		ingredients = {
+			{type="fluid",name="heavy-oil",amount=1},
+			{"packaged-water",2}
+		},
+		result = "packaged-fuel",
+		result_count = 2,
+		energy_required = 2,
+		category = "refining",
+		icons = {"packaged-water"}
+	},
+	{
+		name = "recycled-plastic",
+		ingredients = {
+			{"rubber",6},
+			{type="fluid",name="fuel",amount=6}
+		},
+		result = "plastic-bar",
+		result_count = 12,
+		energy_required = 12,
+		category = "refining",
+		icons = {"rubber"}
+	},
+	{
+		name = "polymer-resin",
+		ingredients = {
+			{type="fluid",name="crude-oil",amount=6}
+		},
+		results = {
+			{"polymer-resin",13},
+			{type="fluid",name="heavy-oil",amount=2}
+		},
+		main_product = "polymer-resin",
+		energy_required = 6,
+		category = "refining",
+		icons = {}
+	},
+	{
+		name = "adhered-iron-plate",
+		ingredients = {
+			{"iron-plate",3},
+			{"rubber",1}
+		},
+		result = "reinforced-iron-plate",
+		result_count = 1,
+		energy_required = 16,
+		category = "assembling",
+		icons = {"rubber"}
+	},
+	{
+		name = "recycled-rubber",
+		ingredients = {
+			{"plastic-bar",6},
+			{type="fluid",name="fuel",amount=6}
+		},
+		result = "rubber",
+		result_count = 12,
+		energy_required = 12,
+		category = "refining",
+		icons = {"plastic"}
+	},
+	{
+		name = "plastic-smart-plating",
+		ingredients = {
+			{"reinforced-iron-plate",1},
+			{"rotor",1},
+			{"plastic-bar",3}
+		},
+		result = "smart-plating",
+		result_count = 2,
+		energy_required = 24,
+		category = "manufacturing",
+		icons = {"plastic"}
+	},
+	{
+		name = "coke-steel-ingot",
+		ingredients = {
+			{"iron-ore",15},
+			{"petroleum-coke",15}
+		},
+		result = "steel-ingot",
+		result_count = 20,
+		energy_required = 12,
+		category = "foundry",
+		icons = {"petroleum-coke"}
+	},
+	{
+		name = "flexible-framework",
+		ingredients = {
+			{"modular-frame",1},
+			{"steel-plate",6},
+			{"rubber",8}
+		},
+		result = "versatile-framework",
+		result_count = 2,
+		energy_required = 16,
+		category = "manufacturing",
+		icons = {"rubber"}
+	},
+	{
+		name = "turbofuel",
+		ingredients = {
+			{type="fluid",name="fuel",amount=6},
+			{"compacted-coal",4}
+		},
+		results = {{type="fluid",name="turbofuel",amount=5}},
+		main_product = "turbofuel",
+		energy_required = 16,
+		category = "refining",
+		icons = {}
+	},
+	{
+		name = "turbo-heavy-fuel",
+		ingredients = {
+			{type="fluid",name="heavy-oil",amount=4},
+			{"compacted-coal",4}
+		},
+		results = {{type="fluid",name="turbofuel",amount=4}},
+		main_product = "turbofuel",
+		energy_required = 8,
+		category = "refining",
+		icons = {"heavy-oil-residue"}
+	},
+	{
+		name = "quickwire-cable",
+		ingredients = {
+			{"quickwire",3},
+			{"rubber",2}
+		},
+		result = "copper-cable",
+		result_count = 11,
+		energy_required = 24,
+		category = "assembling",
+		icons = {"quickwire"}
+	},
+	{
+		name = "caterium-circuit-board",
+		ingredients = {
+			{"plastic-bar",10},
+			{"quickwire",30}
+		},
+		result = "electronic-circuit",
+		result_count = 7,
+		energy_required = 48,
+		category = "assembling",
+		icons = {"quickwire"}
+	},
+	{
+		name = "silicone-high-speed-connector",
+		ingredients = {
+			{"quickwire",60},
+			{"silica",25},
+			{"electronic-circuit",2}
+		},
+		result = "advanced-circuit",
+		result_count = 2,
+		energy_required = 40,
+		category = "manufacturing",
+		icons = {"silica"}
+	},
+	{
+		name = "polyester-fabric",
+		ingredients = {
+			{"polymer-resin",16},
+			{type="fluid",name="water",amount=10}
+		},
+		result = "fabric",
+		result_count = 1,
+		energy_required = 12,
+		category = "refining",
+		icons = {"polymer-resin"}
+	},
+	{
+		name = "insulated-crystal-oscillator",
+		ingredients = {
+			{"quartz-crystal",10},
+			{"rubber",7},
+			{"processing-unit",1}
+		},
+		result = "crystal-oscillator",
+		result_count = 1,
+		energy_required = 32,
+		category = "manufacturing",
+		icons = {"rubber"}
+	},
+	{
+		name = "silicone-circuit-board",
+		ingredients = {
+			{"copper-plate",11},
+			{"silica",11}
+		},
+		result = "electronic-circuit",
+		result_count = 5,
+		energy_required = 24,
+		category = "assembling",
+		icons = {"silica"}
+	},
+	{
+		name = "heat-exchanger",
+		ingredients = {
+			{"alclad-aluminium-sheet",20},
+			{"copper-plate",30}
+		},
+		result = "heat-sink",
+		result_count = 7,
+		energy_required = 32,
+		category = "assembling",
+		icons = {"copper-sheet"}
+	},
+	{
+		name = "turbo-rigour-motor",
+		ingredients = {
+			{"motor",7},
+			{"radio-control-unit",5},
+			{"processing-unit",9},
+			{"stator",7}
+		},
+		result = "turbo-motor",
+		result_count = 3,
+		energy_required = 64,
+		category = "manufacturing",
+		icons = {"ai-limiter"}
+	},
+	{
+		name = "pure-aluminium-ingot",
+		ingredients = {
+			{"aluminium-scrap",12}
+		},
+		result = "aluminium-ingot",
+		result_count = 3,
+		energy_required = 5,
+		category = "smelter",
+		icons = {}
+	},
+	{
+		name = "electrode-aluminium-scrap",
+		ingredients = {
+			{type="fluid",name="alumina-solution",amount=3},
+			{"coal",1}
+		},
+		results = {
+			{"aluminium-scrap",5},
+			{type="fluid",name="water",amount=1}
+		},
+		main_product = "aluminium-scrap",
+		energy_required = 2,
+		category = "refining",
+		icons = {"coal"}
+	},
+	{
+		name = "electromagnetic-connection-rod",
+		ingredients = {
+			{"stator",10},
+			{"advanced-circuit",5}
+		},
+		result = "electromagnetic-control-rod",
+		result_count = 10,
+		energy_required = 60,
+		category = "assembling",
+		icons = {"high-speed-connector"}
+	},
+	{
+		name = "infused-uranium-cell",
+		ingredients = {
+			{"uranium-pellet",40},
+			{"sulfur",45},
+			{"silica",45},
+			{"quickwire",75}
+		},
+		result = "uranium-fuel-cell",
+		result_count = 35,
+		energy_required = 120,
+		category = "manufacturing",
+		icons = {"sulfur"}
+	},
+	{
+		name = "nuclear-fuel-unit",
+		ingredients = {
+			{"uranium-fuel-cell",50},
+			{"electromagnetic-control-rod",10},
+			{"crystal-oscillator",3},
+			{"map-marker",6}
+		},
+		result = "nuclear-fuel",
+		result_count = 3,
+		energy_required = 300,
+		category = "manufacturing",
+		icons = {"crystal-oscillator"}
+	}
 }
+
+return recipes

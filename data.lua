@@ -106,7 +106,6 @@ require("prototypes.vehicles")
 require("prototypes.weapons")
 require("prototypes.equipment")
 require("prototypes.radioactivity")
-require("prototypes.alt-recipes")
 require("prototypes.technology")
 require("prototypes.map-tweaks")
 
