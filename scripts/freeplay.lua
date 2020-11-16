@@ -21,6 +21,13 @@ local function onInit()
 		if remote.interfaces['silo_script'] then
 			remote.call("silo_script", "set_no_victory", true)
 		end
+		for _,tree in pairs(game.surfaces.nauvis.find_entities_filtered{
+			type = "tree",
+			position = {0,0},
+			radius = 10
+		}) do
+			tree.destroy()
+		end
 		game.surfaces.nauvis.create_entity{
 			name = "drop-pod",
 			position = {0.5,-1.5},

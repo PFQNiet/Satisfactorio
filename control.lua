@@ -34,6 +34,11 @@ handler.add_lib(require("scripts.tech-extras"))
 handler.add_lib(require("scripts.map-tweaks"))
 
 handler.add_lib({
+	on_configuration_changed = function()
+		for _,force in pairs(game.forces) do
+			force.reset_technology_effects()
+		end
+	end,
 	add_commands = function()
 		commands.add_command("respawn","Kills your character, allowing you to respawn. Handy if you somehow manage to get yourself stuck.",function(event)
 			local player = game.players[event.player_index]

@@ -109,6 +109,8 @@ require("prototypes.radioactivity")
 require("prototypes.technology")
 require("prototypes.map-tweaks")
 
+require("compatibility")
+
 for _,fluid in pairs(data.raw.fluid) do
 	fluid.auto_barrel = false
 end

@@ -8,6 +8,7 @@
 	"factorio_version": "1.0",
 	"dependencies":
 	[
-		"base >= 1.0.0"
+		"base >= 1.0.0",
+		"?Construction_Drones >= 0.6.11"
 	]
 }

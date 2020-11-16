@@ -11,22 +11,30 @@ local function addTech(name, icon, category, subgroup, order, time, prerequisite
 	if category == "mam" then
 		table.insert(lab.inputs, name)
 	end
-	data:extend({
-		{
+	local iconsize = 256
+	if type(icon) == "table" then
+		iconsize = icon.size
+		icon = icon.filename
+	end
+	if icon:sub(1,1) ~= "_" then
+		icon = "__Satisfactorio__/graphics/technology/"..icon..".png"
+	end
+	local parts = {
+		tool = {
 			type = "tool",
 			name = name,
 			subgroup = subgroup,
 			order = order,
 			icons = {{
-				icon = "__Satisfactorio__/graphics/technology/"..icon..".png",
-				icon_size = 256,
-				scale = 0.25
+				icon = icon,
+				icon_size = iconsize,
+				scale = 64/iconsize
 			}},
 			stack_size = 1,
 			durability = 1,
 			flags = {"hidden"}
 		},
-		{
+		recipe = {
 			type = "recipe",
 			name = name,
 			ingredients = ingredients,
@@ -45,13 +53,13 @@ local function addTech(name, icon, category, subgroup, order, time, prerequisite
 					icon = "__base__/graphics/icons/blueprint.png"
 				},
 				{
-					icon = "__Satisfactorio__/graphics/technology/"..icon..".png",
-					icon_size = 256,
-					scale = 0.1
+					icon = icon,
+					icon_size = iconsize,
+					scale = 28/iconsize
 				}
 			}
 		},
-		{
+		recipe_done = {
 			type = "recipe",
 			name = name.."-done",
 			ingredients = ingredients,
@@ -69,9 +77,9 @@ local function addTech(name, icon, category, subgroup, order, time, prerequisite
 					icon = "__base__/graphics/icons/upgrade-planner.png"
 				},
 				{
-					icon = "__Satisfactorio__/graphics/technology/"..icon..".png",
-					icon_size = 256,
-					scale = 0.1
+					icon = icon,
+					icon_size = iconsize,
+					scale = 28/iconsize
 				},
 				{
 					icon = "__base__/graphics/icons/checked-green.png",
@@ -82,12 +90,12 @@ local function addTech(name, icon, category, subgroup, order, time, prerequisite
 				}
 			}
 		},
-		{
+		technology = {
 			type = "technology",
 			name = name,
 			order = order,
-			icon = "__Satisfactorio__/graphics/technology/"..icon..".png",
-			icon_size = 256,
+			icon = icon,
+			icon_size = iconsize,
 			prerequisites = prerequisites,
 			unit = {
 				count = 1,
@@ -96,8 +104,9 @@ local function addTech(name, icon, category, subgroup, order, time, prerequisite
 			},
 			effects = effects
 		}
-	})
-	return data.raw.technology[name]
+	}
+	data:extend{parts.tool, parts.recipe, parts.recipe_done, parts.technology}
+	return parts
 end
 
 data:extend({
@@ -127,7 +136,7 @@ data:extend({
 	}
 })
 
-addTech("hub-tier0-hub-upgrade-1", "hub/hub-upgrade-1-2", "hub-progressing", "hub-tier0", "a-0-1", 1, {"the-hub"}, {
+local parts = addTech("hub-tier0-hub-upgrade-1", "hub/hub-upgrade-1-2", "hub-progressing", "hub-tier0", "a-0-1", 1, {"the-hub"}, {
 	{"iron-stick",10}
 }, {
 	{type="unlock-recipe",recipe="equipment-workshop"},
@@ -135,7 +144,7 @@ addTech("hub-tier0-hub-upgrade-1", "hub/hub-upgrade-1-2", "hub-progressing", "hu
 	{type="character-inventory-slots-bonus",modifier=3},
 	{type="nothing",effect_description={"technology-effect.add-storage-to-hub"}}
 })
-data.raw.recipe['hub-tier0-hub-upgrade-1'].enabled = true
+parts.recipe.enabled = true
 addTech("hub-tier0-hub-upgrade-2", "hub/hub-upgrade-1-2", "hub-progressing", "hub-tier0", "a-0-2", 1, {"hub-tier0-hub-upgrade-1"}, {
 	{"iron-stick",20},
 	{"iron-plate",10}
@@ -871,6 +880,6 @@ local alt_recipe_tech = addTech("mam-hard-drive", "mam/hard-drive", "mam", "mam-
 }, {
 	{type="nothing",effect_description={"technology-effect.alt-recipe"}}
 })
-alt_recipe_tech.max_level = "infinite"
+alt_recipe_tech.technology.max_level = "infinite"
 
 return addTech
