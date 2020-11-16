@@ -177,7 +177,7 @@ local function onBuilt(event)
 				pump.active = false
 			end
 
-			script_data.stations[entity.unit_number] = {platform=entity, mode="input"}
+			script_data.platforms[entity.unit_number] = {platform=entity, mode="input"}
 		end
 		entity.rotatable = false
 
