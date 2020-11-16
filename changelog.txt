@@ -82,3 +82,13 @@ Date: 2020.11.14
     - As HUB Upgrade milestones are completed, the HUB now checks for collision with the player.
     - Smart/Programmable splitters weren't saved correctly.
     - Mk.2 pipes etc. were giving back Mk.1 items on removal
+---------------------------------------------------------------------------------------------------
+Version: 0.2.2
+Date: 2020.11.??
+  Changes:
+    - Screw removed as an independent item and now just replaces Iron Gear
+  Bugfixes:
+    - Power Slugs that are covered by Huge Rocks are now, in fact, covered
+  Modding:
+    - Added framework for mod compatibility scripts
+    - Compatible with Construction Drones
