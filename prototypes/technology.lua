@@ -1,3 +1,4 @@
+-- returns the addTech function, which can be used in mod compatibility scripts
 local lab = assert(data.raw.lab.omnilab, "Technology must be loaded AFTER the Omnilab")
 
 data.raw['utility-sprites'].default.character_inventory_slots_bonus_modifier_icon = {
@@ -7,22 +8,26 @@ data.raw['utility-sprites'].default.character_inventory_slots_bonus_modifier_ico
 }
 
 local function addTech(name, icon, category, subgroup, order, time, prerequisites, ingredients, effects)
-	table.insert(lab.inputs, name)
+	if category == "mam" then
+		table.insert(lab.inputs, name)
+		data:extend({
+			{
+				type = "tool",
+				name = name,
+				subgroup = subgroup,
+				order = order,
+				icons = {{
+					icon = "__Satisfactorio__/graphics/technology/"..icon..".png",
+					icon_size = 256,
+					scale = 0.25
+				}},
+				stack_size = 1,
+				durability = 1,
+				flags = {"hidden"}
+			}
+		})
+	end
 	data:extend({
-		{
-			type = "tool",
-			name = name,
-			subgroup = subgroup,
-			order = order,
-			icons = {{
-				icon = "__Satisfactorio__/graphics/technology/"..icon..".png",
-				icon_size = 256,
-				scale = 0.25
-			}},
-			stack_size = 1,
-			durability = 1,
-			flags = {"hidden"}
-		},
 		{
 			type = "recipe",
 			name = name,
@@ -869,3 +874,5 @@ local alt_recipe_tech = addTech("mam-hard-drive", "mam/hard-drive", "mam", "mam-
 	{type="nothing",effect_description={"technology-effect.alt-recipe"}}
 })
 alt_recipe_tech.max_level = "infinite"
+
+return addTech
