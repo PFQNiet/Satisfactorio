@@ -17,7 +17,7 @@ if mods[mod] then
 		size = 150
 	}, "mam", "mam-caterium", "m-2-9-[construction-drone]", 3, {"mam-caterium-ai-limiter"}, {
 		{"processing-unit",10},
-		{"screw",50}
+		{"iron-gear-wheel",50}
 	}, {
 		{type="unlock-recipe",recipe=names.units.construction_drone}
 	})

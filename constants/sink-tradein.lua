@@ -2,7 +2,7 @@ return {
 	["iron-ore"] = 1,
 	["stone"] = 2,
 	["iron-ingot"] = 2,
-	["screw"] = 2,
+	["iron-gear-wheel"] = 2,
 	["coal"] = 3,
 	["leaves"] = 3,
 	["copper-ore"] = 3,

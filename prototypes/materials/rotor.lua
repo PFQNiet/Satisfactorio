@@ -11,7 +11,7 @@ local rotor = {
 
 local ingredients = {
 	{"iron-stick",5},
-	{"screw",25}
+	{"iron-gear-wheel",25}
 }
 local rotorrecipe1 = { -- by hand in Craft Bench
 	name = name.."-manual",

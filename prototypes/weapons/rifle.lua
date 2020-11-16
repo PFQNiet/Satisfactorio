@@ -14,7 +14,7 @@ data.raw.recipe[basename] = {
 		{"steel-pipe",25},
 		{"heavy-modular-frame",3},
 		{"electronic-circuit",20},
-		{"screw",250}
+		{"iron-gear-wheel",250}
 	},
 	result = basename,
 	energy_required = 30/4,

@@ -13,7 +13,7 @@ local ingredients = {
 	{"modular-frame",5},
 	{"steel-pipe",15},
 	{"encased-industrial-beam",5},
-	{"screw",100}
+	{"iron-gear-wheel",100}
 }
 local framerecipe1 = { -- by hand in Craft Bench
 	name = name.."-manual",

@@ -98,7 +98,7 @@ data:extend({
 		ingredients = {
 			{"reinforced-iron-plate",6},
 			{"iron-stick",16},
-			{"screw",100}
+			{"iron-gear-wheel",100}
 		},
 		result = basename,
 		energy_required = 25/4,

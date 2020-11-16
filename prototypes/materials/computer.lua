@@ -13,7 +13,7 @@ local ingredients = {
 	{"electronic-circuit",10},
 	{"copper-cable",9},
 	{"plastic-bar",18},
-	{"screw",52}
+	{"iron-gear-wheel",52}
 }
 local computerrecipe1 = { -- by hand in Craft Bench
 	name = name.."-manual",

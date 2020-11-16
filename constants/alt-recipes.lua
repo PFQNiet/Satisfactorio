@@ -113,7 +113,7 @@ local recipes = {
 		ingredients = {
 			{"iron-ingot",5}
 		},
-		result = "screw",
+		result = "iron-gear-wheel",
 		result_count = 20,
 		energy_required = 24,
 		category = "constructing",
@@ -146,7 +146,7 @@ local recipes = {
 		name = "bolted-iron-plate",
 		ingredients = {
 			{"iron-plate",18},
-			{"screw",50}
+			{"iron-gear-wheel",50}
 		},
 		result = "reinforced-iron-plate",
 		result_count = 3,
@@ -170,7 +170,7 @@ local recipes = {
 		name = "bolted-frame",
 		ingredients = {
 			{"reinforced-iron-plate",3},
-			{"screw",56}
+			{"iron-gear-wheel",56}
 		},
 		result = "modular-frame",
 		result_count = 2,
@@ -182,7 +182,7 @@ local recipes = {
 		name = "copper-rotor",
 		ingredients = {
 			{"copper-plate",6},
-			{"screw",52}
+			{"iron-gear-wheel",52}
 		},
 		result = "rotor",
 		result_count = 3,
@@ -230,7 +230,7 @@ local recipes = {
 		ingredients = {
 			{"steel-plate",1}
 		},
-		result = "screw",
+		result = "iron-gear-wheel",
 		result_count = 52,
 		energy_required = 12,
 		category = "constructing",
@@ -472,7 +472,7 @@ local recipes = {
 			{"modular-frame",5},
 			{"encased-industrial-beam",3},
 			{"rubber",20},
-			{"screw",104}
+			{"iron-gear-wheel",104}
 		},
 		result = "heavy-modular-frame",
 		result_count = 1,

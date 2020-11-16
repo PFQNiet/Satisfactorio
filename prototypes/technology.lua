@@ -164,7 +164,7 @@ addTech("hub-tier0-hub-upgrade-3", "hub/hub-upgrade-3", "hub-progressing", "hub-
 	{type="unlock-recipe",recipe="constructor"},
 	{type="unlock-recipe",recipe="small-electric-pole"},
 	{type="unlock-recipe",recipe="concrete"},
-	{type="unlock-recipe",recipe="screw"},
+	{type="unlock-recipe",recipe="iron-gear-wheel"},
 	{type="unlock-recipe",recipe="reinforced-iron-plate"},
 	{type="unlock-recipe",recipe="scanner-stone"}
 })
@@ -220,7 +220,7 @@ addTech("hub-tier1-logistics-mk-1", "hub/logistics", "hub-progressing", "hub-tie
 })
 addTech("hub-tier1-field-research", "hub/equipment", "hub-progressing", "hub-tier1", "a-1-3", 180, {"hub-tier0-hub-upgrade-6"}, {
 	{"wire",300},
-	{"screw",300},
+	{"iron-gear-wheel",300},
 	{"iron-plate",100}
 }, {
 	{type="unlock-recipe",recipe="mam"},
@@ -233,7 +233,7 @@ addTech("hub-tier1-field-research", "hub/equipment", "hub-progressing", "hub-tie
 addTech("hub-tier2-part-assembly", "hub/factory", "hub-progressing", "hub-tier2", "a-2-1", 360, {"hub-tier0-hub-upgrade-6"}, {
 	{"iron-plate",300},
 	{"iron-stick",200},
-	{"screw",500},
+	{"iron-gear-wheel",500},
 	{"copper-cable",200}
 }, {
 	{type="unlock-recipe",recipe="assembler"},
@@ -243,7 +243,7 @@ addTech("hub-tier2-part-assembly", "hub/factory", "hub-progressing", "hub-tier2"
 	{type="unlock-recipe",recipe="smart-plating"}
 })
 addTech("hub-tier2-obstacle-clearing", "hub/equipment", "hub-progressing", "hub-tier2", "a-2-2", 180, {"hub-tier0-hub-upgrade-6"}, {
-	{"screw",500},
+	{"iron-gear-wheel",500},
 	{"copper-cable",100},
 	{"concrete",100}
 }, {
@@ -553,7 +553,7 @@ addTech("mam-alien-organisms-organic-properties", "mam/biomass", "mam", "mam-ali
 addTech("mam-alien-organisms-rebar-gun", "mam/rebar-gun", "mam", "mam-alien-organisms", "m-1-6", 300, {"mam-alien-organisms-structural-analysis"}, {
 	{"reinforced-iron-plate",50},
 	{"rotor",25},
-	{"screw",500}
+	{"iron-gear-wheel",500}
 }, {
 	{type="unlock-recipe",recipe="pistol"}
 })

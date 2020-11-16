@@ -25,7 +25,7 @@ local defaultcursor = {
 local ingredients = {
 	{"reinforced-iron-plate",4},
 	{"map-marker",3},
-	{"screw",50}
+	{"iron-gear-wheel",50}
 }
 local scannerrecipe = {
 	name = name,

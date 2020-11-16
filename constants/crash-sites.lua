@@ -1,5 +1,5 @@
 local loot = {
-	["screw"] = {
+	["iron-gear-wheel"] = {
 		probability = 0.8,
 		amount = {40,80}
 	},
@@ -74,7 +74,7 @@ local reqs = {
 	items = {
 		["motor"] = 80,
 		["rotor"] = 60,
-		["screw"] = 50,
+		["iron-gear-wheel"] = 50,
 		["encased-industrial-beam"] = 40,
 		["stator"] = 40,
 		["steel-pipe"] = 30,

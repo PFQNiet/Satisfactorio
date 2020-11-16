@@ -64,7 +64,7 @@ local shopitem = {
 }
 
 local ingredients = {
-	{"screw",200},
+	{"iron-gear-wheel",200},
 	{"iron-plate",10},
 	{"copper-cable",30}
 }

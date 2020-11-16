@@ -1,8 +1,9 @@
 local name = "screw"
+local basename = "iron-gear-wheel"
 local screw = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
-	name = name,
+	name = basename,
 	order = "a[iron]-c["..name.."]",
 	stack_size = 500,
 	subgroup = "parts",
@@ -13,10 +14,10 @@ local ingredients = {
 	{"iron-stick",1}
 }
 local screwrecipe1 = { -- by hand in Craft Bench
-	name = name.."-manual",
+	name = basename.."-manual",
 	type = "recipe",
 	ingredients = ingredients,
-	result = name,
+	result = basename,
 	result_count = 4,
 	energy_required = 3/4,
 	category = "craft-bench",
@@ -24,14 +25,16 @@ local screwrecipe1 = { -- by hand in Craft Bench
 	enabled = false
 }
 local screwrecipe2 = { -- in Constructor
-	name = name,
+	name = basename,
 	type = "recipe",
 	ingredients = ingredients,
-	result = name,
+	result = basename,
 	result_count = 4,
 	energy_required = 6,
 	category = "constructing",
 	enabled = false
 }
 
-data:extend({screw,screwrecipe1,screwrecipe2})
+data:extend({screwrecipe1})
+data.raw.item[basename] = screw
+data.raw.recipe[basename] = screwrecipe2

@@ -11,7 +11,7 @@ local plate = {
 
 local ingredients = {
 	{"iron-plate",6},
-	{"screw",12}
+	{"iron-gear-wheel",12}
 }
 local platerecipe1 = { -- by hand in Craft Bench
 	name = name.."-manual",
