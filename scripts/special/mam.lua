@@ -189,7 +189,7 @@ local function manageMamGUI(player)
 			end
 
 			local inventory = entity.get_inventory(defines.inventory.assembling_machine_input)
-			submitted = inventory.get_contents()
+			local submitted = inventory.get_contents()
 			local ready = true
 			for _,ingredient in ipairs(recipe.ingredients) do
 				if (submitted[ingredient.name] or 0) < ingredient.amount then
