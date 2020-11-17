@@ -121,7 +121,7 @@ local function onGuiClosed(event)
 	if event.gui_type == defines.gui_type.entity and event.entity.name == storage then
 		local player = game.players[event.player_index]
 		local gui = player.gui.left['truck-station-gui']
-		if gui then gui.visible = false end
+		if gui then gui.destroy() end
 	end
 end
 
@@ -172,7 +172,7 @@ local function onTick(event)
 				end
 			end
 			-- disable input if a vehicle is present, enable it if not
-			io.toggle(station,{0,3.5},done)
+			io.toggle(station,{0,3.5},not done)
 		end
 	end
 end

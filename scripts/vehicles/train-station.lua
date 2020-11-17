@@ -323,7 +323,7 @@ local function onGuiClosed(event)
 	if event.gui_type == defines.gui_type.entity and (event.entity.name == freight.."-box" or event.entity.name == fluid.."-tank") then
 		local player = game.players[event.player_index]
 		local gui = player.gui.left['truck-station-gui']
-		if gui then gui.visible = false end
+		if gui then gui.destroy() end
 	end
 end
 
