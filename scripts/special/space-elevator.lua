@@ -148,7 +148,7 @@ local function updateElevatorGUI(force)
 		recipe = hub.get_recipe()
 		if recipe then
 			phase = game.item_prototypes[recipe.products[1].name]
-			if force.technologies[phase.name].reserached then
+			if force.technologies[phase.name].researched then
 				-- phase already completed, so reject it
 				local spill = hub.set_recipe(nil)
 				for name,count in pairs(spill) do

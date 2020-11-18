@@ -13,7 +13,8 @@
 			"adjustMods": {
 				"debugadapter": true,
 				"Satisfactorio": true,
-				"Construction_Drones": true
+				"Construction_Drones": true,
+				"Factorissimo2": true
 			},
 			"modsPath": "E:\\Documents\\factorio-mods"
 		}

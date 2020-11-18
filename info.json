@@ -9,6 +9,7 @@
 	"dependencies":
 	[
 		"base >= 1.0.0",
-		"?Construction_Drones >= 0.6.11"
+		"?Construction_Drones >= 0.6.11",
+		"?Factorissimo2 >= 2.4.2"
 	]
 }

@@ -48,3 +48,6 @@ handler.add_lib({
 		end)
 	end
 })
+
+-- Control-time Mod Compatibility
+handler.add_lib(require("compatibility.factorissimo2-control"))

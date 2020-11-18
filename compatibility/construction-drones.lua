@@ -25,4 +25,6 @@ if mods[mod] then
 	tech.recipe.localised_name = data.raw.item[names.units.construction_drone].localised_name
 	tech.recipe_done.localised_name = data.raw.item[names.units.construction_drone].localised_name
 	tech.technology.localised_name = data.raw.item[names.units.construction_drone].localised_name
+
+	data.raw.shortcut['construction-drone-toggle'].technology_to_unlock = "mam-caterium-construction-drone"
 end
