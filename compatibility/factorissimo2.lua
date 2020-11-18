@@ -137,7 +137,7 @@ if mods[mod] then
 
 	building = data.raw['storage-tank']['factory-input-pipe']
 	building.max_health = 1
-	building.fluid_box.base_area = 0.02
+	building.fluid_box.base_area = 0.1
 	item = data.raw.item[building.name]
 	recipe = data.raw.recipe['factory-input-pipe']
 	recipe.energy_required = 2
@@ -168,7 +168,7 @@ if mods[mod] then
 	
 	building = data.raw['storage-tank']['factory-output-pipe']
 	building.max_health = 1
-	building.fluid_box.base_area = 0.02
+	building.fluid_box.base_area = 0.1
 	item = data.raw.item[building.name]
 	recipe = data.raw.recipe['factory-output-pipe']
 	recipe.energy_required = 2
