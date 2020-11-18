@@ -7,6 +7,10 @@ return {
 					event.research.force.technologies[k].researched = true
 				end
 			end
+			if event.research.name == "hub-tier3-coal-power" then
+				-- set Factorissimo "fluid connection" tech to researched
+				event.research.force.technologies["factory-connection-type-fluid"].researched = true
+			end
 		end
 	}
 }

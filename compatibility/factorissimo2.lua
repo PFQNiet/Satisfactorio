@@ -1,6 +1,16 @@
 -- add compatibility for Factorissimo2
 local mod = "Factorissimo2"
 if mods[mod] then
+	local function hideTech(k)
+		local tech = data.raw.technology[k]
+		tech.hidden = true
+		tech.prerequisites = {}
+		tech.unit = {
+			count = 1,
+			time = 1,
+			ingredients = {}
+		}
+	end
 	local function removeTech(k)
 		local tech = data.raw.technology[k]
 		tech.enabled = false
@@ -21,22 +31,17 @@ if mods[mod] then
 	table.insert(data.raw.technology['hub-tier3-coal-power'].effects, {type="unlock-recipe",recipe="factory-input-pipe"})
 	table.insert(data.raw.technology['hub-tier3-coal-power'].effects, {type="unlock-recipe",recipe="factory-output-pipe"})
 	-- delete the connection techs from Factorissimo (notably, chests wouldn't work here, so belts only)
-	removeTech("factory-connection-type-fluid")
+	hideTech("factory-connection-type-fluid")
 	removeTech("factory-connection-type-chest")
 	removeTech("factory-connection-type-circuit")
 
 	-- set interior upgrades as dependents of Base Building and make them free but also hidden
 	-- the control script can set them as researched when Base Building is researched
-	for _,k in pairs({"factory-interior-upgrade-lights", "factory-interior-upgrade-display", "factory-preview", "factory-recursion-t1", "factory-recursion-t2"}) do
-		local tech = data.raw.technology[k]
-		tech.hidden = true
-		tech.prerequisites = {"hub-tier1-base-building"}
-		tech.unit = {
-			count = 1,
-			time = 1,
-			ingredients = {}
-		}
-	end
+	hideTech("factory-interior-upgrade-lights")
+	hideTech("factory-interior-upgrade-display")
+	hideTech("factory-preview")
+	hideTech("factory-recursion-t1")
+	hideTech("factory-recursion-t2")
 
 	-- disable the requester chest tech
 	removeTech("factory-requester-chest")
