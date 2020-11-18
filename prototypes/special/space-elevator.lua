@@ -112,6 +112,7 @@ silo.energy_source = {type="void"}
 silo.rocket_parts_required = 1
 silo.max_health = 1
 silo.fixed_recipe = nil
+silo.selection_priority = 49
 
 local siloitem = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
