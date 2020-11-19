@@ -84,11 +84,17 @@ Date: 2020.11.14
     - Mk.2 pipes etc. were giving back Mk.1 items on removal
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.2
-Date: 2020.11.??
+Date: 2020.11.19
   Changes:
     - Screw removed as an independent item and now just replaces Iron Gear
   Bugfixes:
     - Power Slugs that are covered by Huge Rocks are now, in fact, covered
+    - Space Elevator crash fixed
+    - Space Elevator "rocket silo" entity is now not selectable
+    - Better handling of potentially incompatible mods
+    - Items on belts are now masked properly by freight platforms
+    - Various fixes and optimisations
   Modding:
     - Added framework for mod compatibility scripts
     - Compatible with Construction Drones
+    - Compatible with Factorissimo 2
