@@ -17,13 +17,6 @@ local function onBuilt(event)
 				if math2d.position.distance_squared(target, snapto.position) > 0.1 then
 					-- figure out where to snap to
 					local snapped = math2d.position.subtract(snapto.position, vector)
-					-- place a ghost first so that the new entity won't try to re-snap
-					entity.surface.create_entity{
-						name = "entity-ghost",
-						inner_name = foundation,
-						position = snapped,
-						force = entity.force
-					}
 					entity.surface.create_entity{
 						name = foundation,
 						position = snapped,
