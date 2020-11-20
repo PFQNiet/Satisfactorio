@@ -87,6 +87,7 @@ Version: 0.2.2
 Date: 2020.11.19
   Changes:
     - Screw removed as an independent item and now just replaces Iron Gear
+    - Foundation now snaps to nearby Foundations to avoid off-by-one construction
   Bugfixes:
     - Power Slugs that are covered by Huge Rocks are now, in fact, covered
     - Space Elevator crash fixed
