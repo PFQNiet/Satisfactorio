@@ -17,6 +17,11 @@ if mods[mod] then
 		tech.hidden = true
 		tech.prerequisites = {}
 	end
+	local function hideItem(k)
+		local item = data.raw.item[k]
+		if not item.flags then item.flags = {} end
+		table.insert(item.flags,"hidden")
+	end
 
 	-- add the factory buildings to "Base Building" milestone, however the recipes will restrict you to smaller buildings until later tiers
 	table.insert(data.raw.technology['hub-tier1-base-building'].effects, {type="unlock-recipe",recipe="factory-1"})
@@ -201,4 +206,9 @@ if mods[mod] then
 		enabled = false
 	}
 	data:extend{undo}
+
+	-- hide circuit in/output and requester
+	hideItem("factory-circuit-input")
+	hideItem("factory-circuit-output")
+	hideItem("factory-requester-chest")
 end
