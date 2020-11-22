@@ -170,23 +170,6 @@ local function updateElevatorGUI(force)
 			else
 				local inventory = hub.get_inventory(defines.inventory.assembling_machine_input)
 				submitted = inventory.get_contents()
-				for _,ingredient in ipairs(recipe.ingredients) do
-					if submitted[ingredient.name] and submitted[ingredient.name] > ingredient.amount then
-						-- spill the excess
-						hub.surface.spill_item_stack(
-							hub.position,
-							{
-								name = ingredient.name,
-								count = inventory.remove{
-									name = ingredient.name,
-									count = submitted[ingredient.name] - ingredient.amount
-								}
-							},
-							true, hub.force, false
-						)
-						submitted[ingredient.name] = ingredient.amount
-					end
-				end
 			end
 		end
 	end
@@ -300,7 +283,7 @@ local function updateElevatorGUI(force)
 				frame.visible = true
 				for _,ingredient in ipairs(recipe.ingredients) do
 					local label = table['space-elevator-tracking-ingredient-'..ingredient.name]['space-elevator-tracking-ingredient-'..ingredient.name..'-count']
-					label.caption = {"gui.fraction", util.format_number(submitted[ingredient.name] or 0), util.format_number(ingredient.amount)}
+					label.caption = {"gui.fraction", util.format_number(math.min(submitted[ingredient.name] or 0, ingredient.amount)), util.format_number(ingredient.amount)}
 					if (submitted[ingredient.name] or 0) < ingredient.amount then
 						ready = false
 					end
@@ -313,7 +296,7 @@ local function updateElevatorGUI(force)
 		end
 	end
 end
-local function submitElevator(force)
+local function submitElevator(force, player)
 	local hub = findElevatorForForce(force)
 	if not hub or not hub.valid then return end
 	local recipe = hub.get_recipe()
@@ -336,16 +319,16 @@ local function submitElevator(force)
 	force.play_sound{path="utility/research_completed"}
 	local spill = hub.set_recipe(nil)
 	for name,count in pairs(spill) do
-		hub.surface.spill_item_stack(
-			hub.position,
-			{
-				name = name,
-				count = count,
-			},
-			true,
-			hub.force,
-			false
-		)
+		if player then
+			count = count - player.insert{name=name,count=count}
+		end
+		if count > 0 then
+			(player or hub).surface.spill_item_stack(
+				(player or hub).position,
+				{name = name, count = count},
+				true, force, false
+			)
+		end
 	end
 end
 
@@ -370,7 +353,8 @@ local function onGuiOpened(event)
 end
 local function onGuiClick(event)
 	if event.element and event.element.valid and event.element.name == "space-elevator-tracking-submit" then
-		submitElevator(game.players[event.player_index].force)
+		local player = game.players[event.player_index]
+		submitElevator(player.force, player)
 	end
 end
 

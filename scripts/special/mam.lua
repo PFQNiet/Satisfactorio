@@ -232,16 +232,14 @@ local function submitMam(event)
 
 	local spill = entity.set_recipe(nil)
 	for name,count in pairs(spill) do
-		entity.surface.spill_item_stack(
-			entity.position,
-			{
-				name = name,
-				count = count,
-			},
-			true,
-			entity.force,
-			false
-		)
+		count = count - player.insert{name=name,count=count}
+		if count > 0 then
+			player.surface.spill_item_stack(
+				player.position,
+				{name = name, count = count},
+				true, force, false
+			)
+		end
 	end
 
 	-- disable the recipe and enable the "-done" recipe
