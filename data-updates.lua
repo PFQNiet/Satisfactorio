@@ -1,5 +1,7 @@
--- add a description to all recipes for which a *-manual version exists, explaining that it can be hand-crafted
 local string = require("scripts.lualib.string")
+local util = require("util")
+
+-- add a description to all recipes for which a *-manual version exists, explaining that it can be hand-crafted
 local workstations = {
 	["craft-bench"] = "craft-bench",
 	["equipment"] = "equipment-workshop"
@@ -56,3 +58,17 @@ for _,car in pairs(data.raw.car) do
 end
 
 require("prototypes.alt-recipes")
+
+-- auto-generate technology item descriptors
+for _,tech in pairs(data.raw.technology) do
+	local item = data.raw.tool[tech.name]
+	if item then
+		local recipe = data.raw.recipe[item.name]
+		local submit = recipe.category == "hub-progressing" and "the-hub" or recipe.category
+		local cost = {"",{"technology-description.submit-to",submit,{"item-name."..submit}},"\n"}
+		for _,ingredient in pairs(recipe.ingredients) do
+			table.insert(cost, {"technology-description.ingredient",ingredient.name or ingredient[1],util.format_number(ingredient.amount or ingredient[2])})
+		end
+		tech.localised_description = cost
+	end
+end

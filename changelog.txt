@@ -99,3 +99,9 @@ Date: 2020.11.19
     - Added framework for mod compatibility scripts
     - Compatible with Construction Drones
     - Compatible with Factorissimo 2
+---------------------------------------------------------------------------------------------------
+Version: 0.2.3
+Date: 2020.11.??
+  Ease of use:
+    - Submitting excess items to the HUB, Space Elevator or MAM now has better handling
+    - Added submission requirements to technology descriptions
