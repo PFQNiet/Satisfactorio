@@ -102,6 +102,11 @@ Date: 2020.11.19
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.3
 Date: 2020.11.??
+  Graphics:
+    - Scaled the Ficsit Freighter to match its actual size
   Ease of use:
     - Submitting excess items to the HUB, Space Elevator or MAM now has better handling
     - Added submission requirements to technology descriptions
+  Bugfixes:
+    - Train platforms now collide with most objects, greatly reducing the manual collision handling
+    - Trains weren't consuming the correct amount of power
