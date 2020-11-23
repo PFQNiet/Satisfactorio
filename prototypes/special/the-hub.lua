@@ -201,6 +201,112 @@ silo.energy_source = {type="void"}
 silo.rocket_parts_required = 1
 silo.max_health = 1
 silo.fixed_recipe = nil
+-- scale silo graphics down to 1/3
+for _,key in pairs({
+	"arm_01_back_animation", "arm_02_right_animation", "arm_03_front_animation",
+	"base_day_sprite", "base_engine_light", "base_front_sprite",
+	"door_back_sprite", "door_front_sprite",
+	"hole_light_sprite", "hole_sprite",
+	"rocket_glow_overlay_sprite", "rocket_shadow_overlay_sprite",
+	"satellite_animation", "shadow_sprite"
+}) do
+	local graphic = silo[key]
+	graphic.scale = (graphic.scale or 1) / 3
+	if graphic.shift then
+		graphic.shift[1] = graphic.shift[1] / 3
+		graphic.shift[2] = graphic.shift[2] / 3
+	end
+	graphic = graphic.hr_version
+	if graphic then
+		graphic.scale = (graphic.scale or 1) / 3
+		if graphic.shift then
+			graphic.shift[1] = graphic.shift[1] / 3
+			graphic.shift[2] = graphic.shift[2] / 3
+		end
+	end
+end
+for _,graphic in pairs(silo.red_lights_back_sprites.layers) do
+	graphic.scale = (graphic.scale or 1) / 3
+	if graphic.shift then
+		graphic.shift[1] = graphic.shift[1] / 3
+		graphic.shift[2] = graphic.shift[2] / 3
+	end
+	graphic = graphic.hr_version
+	if graphic then
+		graphic.scale = (graphic.scale or 1) / 3
+		if graphic.shift then
+			graphic.shift[1] = graphic.shift[1] / 3
+			graphic.shift[2] = graphic.shift[2] / 3
+		end
+	end
+end
+for _,graphic in pairs(silo.red_lights_front_sprites.layers) do
+	graphic.scale = (graphic.scale or 1) / 3
+	if graphic.shift then
+		graphic.shift[1] = graphic.shift[1] / 3
+		graphic.shift[2] = graphic.shift[2] / 3
+	end
+	graphic = graphic.hr_version
+	if graphic then
+		graphic.scale = (graphic.scale or 1) / 3
+		if graphic.shift then
+			graphic.shift[1] = graphic.shift[1] / 3
+			graphic.shift[2] = graphic.shift[2] / 3
+		end
+	end
+end
+silo.door_back_open_offset[1] = silo.door_back_open_offset[1] / 3
+silo.door_back_open_offset[2] = silo.door_back_open_offset[2] / 3
+silo.door_front_open_offset[1] = silo.door_front_open_offset[1] / 3
+silo.door_front_open_offset[2] = silo.door_front_open_offset[2] / 3
+silo.hole_clipping_box[1][1] = silo.hole_clipping_box[1][1] / 3
+silo.hole_clipping_box[1][2] = silo.hole_clipping_box[1][2] / 3
+silo.hole_clipping_box[2][1] = silo.hole_clipping_box[2][1] / 3
+silo.hole_clipping_box[2][2] = silo.hole_clipping_box[2][2] / 3
+silo.rocket_entity = silo.name.."-rocket"
+
+local rocket = table.deepcopy(data.raw['rocket-silo-rocket']['rocket-silo-rocket'])
+rocket.name = silo.rocket_entity
+for _,key in pairs({
+	"rocket_flame_animation", "rocket_flame_left_animation", "rocket_flame_right_animation",
+	"rocket_glare_overlay_sprite", "rocket_shadow_sprite", "rocket_sprite",
+	"rocket_smoke_bottom1_animation", "rocket_smoke_bottom2_animation",
+	"rocket_smoke_top1_animation", "rocket_smoke_top2_animation", "rocket_smoke_top3_animation"
+}) do
+	local graphic = rocket[key]
+	graphic.scale = (graphic.scale or 1) / 3
+	if graphic.shift then
+		graphic.shift[1] = graphic.shift[1] / 3
+		graphic.shift[2] = graphic.shift[2] / 3
+	end
+	graphic = graphic.hr_version
+	if graphic then
+		graphic.scale = (graphic.scale or 1) / 3
+		if graphic.shift then
+			graphic.shift[1] = graphic.shift[1] / 3
+			graphic.shift[2] = graphic.shift[2] / 3
+		end
+	end
+end
+rocket.rocket_visible_distance_from_center = rocket.rocket_visible_distance_from_center / 3
+rocket.rocket_render_layer_switch_distance = rocket.rocket_render_layer_switch_distance / 3
+rocket.full_render_layer_switch_distance = rocket.full_render_layer_switch_distance / 3
+rocket.glow_light.shift[1] = rocket.glow_light.shift[1] / 3
+rocket.glow_light.shift[2] = rocket.glow_light.shift[2] / 3
+rocket.glow_light.size = rocket.glow_light.size / 3
+for _,key in pairs({"rocket_initial_offset","rocket_rise_offset","rocket_launch_offset"}) do
+	local offset = rocket[key]
+	offset[1] = offset[1] / 3
+	offset[2] = offset[2] / 3
+end
+rocket.shadow_slave_entity = rocket.name.."-shadow"
+
+local shadow = table.deepcopy(data.raw['rocket-silo-rocket-shadow']['rocket-silo-rocket-shadow'])
+shadow.name = rocket.shadow_slave_entity
+shadow.collision_box[1][1] = shadow.collision_box[1][1] / 3
+shadow.collision_box[1][2] = shadow.collision_box[1][2] / 3
+shadow.collision_box[2][1] = shadow.collision_box[2][1] / 3
+shadow.collision_box[2][2] = shadow.collision_box[2][2] / 3
 
 local siloitem = {
 	icon = "__Satisfactorio__/graphics/icons/the-hub.png",
@@ -213,7 +319,7 @@ local siloitem = {
 	type = "item"
 }
 
-data:extend({silo,siloitem})
+data:extend({silo,rocket,shadow,siloitem})
 
 -- Dummy recipes that can be used to designate the tiers of HUB progress
 for i=0,7 do
