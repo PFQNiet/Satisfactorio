@@ -347,7 +347,7 @@ local function onTick(event)
 							local burner = loco.burner
 							if not burner.currently_burning then burner.currently_burning = "train-power" end
 							local missing = 85*1000*1000 - burner.remaining_burning_fuel
-							power = power + 25 + missing/1000/1000
+							power = power + 25 + missing/1000/1000/3*4 -- /3*4 converts the 45-tick period to per-second energy
 							burner.remaining_burning_fuel = 85*1000*1000
 						end
 					end
