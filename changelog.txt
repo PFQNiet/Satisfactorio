@@ -101,7 +101,7 @@ Date: 2020.11.19
     - Compatible with Factorissimo 2
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.3
-Date: 2020.11.??
+Date: 2020.11.23
   Graphics:
     - Scaled the Ficsit Freighter to match its actual size
   Ease of use:

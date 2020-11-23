@@ -62,7 +62,7 @@ local function openRecipeGui(player)
 			horizontal_scroll_policy = "never",
 			vertical_scroll_policy = "always"
 		}
-		scroll.style.width = 520
+		scroll.style.width = 560
 		scroll.style.height = 400
 		local recipes = scroll.add{
 			type = "table",
@@ -326,7 +326,9 @@ local function updateItemRequestCount(player, name, count)
 		script_data[player.index][name] = math.ceil(count / yield) * yield
 		updateWantedList(player)
 	end
-	closeItemRequestCount(player)
+	if player.gui.screen['to-do-request-mask'] then
+		closeItemRequestCount(player)
+	end
 end
 
 local function onGuiClosed(event)
@@ -529,6 +531,15 @@ local function onGuiElemChanged(event)
 						sprite = "utility/reassign"
 					}
 					button.style.padding = 6
+
+					button = production.add{
+						type = "sprite-button",
+						name = "recipe-browser-remove-from-list",
+						style = "slot_sized_button_red",
+						tooltip = {"gui.recipe-browser-remove-from-list"},
+						sprite = "utility/trash"
+					}
+					button.style.padding = 6
 				end
 			end
 		end
@@ -555,6 +566,17 @@ local function onGuiClick(event)
 		end
 		wanted[recipe.name] = (wanted[recipe.name] or 0) + yield
 		updateWantedList(player)
+	elseif event.element.name == "recipe-browser-remove-from-list" then
+		local recipe = game.recipe_prototypes[event.element.parent.parent.parent.name]
+		if not script_data[player.index] then script_data[player.index] = {} end
+		local wanted = script_data[player.index]
+		local yield = getRecipeYield(recipe)
+		if event.button == defines.mouse_button_type.right then
+			yield = yield * 5
+		elseif event.shift then
+			yield = math.floor((game.item_prototypes[recipe.main_product.name or recipe.products[1].name] or {stack_size = 100}).stack_size / yield) * yield
+		end
+		updateItemRequestCount(player, recipe.name, math.max(0,(wanted[recipe.name] or 0) - yield))
 	elseif event.element.name == "to-do-list-toggle" then
 		local elem = player.gui.screen['to-do-list'].content
 		if elem.visible then
