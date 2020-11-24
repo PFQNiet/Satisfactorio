@@ -12,4 +12,5 @@ belt.selection_priority = 30
 belt.collision_mask = {"transport-belt-layer"}
 if not belt.flags then belt.flags = {} end
 table.insert(belt.flags, "not-on-map")
+table.insert(belt.flags, "not-blueprintable")
 data:extend({belt})

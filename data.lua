@@ -31,8 +31,8 @@ data:extend({
 	{type="recipe-category",name="awesome-shop"},
 	{type="recipe-category",name="coal-generator"},
 	{type="recipe-category",name="nuclear-power"},
-	{type="item-group",name="special",order="a1",icon="__Satisfactorio__/graphics/item-group/special.png",icon_size=64},
-	{type="item-group",name="milestones",order="a2",icon="__Satisfactorio__/graphics/icons/the-hub.png",icon_size=64},
+	{type="item-group",name="special",order="91",icon="__Satisfactorio__/graphics/item-group/special.png",icon_size=64},
+	{type="item-group",name="milestones",order="92",icon="__Satisfactorio__/graphics/icons/the-hub.png",icon_size=64},
 	{type="item-group",name="space-elevator",order="x3",icon="__Satisfactorio__/graphics/icons/space-elevator.png",icon_size=64},
 	{type="item-group",name="mam-research",order="x4",icon="__Satisfactorio__/graphics/icons/mam.png",icon_size=64},
 	{type="item-subgroup",group="special",name="special",order="s-a"},
@@ -81,14 +81,13 @@ data:extend({
 })
 data.raw['item-subgroup']['transport'].order = "e"
 data.raw['item-subgroup']['train-transport'].order = "f"
-data.raw['item-group']['logistics'].icon = "__Satisfactorio__/graphics/item-group/logistics.png"
-data.raw['item-group']['logistics'].icon_size = 64
-data.raw['item-group']['production'].icon = "__Satisfactorio__/graphics/item-group/production.png"
-data.raw['item-group']['production'].icon_size = 64
-data.raw['item-group']['intermediate-products'].icon = "__Satisfactorio__/graphics/item-group/intermediate-products.png"
-data.raw['item-group']['intermediate-products'].icon_size = 64
-data.raw['item-group']['combat'].icon = "__Satisfactorio__/graphics/item-group/combat.png"
-data.raw['item-group']['combat'].icon_size = 64
+local igroups = data.raw['item-group']
+for _,key in pairs({"logistics","production","intermediate-products","combat"}) do
+	local igroup = igroups[key]
+	igroup.icon = "__Satisfactorio__/graphics/item-group/"..key..".png"
+	igroup.icon_size = 64
+	igroup.icon_mipmaps = 1
+end
 table.insert(data.raw['god-controller'].default.crafting_categories, "building")
 table.insert(data.raw['god-controller'].default.crafting_categories, "unbuilding")
 table.insert(data.raw['god-controller'].default.mining_categories, "solid")
@@ -113,6 +112,24 @@ require("prototypes.equipment")
 require("prototypes.radioactivity")
 require("prototypes.technology")
 require("prototypes.map-tweaks")
+require("prototypes.tips-and-tricks")
+--[=[
+data.raw['utility-constants'].default.main_menu_simulations = {
+	plastic = {
+		checkboard = false,
+		save = "__Satisfactorio__/menu-simulations/plastic.zip",
+		length = 60 * 60 * 60,
+		init = [[
+			local logo = game.surfaces.nauvis.find_entities_filtered{name="factorio-logo-11tiles",limit=1}[1]
+			game.camera_position = {logo.position.x, logo.position.y+9.75}
+			game.camera_zoom = 1
+			game.tick_paused = false
+			game.surfaces.nauvis.daytime = 0
+		]],
+		update = [[]]
+	}
+}
+]=]
 
 require("compatibility")
 
