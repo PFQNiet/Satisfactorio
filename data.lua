@@ -113,7 +113,6 @@ require("prototypes.radioactivity")
 require("prototypes.technology")
 require("prototypes.map-tweaks")
 require("prototypes.tips-and-tricks")
---[=[
 data.raw['utility-constants'].default.main_menu_simulations = {
 	plastic = {
 		checkboard = false,
@@ -129,7 +128,6 @@ data.raw['utility-constants'].default.main_menu_simulations = {
 		update = [[]]
 	}
 }
-]=]
 
 require("compatibility")
 
