@@ -53,11 +53,15 @@ local function unregisterGenerator(entity)
 end
 
 local function createFusebox(player)
-	local gui = player.gui.left
+	local gui = player.gui.relative
 	if not gui['power-trip-reset-fuse'] then
 		local frame = gui.add{
 			type = "frame",
 			name = "power-trip-reset-fuse",
+			anchor = {
+				gui = defines.relative_gui_type.entity_with_energy_source_gui,
+				position = defines.relative_gui_position.right
+			},
 			direction = "vertical",
 			caption = {"gui.power-trip-reset-fuse-title"},
 			style = "inner_frame_in_outer_frame"
@@ -74,12 +78,23 @@ local function createFusebox(player)
 			caption = {"gui.power-trip-reset-fuse-button"}
 		}
 	end
+	local frame = gui['power-trip-reset-fuse']
+	if player.opened and player.opened.name == "fuel-generator" then
+		frame.anchor = {
+			gui = defines.relative_gui_type.storage_tank_gui,
+			position = defines.relative_gui_position.right
+		}
+	else
+		frame.anchor = {
+			gui = defines.relative_gui_type.entity_with_energy_source_gui,
+			position = defines.relative_gui_position.right
+		}
+	end
 end
 local function toggle(entry, enabled)
 	if entry.burner then entry.burner.active = enabled end
 	entry.generator.active = enabled
 	entry.active = enabled
-
 end
 local function onTick(event)
 	for _,entry in pairs(script_data.accumulators) do
@@ -126,7 +141,7 @@ local function onGuiOpened(event)
 end
 local function onGuiClosed(event)
 	local player = game.players[event.player_index]
-	local gui = player.gui.left
+	local gui = player.gui.relative
 	if gui['power-trip-reset-fuse'] then
 		gui['power-trip-reset-fuse'].destroy()
 	end

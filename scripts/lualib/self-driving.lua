@@ -17,6 +17,9 @@ local function getCar(car)
 	end
 	return script_data[car.unit_number]
 end
+local function deleteCar(car)
+	script_data[car.unit_number] = nil
+end
 
 local function turn(myvector, targetvector)
 	myvector = math2d.position.ensure_xy(myvector)
@@ -99,8 +102,7 @@ local function refreshPathRender(car)
 					filled = false,
 					target = {waypoint.x,waypoint.y},
 					surface = car.car.surface,
-					draw_on_ground = true,
-					only_in_alt_mode = true
+					draw_on_ground = true
 				})
 			end
 		else
@@ -113,7 +115,7 @@ local function refreshPathRender(car)
 				to = {waypoint.x,waypoint.y},
 				surface = car.car.surface,
 				draw_on_ground = true,
-				only_in_alt_mode = true
+				only_in_alt_mode = not car.recording
 			})
 		end
 		prev = waypoint
@@ -128,7 +130,7 @@ local function refreshPathRender(car)
 			to = car.car,
 			surface = car.car.surface,
 			draw_on_ground = true,
-			only_in_alt_mode = true
+			only_in_alt_mode = not car.recording
 		})
 	elseif #car.waypoints > 1 then
 		table.insert(car.rendering, rendering.draw_line{
@@ -140,7 +142,7 @@ local function refreshPathRender(car)
 			to = {car.waypoints[1].x,car.waypoints[1].y},
 			surface = car.car.surface,
 			draw_on_ground = true,
-			only_in_alt_mode = true
+			only_in_alt_mode = not car.recording
 		})
 	end
 end
@@ -450,6 +452,17 @@ local function onGuiSwitch(event)
 	end
 end
 
+local function onRemoved(event)
+	local entity = event.entity
+	if not entity or not entity.valid then return end
+	if entity and entity.valid and isSelfDrivingCar(entity) then
+		local car = getCar(entity)
+		for _,line in pairs(car.rendering) do
+			rendering.destroy(line)
+		end
+		deleteCar(entity)
+	end
+end
 
 return {
 	on_init = function()
@@ -461,6 +474,11 @@ return {
 	events = {
 		[defines.events.on_tick] = onTick,
 		[defines.events.on_player_driving_changed_state] = onDriving,
+		
+		[defines.events.on_player_mined_entity] = onRemoved,
+		[defines.events.on_robot_mined_entity] = onRemoved,
+		[defines.events.on_entity_died] = onRemoved,
+		[defines.events.script_raised_destroy] = onRemoved,
 
 		[defines.events.on_gui_click] = onGuiClick,
 		[defines.events.on_gui_selection_state_changed] = onGuiSelection,

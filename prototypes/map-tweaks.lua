@@ -27,7 +27,7 @@ data:extend({
 		type = "custom-input",
 		name = "place-marker",
 		key_sequence = "",
-		linked_game_control = "place-tag",
+		-- linked_game_control = "place-tag",
 		consuming = "none", -- doesn't block the tag GUI and triggers out of the map view anyway
 		action = "lua"
 	}

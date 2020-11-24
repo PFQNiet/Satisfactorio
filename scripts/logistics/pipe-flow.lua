@@ -10,6 +10,8 @@ local entities = { -- advertised max flow per tracked entity
 	["pipeline-junction-cross-mk-2"] = 600,
 	["pipeline-pump-mk-2"] = 600
 }
+local entity_names = {}
+for k,_ in pairs(entities) do table.insert(entity_names,k) end
 
 local function onGuiOpened(event)
 	if not (event.entity and event.entity.valid) then return end
@@ -22,11 +24,16 @@ local function onGuiOpened(event)
 			}
 		end
 		local player = game.players[event.player_index]
-		local gui = player.gui.left['pipe-flow']
+		local gui = player.gui.relative['pipe-flow']
 		if not gui then
-			gui = player.gui.left.add{
+			gui = player.gui.relative.add{
 				type = "frame",
 				name = "pipe-flow",
+				anchor = {
+					gui = defines.relative_gui_type.pipe_gui,
+					position = defines.relative_gui_position.right,
+					names = entity_names
+				},
 				direction = "vertical",
 				caption = {"gui.pipe-flow-title"},
 				style = "inner_frame_in_outer_frame"
@@ -69,7 +76,7 @@ local function onGuiClosed(event)
 	if not (event.entity and event.entity.valid) then return end
 	if entities[event.entity.name] and script_data[event.entity.unit_number] then
 		local player = game.players[event.player_index]
-		local gui = player.gui.left['pipe-flow']
+		local gui = player.gui.relative['pipe-flow']
 		if gui then gui.visible = false end
 		
 		local struct = script_data[event.entity.unit_number]

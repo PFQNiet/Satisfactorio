@@ -71,12 +71,17 @@ local function onGuiOpened(event)
 	if event.gui_type == defines.gui_type.entity and event.entity.valid and event.entity.name == storage then
 		local floor = event.entity.surface.find_entity(base, event.entity.position)
 		-- create additional GUI for switching input/output mode
-		local gui = player.gui.left
+		local gui = player.gui.relative
 		if not gui['awesome-sink-gui'] then
 			local force_idx = player.force.index
 			local frame = gui.add{
 				type = "frame",
 				name = "awesome-sink-gui",
+				anchor = {
+					gui = defines.relative_gui_type.container_gui,
+					position = defines.relative_gui_position.right,
+					name = "awesome-sink-box"
+				},
 				direction = "vertical",
 				caption = {"gui.awesome-sink-gui-title"},
 				style = "inner_frame_in_outer_frame"
@@ -184,7 +189,7 @@ end
 local function onGuiClosed(event)
 	if event.gui_type == defines.gui_type.entity and event.entity.valid and event.entity.name == storage then
 		local player = game.players[event.player_index]
-		local gui = player.gui.left['awesome-sink-gui']
+		local gui = player.gui.relative['awesome-sink-gui']
 		if gui then gui.destroy() end
 	end
 end
@@ -214,16 +219,14 @@ local function on60thTick(event)
 	for _,player in pairs(game.players) do
 		if player.opened and player.opened_gui_type == defines.gui_type.entity and player.opened.valid and player.opened.name == storage then
 			-- GUI can be assumed to exist
-			local gui = player.gui.left['awesome-sink-gui']['awesome-sink-content']['awesome-sink-table']['awesome-sink-count-flow1']['awesome-sink-count']
+			local gui = player.gui.relative['awesome-sink-gui']['awesome-sink-content']['awesome-sink-table']['awesome-sink-count-flow1']['awesome-sink-count']
 			local force_idx = player.force.index
-			gui.caption = util.format_number(
-				script_data.coupons[force_idx] and script_data.coupons[force_idx][2] or 0
-			)
-			gui = player.gui.left['awesome-sink-gui']['awesome-sink-content']['awesome-sink-table']['awesome-sink-count-flow2']['awesome-sink-to-next']
-			gui.caption = util.format_number(
-				pointsToNext(script_data.coupons[force_idx] and script_data.coupons[force_idx][1] or 0)
-				-(script_data.coupons[force_idx] and script_data.coupons[force_idx][3] or 0)
-			)
+			local coupons = script_data.coupons[force_idx] or {0,0,0}
+			gui.caption = util.format_number(coupons[2])
+			gui = player.gui.relative['awesome-sink-gui']['awesome-sink-content']['awesome-sink-table']['awesome-sink-count-flow2']['awesome-sink-to-next']
+			gui.caption = util.format_number(pointsToNext(coupons[1]) - coupons[3])
+			gui = player.gui.relative['awesome-sink-gui']['awesome-sink-bottom']['awesome-sink-print']
+			gui.enabled = coupons[2] > 0
 		end
 	end
 end

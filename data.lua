@@ -1,3 +1,4 @@
+foundation_layer = require("collision-mask-util").get_first_unused_layer()
 data:extend({
 	{type="ammo-category",name="rebar"},
 	{type="ammo-category",name="infinite"},
@@ -81,9 +82,13 @@ data:extend({
 data.raw['item-subgroup']['transport'].order = "e"
 data.raw['item-subgroup']['train-transport'].order = "f"
 data.raw['item-group']['logistics'].icon = "__Satisfactorio__/graphics/item-group/logistics.png"
+data.raw['item-group']['logistics'].icon_size = 64
 data.raw['item-group']['production'].icon = "__Satisfactorio__/graphics/item-group/production.png"
+data.raw['item-group']['production'].icon_size = 64
 data.raw['item-group']['intermediate-products'].icon = "__Satisfactorio__/graphics/item-group/intermediate-products.png"
+data.raw['item-group']['intermediate-products'].icon_size = 64
 data.raw['item-group']['combat'].icon = "__Satisfactorio__/graphics/item-group/combat.png"
+data.raw['item-group']['combat'].icon_size = 64
 table.insert(data.raw['god-controller'].default.crafting_categories, "building")
 table.insert(data.raw['god-controller'].default.crafting_categories, "unbuilding")
 table.insert(data.raw['god-controller'].default.mining_categories, "solid")

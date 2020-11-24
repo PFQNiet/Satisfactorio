@@ -39,7 +39,7 @@ local function onJump(event)
 			local struct = {
 				player = player,
 				car = car,
-				shield = car.grid.put{name="jetpack-equipment"},
+				battery = car.grid.put{name="jetpack-equipment"},
 				shadow = rendering.draw_sprite{
 					sprite = shadow.."-"..car.direction,
 					surface = car.surface,
@@ -50,7 +50,7 @@ local function onJump(event)
 				momentum = {0,0}
 			}
 			script_data[player.index] = struct
-			struct.shield.shield = struct.shield.max_shield
+			struct.battery.energy = struct.battery.max_energy
 		end
 	end
 end
@@ -70,8 +70,8 @@ end
 local function onTick(event)
 	for pid,struct in pairs(script_data) do
 		struct.time = struct.time+1
-		local shield = struct.shield
-		shield.shield = math.max(0,shield.max_shield-struct.time)
+		local battery = struct.battery
+		battery.energy = math.max(0,battery.max_energy-struct.time*1000*1000)
 
 		local altitude = 5
 		if struct.time < 60 then

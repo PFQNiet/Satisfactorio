@@ -191,11 +191,15 @@ local function manageMamGUI(player)
 			local inventory = entity.get_inventory(defines.inventory.assembling_machine_input)
 			local submitted = inventory.get_contents()
 			local ready = true
+			local progress = {0,0}
 			for _,ingredient in ipairs(recipe.ingredients) do
+				if submitted[ingredient.name] then progress[1] = progress[1] + math.min(submitted[ingredient.name],ingredient.amount) end
+				progress[2] = progress[2] + ingredient.amount
 				if (submitted[ingredient.name] or 0) < ingredient.amount then
 					ready = false
 				end
 			end
+			entity.crafting_progress = progress[1] / progress[2]
 			frame['mam-tracking-bottom']['mam-tracking-submit'].enabled = ready
 		end
 	end

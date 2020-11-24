@@ -24,8 +24,7 @@ local foundation = {
 	selection_box = {{-2,-2},{2,2}},
 	selection_priority = 20,
 	render_layer = "lower-radius-visualization",
-	collision_mask = {"layer-12"},
-	-- collision_mask = {"layer-37"}, -- 1.1.0
+	collision_mask = {foundation_layer},
 	max_health = 1,
 	type = "simple-entity-with-owner"
 }
@@ -105,7 +104,7 @@ data:extend({
 		alt_entity_filters = {name},
 		flags = {
 			"only-in-cursor",
-			-- "spawnable", -- 1.1.0
+			"spawnable",
 			"hidden",
 			"not-stackable"
 		}
@@ -116,16 +115,14 @@ data:extend({
 		key_sequence = "ALT + F",
 		order = "d",
 		consuming = "game-only",
-		action = "create-blueprint-item",
-		-- action = "spawn-item", -- 1.1.0
-		item_to_create = "deconstruct-foundation"
-		-- item_to_spawn = "deconstruct-foundation" -- 1.1.0
+		action = "spawn-item",
+		item_to_spawn = "deconstruct-foundation"
 	},
 	{
 		type = "shortcut",
 		name = "deconstruct-foundation",
-		action = "create-blueprint-item",
-		item_to_create = "deconstruct-foundation",
+		action = "spawn-item",
+		item_to_spawn = "deconstruct-foundation",
 		style = "red",
 		technology_to_unlock = "hub-tier1-base-building",
 		icon = {

@@ -110,3 +110,11 @@ Date: 2020.11.23
   Bugfixes:
     - Train platforms now collide with most objects, greatly reducing the manual collision handling
     - Trains weren't consuming the correct amount of power
+---------------------------------------------------------------------------------------------------
+Version: 0.3.0
+Date: 2020.11.24
+  Changes:
+    - Upgraded to Factorio 1.1
+    - Many GUI elements have been moved from gui.left to gui.relative
+  Bugfixes:
+    - Mining a self-driving car now cleans up the rendered path

@@ -81,22 +81,6 @@ return {
 	on_load = function()
 		script_data = global.fuel_generators or script_data
 	end,
-	on_configuration_changed = function()
-		if not script_data[0] then
-			for i=0,60-1 do
-				if script_data[i] then
-					script_data[i] = {[i]=script_data[i]}
-				else
-					script_data[i] = {}
-				end
-			end
-			for i,struct in pairs(script_data) do
-				if i >= 60 then
-					script_data[i%60][i] = struct
-				end
-			end
-		end
-	end,
 	events = {
 		[defines.events.on_built_entity] = onBuilt,
 		[defines.events.on_robot_built_entity] = onBuilt,

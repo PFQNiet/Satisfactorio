@@ -73,19 +73,17 @@ local fakeitem = {
 	place_as_equipment_result = name.."-equipment"
 }
 local fakeequip = {
-	type = "energy-shield-equipment",
+	type = "battery-equipment",
 	name = name.."-equipment",
 	sprite = {
 		filename = "__Satisfactorio__/graphics/icons/"..name..".png",
 		size = {64,64}
 	},
 	categories = {name},
-	energy_per_shield = "10MJ",
-	max_shield_value = 6*60, -- number of ticks of flight time
 	energy_source = {
 		type = "electric",
-		usage_priority = "primary-input",
-		buffer_capacity = "1.2GJ"
+		usage_priority = "secondary-output",
+		buffer_capacity = (6*60).."MJ" -- 1MJ/tick
 	},
 	shape = {
 		width = 1,

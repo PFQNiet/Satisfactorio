@@ -339,6 +339,12 @@ local function updateMilestoneGUI(force)
 			else
 				local inventory = hub.get_inventory(defines.inventory.assembling_machine_input)
 				submitted = inventory.get_contents()
+				local progress = {0,0}
+				for _,ingredient in ipairs(recipe.ingredients) do
+					if submitted[ingredient.name] then progress[1] = progress[1] + math.min(submitted[ingredient.name],ingredient.amount) end
+					progress[2] = progress[2] + ingredient.amount
+				end
+				hub.crafting_progress = progress[1] / progress[2]
 			end
 		end
 	end

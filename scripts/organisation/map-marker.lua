@@ -98,10 +98,9 @@ local function onBuilt(event)
 	if not entity or not entity.valid then return end
 	if entity.name == item_name then
 		entity.force.add_chart_tag(entity.surface, {position=entity.position,icon={type="item",name="map-marker"}})
-		if event.type == defines.events.on_build_entity then
+		if event.type == defines.events.on_built_entity then
 			local player = game.players[event.player_index]
-			player.clean_cursor()
-			-- player.clear_cursor() -- 1.1.0
+			player.clear_cursor()
 			openBeaconGUI(entity, player)
 		end
 	end

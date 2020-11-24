@@ -271,23 +271,6 @@ return {
 	on_load = function()
 		script_data = global.valves or script_data
 	end,
-	on_configuration_changed = function()
-		local valves = script_data.valves
-		if not valves[0] then
-			for i=0,polltime-1 do
-				if valves[i] then
-					valves[i] = {[i]=valves[i]}
-				else
-					valves[i] = {}
-				end
-			end
-			for i,struct in pairs(valves) do
-				if i >= polltime then
-					valves[i%polltime][i] = struct
-				end
-			end
-		end
-	end,
 	events = {
 		[defines.events.on_built_entity] = onBuilt,
 		[defines.events.on_robot_built_entity] = onBuilt,

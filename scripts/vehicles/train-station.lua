@@ -257,11 +257,15 @@ local function onGuiOpened(event)
 		local struct = script_data.platforms[floor.unit_number]
 		local unloading = struct.mode == "output"
 		-- create additional GUI for switching input/output mode (re-use truck station GUI)
-		local gui = player.gui.left
+		local gui = player.gui.relative
 		if not gui['truck-station-gui'] then
 			local frame = gui.add{
 				type = "frame",
 				name = "truck-station-gui",
+				anchor = {
+					gui = event.entity.name == freight.."-box" and defines.relative_gui_type.container_gui or defines.relative_gui_type.storage_tank_gui,
+					position = defines.relative_gui_position.right
+				},
 				direction = "vertical",
 				caption = {"gui.truck-station-gui-title"},
 				style = "inner_frame_in_outer_frame"
@@ -278,7 +282,6 @@ local function onGuiOpened(event)
 		else
 			gui['truck-station-gui'].visible = true
 		end
-		gui['truck-station-gui'].caption = {"entity-name."..event.entity.name}
 		gui['truck-station-gui']['truck-station-mode-toggle'].switch_state = unloading and "right" or "left"
 	end
 end
@@ -322,7 +325,7 @@ end
 local function onGuiClosed(event)
 	if event.gui_type == defines.gui_type.entity and (event.entity.name == freight.."-box" or event.entity.name == fluid.."-tank") then
 		local player = game.players[event.player_index]
-		local gui = player.gui.left['truck-station-gui']
+		local gui = player.gui.relative['truck-station-gui']
 		if gui then gui.destroy() end
 	end
 end
@@ -438,23 +441,6 @@ return {
 	on_load = function()
 		script_data = global.trains or script_data
 		debounce_error = global.player_build_error_debounce or debounce_error
-	end,
-	on_configuration_changed = function()
-		local stations = script_data.stations
-		if not stations[0] then
-			for i=0,45-1 do
-				if stations[i] then
-					stations[i] = {[i]=stations[i]}
-				else
-					stations[i] = {}
-				end
-			end
-			for i,struct in pairs(stations) do
-				if i >= 45 then
-					stations[i%45][i] = struct
-				end
-			end
-		end
 	end,
 	events = {
 		[defines.events.on_built_entity] = onBuilt,
