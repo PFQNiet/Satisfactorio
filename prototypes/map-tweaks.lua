@@ -22,13 +22,5 @@ data:extend({
 		linked_game_control = "toggle-map",
 		consuming = "game-only",
 		action = "lua"
-	},
-	{
-		type = "custom-input",
-		name = "place-marker",
-		key_sequence = "",
-		-- linked_game_control = "place-tag",
-		consuming = "none", -- doesn't block the tag GUI and triggers out of the map view anyway
-		action = "lua"
 	}
 })
