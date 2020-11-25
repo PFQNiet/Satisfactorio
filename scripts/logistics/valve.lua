@@ -194,7 +194,7 @@ local function onGuiOpened(event)
 		gui.frame.content.left.preview.entity = struct.base
 		gui.frame.content.right['valve-flow-slider'].set_slider_minimum_maximum(0,struct.base.force.recipes['pipeline-mk-2'].enabled and 600 or 300)
 		gui.frame.content.right['valve-flow-slider'].slider_value = struct.flow
-		gui.frame.content.right.bottom['valve-flow-input'].text = struct.flow
+		gui.frame.content.right.bottom['valve-flow-input'].text = tostring(struct.flow)
 		
 		gui.visible = true
 		player.opened = gui
@@ -228,7 +228,7 @@ local function onGuiValueChanged(event)
 				if pid ~= player.index then
 					gui['valve-flow-slider'].slider_value = val
 				end
-				gui.bottom['valve-flow-input'].text = val
+				gui.bottom['valve-flow-input'].text = tostring(val)
 			end
 		end
 	end
@@ -247,7 +247,7 @@ local function onGuiConfirmed(event)
 				if pid ~= player.index then
 					gui.bottom['valve-flow-input'].text = val
 				end
-				gui['valve-flow-slider'].slider_value = val
+				gui['valve-flow-slider'].slider_value = tostring(val)
 			end
 		end
 	end

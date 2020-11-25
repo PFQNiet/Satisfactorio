@@ -113,18 +113,26 @@ require("prototypes.radioactivity")
 require("prototypes.technology")
 require("prototypes.map-tweaks")
 require("prototypes.tips-and-tricks")
+local find_logo = [[
+	local logo = game.surfaces.nauvis.find_entities_filtered{name="factorio-logo-11tiles",limit=1}[1]
+	game.camera_position = {logo.position.x, logo.position.y+9.75}
+	game.camera_zoom = 1
+	game.tick_paused = false
+	game.surfaces.nauvis.daytime = 0
+]]
 data.raw['utility-constants'].default.main_menu_simulations = {
 	plastic = {
 		checkboard = false,
 		save = "__Satisfactorio__/menu-simulations/plastic.zip",
-		length = 60 * 60 * 60,
-		init = [[
-			local logo = game.surfaces.nauvis.find_entities_filtered{name="factorio-logo-11tiles",limit=1}[1]
-			game.camera_position = {logo.position.x, logo.position.y+9.75}
-			game.camera_zoom = 1
-			game.tick_paused = false
-			game.surfaces.nauvis.daytime = 0
-		]],
+		length = 5 * 60 * 60,
+		init = find_logo,
+		update = [[]]
+	},
+	coal_power = {
+		checkboard = false,
+		save = "__Satisfactorio__/menu-simulations/coal-power.zip",
+		length = 5 * 60 * 60,
+		init = find_logo,
 		update = [[]]
 	}
 }

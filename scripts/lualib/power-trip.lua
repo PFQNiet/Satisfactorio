@@ -84,9 +84,14 @@ local function createFusebox(player)
 			gui = defines.relative_gui_type.storage_tank_gui,
 			position = defines.relative_gui_position.right
 		}
-	else
+	elseif player.opened and (player.opened.name == "biomass-burner" or player.opened.name == "biomass-burner-hub") then
 		frame.anchor = {
 			gui = defines.relative_gui_type.entity_with_energy_source_gui,
+			position = defines.relative_gui_position.right
+		}
+	else
+		frame.anchor = {
+			gui = defines.relative_gui_type.assembling_machine_gui,
 			position = defines.relative_gui_position.right
 		}
 	end
