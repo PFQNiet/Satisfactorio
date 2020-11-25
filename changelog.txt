@@ -118,3 +118,9 @@ Date: 2020.11.24
     - Many GUI elements have been moved from gui.left to gui.relative
   Bugfixes:
     - Mining a self-driving car now cleans up the rendered path
+---------------------------------------------------------------------------------------------------
+Version: 0.3.1
+Date: 2020.11.25
+  Changes:
+    - Tips and tricks have been tweaked to at least work with Satisfactorio buildings
+    - Main menu scenes have been added
