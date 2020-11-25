@@ -136,9 +136,20 @@ data.raw['utility-constants'].default.main_menu_simulations = {
 		init = find_logo,
 		update = [[]]
 	},
+	--[=[ freezes the game for some reason...
 	self_driving = {
 		checkboard = false,
 		save = "__Satisfactorio__/menu-simulations/self-driving.zip",
+		length = 30 * 60,
+		init = find_logo,
+		update = [[
+			log(game.tick)
+		]]
+	},
+	]=]
+	space_elevator = {
+		checkboard = false,
+		save = "__Satisfactorio__/menu-simulations/space-elevator.zip",
 		length = 30 * 60,
 		init = find_logo,
 		update = [[]]
