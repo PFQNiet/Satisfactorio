@@ -145,7 +145,7 @@ data.raw['utility-constants'].default.main_menu_simulations = {
 	}
 }
 
-require("compatibility")
+require(modpath.."compatibility")
 
 for _,fluid in pairs(data.raw.fluid) do
 	fluid.auto_barrel = false
