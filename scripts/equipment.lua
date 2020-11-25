@@ -1,7 +1,7 @@
 return {
-	require("equipment.parachute"),
-	require("equipment.blade-runners"),
-	require("equipment.jetpack"),
-	require("equipment.gas-mask"),
-	require("equipment.hazmat-suit")
+	require(modpath.."scripts.equipment.parachute"),
+	require(modpath.."scripts.equipment.blade-runners"),
+	require(modpath.."scripts.equipment.jetpack"),
+	require(modpath.."scripts.equipment.gas-mask"),
+	require(modpath.."scripts.equipment.hazmat-suit")
 }

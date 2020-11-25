@@ -5,7 +5,7 @@ local scanner = "object-scanner"
 local script_data = {
 	pings = {}
 }
-local beacons = require('scripts.organisation.beacon').data
+local beacons = require(modpath..'scripts.organisation.beacon').data
 
 local util = require("util")
 

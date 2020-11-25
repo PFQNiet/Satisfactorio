@@ -1,6 +1,6 @@
 return {
-	require("scripts.weapons.xeno-zapper"),
-	require("scripts.weapons.xeno-basher"),
-	require("scripts.weapons.nobelisk"),
-	require("scripts.weapons.chainsaw")
+	require(modpath.."scripts.weapons.xeno-zapper"),
+	require(modpath.."scripts.weapons.xeno-basher"),
+	require(modpath.."scripts.weapons.nobelisk"),
+	require(modpath.."scripts.weapons.chainsaw")
 }

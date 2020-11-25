@@ -1,5 +1,5 @@
-local io = require("scripts.lualib.input-output")
-local getitems = require("scripts.lualib.get-items-from")
+local io = require(modpath.."scripts.lualib.input-output")
+local getitems = require(modpath.."scripts.lualib.get-items-from")
 
 local splitter = "conveyor-splitter"
 local buffer = "conveyor-splitter-box"

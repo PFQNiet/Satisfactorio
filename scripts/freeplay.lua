@@ -8,6 +8,9 @@ local script_data = {
 
 -- modify default freeplay scenario
 local function onInit()
+	if remote.interfaces['silo_script'] then
+		remote.call("silo_script", "set_no_victory", true)
+	end
 	if remote.interfaces.freeplay then
 		global.onboarding = global.onboarding or script_data
 
@@ -18,9 +21,6 @@ local function onInit()
 		remote.call("freeplay","set_skip_intro",true)
 		remote.call("freeplay","set_disable_crashsite",true)
 		remote.call("freeplay","set_chart_distance",1)
-		if remote.interfaces['silo_script'] then
-			remote.call("silo_script", "set_no_victory", true)
-		end
 		for _,tree in pairs(game.surfaces.nauvis.find_entities_filtered{
 			type = "tree",
 			position = {0,0},

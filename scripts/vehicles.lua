@@ -1,6 +1,6 @@
 return {
-	require("scripts.vehicles.truck-station"),
-	require("scripts.vehicles.train-station"),
-	require("scripts.vehicles.enemy-impact"),
-	require("scripts.vehicles.damage-passthru")
+	require(modpath.."scripts.vehicles.truck-station"),
+	require(modpath.."scripts.vehicles.train-station"),
+	require(modpath.."scripts.vehicles.enemy-impact"),
+	require(modpath.."scripts.vehicles.damage-passthru")
 }

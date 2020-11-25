@@ -1,5 +1,5 @@
-local io = require("scripts.lualib.input-output")
-local getitems = require("scripts.lualib.get-items-from")
+local io = require(modpath.."scripts.lualib.input-output")
+local getitems = require(modpath.."scripts.lualib.get-items-from")
 
 local box_map = {
 	["miner-mk-1-box"] = "miner-mk-1",

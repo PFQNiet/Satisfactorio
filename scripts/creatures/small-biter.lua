@@ -8,7 +8,7 @@
 -- uses global.small_biter.dropped-bait to track dropped berries, as they sadly lack a "last_user"
 -- uses global.small_biter.lizard-doggo-gui to track which doggo a player has opened
 
-local loot = require("constants.doggo-loot")
+local loot = require(modpath.."constants.doggo-loot")
 
 local doggo = "small-biter"
 local bait = "paleberry"

@@ -2,8 +2,8 @@
 -- uses global.train.platforms to list freight platforms {entity, mode}
 -- uses global.player_build_error_debounce to track force -> last error tick to de-duplicate placement errors
 -- uses global.train.accounted to track train IDs that have already been counted by a station in the last cycle
-local io = require("scripts.lualib.input-output")
-local getitems = require("scripts.lualib.get-items-from")
+local io = require(modpath.."scripts.lualib.input-output")
+local getitems = require(modpath.."scripts.lualib.get-items-from")
 local math2d = require("math2d")
 
 local station = "train-station"

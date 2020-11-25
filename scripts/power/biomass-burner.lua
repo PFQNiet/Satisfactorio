@@ -1,4 +1,4 @@
-local powertrip = require("scripts.lualib.power-trip")
+local powertrip = require(modpath.."scripts.lualib.power-trip")
 
 local burner = "biomass-burner"
 local burner_hub = "biomass-burner-hub"

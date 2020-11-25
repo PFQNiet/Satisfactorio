@@ -1,12 +1,12 @@
 return {
-	require("scripts.logistics.conveyor-merger"),
-	require("scripts.logistics.conveyor-splitter"),
-	require("scripts.logistics.splitters"),
-	require("scripts.logistics.smart-splitter"),
-	require("scripts.logistics.programmable-splitter"),
-	require("scripts.logistics.valve"),
-	require("scripts.logistics.foundation"),
-	require("scripts.logistics.jump-pads"),
-	require("scripts.logistics.hyper-tubes"),
-	require("scripts.logistics.pipe-flow")
+	require(modpath.."scripts.logistics.conveyor-merger"),
+	require(modpath.."scripts.logistics.conveyor-splitter"),
+	require(modpath.."scripts.logistics.splitters"),
+	require(modpath.."scripts.logistics.smart-splitter"),
+	require(modpath.."scripts.logistics.programmable-splitter"),
+	require(modpath.."scripts.logistics.valve"),
+	require(modpath.."scripts.logistics.foundation"),
+	require(modpath.."scripts.logistics.jump-pads"),
+	require(modpath.."scripts.logistics.hyper-tubes"),
+	require(modpath.."scripts.logistics.pipe-flow")
 }

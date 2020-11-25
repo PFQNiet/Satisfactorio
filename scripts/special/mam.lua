@@ -1,7 +1,7 @@
 -- uses global.hard_drive.research to record which alt recipes have been selected as rewards
 local util = require("util")
-local string = require("scripts.lualib.string")
-local omnilab = require("scripts.lualib.omnilab")
+local string = require(modpath.."scripts.lualib.string")
+local omnilab = require(modpath.."scripts.lualib.omnilab")
 
 local mam = "mam"
 

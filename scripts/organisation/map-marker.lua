@@ -1,7 +1,7 @@
 -- uses global.beacons.opened as Player index -> opened beacon GUI
 local item_name = "map-marker"
 
-local beacons = require('scripts.organisation.beacon').data
+local beacons = require(modpath.."scripts.organisation.beacon").data
 
 local function findBeaconTag(beacon)
 	return beacon.force.find_chart_tags(beacon.surface, {{beacon.position.x-0.1,beacon.position.y-0.1},{beacon.position.x+0.1,beacon.position.y+0.1}})[1]

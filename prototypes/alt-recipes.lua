@@ -12,7 +12,7 @@ data:extend({
 	}
 })
 
-local recipes = require("constants.alt-recipes")
+local recipes = require(modpath.."constants.alt-recipes")
 for i,r in pairs(recipes) do
 	local icons = r.icons
 	local product = data.raw.item[r.main_product or r.result] or data.raw.capsule[r.result] or data.raw.fluid[r.main_product]
@@ -30,7 +30,7 @@ for i,r in pairs(recipes) do
 end
 data:extend(recipes)
 
-local alts = require("constants.alt-recipes-prereqs") -- dict [base name] => {prerequisites}
+local alts = require(modpath.."constants.alt-recipes-prereqs") -- dict [base name] => {prerequisites}
 for base,prereq in pairs(alts) do
 	table.insert(prereq,"mam-hard-drive")
 	local recipe = data.raw.recipe[base]

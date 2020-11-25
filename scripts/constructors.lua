@@ -1,11 +1,11 @@
 return {
-	require("scripts.constructors.craft-bench"),
-	require("scripts.constructors.equipment-workshop"),
-	require("scripts.constructors.smelter"),
-	require("scripts.constructors.foundry"),
-	require("scripts.constructors.constructor"),
-	require("scripts.constructors.assembler"),
-	require("scripts.constructors.manufacturer"),
-	require("scripts.constructors.refinery"),
-	require("scripts.constructors.packager")
+	require(modpath.."scripts.constructors.craft-bench"),
+	require(modpath.."scripts.constructors.equipment-workshop"),
+	require(modpath.."scripts.constructors.smelter"),
+	require(modpath.."scripts.constructors.foundry"),
+	require(modpath.."scripts.constructors.constructor"),
+	require(modpath.."scripts.constructors.assembler"),
+	require(modpath.."scripts.constructors.manufacturer"),
+	require(modpath.."scripts.constructors.refinery"),
+	require(modpath.."scripts.constructors.packager")
 }

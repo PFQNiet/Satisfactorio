@@ -1,3 +1,4 @@
+modpath = "__Satisfactorio__."
 foundation_layer = require("collision-mask-util").get_first_unused_layer()
 data:extend({
 	{type="ammo-category",name="rebar"},
@@ -124,14 +125,21 @@ data.raw['utility-constants'].default.main_menu_simulations = {
 	plastic = {
 		checkboard = false,
 		save = "__Satisfactorio__/menu-simulations/plastic.zip",
-		length = 5 * 60 * 60,
+		length = 30 * 60,
 		init = find_logo,
 		update = [[]]
 	},
 	coal_power = {
 		checkboard = false,
 		save = "__Satisfactorio__/menu-simulations/coal-power.zip",
-		length = 5 * 60 * 60,
+		length = 30 * 60,
+		init = find_logo,
+		update = [[]]
+	},
+	self_driving = {
+		checkboard = false,
+		save = "__Satisfactorio__/menu-simulations/self-driving.zip",
+		length = 30 * 60,
 		init = find_logo,
 		update = [[]]
 	}

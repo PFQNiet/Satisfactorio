@@ -1,7 +1,7 @@
 -- uses global.crash_site.sites to track requirements for unlocking the spaceship
 -- uses global.crash_site.opened to track last opened crash site GUI
 
-local data = require("constants.crash-sites")
+local data = require(modpath.."constants.crash-sites")
 local loot_table = data.loot
 local requirement_table = data.requirements
 local crash_site = require("crash-site")

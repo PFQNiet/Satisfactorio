@@ -3,8 +3,8 @@
 -- uses global.hub.cooldown as table of Force index -> tick at which the Freighter returns
 local util = require("util")
 local math2d = require("math2d")
-local string = require("scripts.lualib.string")
-local getitems = require("scripts.lualib.get-items-from")
+local string = require(modpath.."scripts.lualib.string")
+local getitems = require(modpath.."scripts.lualib.get-items-from")
 
 local base = "the-hub"
 local terminal = "the-hub-terminal"

@@ -6,7 +6,7 @@ local script_data = {
 	fx = {},
 	pings = {}
 }
-local resources = require('scripts.lualib.resources')
+local resources = require(modpath..'scripts.lualib.resources')
 
 local function queueEffect(tick, effect)
 	if not script_data.fx[tick] then script_data.fx[tick] = {} end

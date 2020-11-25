@@ -1,6 +1,6 @@
 return {
-	require("scripts.special.the-hub"),
-	require("scripts.special.space-elevator"),
-	require("scripts.special.mam"),
-	require("scripts.special.awesome-sink")
+	require(modpath.."scripts.special.the-hub"),
+	require(modpath.."scripts.special.space-elevator"),
+	require(modpath.."scripts.special.mam"),
+	require(modpath.."scripts.special.awesome-sink")
 }

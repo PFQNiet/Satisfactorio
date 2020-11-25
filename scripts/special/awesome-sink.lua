@@ -27,8 +27,8 @@ local function gainPoints(force, points)
 	end
 end
 
-local io = require("scripts.lualib.input-output")
-local paytable = require("constants.sink-tradein")
+local io = require(modpath.."scripts.lualib.input-output")
+local paytable = require(modpath.."constants.sink-tradein")
 
 local base = "awesome-sink"
 local storage = base.."-box"

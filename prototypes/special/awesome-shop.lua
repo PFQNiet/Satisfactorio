@@ -106,7 +106,7 @@ local shoprecipe_undo = {
 
 data:extend({shop,shopitem,shoprecipe,shoprecipe_undo})
 
-local prices = require("constants.sink-cashout")
+local prices = require(modpath.."constants.sink-cashout")
 -- prices = table of [item] = {cost, number}
 for item,spec in pairs(prices) do
 	local cost = spec[1]

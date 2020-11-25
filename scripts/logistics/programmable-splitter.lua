@@ -1,13 +1,13 @@
 -- uses tick events from smart-splitter, just with a table of filters instead of just one (up to 32 per side)
 -- uses global.splitters.splitters to track structures {base, buffer, filters, {left1, left2}, {middle1, middle2}, {right1, right2}}
 -- GUI uses global.splitters.gui to track player > opened programmable splitter
-local io = require("scripts.lualib.input-output")
-local getitems = require("scripts.lualib.get-items-from")
+local io = require(modpath.."scripts.lualib.input-output")
+local getitems = require(modpath.."scripts.lualib.get-items-from")
 
 local splitter = "programmable-splitter"
 local buffer = "programmable-splitter-box"
 
-local script_data = require("scripts.logistics.splitters").data
+local script_data = require(modpath.."scripts.logistics.splitters").data
 
 local function findStruct(entity)
 	return script_data.splitters[entity.unit_number]

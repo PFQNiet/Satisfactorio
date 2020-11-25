@@ -21,9 +21,9 @@
 	When spawned, a "node" can actually be a cluster of resource nodes, akin to oil patches in vanilla
 	Special resource "types": x-plant, x-deposit, x-powerslug, x-crashsite
 ]]
-local crash_site = require("scripts.lualib.crash-sites")
-local enemies = require("scripts.lualib.enemy-spawning")
-local resources = require('scripts.lualib.resources')
+local crash_site = require(modpath.."scripts.lualib.crash-sites")
+local enemies = require(modpath.."scripts.lualib.enemy-spawning")
+local resources = require(modpath..'scripts.lualib.resources')
 
 local script_data = {
 	queued = {}

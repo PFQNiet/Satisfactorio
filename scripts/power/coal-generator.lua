@@ -1,7 +1,7 @@
-local io = require("scripts.lualib.input-output")
-local getitems = require("scripts.lualib.get-items-from")
+local io = require(modpath.."scripts.lualib.input-output")
+local getitems = require(modpath.."scripts.lualib.get-items-from")
 local math2d = require("math2d")
-local powertrip = require("scripts.lualib.power-trip")
+local powertrip = require(modpath.."scripts.lualib.power-trip")
 
 local base = "coal-generator"
 local boiler = "coal-generator-boiler"

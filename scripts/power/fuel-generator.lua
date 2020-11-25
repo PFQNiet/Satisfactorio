@@ -2,7 +2,7 @@
 -- periodically removes fluid from the tank to recharge the electricity buffer
 -- uses global['fuel-generators'] to list all gens
 local math2d = require("math2d")
-local powertrip = require("scripts.lualib.power-trip")
+local powertrip = require(modpath.."scripts.lualib.power-trip")
 
 local storage = "fuel-generator"
 local buffer = storage.."-eei"

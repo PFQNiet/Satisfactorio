@@ -1,4 +1,4 @@
-local io = require("scripts.lualib.input-output")
+local io = require(modpath.."scripts.lualib.input-output")
 
 local manufacturer = "manufacturer"
 

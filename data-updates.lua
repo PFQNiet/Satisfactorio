@@ -1,4 +1,4 @@
-local string = require("scripts.lualib.string")
+local string = require(modpath.."scripts.lualib.string")
 local util = require("util")
 
 -- add a description to all recipes for which a *-manual version exists, explaining that it can be hand-crafted

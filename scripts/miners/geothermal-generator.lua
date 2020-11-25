@@ -1,4 +1,4 @@
-local powertrip = require("scripts.lualib.power-trip")
+local powertrip = require(modpath.."scripts.lualib.power-trip")
 
 local miner = "geothermal-generator"
 local gen = miner.."-eei"

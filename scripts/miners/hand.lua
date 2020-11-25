@@ -1,4 +1,4 @@
-local string = require("scripts.lualib.string")
+local string = require(modpath.."scripts.lualib.string")
 
 local dead_trees = {
 	["dead-dry-hairy-tree"] = true,

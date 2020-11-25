@@ -1,2 +1,2 @@
-require("compatibility.construction-drones")
-require("compatibility.factorissimo2")
+require(modpath.."compatibility.construction-drones")
+require(modpath.."compatibility.factorissimo2")

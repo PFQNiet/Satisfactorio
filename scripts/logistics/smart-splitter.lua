@@ -1,11 +1,11 @@
 -- a splitter that allows setting a single filter on each output
-local io = require("scripts.lualib.input-output")
-local getitems = require("scripts.lualib.get-items-from")
+local io = require(modpath.."scripts.lualib.input-output")
+local getitems = require(modpath.."scripts.lualib.get-items-from")
 
 local splitter = "smart-splitter"
 local buffer = "smart-splitter-box"
 
-local script_data = require("scripts.logistics.splitters").data
+local script_data = require(modpath.."scripts.logistics.splitters").data
 
 local function findStruct(entity)
 	return script_data.splitters[entity.unit_number]

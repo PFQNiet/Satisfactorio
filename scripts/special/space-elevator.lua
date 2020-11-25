@@ -2,8 +2,8 @@
 -- uses global.space-elevator.phase as table of Force index -> phase shown in GUI - if different to current selection then GUI needs refresh, otherwise just update counts
 -- uses global.player_build_error_debounce'] to track force -> last error tick to de-duplicate placement errors
 local util = require("util")
-local string = require("scripts.lualib.string")
-local io = require("scripts.lualib.input-output")
+local string = require(modpath.."scripts.lualib.string")
+local io = require(modpath.."scripts.lualib.input-output")
 
 local elevator = "space-elevator"
 

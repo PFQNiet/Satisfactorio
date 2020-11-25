@@ -2,7 +2,7 @@
 -- cliff must be facing away from the player (same direction, or 45 degrees off) and within 4 tiles - the jump itself is 6 tiles
 -- uses global['parachute-flight'] to track player > {fake car, shadow, flight time}
 local math2d = require("math2d")
-local string = require("scripts.lualib.string")
+local string = require(modpath.."scripts.lualib.string")
 
 local item = "parachute"
 local vehicle = item.."-flying"

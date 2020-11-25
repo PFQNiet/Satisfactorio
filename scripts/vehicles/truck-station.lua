@@ -1,6 +1,6 @@
 -- uses global.trucks.stations to list all truck stations
-local io = require("scripts.lualib.input-output")
-local getitems = require("scripts.lualib.get-items-from")
+local io = require(modpath.."scripts.lualib.input-output")
+local getitems = require(modpath.."scripts.lualib.get-items-from")
 local math2d = require("math2d")
 
 local base = "truck-station"
