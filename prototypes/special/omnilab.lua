@@ -16,7 +16,7 @@ local lab = {
 	dying_explosion = "big-explosion",
 	energy_source = {type="void"},
 	energy_usage = "1W",
-	flags = {"hidden"},
+	flags = {"hidden","hide-alt-info"},
 	selectable_in_game = false,
 	icon = "__Satisfactorio__/graphics/icons/mam.png",
 	icon_size = 64,
