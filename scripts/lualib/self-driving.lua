@@ -471,7 +471,6 @@ return {
 	on_load = function()
 		script_data = global.cars or script_data
 	end,
-	get_data = function() return script_data end,
 	events = {
 		[defines.events.on_tick] = onTick,
 		[defines.events.on_player_driving_changed_state] = onDriving,

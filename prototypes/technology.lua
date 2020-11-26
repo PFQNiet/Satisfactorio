@@ -141,7 +141,7 @@ local parts = addTech("hub-tier0-hub-upgrade-1", "hub/hub-upgrade-1-2", "hub-pro
 }, {
 	{type="unlock-recipe",recipe="equipment-workshop"},
 	{type="unlock-recipe",recipe="portable-miner"},
-	{type="character-inventory-slots-bonus",modifier=3},
+	{type="character-inventory-slots-bonus",modifier=3,use_icon_overlay_constant=false},
 	{type="nothing",effect_description={"technology-effect.add-storage-to-hub"}}
 })
 parts.recipe.enabled = true
@@ -174,7 +174,7 @@ addTech("hub-tier0-hub-upgrade-4", "hub/hub-upgrade-4", "hub-progressing", "hub-
 	{"concrete",10}
 }, {
 	{type="unlock-recipe",recipe="transport-belt"},
-	{type="character-inventory-slots-bonus",modifier=3}
+	{type="character-inventory-slots-bonus",modifier=3,use_icon_overlay_constant=false}
 })
 addTech("hub-tier0-hub-upgrade-5", "hub/hub-upgrade-5", "hub-progressing", "hub-tier0", "a-0-5", 1, {"hub-tier0-hub-upgrade-4"}, {
 	{"iron-stick",75},
@@ -227,7 +227,7 @@ addTech("hub-tier1-field-research", "hub/equipment", "hub-progressing", "hub-tie
 	{type="unlock-recipe",recipe="wooden-chest"},
 	{type="unlock-recipe",recipe="map-marker"},
 	{type="unlock-recipe",recipe="object-scanner"},
-	{type="character-inventory-slots-bonus",modifier=5}
+	{type="character-inventory-slots-bonus",modifier=5,use_icon_overlay_constant=false}
 })
 
 addTech("hub-tier2-part-assembly", "hub/factory", "hub-progressing", "hub-tier2", "a-2-1", 360, {"hub-tier0-hub-upgrade-6"}, {
@@ -249,7 +249,7 @@ addTech("hub-tier2-obstacle-clearing", "hub/equipment", "hub-progressing", "hub-
 }, {
 	{type="unlock-recipe",recipe="solid-biofuel"},
 	{type="unlock-recipe",recipe="chainsaw"},
-	{type="character-inventory-slots-bonus",modifier=5}
+	{type="character-inventory-slots-bonus",modifier=5,use_icon_overlay_constant=false}
 })
 addTech("hub-tier2-jump-pads", "hub/structure", "hub-progressing", "hub-tier2", "a-2-3", 240, {"hub-tier0-hub-upgrade-6"}, {
 	{"rotor",50},
@@ -332,7 +332,7 @@ addTech("hub-tier4-improved-melee-combat", "hub/equipment", "hub-progressing", "
 	{"copper-cable",200}
 }, {
 	{type="unlock-recipe",recipe="xeno-basher"},
-	{type="character-inventory-slots-bonus",modifier=5}
+	{type="character-inventory-slots-bonus",modifier=5,use_icon_overlay_constant=false}
 })
 addTech("hub-tier4-hyper-tubes", "hub/structure", "hub-progressing", "hub-tier4", "a-4-3", 600, {"space-elevator-phase1"}, {
 	{"copper-plate",300},
@@ -431,7 +431,7 @@ addTech("hub-tier6-jetpack", "hub/equipment", "hub-progressing", "hub-tier6", "a
 	{"rubber",200}
 }, {
 	{type="unlock-recipe",recipe="jetpack"},
-	{type="character-inventory-slots-bonus",modifier=5}
+	{type="character-inventory-slots-bonus",modifier=5,use_icon_overlay_constant=false}
 })
 addTech("hub-tier6-monorail-train-technology", "hub/vehicle", "hub-progressing", "hub-tier6", "a-6-3", 900, {"space-elevator-phase2"}, {
 	{"computer",50},
@@ -586,7 +586,7 @@ addTech("mam-alien-organisms-inflated-pocket-dimension", "mam/thumbsup", "mam", 
 	{"alien-organs",5},
 	{"wire",3000}
 }, {
-	{type="character-inventory-slots-bonus",modifier=5}
+	{type="character-inventory-slots-bonus",modifier=5,use_icon_overlay_constant=false}
 })
 
 addTech("mam-caterium-caterium", "mam/caterium-ore", "mam", "mam-caterium", "m-2-1", 3, {"hub-tier1-field-research"}, {
@@ -612,7 +612,7 @@ addTech("mam-caterium-inflated-pocket-dimension1", "mam/thumbsup", "mam", "mam-c
 	{"wire",500},
 	{"reinforced-iron-plate",50}
 }, {
-	{type="character-inventory-slots-bonus",modifier=5}
+	{type="character-inventory-slots-bonus",modifier=5,use_icon_overlay_constant=false}
 })
 addTech("mam-caterium-blade-runners", "mam/blade-runners", "mam", "mam-caterium", "m-2-6", 300, {"mam-caterium-caterium-electronics"}, {
 	{"quickwire",100},
@@ -647,7 +647,7 @@ addTech("mam-caterium-inflated-pocket-dimension2", "mam/thumbsup", "mam", "mam-c
 	{"advanced-circuit",50},
 	{"motor",50}
 }, {
-	{type="character-inventory-slots-bonus",modifier=5}
+	{type="character-inventory-slots-bonus",modifier=5,use_icon_overlay_constant=false}
 })
 addTech("mam-caterium-supercomputer", "mam/supercomputer", "mam", "mam-caterium", "m-2-c", 3, {"mam-caterium-high-speed-connector"}, {
 	{"processing-unit",50},
@@ -871,7 +871,7 @@ addTech("mam-sulfur-inflated-pocket-dimension", "mam/thumbsup", "mam", "mam-sulf
 	{"black-powder",50},
 	{"steel-plate",100}
 }, {
-	{type="character-inventory-slots-bonus",modifier=5}
+	{type="character-inventory-slots-bonus",modifier=5,use_icon_overlay_constant=false}
 })
 
 --[[ ALT RECIPES ]]--
