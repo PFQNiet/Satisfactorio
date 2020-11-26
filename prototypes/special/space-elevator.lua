@@ -48,7 +48,8 @@ local elevator = {
 	},
 	name = name,
 	selection_box = {{-13.5,-13.5},{13.5,13.5}},
-	type = "assembling-machine"
+	type = "assembling-machine",
+	return_ingredients_on_change = false
 }
 
 local elevatoritem = {

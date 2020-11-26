@@ -51,7 +51,8 @@ local mam = {
 	},
 	name = name,
 	selection_box = {{-2,-1},{2,1}},
-	type = "assembling-machine"
+	type = "assembling-machine",
+	return_ingredients_on_change = false
 }
 
 local mamitem = {

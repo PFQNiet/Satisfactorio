@@ -46,7 +46,8 @@ local hub = {
 	},
 	name = name,
 	selection_box = {{-6.5,-3.5},{6.5,3.5}},
-	type = "assembling-machine"
+	type = "assembling-machine",
+	return_ingredients_on_change = false
 }
 local hubterminal = {
 	allowed_effects = {},
@@ -90,7 +91,8 @@ local hubterminal = {
 	name = name.."-terminal",
 	placeable_by = {item=name,count=1},
 	selection_box = {{-0.5,-1},{0.5,1}},
-	type = "assembling-machine"
+	type = "assembling-machine",
+	return_ingredients_on_change = false
 }
 
 local hubgraphic_north = {
