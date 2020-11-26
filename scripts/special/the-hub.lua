@@ -504,8 +504,7 @@ local function submitMilestone(force,player)
 	end
 	force.technologies[milestone].researched = true
 	force.play_sound{path="utility/research_completed"}
-	local spill = hub.set_recipe(nil)
-	for name,count in pairs(spill) do
+	for name,count in pairs(inventory.get_contents()) do
 		if player then
 			count = count - player.insert{name=name,count=count}
 		end
@@ -517,6 +516,7 @@ local function submitMilestone(force,player)
 			)
 		end
 	end
+	hub.set_recipe(nil)
 end
 
 local function onBuilt(event)

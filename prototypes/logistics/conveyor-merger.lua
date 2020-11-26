@@ -87,7 +87,7 @@ local mergeritem = {
 
 local ingredients = {
 	{"iron-plate",2},
-	{"copper-cable",2}
+	{"iron-stick",2}
 }
 local mergerrecipe = {
 	name = name,

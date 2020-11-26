@@ -234,8 +234,7 @@ local function submitMam(event)
 	force.research_queue = {research}
 	force.print({"message.mam-research-started",research,game.technology_prototypes[research].localised_name})
 
-	local spill = entity.set_recipe(nil)
-	for name,count in pairs(spill) do
+	for name,count in pairs(inventory.get_contents()) do
 		count = count - player.insert{name=name,count=count}
 		if count > 0 then
 			player.surface.spill_item_stack(
@@ -245,6 +244,7 @@ local function submitMam(event)
 			)
 		end
 	end
+	entity.set_recipe(nil)
 
 	-- disable the recipe and enable the "-done" recipe
 	force.recipes[research].enabled = false
