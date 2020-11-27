@@ -124,3 +124,8 @@ Date: 2020.11.25
   Changes:
     - Tips and tricks have been tweaked to at least work with Satisfactorio buildings
     - Main menu scenes have been added
+---------------------------------------------------------------------------------------------------
+Version: 0.3.2
+Date: ????
+  Bugfixes:
+    - Fixed that mining a lookout tower while you were in it would result in the range buff sticking
