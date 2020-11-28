@@ -11,6 +11,7 @@ local foundation = {
 		"placeable-neutral",
 		"placeable-player",
 		"player-creation",
+		"not-rotatable",
 		"not-on-map"
 	},
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
