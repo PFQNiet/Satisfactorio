@@ -1,5 +1,5 @@
 -- uses global.space_elevator.elevator as table of Force index -> elevator
--- uses global.space-elevator.phase as table of Force index -> phase shown in GUI - if different to current selection then GUI needs refresh, otherwise just update counts
+-- uses global.space-elevator.phase as table of Player index -> phase shown in GUI - if different to current selection then GUI needs refresh, otherwise just update counts
 -- uses global.player_build_error_debounce'] to track force -> last error tick to de-duplicate placement errors
 local util = require("util")
 local string = require(modpath.."scripts.lualib.string")
@@ -238,6 +238,7 @@ local function updateElevatorGUI(force)
 					name = "space-elevator-tracking-submit",
 					caption = {"gui.space-elevator-submit-caption"}
 				}
+				script_data.phase[player.index] = nil -- force gui refresh
 			end
 
 			-- gather up GUI element references
@@ -248,8 +249,8 @@ local function updateElevatorGUI(force)
 			local button = bottom['space-elevator-tracking-submit']
 
 			-- check if the selected milestone has been changed
-			if phase.name ~= script_data.phase[force.index] then
-				script_data.phase[force.index] = phase.name
+			if phase.name ~= script_data.phase[player.index] then
+				script_data.phase[player.index] = phase.name
 				inner.visible = phase.name ~= "none"
 				bottom.visible = inner.visible
 				button.enabled = false
