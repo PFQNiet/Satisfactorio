@@ -64,7 +64,7 @@ local function createFusebox(player)
 			},
 			direction = "vertical",
 			caption = {"gui.power-trip-reset-fuse-title"},
-			style = "inner_frame_in_outer_frame"
+			style = "inset_frame_container_frame"
 		}
 		frame.style.horizontally_stretchable = false
 		frame.style.use_header_filler = false

@@ -206,7 +206,7 @@ local function updateElevatorGUI(force)
 					},
 					direction = "vertical",
 					caption = {"gui.space-elevator-tracking-caption"},
-					style = "inner_frame_in_outer_frame"
+					style = "inset_frame_container_frame"
 				}
 				frame.style.horizontally_stretchable = false
 				frame.style.use_header_filler = false

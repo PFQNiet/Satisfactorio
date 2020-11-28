@@ -36,7 +36,7 @@ local function onGuiOpened(event)
 				},
 				direction = "vertical",
 				caption = {"gui.pipe-flow-title"},
-				style = "inner_frame_in_outer_frame"
+				style = "inset_frame_container_frame"
 			}
 			gui.style.horizontally_stretchable = false
 			gui.style.use_header_filler = false

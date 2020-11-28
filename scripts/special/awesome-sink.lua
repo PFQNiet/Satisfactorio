@@ -84,7 +84,7 @@ local function onGuiOpened(event)
 				},
 				direction = "vertical",
 				caption = {"gui.awesome-sink-gui-title"},
-				style = "inner_frame_in_outer_frame"
+				style = "inset_frame_container_frame"
 			}
 			frame.style.horizontally_stretchable = false
 			frame.style.use_header_filler = false
