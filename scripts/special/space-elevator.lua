@@ -181,7 +181,7 @@ local function updateElevatorGUI(force)
 	end
 
 	for _,player in pairs(force.players) do
-		local gui = player.gui.left
+		local gui = player.gui.relative
 		local frame = gui['space-elevator-tracking']
 		local entity = player.opened
 		if player.opened_gui_type ~= defines.gui_type.entity then
@@ -200,6 +200,10 @@ local function updateElevatorGUI(force)
 				frame = gui.add{
 					type = "frame",
 					name = "space-elevator-tracking",
+					anchor = {
+						gui = defines.relative_gui_type.assembling_machine_gui,
+						position = defines.relative_gui_position.right
+					},
 					direction = "vertical",
 					caption = {"gui.space-elevator-tracking-caption"},
 					style = "inner_frame_in_outer_frame"

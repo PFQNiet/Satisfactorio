@@ -110,15 +110,15 @@ local function manageMamGUI(player)
 		end
 		return
 	end
+	local entity = player.opened
+	local gui = player.gui.relative
+	local frame = gui['mam-tracking']
 	if player.opened_gui_type ~= defines.gui_type.entity then
-		if player.gui.left['mam-tracking'] then
-			player.gui.left['mam-tracking'].destroy()
+		if frame then
+			frame.destroy()
 		end
 		return
 	end
-	local entity = player.opened
-	local gui = player.gui.left
-	local frame = gui['mam-tracking']
 	if not (entity and entity.valid and entity.name == mam) then
 		if frame then frame.destroy() end
 		return
@@ -162,6 +162,10 @@ local function manageMamGUI(player)
 				frame = gui.add{
 					type = "frame",
 					name = "mam-tracking",
+					anchor = {
+						gui = defines.relative_gui_type.assembling_machine_gui,
+						position = defines.relative_gui_position.right
+					},
 					direction = "vertical",
 					caption = {"gui.mam-tracking-caption"},
 					style = "inner_frame_in_outer_frame"
