@@ -324,6 +324,10 @@ local function onGuiClick(event)
 	if event.element.valid and event.element.name == "self-driving-record" then
 		-- all of this must exist for the GUI button to exist
 		local gui = player.gui.left['self-driving']
+		if not player.vehicle then
+			gui.destroy()
+			return
+		end
 		local car = getCar(player.vehicle)
 		if not car.recording then
 			if car.autopilot then
@@ -416,6 +420,9 @@ end
 local function onGuiSelection(event)
 	local player = game.players[event.player_index]
 	if event.element.valid and event.element.name == "self-driving-waypoints" then
+		if not player.vehicle then
+			return
+		end
 		local index = event.element.selected_index
 		local edit = player.gui.left['self-driving']['self-driving-edit']
 		local car = getCar(player.vehicle)
@@ -435,6 +442,9 @@ end
 local function onGuiSwitch(event)
 	local player = game.players[event.player_index]
 	if event.element.valid and event.element.name == "self-driving-mode-toggle" then
+		if not player.vehicle then
+			return
+		end
 		local car = getCar(player.vehicle)
 		car.autopilot = event.element.switch_state == "right"
 		local edit = player.gui.left['self-driving']['self-driving-edit']

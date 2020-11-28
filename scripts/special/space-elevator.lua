@@ -183,8 +183,14 @@ local function updateElevatorGUI(force)
 	for _,player in pairs(force.players) do
 		local gui = player.gui.left
 		local frame = gui['space-elevator-tracking']
-		-- if the space elevator was deconstructed, hide the GUI
-		if not findElevatorForForce(force) then
+		local entity = player.opened
+		if player.opened_gui_type ~= defines.gui_type.entity then
+			if frame then
+				frame.destroy()
+			end
+		elseif not (entity and entity.valid and entity.name == elevator) then
+			if frame then frame.destroy() end
+		elseif not findElevatorForForce(force) then
 			if frame then
 				frame.destroy()
 			end
