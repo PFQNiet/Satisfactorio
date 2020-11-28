@@ -108,7 +108,7 @@ local function onTick(event)
 					table.remove(struct.rolling_average,1)
 					local avg = 0
 					for _,val in pairs(struct.rolling_average) do
-						avg = avg + val*60 * 100/59 -- /60 values * 60t/s * 60s/m (100/59 because numbers are... weird?)
+						avg = avg + val*60 -- /60 values * 60t/s * 60s/m
 					end
 					caption = {"gui.pipe-flow-details",{"fluid-name."..fluid.name},string.format("%.1f",avg),max,{"per-minute-suffix"}}
 					bar = avg / max
