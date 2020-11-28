@@ -98,12 +98,14 @@ end
 local function checkForRegrowth(event)
 	for i,plant in pairs(script_data) do
 		if plant.regen_at < event.tick then
-			plant.entity.surface.create_entity{
-				name = string.remove_suffix(plant.entity.name, "-harvested"),
-				position = plant.entity.position,
-				force = "neutral"
-			}
-			plant.entity.destroy()
+			if plant.entity.valid then
+				plant.entity.surface.create_entity{
+					name = string.remove_suffix(plant.entity.name, "-harvested"),
+					position = plant.entity.position,
+					force = "neutral"
+				}
+				plant.entity.destroy()
+			end
 			script_data[i] = nil
 		end
 	end
