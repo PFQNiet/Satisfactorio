@@ -357,14 +357,18 @@ local function onResearch(event)
 	completeElevator(event.research)
 end
 local function onGuiOpened(event)
-	if event.entity and event.entity.name == terminal and event.entity.get_recipe() == nil then
-		-- double-check for, and disable, any recipes that have completed technologies
+	if event.entity and event.entity.name == elevator then
 		local force = event.entity.force
-		for _,recipe in pairs(force.recipes) do
-			if force.technologies[recipe.name] and force.recipes[recipe.name.."-done"] and force.technologies[recipe.name].researched then
-				force.recipes[recipe.name].enabled = false
-				force.recipes[recipe.name.."-done"].enabled = true
+		if event.entity.get_recipe() == nil then
+			-- double-check for, and disable, any recipes that have completed technologies
+			for _,recipe in pairs(force.recipes) do
+				if force.technologies[recipe.name] and force.recipes[recipe.name.."-done"] and force.technologies[recipe.name].researched then
+					force.recipes[recipe.name].enabled = false
+					force.recipes[recipe.name.."-done"].enabled = true
+				end
 			end
+		else
+			updateElevatorGUI(force)
 		end
 	end
 end
@@ -383,6 +387,12 @@ return {
 	on_load = function()
 		script_data = global.space_elevator or script_data
 		debounce_error = global.player_build_error_debounce or debounce_error
+	end,
+	on_configuration_changed = function()
+		for _,p in pairs(game.players) do
+			local frame = p.gui.left['space-elevator-tracking']
+			if frame then frame.destroy() end
+		end
 	end,
 	on_nth_tick = {
 		[6] = onTick

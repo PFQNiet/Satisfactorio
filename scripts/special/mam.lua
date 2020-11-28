@@ -277,6 +277,8 @@ local function onGuiOpened(event)
 				force.recipes[recipe.name.."-done"].enabled = true
 			end
 		end
+	else
+		manageMamGUI(player)
 	end
 	
 	local struct = script_data.research[player.force.index]
@@ -447,6 +449,12 @@ return {
 	end,
 	on_load = function()
 		script_data = global.hard_drive or script_data
+	end,
+	on_configuration_changed = function()
+		for _,p in pairs(game.players) do
+			local frame = p.gui.left['mam-tracking']
+			if frame then frame.destroy() end
+		end
 	end,
 	on_nth_tick = {
 		[6] = function(event) manageMamGUI() end
