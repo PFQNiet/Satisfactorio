@@ -474,6 +474,12 @@ local function onRemoved(event)
 	end
 end
 
+local function onPlayerDied(event)
+	local player = game.players[event.player_index]
+	local gui = player.gui.left['self-driving']
+	if gui then gui.destroy() end
+end
+
 return {
 	on_init = function()
 		global.cars = global.cars or script_data
@@ -492,6 +498,8 @@ return {
 
 		[defines.events.on_gui_click] = onGuiClick,
 		[defines.events.on_gui_selection_state_changed] = onGuiSelection,
-		[defines.events.on_gui_switch_state_changed] = onGuiSwitch
+		[defines.events.on_gui_switch_state_changed] = onGuiSwitch,
+
+		[defines.events.on_player_died] = onPlayerDied
 	}
 }

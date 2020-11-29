@@ -126,6 +126,10 @@ Date: 2020.11.25
     - Main menu scenes have been added
 ---------------------------------------------------------------------------------------------------
 Version: 0.3.2
-Date: ????
+Date: 2020.11.29
+  Gui:
+    - Improved the integration of various GUI elements
   Bugfixes:
     - Fixed that mining a lookout tower while you were in it would result in the range buff sticking
+    - Fixed that mining a harvested plant would crash the game a few hours later
+    - Fixed that dying in a car would leave the self-driving GUI open, leading to a crash
