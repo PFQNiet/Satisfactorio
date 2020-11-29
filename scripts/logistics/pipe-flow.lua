@@ -31,25 +31,35 @@ local function onGuiOpened(event)
 				name = "pipe-flow",
 				anchor = {
 					gui = defines.relative_gui_type.pipe_gui,
-					position = defines.relative_gui_position.right,
+					position = defines.relative_gui_position.bottom,
 					names = entity_names
 				},
 				direction = "vertical",
-				caption = {"gui.pipe-flow-title"},
 				style = "inset_frame_container_frame"
 			}
-			gui.style.horizontally_stretchable = false
 			gui.style.use_header_filler = false
 
-			local flow = gui.add{
+			local inner = gui.add{
+				type = "frame",
+				name = "inner",
+				direction = "vertical",
+				style = "inside_shallow_frame_with_padding"
+			}
+			inner.add{
+				type = "label",
+				caption = {"gui.pipe-flow-title"},
+				style = "heading_3_label"
+			}.style.bottom_padding = 4
+			local flow = inner.add{
 				type = "flow",
 				direction = "horizontal",
 				name = "content"
 			}
 			flow.style.horizontal_spacing = 12
 			local sprite = flow.add{
-				type = "sprite",
-				name = "fluid"
+				type = "sprite-button",
+				name = "fluid",
+				style = "transparent_slot"
 			}
 			local flow2 = flow.add{
 				type = "flow",
@@ -65,9 +75,7 @@ local function onGuiOpened(event)
 				type = "progressbar",
 				name = "bar"
 			}
-			bar.style.width = 200
-		else
-			gui.visible = true
+			bar.style.horizontally_stretchable = true
 		end
 		script_data[event.entity.unit_number].opened_by[player.index] = gui
 	end
@@ -76,9 +84,6 @@ local function onGuiClosed(event)
 	if not (event.entity and event.entity.valid) then return end
 	if entities[event.entity.name] and script_data[event.entity.unit_number] then
 		local player = game.players[event.player_index]
-		local gui = player.gui.relative['pipe-flow']
-		if gui then gui.visible = false end
-		
 		local struct = script_data[event.entity.unit_number]
 		struct.opened_by[player.index] = nil
 		if not next(struct.opened_by) then
@@ -90,10 +95,6 @@ end
 local function onTick(event)
 	for id,struct in pairs(script_data) do
 		if not struct.entity.valid then
-			-- find any players that had it open and close the GUI
-			for _,gui in pairs(struct.opened_by) do
-				gui.visible = false
-			end
 			script_data[id] = nil
 		else
 			local fluidbox = struct.entity.fluidbox
@@ -119,9 +120,9 @@ local function onTick(event)
 				caption = {"gui.pipe-flow-details",{"gui.pipe-flow-no-fluid"},"---.-",max,{"per-minute-suffix"}}
 			end
 			for _,gui in pairs(struct.opened_by) do
-				gui.content.fluid.sprite = sprite
-				gui.content.details.flowtext.caption = caption
-				gui.content.details.bar.value = bar
+				gui.inner.content.fluid.sprite = sprite
+				gui.inner.content.details.flowtext.caption = caption
+				gui.inner.content.details.bar.value = bar
 			end
 		end
 	end

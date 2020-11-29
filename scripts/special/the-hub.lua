@@ -321,14 +321,7 @@ local function updateMilestoneGUI(force)
 				-- milestone already completed, so reject it
 				local spill = hub.set_recipe(nil)
 				for name,count in pairs(spill) do
-					hub.surface.spill_item_stack(
-						hub.position,
-						{
-							name = name,
-							count = count,
-						},
-						true, force, false
-					)
+					hub.surface.spill_item_stack(hub.position, {name = name, count = count}, true, force, false)
 				end
 				if milestone.name == recipe.name then
 					force.recipes[recipe.name].enabled = false
@@ -351,12 +344,12 @@ local function updateMilestoneGUI(force)
 
 	for _,player in pairs(force.players) do
 		local gui = player.gui.left
-		local frame = gui['hub-milestone-tracking']
+		local frame = gui['hub-milestone']
 		-- create the GUI if it doesn't exist yet, but only once a HUB has been built for the first time
 		if not frame and force.technologies['the-hub'].researched then
 			frame = gui.add{
 				type = "frame",
-				name = "hub-milestone-tracking",
+				name = "hub-milestone",
 				direction = "vertical",
 				caption = {"gui.hub-milestone-tracking-caption"},
 				style = "inner_frame_in_outer_frame"
@@ -365,12 +358,12 @@ local function updateMilestoneGUI(force)
 			frame.style.use_header_filler = false
 			frame.add{
 				type = "label",
-				name = "hub-milestone-tracking-name",
+				name = "hub-milestone-name",
 				caption = {"","[font=heading-2]",{"gui.hub-milestone-tracking-none-selected"},"[/font]"}
 			}
 			local inner = frame.add{
 				type = "frame",
-				name = "hub-milestone-tracking-content",
+				name = "hub-milestone-content",
 				style = "inside_shallow_frame",
 				direction = "vertical"
 			}
@@ -379,43 +372,58 @@ local function updateMilestoneGUI(force)
 			inner.style.bottom_margin = 4
 			inner.add{
 				type = "table",
-				name = "hub-milestone-tracking-table",
+				name = "hub-milestone-table",
 				style = "bordered_table",
 				column_count = 3
 			}
 			local cooldown = frame.add{
 				type = "label",
-				name = "hub-milestone-tracking-cooldown"
+				name = "hub-milestone-cooldown"
 			}
 			cooldown.visible = false
-			local bottom = frame.add{
+		end
+		gui = player.gui.relative
+		local flow = gui['hub-milestone']
+		if frame and not flow then
+			flow = gui.add{
 				type = "flow",
-				name = "hub-milestone-tracking-bottom"
+				name = "hub-milestone",
+				anchor = {
+					gui = defines.relative_gui_type.assembling_machine_gui,
+					position = defines.relative_gui_position.bottom,
+					name = terminal
+				},
+				direction = "horizontal"
 			}
-			local pusher = bottom.add{type="empty-widget"}
-			pusher.style.horizontally_stretchable = true
-			bottom.add{
+			flow.add{type="empty-widget"}.style.horizontally_stretchable = true
+			local frame = flow.add{
+				type = "frame",
+				name = "hub-milestone-frame",
+				direction = "horizontal",
+				style = "inset_frame_container_frame"
+			}
+			frame.style.horizontally_stretchable = false
+			frame.style.use_header_filler = false
+			local button = frame.add{
 				type = "button",
 				style = "confirm_button",
-				name = "hub-milestone-tracking-submit",
+				name = "hub-milestone-submit",
 				caption = {"gui.hub-milestone-submit-caption"}
 			}
 		end
 
 		if frame then
 			-- gather up GUI element references
-			local name = frame['hub-milestone-tracking-name']
-			local inner = frame['hub-milestone-tracking-content']
-			local table = inner['hub-milestone-tracking-table']
-			local cooldown = frame['hub-milestone-tracking-cooldown']
-			local bottom = frame['hub-milestone-tracking-bottom']
-			local button = bottom['hub-milestone-tracking-submit']
+			local name = frame['hub-milestone-name']
+			local inner = frame['hub-milestone-content']
+			local table = inner['hub-milestone-table']
+			local cooldown = frame['hub-milestone-cooldown']
+			local button = flow['hub-milestone-frame']['hub-milestone-submit']
 
 			-- check if the selected milestone has been changed
 			if milestone.name ~= script_data.milestone_selected[force.index] then
 				script_data.milestone_selected[force.index] = milestone.name
 				inner.visible = milestone.name ~= "none"
-				bottom.visible = inner.visible
 				button.enabled = false
 				table.clear()
 				if milestone.name == "none" then
@@ -438,13 +446,13 @@ local function updateMilestoneGUI(force)
 						}
 						local count_flow = table.add{
 							type = "flow",
-							name = "hub-milestone-tracking-ingredient-"..ingredient.name
+							name = "hub-milestone-ingredient-"..ingredient.name
 						}
 						local pusher = count_flow.add{type="empty-widget"}
 						pusher.style.horizontally_stretchable = true
 						count_flow.add{
 							type = "label",
-							name = "hub-milestone-tracking-ingredient-"..ingredient.name.."-count",
+							name = "hub-milestone-ingredient-"..ingredient.name.."-count",
 							caption = {"gui.fraction", -1, -1} -- unset by default, will be populated in the next block
 						}
 					end
@@ -471,13 +479,12 @@ local function updateMilestoneGUI(force)
 			end
 			if milestone.name ~= "none" then
 				for _,ingredient in ipairs(recipe.ingredients) do
-					local label = table['hub-milestone-tracking-ingredient-'..ingredient.name]['hub-milestone-tracking-ingredient-'..ingredient.name..'-count']
+					local label = table['hub-milestone-ingredient-'..ingredient.name]['hub-milestone-ingredient-'..ingredient.name..'-count']
 					label.caption = {"gui.fraction", util.format_number(math.min(submitted[ingredient.name] or 0, ingredient.amount)), util.format_number(ingredient.amount)}
 					if (submitted[ingredient.name] or 0) < ingredient.amount then
 						ready = false
 					end
 				end
-				button.visible = player.opened and player.opened == hub
 				button.enabled = ready
 			end
 		end
@@ -577,7 +584,7 @@ local function onGuiOpened(event)
 	end
 end
 local function onGuiClick(event)
-	if event.element and event.element.valid and event.element.name == "hub-milestone-tracking-submit" then
+	if event.element and event.element.valid and event.element.name == "hub-milestone-submit" then
 		local player = game.players[event.player_index]
 		submitMilestone(player.force, player)
 	end

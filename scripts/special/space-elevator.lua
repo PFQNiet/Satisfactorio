@@ -182,134 +182,50 @@ local function updateElevatorGUI(force)
 
 	for _,player in pairs(force.players) do
 		local gui = player.gui.relative
-		local frame = gui['space-elevator-tracking']
-		local entity = player.opened
-		if player.opened_gui_type ~= defines.gui_type.entity then
-			if frame then
-				frame.destroy()
-			end
-		elseif not (entity and entity.valid and entity.name == elevator) then
-			if frame then frame.destroy() end
-		elseif not findElevatorForForce(force) then
-			if frame then
-				frame.destroy()
-			end
-		else
-			-- create the GUI if it doesn't exist
-			if not frame then
-				frame = gui.add{
-					type = "frame",
-					name = "space-elevator-tracking",
-					anchor = {
-						gui = defines.relative_gui_type.assembling_machine_gui,
-						position = defines.relative_gui_position.right
-					},
-					direction = "vertical",
-					caption = {"gui.space-elevator-tracking-caption"},
-					style = "inset_frame_container_frame"
-				}
-				frame.style.horizontally_stretchable = false
-				frame.style.use_header_filler = false
-				frame.add{
-					type = "label",
-					name = "space-elevator-tracking-name",
-					caption = {"","[font=heading-2]",{"gui.space-elevator-tracking-none-selected"},"[/font]"}
-				}
-				local inner = frame.add{
-					type = "frame",
-					name = "space-elevator-tracking-content",
-					style = "inside_shallow_frame",
-					direction = "vertical"
-				}
-				inner.style.horizontally_stretchable = true
-				inner.style.top_margin = 4
-				inner.style.bottom_margin = 4
-				inner.add{
-					type = "table",
-					name = "space-elevator-tracking-table",
-					style = "bordered_table",
-					column_count = 3
-				}
-				local bottom = frame.add{
-					type = "flow",
-					name = "space-elevator-tracking-bottom"
-				}
-				local pusher = bottom.add{type="empty-widget"}
-				pusher.style.horizontally_stretchable = true
-				bottom.add{
-					type = "button",
-					style = "confirm_button",
-					name = "space-elevator-tracking-submit",
-					caption = {"gui.space-elevator-submit-caption"}
-				}
-				script_data.phase[player.index] = nil -- force gui refresh
-			end
+		local flow = gui['space-elevator']
+		if not flow then
+			flow = gui.add{
+				type = "flow",
+				name = "space-elevator",
+				anchor = {
+					gui = defines.relative_gui_type.assembling_machine_gui,
+					position = defines.relative_gui_position.bottom,
+					name = elevator
+				},
+				direction = "horizontal"
+			}
+			flow.add{type="empty-widget"}.style.horizontally_stretchable = true
+			local frame = flow.add{
+				type = "frame",
+				name = "space-elevator-frame",
+				direction = "horizontal",
+				style = "inset_frame_container_frame"
+			}
+			frame.style.horizontally_stretchable = false
+			frame.style.use_header_filler = false
+			frame.add{
+				type = "button",
+				style = "confirm_button",
+				name = "space-elevator-submit",
+				caption = {"gui.space-elevator-submit-caption"}
+			}
+			script_data.phase[player.index] = nil -- force gui refresh
+		end
 
-			-- gather up GUI element references
-			local name = frame['space-elevator-tracking-name']
-			local inner = frame['space-elevator-tracking-content']
-			local table = inner['space-elevator-tracking-table']
-			local bottom = frame['space-elevator-tracking-bottom']
-			local button = bottom['space-elevator-tracking-submit']
+		-- gather up GUI element references
+		local frame = flow['space-elevator-frame']
+		local button = frame['space-elevator-submit']
 
-			-- check if the selected milestone has been changed
-			if phase.name ~= script_data.phase[player.index] then
-				script_data.phase[player.index] = phase.name
-				inner.visible = phase.name ~= "none"
-				bottom.visible = inner.visible
-				button.enabled = false
-				table.clear()
-				if phase.name == "none" then
-					name.caption = {"","[font=heading-2]",{"gui.space-elevator-tracking-none-selected"},"[/font]"}
-					frame.visible = false
-				else
-					frame.visible = true
-					-- if milestone is actually set then we know this is valid
-					name.caption = {"","[img=recipe/"..phase.name.."] [font=heading-2]",phase.localised_name,"[/font]"}
-					for _,ingredient in ipairs(recipe.ingredients) do
-						local sprite = table.add{
-							type = "sprite-button",
-							sprite = "item/"..ingredient.name,
-							style = "transparent_slot"
-						}
-						sprite.style.width = 20
-						sprite.style.height = 20
-						table.add{
-							type = "label",
-							caption = game.item_prototypes[ingredient.name].localised_name,
-							style = "bold_label"
-						}
-						local count_flow = table.add{
-							type = "flow",
-							name = "space-elevator-tracking-ingredient-"..ingredient.name
-						}
-						local pusher = count_flow.add{type="empty-widget"}
-						pusher.style.horizontally_stretchable = true
-						count_flow.add{
-							type = "label",
-							name = "space-elevator-tracking-ingredient-"..ingredient.name.."-count",
-							caption = {"gui.fraction", -1, -1} -- unset by default, will be populated in the next block
-						}
-					end
+		-- so now we've established the GUI exists, and is populated with a table for the currently selected phase... if there is one, update the counts now
+		local ready = true
+		if phase.name ~= "none" then
+			for _,ingredient in ipairs(recipe.ingredients) do
+				if (submitted[ingredient.name] or 0) < ingredient.amount then
+					ready = false
+					break
 				end
 			end
-
-			-- so now we've established the GUI exists, and is populated with a table for the currently selected phase... if there is one, update the counts now
-			local ready = true
-			if phase.name ~= "none" then
-				frame.visible = true
-				for _,ingredient in ipairs(recipe.ingredients) do
-					local label = table['space-elevator-tracking-ingredient-'..ingredient.name]['space-elevator-tracking-ingredient-'..ingredient.name..'-count']
-					label.caption = {"gui.fraction", util.format_number(math.min(submitted[ingredient.name] or 0, ingredient.amount)), util.format_number(ingredient.amount)}
-					if (submitted[ingredient.name] or 0) < ingredient.amount then
-						ready = false
-					end
-				end
-				button.visible = player.opened and player.opened == hub
-				button.enabled = ready
-			else
-				frame.visible = false
-			end
+			button.enabled = ready
 		end
 	end
 end
@@ -373,7 +289,7 @@ local function onGuiOpened(event)
 	end
 end
 local function onGuiClick(event)
-	if event.element and event.element.valid and event.element.name == "space-elevator-tracking-submit" then
+	if event.element and event.element.valid and event.element.name == "space-elevator-submit" then
 		local player = game.players[event.player_index]
 		submitElevator(player.force, player)
 	end
@@ -387,12 +303,6 @@ return {
 	on_load = function()
 		script_data = global.space_elevator or script_data
 		debounce_error = global.player_build_error_debounce or debounce_error
-	end,
-	on_configuration_changed = function()
-		for _,p in pairs(game.players) do
-			local frame = p.gui.left['space-elevator-tracking']
-			if frame then frame.destroy() end
-		end
 	end,
 	on_nth_tick = {
 		[6] = onTick

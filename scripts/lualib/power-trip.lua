@@ -54,45 +54,49 @@ end
 
 local function createFusebox(player)
 	local gui = player.gui.relative
-	if not gui['power-trip-reset-fuse'] then
-		local frame = gui.add{
-			type = "frame",
-			name = "power-trip-reset-fuse",
+	local flow = gui['fusebox']
+	if not flow then
+		flow = gui.add{
+			type = "flow",
+			name = "fusebox",
 			anchor = {
 				gui = defines.relative_gui_type.entity_with_energy_source_gui,
-				position = defines.relative_gui_position.right
+				position = defines.relative_gui_position.bottom
 			},
+			direction = "horizontal"
+		}
+		flow.add{type="empty-widget"}.style.horizontally_stretchable = true
+		local frame = flow.add{
+			type = "frame",
+			name = "content",
 			direction = "vertical",
 			caption = {"gui.power-trip-reset-fuse-title"},
 			style = "inset_frame_container_frame"
 		}
 		frame.style.horizontally_stretchable = false
 		frame.style.use_header_filler = false
-		local bottom = frame.add{type="flow"}
-		local pusher = bottom.add{type="empty-widget"}
-		pusher.style.horizontally_stretchable = true
-		bottom.add{
+		frame.add{
 			type = "button",
 			style = "confirm_button",
-			name = "power-trip-reset-fuse-submit",
+			name = "fusebox-reset-fuse",
 			caption = {"gui.power-trip-reset-fuse-button"}
 		}
 	end
-	local frame = gui['power-trip-reset-fuse']
-	if player.opened and player.opened.name == "fuel-generator" then
-		frame.anchor = {
+	local frame = flow.content
+	if player.opened and player.opened.type == "storage-tank" then
+		flow.anchor = {
 			gui = defines.relative_gui_type.storage_tank_gui,
-			position = defines.relative_gui_position.right
+			position = defines.relative_gui_position.bottom
 		}
-	elseif player.opened and (player.opened.name == "biomass-burner" or player.opened.name == "biomass-burner-hub") then
-		frame.anchor = {
+	elseif player.opened and player.opened.type == "burner-generator" then
+		flow.anchor = {
 			gui = defines.relative_gui_type.entity_with_energy_source_gui,
-			position = defines.relative_gui_position.right
+			position = defines.relative_gui_position.bottom
 		}
 	else
-		frame.anchor = {
+		flow.anchor = {
 			gui = defines.relative_gui_type.assembling_machine_gui,
-			position = defines.relative_gui_position.right
+			position = defines.relative_gui_position.bottom
 		}
 	end
 end
@@ -147,13 +151,13 @@ end
 local function onGuiClosed(event)
 	local player = game.players[event.player_index]
 	local gui = player.gui.relative
-	if gui['power-trip-reset-fuse'] then
-		gui['power-trip-reset-fuse'].destroy()
+	if gui['fusebox'] then
+		gui['fusebox'].destroy()
 	end
 end
 local function onGuiClick(event)
 	local player = game.players[event.player_index]
-	if event.element and event.element.valid and event.element.name == "power-trip-reset-fuse-submit" then
+	if event.element and event.element.valid and event.element.name == "fusebox-reset-fuse" then
 		-- get electric network ID of opened GUI
 		if not player.opened then return end
 		local entry = findRegistration(player.opened)

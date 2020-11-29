@@ -111,41 +111,22 @@ local function manageMamGUI(player)
 		return
 	end
 	local entity = player.opened
+	if not (entity and entity.valid and entity.name == mam) then return end
 	local gui = player.gui.relative
-	local frame = gui['mam-tracking']
-	if player.opened_gui_type ~= defines.gui_type.entity then
-		if frame then
-			frame.destroy()
-		end
-		return
-	end
-	if not (entity and entity.valid and entity.name == mam) then
-		if frame then frame.destroy() end
-		return
-	end
+	local flow = gui['mam']
 	
 	-- check its recipe and inventory
 	local recipe = entity.get_recipe()
-	if not recipe then
-		if frame then frame.destroy() end
-	else
+	if recipe then
 		local research = game.item_prototypes[recipe.products[1].name]
 		local force = entity.force
 		if force.technologies[research.name].researched
 		or (force.current_research and force.current_research.name == research.name and force.research_progress > 0)
 		or ((force.get_saved_technology_progress(research.name) or 0) > 0) then
 			-- research already completed, so reject it
-			if frame then frame.destroy() end
 			local spill = entity.set_recipe(nil)
 			for name,count in pairs(spill) do
-				entity.surface.spill_item_stack(
-					entity.position,
-					{
-						name = name,
-						count = count,
-					},
-					true, force, false
-				)
+				entity.surface.spill_item_stack(entity.position, {name = name, count = count}, true, force, false)
 			end
 			if research.name == recipe.name then
 				force.recipes[recipe.name].enabled = false
@@ -153,43 +134,32 @@ local function manageMamGUI(player)
 			end
 			force.print({"message.mam-already-done",research.name,research.localised_name})
 		else
-			if frame and frame['mam-tracking-name'..research.name] then
-				-- research has changed, re-create GUI
-				frame.destroy()
-				frame = nil
-			end
-			if not frame then
-				frame = gui.add{
-					type = "frame",
-					name = "mam-tracking",
+			if not flow then
+				flow = gui.add{
+					type = "flow",
+					name = "mam",
 					anchor = {
 						gui = defines.relative_gui_type.assembling_machine_gui,
-						position = defines.relative_gui_position.right
+						position = defines.relative_gui_position.bottom,
+						name = mam
 					},
-					direction = "vertical",
-					caption = {"gui.mam-tracking-caption"},
+					direction = "horizontal"
+				}
+				flow.add{type="empty-widget"}.style.horizontally_stretchable = true
+				local frame = flow.add{
+					type = "frame",
+					name = "mam-frame",
+					direction = "horizontal",
 					style = "inset_frame_container_frame"
 				}
 				frame.style.horizontally_stretchable = false
 				frame.style.use_header_filler = false
-				frame.add{
-					type = "label",
-					name = "mam-tracking-name-"..research.name,
-					caption = {"","[img=recipe/"..research.name.."] [font=heading-2]",research.localised_name,"[/font]"}
-				}
-				local bottom = frame.add{
-					type = "flow",
-					name = "mam-tracking-bottom"
-				}
-				local pusher = bottom.add{type="empty-widget"}
-				pusher.style.horizontally_stretchable = true
-				local button = bottom.add{
+				local button = frame.add{
 					type = "button",
 					style = "confirm_button",
-					name = "mam-tracking-submit",
+					name = "mam-submit",
 					caption = {"gui.mam-submit-caption"}
 				}
-				button.style.top_margin = 8
 			end
 
 			local inventory = entity.get_inventory(defines.inventory.assembling_machine_input)
@@ -204,12 +174,12 @@ local function manageMamGUI(player)
 				end
 			end
 			entity.crafting_progress = progress[1] / progress[2]
-			frame['mam-tracking-bottom']['mam-tracking-submit'].enabled = ready
+			flow['mam-frame']['mam-submit'].enabled = ready
 		end
 	end
 end
 local function submitMam(event)
-	if not (event.element and event.element.valid and event.element.name == "mam-tracking-submit") then return end
+	if not (event.element and event.element.valid and event.element.name == "mam-submit") then return end
 	-- the GUI only exists if the player has a M.A.M. open, but double-check just to be sure
 	local player = game.players[event.player_index]
 	local entity = player.opened
@@ -427,7 +397,7 @@ end
 local function onGuiClick(event)
 	if event.element and event.element.valid then
 		local player = game.players[event.player_index]
-		if event.element.name == "mam-tracking-submit" then
+		if event.element.name == "mam-submit" then
 			submitMam(event)
 		elseif event.element.name == "hard-drive-reward-close" then
 			local gui = player.gui.screen['hard-drive-reward']
@@ -449,12 +419,6 @@ return {
 	end,
 	on_load = function()
 		script_data = global.hard_drive or script_data
-	end,
-	on_configuration_changed = function()
-		for _,p in pairs(game.players) do
-			local frame = p.gui.left['mam-tracking']
-			if frame then frame.destroy() end
-		end
 	end,
 	on_nth_tick = {
 		[6] = function(event) manageMamGUI() end

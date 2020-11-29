@@ -63,6 +63,41 @@ local function onRemoved(event)
 	end
 end
 
+local function on4thTick()
+	for i,sink in pairs(script_data.sinks) do
+		-- the fastest belt carries a max of 1 item every 4.5 ticks, so this should easily keep up with that
+		if sink.energy >= 30*1000*1000 then
+			-- entity can charge at 40MW and store 30MW, with a drain of 30MW, so it'll take a few seconds to power up, which is fine
+			local store = sink.surface.find_entity(storage, sink.position)
+			local inventory = store.get_inventory(defines.inventory.chest)
+			local content = inventory[1].valid_for_read and inventory[1] or nil
+			if content then
+				-- check if item is in the pay table
+				if paytable[content.name] then
+					gainPoints(sink.force, paytable[content.name] * content.count)
+					content.clear()
+				end
+				-- otherwise, sink jams until player removes the offending item from the chest
+				-- (so it's better than Satisfactory where you have to deconstruct the whole conveyor!)
+			end
+		end
+	end
+end
+local function on60thTick()
+	-- if a player has a sink entity open, update their GUI
+	for _,player in pairs(game.players) do
+		if player.opened and player.opened_gui_type == defines.gui_type.entity and player.opened.valid and player.opened.name == storage then
+			-- GUI can be assumed to exist
+			local gui = player.gui.relative['awesome-sink'].content
+			local table = gui.table
+			local coupons = script_data.coupons[player.force.index] or {0,0,0}
+			table.tickets.count.caption = util.format_number(coupons[2])
+			table.tonext.count.caption = util.format_number(pointsToNext(coupons[1]) - coupons[3])
+			gui.bottom['awesome-sink-print'].enabled = coupons[2] > 0
+		end
+	end
+end
+
 local function onGuiOpened(event)
 	local player = game.players[event.player_index]
 	if event.gui_type == defines.gui_type.entity and event.entity.valid and event.entity.name == base then
@@ -72,11 +107,11 @@ local function onGuiOpened(event)
 		local floor = event.entity.surface.find_entity(base, event.entity.position)
 		-- create additional GUI for switching input/output mode
 		local gui = player.gui.relative
-		if not gui['awesome-sink-gui'] then
+		if not gui['awesome-sink'] then
 			local force_idx = player.force.index
 			local frame = gui.add{
 				type = "frame",
-				name = "awesome-sink-gui",
+				name = "awesome-sink",
 				anchor = {
 					gui = defines.relative_gui_type.container_gui,
 					position = defines.relative_gui_position.right,
@@ -87,19 +122,16 @@ local function onGuiOpened(event)
 				style = "inset_frame_container_frame"
 			}
 			frame.style.horizontally_stretchable = false
-			frame.style.use_header_filler = false
 			local inner = frame.add{
 				type = "frame",
-				name = "awesome-sink-content",
-				style = "inside_shallow_frame",
+				name = "content",
+				style = "inside_shallow_frame_with_padding",
 				direction = "vertical"
 			}
 			inner.style.horizontally_stretchable = true
-			inner.style.top_margin = 4
-			inner.style.bottom_margin = 4
 			local table = inner.add{
 				type = "table",
-				name = "awesome-sink-table",
+				name = "table",
 				style = "bordered_table",
 				column_count = 3
 			}
@@ -117,13 +149,13 @@ local function onGuiOpened(event)
 			}
 			local count_flow = table.add{
 				type = "flow",
-				name = "awesome-sink-count-flow1"
+				name = "tickets"
 			}
 			local pusher = count_flow.add{type="empty-widget"}
 			pusher.style.horizontally_stretchable = true
 			count_flow.add{
 				type = "label",
-				name = "awesome-sink-count",
+				name = "count",
 				caption = util.format_number(
 					script_data.coupons[force_idx] and script_data.coupons[force_idx][2] or 0
 				)
@@ -135,29 +167,35 @@ local function onGuiOpened(event)
 			}
 			count_flow = table.add{
 				type = "flow",
-				name = "awesome-sink-count-flow2"
+				name = "tonext"
 			}
+			count_flow.style.minimal_width = 80
 			pusher = count_flow.add{type="empty-widget"}
 			pusher.style.horizontally_stretchable = true
 			count_flow.add{
 				type = "label",
-				name = "awesome-sink-to-next",
+				name = "count",
 				caption = util.format_number(
 					pointsToNext(script_data.coupons[force_idx] and script_data.coupons[force_idx][1] or 0)
 					-(script_data.coupons[force_idx] and script_data.coupons[force_idx][3] or 0)
 				)
 			}
-			local bottom = frame.add{
+			local bottom = inner.add{
 				type = "flow",
-				name = "awesome-sink-bottom"
+				name = "bottom"
 			}
-			local pusher = bottom.add{type="empty-widget"}
-			pusher.style.horizontally_stretchable = true
+			bottom.style.top_margin = 12
+			bottom.style.bottom_margin = 12
+			bottom.add{type="empty-widget"}.style.horizontally_stretchable = true
 			bottom.add{
 				type = "button",
 				style = "confirm_button",
 				name = "awesome-sink-print",
 				caption = {"gui.awesome-sink-print"}
+			}
+			inner.add{
+				type = "empty-widget",
+				style = "vertical_lines_slots_filler"
 			}
 		end
 	end
@@ -183,6 +221,7 @@ local function onGuiClick(event)
 				inventory.insert{name="coin",count=print}
 			end
 			script_data.coupons[force_idx][2] = script_data.coupons[force_idx][2] - print
+			on60thTick()
 		end
 	end
 end
@@ -191,43 +230,6 @@ local function onGuiClosed(event)
 		local player = game.players[event.player_index]
 		local gui = player.gui.relative['awesome-sink-gui']
 		if gui then gui.destroy() end
-	end
-end
-
-local function on4thTick(event)
-	for i,sink in pairs(script_data.sinks) do
-		-- the fastest belt carries a max of 1 item every 4.5 ticks, so this should easily keep up with that
-		if sink.energy >= 30*1000*1000 then
-			-- entity can charge at 40MW and store 30MW, with a drain of 30MW, so it'll take a few seconds to power up, which is fine
-			local store = sink.surface.find_entity(storage, sink.position)
-			local inventory = store.get_inventory(defines.inventory.chest)
-			local content = inventory[1].valid_for_read and inventory[1] or nil
-			if content then
-				-- check if item is in the pay table
-				if paytable[content.name] then
-					gainPoints(sink.force, paytable[content.name] * content.count)
-					content.clear()
-				end
-				-- otherwise, sink jams until player removes the offending item from the chest
-				-- (so it's better than Satisfactory where you have to deconstruct the whole conveyor!)
-			end
-		end
-	end
-end
-local function on60thTick(event)
-	-- if a player has a sink entity open, update their GUI
-	for _,player in pairs(game.players) do
-		if player.opened and player.opened_gui_type == defines.gui_type.entity and player.opened.valid and player.opened.name == storage then
-			-- GUI can be assumed to exist
-			local gui = player.gui.relative['awesome-sink-gui']['awesome-sink-content']['awesome-sink-table']['awesome-sink-count-flow1']['awesome-sink-count']
-			local force_idx = player.force.index
-			local coupons = script_data.coupons[force_idx] or {0,0,0}
-			gui.caption = util.format_number(coupons[2])
-			gui = player.gui.relative['awesome-sink-gui']['awesome-sink-content']['awesome-sink-table']['awesome-sink-count-flow2']['awesome-sink-to-next']
-			gui.caption = util.format_number(pointsToNext(coupons[1]) - coupons[3])
-			gui = player.gui.relative['awesome-sink-gui']['awesome-sink-bottom']['awesome-sink-print']
-			gui.enabled = coupons[2] > 0
-		end
 	end
 end
 
