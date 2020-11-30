@@ -33,11 +33,9 @@ local function refundEntity(entity, reason, event)
 			player.insert{name=entity.name,count=1}
 		end
 		if not debounce_error[player.force.index] or debounce_error[player.force.index] < event.tick then
-			player.surface.create_entity{
-				name = "flying-text",
-				position = entity.position,
+			player.create_local_flying_text{
 				text = reason,
-				render_player_index = player.index
+				create_at_cursor = true
 			}
 			player.play_sound{
 				path = "utility/cannot_build"

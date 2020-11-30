@@ -51,11 +51,9 @@ local function onBuilt(event)
 			local player = entity.last_user
 			player.insert{name=entity.name,count=1}
 			if not debounce_error[player.force.index] or debounce_error[player.force.index] < event.tick then
-				player.surface.create_entity{
-					name = "flying-text",
-					position = entity.position,
+				player.create_local_flying_text{
 					text = {"message.hyper-tube-no-junction"},
-					render_player_index = player.index
+					create_at_cursor = true
 				}
 				player.play_sound{
 					path = "utility/cannot_build"
@@ -94,11 +92,9 @@ local function onRotated(event)
 		if not isValidHyperTube(entity) then
 			event.entity.direction = event.previous_direction
 			local player = game.players[event.player_index]
-			player.surface.create_entity{
-				name = "flying-text",
-				position = entity.position,
+			player.create_local_flying_text{
 				text = {"message.hyper-tube-no-junction"},
-				render_player_index = player.index
+				create_at_cursor = true
 			}
 			player.play_sound{
 				path = "utility/cannot_build"

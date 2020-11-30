@@ -299,11 +299,9 @@ local function onInteract(event)
 			end
 		else
 			-- create flying text like when trying to mine normally
-			player.surface.create_entity{
-				name = "flying-text",
-				position = player.selected.position,
+			player.create_local_flying_text{
 				text = {"cant-reach"},
-				render_player_index = player.index
+				create_at_cursor = true
 			}
 			player.play_sound{
 				path = "utility/cannot_build"
