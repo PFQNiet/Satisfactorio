@@ -41,6 +41,14 @@ data:extend({
 		linked_game_control = "open-gui",
 		consuming = "none",
 		action = "lua"
+	},
+	{
+		type = "custom-input",
+		name = "fast-stack-transfer",
+		key_sequence = "",
+		linked_game_control = "fast-entity-transfer",
+		consuming = "none",
+		action = "lua"
 	}
 })
 -- delete some unused controls
