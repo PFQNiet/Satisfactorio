@@ -110,30 +110,30 @@ local function onGuiClick(event)
 	end
 end
 
---[[ FEATURE WANTED but doesn't work due to a catastrophic bug https://forums.factorio.com/92323
+--[[ FEATURE WANTED but doesn't work due to transport belt interactions https://forums.factorio.com/92323 
 local function dropStack(event)
 	local player = game.players[event.player_index]
 	if not player.selected and player.cursor_stack.valid_for_read then
 		-- spill one item, then boost its count to the stack's count, but only if it wasn't dropped too far away
 		local cursor = player.cursor_stack
-		local count = cursor.count
-		cursor.count = 1
-		local dropped = player.surface.spill_item_stack(event.cursor_position, cursor)[1]
-		local dx = event.cursor_position.x-dropped.position.x
-		local dy = event.cursor_position.y-dropped.position.y
-		if dx*dx+dy*dy > 2*2 then
-			dropped.destroy()
-			cursor.count = count
-		else
-			dropped.stack.count = count
-			player.play_sound{
-				path = "utility/drop_item"
+		local position = player.surface.find_non_colliding_position("stack-on-ground",event.cursor_position,2,0.1,false)
+		if position then
+			local stack = {
+				name = cursor.name,
+				count = 1
 			}
+			local entity = player.surface.create_entity{
+				name = "stack-on-ground",
+				position = position,
+				stack = stack
+			}
+			entity.stack.swap_stack(cursor)
 			cursor.clear()
+			player.play_sound{path="utility/drop_item"}
 		end
 	end
 end
-]]
+--]]
 
 return {
 	events = {
@@ -141,6 +141,6 @@ return {
 		[defines.events.on_gui_click] = onGuiClick,
 		[defines.events.on_gui_opened] = onGuiOpened,
 
-		-- ["fast-stack-transfer"] = dropStack
+		["fast-stack-transfer"] = dropStack
 	}
 }

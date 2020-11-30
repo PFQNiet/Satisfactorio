@@ -244,5 +244,18 @@ data:extend({
 			mipmap_count = 2
 		},
 		order = "s-a[recipe-browser]"
+	},
+	--[[ wanted feature but can't do it because of interaction with transport belts
+	{
+		type = "item-entity",
+		name = "stack-on-ground",
+		collision_box = {{-0.14,-0.14},{0.14,0.14}},
+		collision_mask = {"item-layer","transport-belt-layer"},
+		selection_box = {{-0.17,-0.17},{0.17,0.17}},
+		flags = {"placeable-off-grid","not-on-map"},
+		icon = "__core__/graphics/item-on-ground.png",
+		icon_size = 64,
+		minable = {mining_time=0.25}
 	}
+	]]
 })

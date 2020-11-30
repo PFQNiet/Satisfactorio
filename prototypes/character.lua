@@ -42,6 +42,7 @@ data:extend({
 		consuming = "none",
 		action = "lua"
 	},
+	--[[ wanted feature but can't do due to transport belt interaction
 	{
 		type = "custom-input",
 		name = "fast-stack-transfer",
@@ -50,6 +51,7 @@ data:extend({
 		consuming = "none",
 		action = "lua"
 	}
+	]]
 })
 -- delete some unused controls
 data.raw['custom-input']['toggle-equipment-movement-bonus'] = nil
