@@ -3,7 +3,7 @@ local name = "liquid-biofuel"
 local fluid = {
 	type = "fluid",
 	name = name,
-	order = "b["..name.."]",
+	order = "c[fuel]-b["..name.."]",
 	subgroup = "fluid-fuel",
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
@@ -23,6 +23,7 @@ local recipe = { -- in Refinery
 	type = "recipe",
 	ingredients = ingredients,
 	results = {{type="fluid",name="liquid-biofuel",amount=4}},
+	subgroup = "fluid-recipe",
 	energy_required = 4,
 	category = "refining",
 	enabled = false

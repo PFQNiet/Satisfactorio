@@ -3,7 +3,7 @@ local name = "fuel"
 local fluid = {
 	type = "fluid",
 	name = name,
-	order = "a["..name.."]",
+	order = "c[fuel]-a["..name.."]",
 	subgroup = "fluid-fuel",
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
@@ -23,6 +23,7 @@ local recipe1 = { -- in Refinery
 		{"polymer-resin",3}
 	},
 	main_product = name,
+	subgroup = "fluid-recipe",
 	energy_required = 6,
 	category = "refining",
 	order = fluid.order.."-a",
@@ -34,6 +35,7 @@ local recipe2 = { -- Residual
 	type = "recipe",
 	ingredients = {{type="fluid",name="heavy-oil",amount=6}},
 	results = {{type="fluid",name=name,amount=4}},
+	subgroup = "fluid-recipe",
 	energy_required = 6,
 	category = "refining",
 	icons = {

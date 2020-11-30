@@ -4,7 +4,7 @@ local fluid = {
 	type = "fluid",
 	name = name,
 	subgroup = "fluid-product",
-	order = "b["..name.."]",
+	order = "b[fluid-products]-b["..name.."]",
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	max_temperature = 25,
@@ -26,6 +26,7 @@ local recipe = { -- in Refinery
 		{"silica",2}
 	},
 	main_product = name,
+	subgroup = "fluid-recipe",
 	energy_required = 6,
 	category = "refining",
 	enabled = false

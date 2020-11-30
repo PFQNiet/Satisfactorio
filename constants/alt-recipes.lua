@@ -563,6 +563,7 @@ local recipes = {
 			{"polymer-resin",2}
 		},
 		main_product = "heavy-oil",
+		subgroup = "fluid-recipe",
 		energy_required = 6,
 		category = "refining",
 		icons = {}
@@ -699,6 +700,7 @@ local recipes = {
 		},
 		results = {{type="fluid",name="turbofuel",amount=5}},
 		main_product = "turbofuel",
+		subgroup = "fluid-recipe",
 		energy_required = 16,
 		category = "refining",
 		icons = {}
@@ -711,6 +713,7 @@ local recipes = {
 		},
 		results = {{type="fluid",name="turbofuel",amount=4}},
 		main_product = "turbofuel",
+		subgroup = "fluid-recipe",
 		energy_required = 8,
 		category = "refining",
 		icons = {"heavy-oil-residue"}

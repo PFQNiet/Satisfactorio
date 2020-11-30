@@ -78,6 +78,7 @@ local function openRecipeGui(player)
 
 	if gui.visible then
 		gui.visible = false
+		player.opened = nil
 	else
 		gui.visible = true
 		player.opened = gui

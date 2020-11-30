@@ -6,4 +6,4 @@ local fluid = data.raw.fluid[basename]
 fluid.icon = "__Satisfactorio__/graphics/icons/"..name..".png"
 fluid.icon_mipmaps = 0
 fluid.subgroup = "fluid-product"
-fluid.order = "a["..name.."]"
+fluid.order = "b[fluid-products]-a["..name.."]"

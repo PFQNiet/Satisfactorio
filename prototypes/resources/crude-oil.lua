@@ -31,7 +31,7 @@ local fluid = data.raw.fluid[name]
 fluid.icon = ore.icon
 fluid.icon_mipmaps = 0
 fluid.subgroup = "fluid-resource"
-fluid.order = "f["..name.."]"
+fluid.order = "a[fluid-resource]-f["..name.."]"
 
 local autoplace = data.raw['autoplace-control'][name]
 autoplace.order = "f"
