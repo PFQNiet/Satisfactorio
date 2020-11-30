@@ -133,3 +133,9 @@ Date: 2020.11.29
     - Fixed that mining a lookout tower while you were in it would result in the range buff sticking
     - Fixed that mining a harvested plant would crash the game a few hours later
     - Fixed that dying in a car would leave the self-driving GUI open, leading to a crash
+---------------------------------------------------------------------------------------------------
+Version: 0.3.3
+Date: 2020.11.30
+  Features:
+    - Inventory trash slot, which can be used to discard any items cluttering your inventory.
+    - Sort button added to various storage containers and cars.
