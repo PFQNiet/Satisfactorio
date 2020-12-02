@@ -27,11 +27,11 @@ local function turn(myvector, targetvector)
 	local dir = math.atan2(myvector.x*targetvector.y - myvector.y*targetvector.x, myvector.x*targetvector.x + myvector.y*targetvector.y)
 	-- >0 = anticlockwise
 	-- <0 = clockwise
-	if dir > 0.035 then return defines.riding.direction.right end
-	if dir < -0.035 then return defines.riding.direction.left end
+	if dir > 0.035 then return defines.riding.direction.right, dir end
+	if dir < -0.035 then return defines.riding.direction.left, dir end
 	return defines.riding.direction.straight, dir
 end
-local function speed(myspeed, mypos, targetpos, steer)
+local function speed(myspeed, mypos, targetpos, steer, delta)
 	-- if we're getting close to the target, slow down
 	local wait = targetpos.wait
 	mypos = math2d.position.ensure_xy(mypos)
@@ -46,8 +46,10 @@ local function speed(myspeed, mypos, targetpos, steer)
 	elseif steer == defines.riding.direction.straight and wait == 0 then
 		-- if car is driving straight and waypoint has no wait time, then there is no need to brake - just continue
 		accel = dist < 3 and defines.riding.acceleration.nothing or defines.riding.acceleration.accelerating
-	elseif dist/myspeed < 90 then -- ticks to target
+	elseif math.abs(dist/myspeed) < 90 then -- ticks to target
 		accel = defines.riding.acceleration.braking
+	elseif delta < -1.6 or delta > 1.6 then
+		accel = defines.riding.acceleration.reversing
 	else
 		accel = defines.riding.acceleration.accelerating
 	end
@@ -164,6 +166,14 @@ local function onTick(event)
 					refreshPathRender(car)
 				end
 			end
+		elseif car.autopilot and car.crash_tick then
+			car.car.riding_state = {
+				acceleration = defines.riding.acceleration.reversing,
+				direction = defines.riding.direction.straight
+			}
+			if math.random(60) < event.tick - car.crash_tick then
+				car.crash_tick = nil
+			end
 		elseif car.autopilot and car.wait_until < event.tick and #car.waypoints > 1 and (not car.sleep_until or car.sleep_until < event.tick) then
 			if car.waypoint_index > #car.waypoints then
 				-- list was edited and no longer valid
@@ -172,7 +182,7 @@ local function onTick(event)
 			local mydir = {math.cos(math.pi*2*(0.25-car.car.orientation)), -math.sin(math.pi*2*(0.25-car.car.orientation))}
 			local todir = {car.waypoints[car.waypoint_index].x-car.car.position.x, car.waypoints[car.waypoint_index].y-car.car.position.y}
 			local steer, delta = turn(mydir, todir)
-			local accel, distance = speed(car.car.speed, car.car.position, car.waypoints[car.waypoint_index], steer)
+			local accel, distance = speed(car.car.speed, car.car.position, car.waypoints[car.waypoint_index], steer, delta)
 			car.car.riding_state = {
 				acceleration = accel,
 				direction = steer
@@ -192,11 +202,12 @@ local function onTick(event)
 					for _,player in pairs(car.car.force.players) do
 						player.add_alert(car.car, defines.alert_type.train_out_of_fuel)
 					end
-				elseif car.car.riding_state.acceleration == defines.riding.acceleration.accelerating and car.car.speed == 0 then
-					if not car.crash_check or car.crash_check < 3 then
+				elseif car.car.riding_state.acceleration ~= defines.riding.acceleration.nothing and car.car.speed == 0 then
+					if not car.crash_check or car.crash_check < 2 then
 						car.crash_check = (car.crash_check or 0) + 1
 					else
 						-- car is trying to move but can't, despite having fuel, and has failed this check 3 times
+						-- TODO update/remove this, as the new "reverse and try again" mechanic overrides this
 						for _,player in pairs(car.car.force.players) do
 							player.add_custom_alert(car.car, {type="virtual",name="signal-vehicle-crashed"}, {"gui-alert-tooltip.vehicle-crashed",{"entity-name."..car.car.name}}, true)
 						end
@@ -221,6 +232,15 @@ local function isSelfDrivingCar(entity)
 	return entity.name == "truck" or
 		entity.name == "tractor" or
 		entity.name == "explorer"
+end
+local function onDamaged(event)
+	local entity = event.entity
+	if isSelfDrivingCar(entity) and event.damage_type.name == "impact" then
+		local car = getCar(entity)
+		if car and car.autopilot and not car.crash_tick then
+			car.crash_tick = event.tick
+		end
+	end
 end
 local function onDriving(event)
 	-- when a player enters/leaves a car
@@ -500,6 +520,7 @@ return {
 		[defines.events.on_gui_selection_state_changed] = onGuiSelection,
 		[defines.events.on_gui_switch_state_changed] = onGuiSwitch,
 
+		[defines.events.on_entity_damaged] = onDamaged,
 		[defines.events.on_player_died] = onPlayerDied
 	}
 }
