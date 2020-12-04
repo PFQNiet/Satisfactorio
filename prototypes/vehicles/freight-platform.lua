@@ -10,12 +10,11 @@ local base = {
 	name = name,
 	energy_source = {
 		type = "electric",
-		buffer_capacity = "100MJ",
+		buffer_capacity = "50MW",
 		usage_priority = "secondary-input",
-		drain = "0W",
-		input_flow_limit = "50MW",
-		output_flow_limit = "0W"
+		drain = "0W"
 	},
+	energy_usage = "50MW",
 	pictures = {
 		north = {
 			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-n.png",

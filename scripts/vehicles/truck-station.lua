@@ -132,9 +132,8 @@ local function onTick(event)
 	for i,struct in pairs(script_data.stations[event.tick%30]) do
 		local station = struct.entity
 		local mode = struct.mode
-		if station.energy >= 10*1000*1000 then
+		if station.energy > 0 then
 			-- each station will "tick" once every 30 in-game ticks, ie. every half-second
-			-- power consumption is 20MW, so each "tick" consumes 10MJ if a vehicle is present
 			local centre = math2d.position.add(station.position, math2d.position.rotate_vector({-0.5,-8}, station.direction*45))
 			local vehicles = station.surface.find_entities_filtered{
 				name = {"tractor","truck","explorer"},
@@ -168,12 +167,11 @@ local function onTick(event)
 							break
 						end
 					end
-					-- drain 10MJ
-					station.energy = station.energy - 10*1000*1000
 					done = true
 					break
 				end
 			end
+			station.active = done
 			-- disable input if a vehicle is present, enable it if not
 			io.toggle(station,{0,3.5},not done)
 		end

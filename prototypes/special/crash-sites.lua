@@ -47,7 +47,7 @@ local interface = {
 		drain = "0W",
 		output_flow_limit = "0W"
 	},
-	energy_usage = "50MW",
+	energy_usage = "50MW", -- default value, varies depending on the crash site
 	picture = {
 		filename = "__core__/graphics/empty.png",
 		size = {1,1}

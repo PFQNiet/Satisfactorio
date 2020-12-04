@@ -24,12 +24,12 @@ local base = {
 	name = name,
 	energy_source = {
 		type = "electric",
-		buffer_capacity = "1kJ",
+		buffer_capacity = "50MW",
 		usage_priority = "secondary-input",
 		drain = "0W",
 		output_flow_limit = "0W"
 	},
-	energy_usage = "50MW",
+	energy_usage = "50MW", -- initial value, which gets increased when pulling trains
 	pictures = {
 		north = {
 			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-n.png",
