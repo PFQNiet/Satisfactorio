@@ -360,7 +360,6 @@ local function onTick(event)
 			station.electric_buffer_size = math.max(station.electric_buffer_size, station.power_usage)
 
 			-- one transfer every 45 ticks = 24 seconds for a 32-stack freight car
-			local energy_used = (50/60*45)*1000*1000
 			local train = stop.get_stopped_train()
 			-- scan attached platforms and, if a matching wagon is present, handle loading/unloading
 			local delta = math2d.position.rotate_vector({0,7},station.direction*45)
@@ -376,7 +375,7 @@ local function onTick(event)
 				
 				local struct = script_data.platforms[platform.unit_number]
 				local is_output = struct.mode == "output"
-				if platform.name == freight and platform.energy >= energy_used then
+				if platform.name == freight and platform.energy > 0 then
 					local wagon = station.surface.find_entity("cargo-wagon", position)
 					if train and wagon then
 						local wagoninventory = wagon.get_inventory(defines.inventory.cargo_wagon)
@@ -391,14 +390,14 @@ local function onTick(event)
 								local source = from.find_item_stack(name)
 								-- since there is an empty stack, an insert will always succeed
 								from.remove({name=name,count=to.insert(source)})
-								platform.energy = platform.energy - energy_used
 								break
 							end
 						end
 					end
 					io.toggle(platform,{6.5,-1},not (train and wagon))
 					io.toggle(platform,{6.5,1},not (train and wagon))
-				elseif platform.name == fluid and platform.energy >= energy_used then
+					platform.active = not not (train and wagon)
+				elseif platform.name == fluid and platform.energy > 0 then
 					local wagon = station.surface.find_entity("fluid-wagon", position)
 					if train and wagon then
 						local store = station.surface.find_entity(fluid.."-tank", math2d.position.add(platform.position, math2d.position.rotate_vector(storage_pos, platform.direction*45)))
@@ -411,7 +410,6 @@ local function onTick(event)
 								amount = to.insert_fluid{name=name,amount=amount}
 								if amount > 0 then
 									from.remove_fluid{name=name,amount=amount}
-									platform.energy = platform.energy - energy_used
 								end
 								break
 							end
@@ -425,6 +423,7 @@ local function onTick(event)
 						fluid.."-pump",
 						math2d.position.add(platform.position, math2d.position.rotate_vector({6.5,1}, platform.direction*45))
 					).active = not (train and wagon)
+					platform.active = not not (train and wagon)
 				end
 			end
 		end

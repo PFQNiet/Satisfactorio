@@ -55,12 +55,11 @@ local interface = {
 	name = name.."-eei",
 	energy_source = {
 		type = "electric",
-		buffer_capacity = "150MJ",
+		buffer_capacity = "150MW",
 		usage_priority = "secondary-output",
-		drain = "0W",
-		input_flow_limit = "0W",
-		output_flow_limit = "150MW"
+		drain = "0W"
 	},
+	energy_production = "150MW", -- may be adjusted in case of low fuel
 	pictures = empty_sprite,
 	max_health = 1,
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",

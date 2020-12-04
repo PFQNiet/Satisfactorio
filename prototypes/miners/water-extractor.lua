@@ -64,16 +64,15 @@ local extractor = {
 	}
 }
 -- "placeholder" that can be placed on any water tiles, will spawn a water "resource node" beneath itself
+-- EEI type is used so that tooltip provides power info
 local placeholder = {
 	type = "electric-energy-interface",
 	name = name.."-placeholder",
 	energy_source = {
 		type = "electric",
-		buffer_capacity = "20MJ",
+		buffer_capacity = "20MW",
 		usage_priority = "secondary-input",
-		drain = "0W",
-		input_flow_limit = "30MW",
-		output_flow_limit = "0W"
+		drain = "0W"
 	},
 	energy_usage = "20MW",
 	animations = extractor.animations,

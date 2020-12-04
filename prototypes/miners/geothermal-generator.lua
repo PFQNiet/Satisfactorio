@@ -36,11 +36,8 @@ local interface = {
 	name = name.."-eei",
 	energy_source = {
 		type = "electric",
-		buffer_capacity = "200MJ",
-		usage_priority = "primary-output",
-		drain = "0W",
-		input_flow_limit = "0W",
-		output_flow_limit = "200MW"
+		buffer_capacity = "200MW",
+		usage_priority = "primary-output"
 	},
 	energy_production = "200MW",
 	animation = {

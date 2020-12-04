@@ -139,3 +139,8 @@ Date: 2020.11.30
   Features:
     - Inventory trash slot, which can be used to discard any items cluttering your inventory.
     - Sort button added to various storage containers and cars.
+---------------------------------------------------------------------------------------------------
+Version: 0.3.4
+Date: 2020.12.??
+  Bugfixes:
+    - Reworked electric-energy-interface entities to make better use of the system, notably for tooltips.

@@ -164,27 +164,11 @@ local function onGuiClick(event)
 		if not entry then return end
 		local force = entry.generator.force
 		local network = entry.generator.electric_network_id
-		local fl_proto = game.fluid_prototypes
 		-- seek out all generators with this network ID and re-enable them
 		for _,entry in pairs(script_data.accumulators) do
 			if type(entry) == "table" then -- ignore pointers to accumulators, just do actual entries
 				if entry.generator.force == force and entry.generator.electric_network_id == network then
 					toggle(entry, true)
-					if entry.burner and entry.burner.type == "storage-tank" then
-						-- immediately perform a fuel transfer
-						local fluid_type, fluid_amount = next(entry.burner.get_fluid_contents())
-						if fluid_type and fluid_amount > 0 then
-							local fuel_value = fl_proto[fluid_type].fuel_value
-							if fuel_value > 0 then
-								local energy_to_full_charge = entry.generator.electric_buffer_size - entry.generator.energy
-								local fuel_to_full_charge = energy_to_full_charge / fuel_value
-								-- attempt to remove the full amount - if it's limited by the amount actually present then the return value will reflect that
-								local fuel_consumed_this_tick = entry.burner.remove_fluid{name=fluid_type, amount=fuel_to_full_charge}
-								local energy_gained_this_tick = fuel_consumed_this_tick * fuel_value
-								entry.generator.energy = entry.generator.energy + energy_gained_this_tick
-							end
-						end
-					end
 					entry.accumulator.energy = 1
 				end
 			end
