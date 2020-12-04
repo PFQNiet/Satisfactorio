@@ -439,7 +439,7 @@ local function onInit()
 	registerResource("raw-quartz", 600, 1, 6, 3)
 	registerResource("bauxite", 800, 2, 6, 5)
 	registerResource("uranium-ore", 1000, 2, 2, 6)
-	registerResource("geyser", 750, 1, 1, 4)
+	registerResource("geyser", 550, 1, 1, 4)
 
 	registerResource("x-plant", 100, 1, 3, 0)
 	registerResource("x-deposit", 100, 1, 10, 0) -- "value" is unused

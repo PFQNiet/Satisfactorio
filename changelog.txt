@@ -142,5 +142,8 @@ Date: 2020.11.30
 ---------------------------------------------------------------------------------------------------
 Version: 0.3.4
 Date: 2020.12.??
+  Balancing:
+    - Increase spawn rate of Geyser
   Bugfixes:
     - Reworked electric-energy-interface entities to make better use of the system, notably for tooltips.
+    - Added Fuse Box to Geothermal Generator

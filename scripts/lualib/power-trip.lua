@@ -83,22 +83,16 @@ local function createFusebox(player)
 		}
 	end
 	local frame = flow.content
-	if player.opened and player.opened.type == "storage-tank" then
-		flow.anchor = {
-			gui = defines.relative_gui_type.storage_tank_gui,
-			position = defines.relative_gui_position.bottom
-		}
-	elseif player.opened and player.opened.type == "burner-generator" then
-		flow.anchor = {
-			gui = defines.relative_gui_type.entity_with_energy_source_gui,
-			position = defines.relative_gui_position.bottom
-		}
-	else
-		flow.anchor = {
-			gui = defines.relative_gui_type.assembling_machine_gui,
-			position = defines.relative_gui_position.bottom
-		}
-	end
+	local types = {
+		["storage-tank"] = "storage_tank_gui",
+		["burner-generator"] = "entity_with_energy_source_gui",
+		["electric-energy-interface"] = "electric_energy_interface_gui",
+		["default"] = "assembling_machine_gui"
+	}
+	flow.anchor = {
+		gui = defines.relative_gui_type[types[player.opened and player.opened.type or "default"] or types["default"]],
+		position = defines.relative_gui_position.bottom
+	}
 end
 local function toggle(entry, enabled)
 	if entry.burner then entry.burner.active = enabled end
