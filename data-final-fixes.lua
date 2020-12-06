@@ -17,3 +17,13 @@ for _,tech in pairs(data.raw.technology) do
 		end
 	end
 end
+
+-- anything that would collide with objects or rails, except for actual (straight) rails should collide with platforms
+local maskutil = require("collision-mask-util")
+for _,entity in pairs(maskutil.collect_prototypes_colliding_with_mask{"object-layer","rail-layer"}) do
+	if entity.type ~= "straight-rail" then
+		local mask = maskutil.get_mask(entity)
+		maskutil.add_layer(mask,train_platform_layer)
+		entity.collision_mask = mask
+	end
+end

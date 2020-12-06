@@ -1,3 +1,5 @@
+assert(train_platform_layer ~= nil, "Train station must be defined before freight platform, as it uses its collision mask")
+
 local empty_sprite = {
 	filename = "__core__/graphics/empty.png",
 	width = 1,
@@ -41,7 +43,7 @@ local base = {
 	icon_size = 64,
 	render_layer = "lower-object",
 	collision_box = {{-6.7,-3.2},{6.7,3.2}},
-	collision_mask = {"player-layer"}, -- object collision will be checked by script but this covers most cases
+	collision_mask = {train_platform_layer},
 	corpse = "big-remnants",
 	dying_explosion = "big-explosion",
 	flags = {

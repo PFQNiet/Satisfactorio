@@ -1,5 +1,5 @@
 modpath = "__Satisfactorio__."
-foundation_layer = require("collision-mask-util").get_first_unused_layer()
+foundation_layer = nil
 data:extend({
 	{type="ammo-category",name="rebar"},
 	{type="ammo-category",name="infinite"},

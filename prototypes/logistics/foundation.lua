@@ -1,3 +1,5 @@
+foundation_layer = require("collision-mask-util").get_first_unused_layer()
+
 local name = "foundation"
 local foundation = {
 	picture = {

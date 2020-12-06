@@ -1,3 +1,5 @@
+assert(foundation_layer ~= nil, "Foundation must be defined before water extractor, as it uses its collision mask")
+
 local name = "water-extractor"
 local extractor = {
 	allowed_effects = {"speed","consumption"},

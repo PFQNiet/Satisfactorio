@@ -11,7 +11,9 @@ local freight = "freight-platform"
 local fluid = "fluid-freight-platform"
 local empty = "empty-platform"
 local trainstop = "train-stop"
+local combinator = "train-station-counter"
 local stop_pos = {2,-2.5}
+local counter_pos = {2.5,-1.5}
 local storage_pos = {3.5,0}
 
 local script_data = {
@@ -104,8 +106,29 @@ local function onBuilt(event)
 				raise_built = true
 			}
 			stop.rotatable = false
+			local counter = entity.surface.create_entity{
+				name = combinator,
+				position = math2d.position.add(entity.position, math2d.position.rotate_vector(counter_pos, entity.direction*45)),
+				direction = entity.direction,
+				force = entity.force,
+				raise_built = true
+			}
+			counter.operable = false
+			-- connect inserters to buffer and only enable if item count = 0
+			counter.connect_neighbour({wire = defines.wire_type.green, target_entity = stop})
+			local control = stop.get_or_create_control_behavior()
+			control.send_to_train = true
+			control.read_from_train = false
+			control.read_stopped_train = false
+			control.set_trains_limit = false
+			control.read_trains_count = false
+			control.enable_disable = false
 
-			script_data.stations[entity.unit_number%45][entity.unit_number] = {station=entity, stop=stop}
+			script_data.stations[entity.unit_number%45][entity.unit_number] = {
+				station = entity,
+				stop = stop,
+				counter = counter
+			}
 		else
 			-- platforms must be adjacent to another platform or a station
 			local before = math2d.position.add(entity.position, math2d.position.rotate_vector({0,-7}, entity.direction*45))
@@ -211,7 +234,7 @@ local function onRemoved(event)
 	if entity.name == station or entity.name == freight or entity.name == fluid or entity.name == empty then
 		local names
 		if entity.name == station then
-			names = {entity.name.."-walkable", trainstop}
+			names = {entity.name.."-walkable", trainstop, combinator}
 		elseif entity.name == freight then
 			names = {entity.name.."-walkable", entity.name.."-collision", entity.name.."-box"}
 			io.remove(entity, event)
@@ -364,6 +387,10 @@ local function onTick(event)
 			-- scan attached platforms and, if a matching wagon is present, handle loading/unloading
 			local delta = math2d.position.rotate_vector({0,7},station.direction*45)
 			local position = station.position
+			local inventory = {
+				item = {},
+				fluid = {}
+			}
 			while true do
 				position = math2d.position.add(position, delta)
 				local platform = station.surface.find_entities_filtered{
@@ -377,10 +404,10 @@ local function onTick(event)
 				local is_output = struct.mode == "output"
 				if platform.name == freight and platform.energy > 0 then
 					local wagon = station.surface.find_entity("cargo-wagon", position)
+					local store = station.surface.find_entity(freight.."-box", math2d.position.add(platform.position, math2d.position.rotate_vector(storage_pos, platform.direction*45)))
+					local storeinventory = store.get_inventory(defines.inventory.chest)
 					if train and wagon then
 						local wagoninventory = wagon.get_inventory(defines.inventory.cargo_wagon)
-						local store = station.surface.find_entity(freight.."-box", math2d.position.add(platform.position, math2d.position.rotate_vector(storage_pos, platform.direction*45)))
-						local storeinventory = store.get_inventory(defines.inventory.chest)
 						-- transfer one item stack
 						local from = is_output and wagoninventory or storeinventory
 						local to = is_output and storeinventory or wagoninventory
@@ -394,13 +421,16 @@ local function onTick(event)
 							end
 						end
 					end
+					for name,count in pairs(storeinventory.get_contents()) do
+						inventory.item[name] = (inventory.item[name] or 0) + count
+					end
 					io.toggle(platform,{6.5,-1},not (train and wagon))
 					io.toggle(platform,{6.5,1},not (train and wagon))
 					platform.active = not not (train and wagon)
 				elseif platform.name == fluid and platform.energy > 0 then
 					local wagon = station.surface.find_entity("fluid-wagon", position)
+					local store = station.surface.find_entity(fluid.."-tank", math2d.position.add(platform.position, math2d.position.rotate_vector(storage_pos, platform.direction*45)))
 					if train and wagon then
-						local store = station.surface.find_entity(fluid.."-tank", math2d.position.add(platform.position, math2d.position.rotate_vector(storage_pos, platform.direction*45)))
 						-- transfer 50 units
 						local from = is_output and wagon or store
 						local to = is_output and store or wagon
@@ -415,6 +445,9 @@ local function onTick(event)
 							end
 						end
 					end
+					for name,count in pairs(store.get_fluid_contents()) do
+						inventory.fluid[name] = (inventory.fluid[name] or 0) + count
+					end
 					station.surface.find_entity(
 						fluid.."-pump",
 						math2d.position.add(platform.position, math2d.position.rotate_vector({6.5,-1}, platform.direction*45))
@@ -425,6 +458,21 @@ local function onTick(event)
 					).active = not (train and wagon)
 					platform.active = not not (train and wagon)
 				end
+			end
+			local signals = {}
+			for key,entries in pairs(inventory) do
+				for name,count in pairs(entries) do
+					local idx = #signals+1
+					signals[idx] = {
+						index = idx,
+						signal = {type=key,name=name},
+						count = count
+					}
+					if idx == 200 then break end -- 200 different items/fluids in one train stop? wtf is wrong with you?
+				end
+			end
+			if struct.counter and struct.counter.valid then
+				struct.counter.get_or_create_control_behavior().parameters = signals
 			end
 		end
 	end

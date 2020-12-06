@@ -3,6 +3,8 @@
 -- freight platform layout is |OI-IO|
 -- fluid platform consists of pumps and a storage tank, so that it can draw fluid into itself and output it
 -- central 7x2 is reserved for the rails
+train_platform_layer = require("collision-mask-util").get_first_unused_layer()
+
 local name = "train-station"
 local empty_sprite = {
 	filename = "__core__/graphics/empty.png",
@@ -18,6 +20,7 @@ stop.minable = {
 	result = name
 }
 stop.placeable_by = {{item=name,count=1}}
+stop.max_health = 1
 
 local base = {
 	type = "electric-energy-interface",
@@ -53,7 +56,7 @@ local base = {
 	icon_size = 64,
 	render_layer = "decorative", -- required so that the train-stop renders on top of it
 	collision_box = {{-6.7,-3.2},{6.7,3.2}},
-	collision_mask = {"player-layer"}, -- object collision will be checked by script but this covers most cases
+	collision_mask = {train_platform_layer},
 	corpse = "big-remnants",
 	dying_explosion = "big-explosion",
 	flags = {
@@ -150,3 +153,14 @@ local recipe_undo = {
 }
 
 data:extend({base,collision,item,recipe,recipe_undo})
+
+local combinator = table.deepcopy(data.raw['constant-combinator']['constant-combinator'])
+combinator.name = name.."-counter"
+combinator.circuit_wire_max_distance = 2
+combinator.item_slot_count = 200
+combinator.max_health = 1
+combinator.icon = "__Satisfactorio__/graphics/icons/"..name..".png"
+combinator.icon_size = 64
+combinator.icon_mipmaps = 1
+combinator.collision_mask = {}
+data:extend{combinator}
