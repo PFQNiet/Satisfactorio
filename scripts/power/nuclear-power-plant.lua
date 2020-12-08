@@ -41,8 +41,6 @@ local function onBuilt(event)
 		powertrip.registerGenerator(boil, gen, accumulator)
 		-- make the base intangible (TODO: remove the base outright and put graphics on the child entities instead)
 		entity.operable = false
-		entity.minable = false
-		entity.destructible = false
 		entity.rotatable = false
 		gen.rotatable = false
 	end
@@ -51,7 +49,7 @@ end
 local function onRemoved(event)
 	local entity = event.entity
 	if not entity or not entity.valid then return end
-	if entity.name == boiler or entity.name == generator_ne or entity.name == generator_sw then
+	if entity.name == base or entity.name == boiler or entity.name == generator_ne or entity.name == generator_sw then
 		-- find the base that should be right here
 		local floor = entity.surface.find_entity(base,entity.position)
 		if not floor or not floor.valid then
@@ -65,11 +63,12 @@ local function onRemoved(event)
 			-- safely get items from the boiler
 			getitems.burner(boil, event and event.buffer or nil)
 			boil.destroy()
-		else
+		end
+		if entity.name ~= generator_ne and entity.name ~= generator_sw then
 			gen.destroy()
 		end
 		io.remove(floor, event)
-		floor.destroy{raise_destroy = true}
+		floor.destroy()
 	end
 end
 

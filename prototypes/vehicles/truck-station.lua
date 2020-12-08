@@ -78,6 +78,8 @@ local storage = {
 		"placeable-neutral",
 		"placeable-player",
 		"player-creation",
+		"not-on-map",
+		"not-deconstructable",
 		"not-blueprintable",
 		"no-copy-paste"
 	},
@@ -112,6 +114,8 @@ local fuelbox = {
 		"placeable-neutral",
 		"placeable-player",
 		"player-creation",
+		"not-on-map",
+		"not-deconstructable",
 		"not-blueprintable",
 		"no-copy-paste"
 	},

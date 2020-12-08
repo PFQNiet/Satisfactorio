@@ -1,3 +1,5 @@
+local getitems = require(modpath.."scripts.lualib.get-items-from")
+
 local miner = "portable-miner"
 local box = "portable-miner-box"
 
@@ -23,8 +25,11 @@ end
 local function onRemoved(event)
 	local entity = event.entity
 	if not entity or not entity.valid then return end
-	if entity.name == box then
-		-- find the drill that should be right here
+	if entity.name == miner then
+		local store = entity.surface.find_entity(box, entity.position)
+		getitems.storage(store, event and event.buffer or nil)
+		store.destroy()
+	elseif entity.name == box then
 		local drill = entity.surface.find_entity(miner,entity.position)
 		if not drill or not drill.valid then
 			game.print("Couldn't find the drill")

@@ -21,6 +21,11 @@ stop.minable = {
 }
 stop.placeable_by = {{item=name,count=1}}
 stop.max_health = 1
+if not stop.flags then stop.flags = {} end
+table.insert(stop.flags, "not-on-map")
+table.insert(stop.flags, "not-blueprintable")
+table.insert(stop.flags, "no-copy-paste")
+table.insert(stop.flags, "not-deconstructable")
 
 local base = {
 	type = "electric-energy-interface",
@@ -61,7 +66,8 @@ local base = {
 	dying_explosion = "big-explosion",
 	flags = {
 		"placeable-player",
-		"player-creation"
+		"player-creation",
+		"not-on-map"
 	},
 	minable = {
 		mining_time = 1,
@@ -91,6 +97,7 @@ local collision = {
 		"placeable-player",
 		"placeable-off-grid",
 		"player-creation",
+		"not-deconstructable",
 		"not-blueprintable",
 		"no-copy-paste"
 	},

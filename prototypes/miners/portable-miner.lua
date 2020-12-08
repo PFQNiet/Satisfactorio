@@ -17,13 +17,15 @@ local pm = {
 		"placeable-player",
 		"player-creation",
 		"no-automated-item-removal",
-		"no-automated-item-insertion",
-		"not-deconstructable"
+		"no-automated-item-insertion"
 	},
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	max_health = 1,
-	minable = nil, -- not minable - mine the box instead
+	minable = {
+		mining_time = 0.5,
+		result = name,
+	},
 	mining_speed = 1/3, -- base 20/min
 	name = name,
 	resource_categories = {"solid"},
@@ -42,7 +44,9 @@ local pmbox = {
 		"placeable-neutral",
 		"placeable-player",
 		"player-creation",
+		"not-on-map",
 		"not-blueprintable",
+		"not-deconstructable",
 		"no-automated-item-removal",
 		"no-copy-paste"
 	},

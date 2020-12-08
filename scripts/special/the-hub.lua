@@ -163,7 +163,7 @@ local function removeBiomassBurner1(hub, buffer) -- only if it exists
 		if buffer then
 			getitems.burner(burner, buffer)
 		end
-		burner.destroy{raise_destroy=true}
+		burner.destroy()
 	end
 	local pole = hub.surface.find_entity(powerpole,position(powerpole_pos,hub))
 	if pole and pole.valid then
@@ -191,7 +191,7 @@ local function removeBiomassBurner2(hub, buffer) -- only if it exists
 		if buffer then
 			getitems.burner(burner, buffer)
 		end
-		burner.destroy{raise_destroy=true}
+		burner.destroy()
 	end
 end
 local function buildFreighter(hub)

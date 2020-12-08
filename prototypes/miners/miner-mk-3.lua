@@ -36,8 +36,7 @@ local miner = {
 	flags = {
 		"placeable-neutral",
 		"placeable-player",
-		"player-creation",
-		"not-deconstructable"
+		"player-creation"
 	},
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
@@ -66,7 +65,9 @@ local minerbox = {
 		"placeable-neutral",
 		"placeable-player",
 		"player-creation",
+		"not-on-map",
 		"not-blueprintable",
+		"not-deconstructable",
 		"no-copy-paste"
 	},
 	icon = miner.icon,

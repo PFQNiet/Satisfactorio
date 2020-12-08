@@ -32,7 +32,10 @@ local burner = {
 		"player-creation",
 		"no-automated-item-removal",
 		"no-automated-item-insertion",
-		"not-deconstructable"
+		"not-on-map",
+		"not-deconstructable",
+		"not-blueprintable",
+		"no-copy-paste"
 	},
 	icon = "__Satisfactorio__/graphics/icons/biomass-burner.png",
 	icon_size = 64,
@@ -55,6 +58,13 @@ local accumulator = {
 	charge_cooldown = 0,
 	discharge_cooldown = 0,
 	collision_box = burner.collision_box,
+	flags = {
+		"player-creation",
+		"not-on-map",
+		"not-deconstructable",
+		"not-blueprintable",
+		"no-copy-paste"
+	},
 	icon = "__Satisfactorio__/graphics/icons/biomass-burner.png",
 	icon_size = 64,
 	max_health = 1,

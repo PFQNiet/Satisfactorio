@@ -45,7 +45,8 @@ local base = {
 	dying_explosion = "big-explosion",
 	flags = {
 		"placeable-player",
-		"player-creation"
+		"player-creation",
+		"not-on-map"
 	},
 	minable = {
 		mining_time = 1,
@@ -75,6 +76,7 @@ local walkable = {
 		"placeable-player",
 		"placeable-off-grid",
 		"player-creation",
+		"not-deconstructable",
 		"not-blueprintable",
 		"no-copy-paste"
 	},
@@ -100,6 +102,7 @@ local collision = {
 		"placeable-player",
 		"placeable-off-grid",
 		"player-creation",
+		"not-deconstructable",
 		"not-blueprintable",
 		"no-copy-paste"
 	},
@@ -123,6 +126,11 @@ pump.fluid_box.pipe_connections[1].position = {0,-1}
 pump.fluid_box.pipe_connections[2].position = {0,1}
 pump.placeable_by = {item=name,count=1}
 pump.next_upgrade = nil
+if not pump.flags then pump.flags = {} end
+table.insert(pump.flags, "not-on-map")
+table.insert(pump.flags, "not-blueprintable")
+table.insert(pump.flags, "no-copy-paste")
+table.insert(pump.flags, "not-deconstructable")
 
 local storage = {
 	type = "storage-tank",
@@ -145,6 +153,8 @@ local storage = {
 		"placeable-neutral",
 		"placeable-player",
 		"player-creation",
+		"not-on-map",
+		"not-deconstructable",
 		"not-blueprintable",
 		"no-copy-paste"
 	},

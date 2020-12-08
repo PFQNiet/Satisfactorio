@@ -62,7 +62,7 @@ local tank = {
 }
 local tankin = table.deepcopy(tank)
 tankin.name = name.."-input"
-tankin.placeable_by = {{item=name,count=1}}
+tankin.minable = nil
 tankin.fluid_box.pipe_connections = {{type="input",position={0,1}}}
 tankin.pictures.picture = {
 	filename = "__core__/graphics/empty.png",
@@ -76,7 +76,7 @@ tankin.selection_priority = 40
 
 local tankout = table.deepcopy(tank)
 tankout.name = name.."-output"
-tankout.placeable_by = {{item=name,count=1}}
+tankout.minable = nil
 tankout.fluid_box.pipe_connections = {{type="output",position={0,-1}}}
 tankout.pictures.picture = {
 	filename = "__core__/graphics/empty.png",

@@ -73,6 +73,8 @@ local boiler = {
 		"placeable-neutral",
 		"placeable-player",
 		"player-creation",
+		"not-on-map",
+		"not-deconstructable",
 		"not-blueprintable",
 		"no-copy-paste"
 	},
@@ -132,6 +134,13 @@ local accumulator = {
 	charge_cooldown = 0,
 	discharge_cooldown = 0,
 	collision_box = {{-9.2,-9.2},{9.2,9.2}},
+	flags = {
+		"player-creation",
+		"not-on-map",
+		"not-deconstructable",
+		"not-blueprintable",
+		"no-copy-paste"
+	},
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	max_health = 1,
@@ -180,6 +189,8 @@ local generator_ne = {
 	flags = {
 		"placeable-player",
 		"player-creation",
+		"not-on-map",
+		"not-deconstructable",
 		"not-blueprintable",
 		"no-copy-paste"
 	},

@@ -13,4 +13,6 @@ belt.collision_mask = {"transport-belt-layer"}
 if not belt.flags then belt.flags = {} end
 table.insert(belt.flags, "not-on-map")
 table.insert(belt.flags, "not-blueprintable")
+table.insert(belt.flags, "no-copy-paste")
+table.insert(belt.flags, "not-deconstructable")
 data:extend({belt})

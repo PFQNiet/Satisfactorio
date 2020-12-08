@@ -58,6 +58,7 @@ local bufferbox = {
 		"placeable-player",
 		"player-creation",
 		"not-blueprintable",
+		"not-deconstructable",
 		"no-copy-paste"
 	},
 	icon = merger.icon,
@@ -67,9 +68,9 @@ local bufferbox = {
 	minable = nil,
 	name = name.."-box",
 	picture = empty_sprite,
-	placeable_by = {item=name,count=1},
 	selection_box = {{-0.5,-0.5},{0.5,0.5}},
 	selection_priority = 40,
+	selectable_in_game = false,
 	circuit_wire_max_distance = 1,
 	type = "container"
 }

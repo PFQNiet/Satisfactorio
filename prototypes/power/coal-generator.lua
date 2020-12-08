@@ -49,7 +49,10 @@ local placeholder = {
 		"placeable-player",
 		"player-creation"
 	},
-	minable = nil, -- mine either the boiler or the generator
+	minable = {
+		mining_time = 1,
+		result = name
+	},
 	selection_box = {{-2.5,-6},{2.5,6}},
 	selection_priority = 40
 }
@@ -77,6 +80,8 @@ local boiler = {
 		"placeable-neutral",
 		"placeable-player",
 		"player-creation",
+		"not-on-map",
+		"not-deconstructable",
 		"not-blueprintable",
 		"no-copy-paste"
 	},
@@ -148,6 +153,13 @@ local accumulator_ns = {
 	charge_cooldown = 0,
 	discharge_cooldown = 0,
 	collision_box = {{-2.2,-3.7},{2.2,3.7}},
+	flags = {
+		"player-creation",
+		"not-on-map",
+		"not-deconstructable",
+		"not-blueprintable",
+		"no-copy-paste"
+	},
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	max_health = 1,
@@ -170,6 +182,13 @@ local accumulator_ew = {
 	charge_cooldown = 0,
 	discharge_cooldown = 0,
 	collision_box = {{-3.7,-2.2},{3.7,2.2}},
+	flags = {
+		"player-creation",
+		"not-on-map",
+		"not-deconstructable",
+		"not-blueprintable",
+		"no-copy-paste"
+	},
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	max_health = 1,
@@ -218,6 +237,8 @@ local generator_ne = {
 	flags = {
 		"placeable-player",
 		"player-creation",
+		"not-on-map",
+		"not-deconstructable",
 		"not-blueprintable",
 		"no-copy-paste"
 	},

@@ -65,6 +65,8 @@ local storage = {
 		"placeable-player",
 		"player-creation",
 		"placeable-off-grid", -- it goes between two grid squares
+		"not-on-map",
+		"not-deconstructable",
 		"not-blueprintable",
 		"no-copy-paste"
 	},

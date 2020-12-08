@@ -48,7 +48,8 @@ local base = {
 	dying_explosion = "big-explosion",
 	flags = {
 		"placeable-player",
-		"player-creation"
+		"player-creation",
+		"not-on-map"
 	},
 	minable = {
 		mining_time = 1,
@@ -78,6 +79,7 @@ local collision = {
 		"placeable-player",
 		"placeable-off-grid",
 		"player-creation",
+		"not-deconstructable",
 		"not-blueprintable",
 		"no-copy-paste"
 	},
