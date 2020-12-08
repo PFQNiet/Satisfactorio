@@ -147,3 +147,5 @@ Date: 2020.12.??
   Bugfixes:
     - Reworked electric-energy-interface entities to make better use of the system, notably for tooltips.
     - Added Fuse Box to Geothermal Generator
+  Changes:
+    - No longer compatible with Construction Drones, use Companion Drones instead.

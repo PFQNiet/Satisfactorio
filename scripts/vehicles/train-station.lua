@@ -356,7 +356,7 @@ local function onTick(event)
 	for i,struct in pairs(script_data.stations[event.tick%45]) do
 		local station = struct.station
 		local stop = struct.stop
-		if station.energy >= 1000 then
+		if station.energy > 0 then
 			-- each station will "tick" once 45 ticks
 			local trains = stop.get_train_stop_trains()
 			local power = 50 -- MW
