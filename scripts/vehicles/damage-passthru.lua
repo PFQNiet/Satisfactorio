@@ -1,6 +1,6 @@
 -- when a vehicle takes damage, pass it on to the player
 local function onDamaged(event)
-	if event.entity.type == "car" then
+	if event.entity.type == "car" or event.entity.type == "spider-vehicle" then
 		local damage = event.original_damage_amount
 		if event.damage_type.name == "impact" then
 			damage = math.max(0, (damage - 10) * 0.7)

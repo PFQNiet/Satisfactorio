@@ -22,8 +22,8 @@ if mods[mod] then
 
 	-- adjust vehicle
 	local spider = data.raw['spider-vehicle']['companion']
-	spider.max_health = 1
-	spider.resistances = nil
+	-- spider.max_health = 1
+	-- spider.resistances = nil
 	spider.movement_energy_consumption = "10MW"
 
 	data.raw['item-subgroup']['companion'].group = 'logistics'
