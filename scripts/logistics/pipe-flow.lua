@@ -2,16 +2,55 @@
 -- opening a pipe's GUI adds it to the tracking list, closing it (provided no other player has it open) removes it
 local script_data = {}
 
-local entities = { -- advertised max flow per tracked entity
-	["pipe"] = 300,
-	["pipe-to-ground"] = 300,
-	["pump"] = 300,
-	["pipeline-mk-2"] = 600,
-	["pipeline-junction-cross-mk-2"] = 600,
-	["pipeline-pump-mk-2"] = 600
+local tier1 = {flow = 300, distance = 20}
+local tier2 = {flow = 600, distance = 50}
+local entities = {
+	["pipe"] = tier1,
+	["pipe-to-ground"] = tier1,
+	-- ["pump"] = tier1,
+	["pipeline-mk-2"] = tier2,
+	["pipeline-junction-cross-mk-2"] = tier2,
+	-- ["pipeline-pump-mk-2"] = tier2
 }
 local entity_names = {}
 for k,_ in pairs(entities) do table.insert(entity_names,k) end
+
+local function measurePipeSection(root)
+	local visited = {[root.unit_number] = true}
+	local bailout = 200 -- entities[root.name].distance * 1.5
+	local addself = root.type == "pump" and 0 or 1 -- add self if self is a pipe or pipe-to-ground
+	local function recurse(node, length)
+		visited[node.unit_number] = true
+		if length > bailout then return bailout end
+		local max = length
+		for _,next in pairs(node.neighbours[1]) do
+			if (next.type == "pipe" or next.type == "pipe-to-ground") and not visited[next.unit_number] then
+				local upstream = recurse(next, length+1)
+				if upstream > max then max = upstream end
+			end
+		end
+		return max
+	end
+	
+	local lengths = {}
+	for _,next in pairs(root.neighbours[1]) do
+		if (next.type == "pipe" or next.type == "pipe-to-ground") and not visited[next.unit_number] then
+			table.insert(lengths, recurse(next,1))
+		end
+	end
+	local count = #lengths
+	local total
+	if count == 0 then
+		total = addself
+	elseif count == 1 then
+		total = lengths[1] + addself
+	else
+		-- add the two longest lengths to get the total length
+		table.sort(lengths)
+		total = lengths[count] + lengths[count-1] + addself
+	end
+	return total < bailout and total or {"gui.pipe-too-long"}
+end
 
 local function onGuiOpened(event)
 	if not (event.entity and event.entity.valid) then return end
@@ -49,12 +88,14 @@ local function onGuiOpened(event)
 				type = "label",
 				caption = {"gui.pipe-flow-title"},
 				style = "heading_3_label"
-			}.style.bottom_padding = 4
+			}
 			local flow = inner.add{
 				type = "flow",
 				direction = "horizontal",
 				name = "content"
 			}
+			flow.style.top_margin = 4
+			flow.style.bottom_margin = 12
 			flow.style.horizontal_spacing = 12
 			local sprite = flow.add{
 				type = "sprite-button",
@@ -76,7 +117,15 @@ local function onGuiOpened(event)
 				name = "bar"
 			}
 			bar.style.horizontally_stretchable = true
+
+			inner.add{
+				type = "label",
+				name = "pipe-length"
+			}
 		end
+
+		gui.inner['pipe-length'].caption = {"gui.pipe-length",measurePipeSection(event.entity),entities[event.entity.name].distance}
+
 		script_data[event.entity.unit_number].opened_by[player.index] = gui
 	end
 end
@@ -102,7 +151,7 @@ local function onTick(event)
 			local sprite = "fluid/"..(fluid and fluid.name or "fluid-unknown")
 			local caption
 			local bar = 0
-			local max = entities[struct.entity.name]
+			local max = entities[struct.entity.name].flow
 			if fluid then
 				table.insert(struct.rolling_average, fluidbox.get_flow(1))
 				if #struct.rolling_average > 60 then

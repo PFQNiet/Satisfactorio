@@ -11,7 +11,9 @@ local sqrt2 = math.sqrt(2)
 
 local function onJump(event)
 	local player = game.players[event.player_index]
-	local armour = player.get_inventory(defines.inventory.character_armor)[1]
+	local inventory = player.get_inventory(defines.inventory.character_armor)
+	if not inventory then return end
+	local armour = inventory[1]
 	if armour.valid_for_read and armour.name == item and not player.driving then
 		-- check for fuel
 		local inventory = player.get_main_inventory()

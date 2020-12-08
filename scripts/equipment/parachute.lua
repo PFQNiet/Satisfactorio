@@ -13,6 +13,7 @@ local script_data = {}
 local function onJump(event)
 	local player = game.players[event.player_index]
 	local inventory = player.get_inventory(defines.inventory.character_armor)
+	if not inventory then return end
 	local armour = inventory[1]
 	if armour.valid_for_read and armour.name == item and player.character and not player.driving then
 		-- check for a cliff in front of the player
