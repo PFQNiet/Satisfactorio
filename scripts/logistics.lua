@@ -1,4 +1,5 @@
 return {
+	require(modpath.."scripts.logistics.transport-belts"),
 	require(modpath.."scripts.logistics.conveyor-merger"),
 	require(modpath.."scripts.logistics.conveyor-splitter"),
 	require(modpath.."scripts.logistics.splitters"),

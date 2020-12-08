@@ -149,3 +149,6 @@ Date: 2020.12.??
     - Added Fuse Box to Geothermal Generator
   Changes:
     - No longer compatible with Construction Drones, use Companion Drones instead.
+    - You can no longer merge belts without a Conveyor Merger - this is to prevent possible assumptions of how lanes work
+  Ease of use:
+    - Added "pipe length" info to pipe GUI for better planning of pipelines
