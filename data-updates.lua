@@ -52,7 +52,7 @@ end
 local vehicle_types = {"car","locomotive","cargo-wagon","fluid-wagon","spider-vehicle"}
 for _,type in pairs(vehicle_types) do
 	for _,car in pairs(data.raw[type]) do
-		if car.max_health > 1 then
+		if car.max_health > 1 and car.name ~= "companion" then -- Companion drones mod, they should stay destructible.
 			if not car.flags then car.flags = {} end
 			table.insert(car.flags,"breaths-air")
 			car.resistances = resists

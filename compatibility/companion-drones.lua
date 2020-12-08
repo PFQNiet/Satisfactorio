@@ -22,9 +22,22 @@ if mods[mod] then
 
 	-- adjust vehicle
 	local spider = data.raw['spider-vehicle']['companion']
-	-- spider.max_health = 1
-	-- spider.resistances = nil
+	spider.max_health = 50
+	spider.resistances = nil
+	-- spider.healing_per_tick = 0.1 -- spider-vehicle isn't "active" so regen doesn't work. Use control-time code instead
 	spider.movement_energy_consumption = "10MW"
+	spider.corpse = "companion-remnants"
+	spider.dying_explosion = "spidertron-explosion"
+
+	local corpse = table.deepcopy(data.raw.corpse['spidertron-remnants'])
+	corpse.name = "companion-remnants"
+	local layers = corpse.animation[1].layers
+	layers[1].scale = 0.5
+	layers[1].hr_version.scale = 0.25
+	layers[2].scale = 0.5
+	layers[2].hr_version.scale = 0.25
+	corpse.selection_box = {{-1.5,-1.5},{1.5,1.5}}
+	data:extend{corpse}
 
 	data.raw['item-subgroup']['companion'].group = 'logistics'
 
