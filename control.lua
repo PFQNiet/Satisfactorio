@@ -56,5 +56,5 @@ handler.add_lib({
 })
 
 -- Control-time Mod Compatibility
-handler.add_lib(require(modpath.."compatibility.construction-drones-control"))
+handler.add_lib(require(modpath.."compatibility.companion-drones-control"))
 handler.add_lib(require(modpath.."compatibility.factorissimo2-control"))

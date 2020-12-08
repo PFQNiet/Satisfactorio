@@ -7,7 +7,7 @@ data.raw['utility-sprites'].default.character_inventory_slots_bonus_modifier_ico
 	height = 256
 }
 
-local function addTech(name, icon, category, subgroup, order, time, prerequisites, ingredients, effects)
+local function addTech(name, icon, category, subgroup, order, time, prerequisites, ingredients, effects, localised_name)
 	if category == "mam" then
 		table.insert(lab.inputs, name)
 	end
@@ -105,6 +105,12 @@ local function addTech(name, icon, category, subgroup, order, time, prerequisite
 			effects = effects
 		}
 	}
+	if localised_name then
+		parts.tool.localised_name = localised_name
+		parts.recipe.localised_name = localised_name
+		parts.recipe_done.localised_name = localised_name
+		parts.technology.localised_name = localised_name
+	end
 	data:extend{parts.tool, parts.recipe, parts.recipe_done, parts.technology}
 	return parts
 end

@@ -66,8 +66,7 @@ end
 local function on4thTick()
 	for i,sink in pairs(script_data.sinks) do
 		-- the fastest belt carries a max of 1 item every 4.5 ticks, so this should easily keep up with that
-		if sink.energy >= 30*1000*1000 then
-			-- entity can charge at 40MW and store 30MW, with a drain of 30MW, so it'll take a few seconds to power up, which is fine
+		if sink.energy > 0 then
 			local store = sink.surface.find_entity(storage, sink.position)
 			local inventory = store.get_inventory(defines.inventory.chest)
 			local content = inventory[1].valid_for_read and inventory[1] or nil
@@ -187,12 +186,13 @@ local function onGuiOpened(event)
 			bottom.style.top_margin = 12
 			bottom.style.bottom_margin = 12
 			bottom.add{type="empty-widget"}.style.horizontally_stretchable = true
-			bottom.add{
+			local button = bottom.add{
 				type = "button",
 				style = "confirm_button",
 				name = "awesome-sink-print",
 				caption = {"gui.awesome-sink-print"}
 			}
+			button.enabled = false
 			inner.add{
 				type = "empty-widget",
 				style = "vertical_lines_slots_filler"
