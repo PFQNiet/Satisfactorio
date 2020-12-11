@@ -5,7 +5,13 @@ local basename = "pipe-to-ground"
 local pipe = table.deepcopy(data.raw['pipe-to-ground'][basename])
 pipe.name = name
 pipe.minable.result = name
-pipe.icon = "__Satisfactorio__/graphics/icons/"..name..".png"
+pipe.icon = nil
+pipe.icons = {
+	{
+		icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+		tint = {0.2,0.8,1}
+	}
+}
 local box = pipe.fluid_box
 box.height = 0.0093
 box.base_area = 0.01/box.height
@@ -20,6 +26,7 @@ data.raw['pipe-to-ground']['pipe-to-ground'].next_upgrade = name
 local pipeitem = table.deepcopy(data.raw.item[basename])
 pipeitem.name = name
 pipeitem.icon = pipe.icon
+pipeitem.icons = pipe.icons
 pipeitem.place_result = name
 pipeitem.order = pipeitem.order.."-2"
 

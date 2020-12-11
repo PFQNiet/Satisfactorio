@@ -21,6 +21,7 @@ stop.minable = {
 }
 stop.placeable_by = {{item=name,count=1}}
 stop.max_health = 1
+stop.selection_priority = 45
 if not stop.flags then stop.flags = {} end
 table.insert(stop.flags, "not-on-map")
 table.insert(stop.flags, "not-blueprintable")
