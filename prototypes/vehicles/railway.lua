@@ -58,7 +58,7 @@ signal.enabled = false
 _group = data.raw['item-subgroup'][rail.subgroup]
 recipe_undo = {
 	name = "rail-signal-undo",
-	localised_name = {"recipe-name.dismantle",{"item-name.rail-signal"}},
+	localised_name = {"recipe-name.dismantle",{"entity-name.rail-signal"}},
 	type = "recipe",
 	ingredients = {
 		{"rail-signal",1}
@@ -90,7 +90,7 @@ signal.enabled = false
 _group = data.raw['item-subgroup'][rail.subgroup]
 recipe_undo = {
 	name = "rail-chain-signal-undo",
-	localised_name = {"recipe-name.dismantle",{"item-name.rail-chain-signal"}},
+	localised_name = {"recipe-name.dismantle",{"entity-name.rail-chain-signal"}},
 	type = "recipe",
 	ingredients = {
 		{"rail-chain-signal",1}

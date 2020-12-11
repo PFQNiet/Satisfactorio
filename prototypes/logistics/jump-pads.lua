@@ -207,7 +207,7 @@ local _group = data.raw['item-subgroup'][item.subgroup]
 local undo = {
 	type = "recipe",
 	name = name.."-undo",
-	localised_name = {"recipe-name.dismantle",{"item-name."..name}},
+	localised_name = {"recipe-name.dismantle",{"entity-name."..name}},
 	ingredients = {
 		{name,1}
 	},
@@ -296,7 +296,7 @@ local _group = data.raw['item-subgroup'][item.subgroup]
 local undo = {
 	type = "recipe",
 	name = name.."-undo",
-	localised_name = {"recipe-name.dismantle",{"item-name."..name}},
+	localised_name = {"recipe-name.dismantle",{"entity-name."..name}},
 	ingredients = {
 		{name,1}
 	},

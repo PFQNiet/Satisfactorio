@@ -87,7 +87,7 @@ local constructorrecipe = {
 local _group = data.raw['item-subgroup'][constructoritem.subgroup]
 local constructorrecipe_undo = {
 	name = name.."-undo",
-	localised_name = {"recipe-name.dismantle",{"item-name."..name}},
+	localised_name = {"recipe-name.dismantle",{"entity-name."..name}},
 	type = "recipe",
 	ingredients = {
 		{name,1}

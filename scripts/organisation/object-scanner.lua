@@ -168,7 +168,7 @@ local function openBeaconScanner(player)
 	beacons.beacons[player.index] = {}
 	for i,beacon in pairs(entities) do
 		local tag = tags[beacon.unit_number]
-		menu.add_item({"","[img="..tag.icon.type.."."..tag.icon.name.."] ",tag.text == "" and {"item-name.map-marker"} or tag.text})
+		menu.add_item({"","[img="..tag.icon.type.."."..tag.icon.name.."] ",tag.text == "" and {"entity-name.map-marker"} or tag.text})
 		table.insert(beacons.beacons[player.index], beacon)
 		if script_data.pings[player.index].beacon == beacon then
 			index = i

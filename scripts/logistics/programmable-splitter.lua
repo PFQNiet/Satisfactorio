@@ -226,7 +226,7 @@ local function onGuiOpened(event)
 				style = "inner_frame_in_outer_frame"
 			}
 			local title_flow = gui.add{type = "flow", name = "title_flow"}
-			local title = title_flow.add{type = "label", caption = {"item-name.programmable-splitter"}, style = "frame_title"}
+			local title = title_flow.add{type = "label", caption = event.entity.localised_name, style = "frame_title"}
 			title.drag_target = gui
 			local pusher = title_flow.add{type = "empty-widget", style = "draggable_space_header"}
 			pusher.style.height = 24

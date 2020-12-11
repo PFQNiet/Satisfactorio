@@ -76,20 +76,23 @@ local function onGuiOpened(event)
 		openBeaconGUI(event.entity, game.players[event.player_index])
 	end
 end
+local function saveBeacon(beacon, gui)
+	local tag = findBeaconTag(beacon)
+	if tag and tag.valid then
+		tag.destroy()
+		local params = {position=beacon.position,icon={type="item",name="map-marker"}}
+		if gui['beacon-naming-icon'].elem_value then params.icon = gui['beacon-naming-icon'].elem_value end
+		if gui['beacon-naming-name'].text then params.text = gui['beacon-naming-name'].text end
+		beacon.force.add_chart_tag(beacon.surface, params)
+	end
+end
 local function onGuiClick(event)
 	if not (event.element and event.element.valid) then return end
 	local player = game.players[event.player_index]
 	if event.element.name == "beacon-naming-confirm" then
 		local beacon = beacons.opened[player.index] -- can be assumed to exist, otherwise how did we get here?
-		local tag = findBeaconTag(beacon)
-		if tag and tag.valid then
-			local gui = player.gui.screen['beacon-naming']['beacon-naming-inner']['beacon-naming-table']
-			tag.destroy()
-			local params = {position=beacon.position,icon={type="item",name="map-marker"}}
-			if gui['beacon-naming-icon'].elem_value then params.icon = gui['beacon-naming-icon'].elem_value end
-			if gui['beacon-naming-name'].text then params.text = gui['beacon-naming-name'].text end
-			beacon.force.add_chart_tag(beacon.surface, params)
-		end
+		local gui = player.gui.screen['beacon-naming']['beacon-naming-inner']['beacon-naming-table']
+		saveBeacon(beacon, gui)
 		closeBeaconGUI(player)
 	end
 end
@@ -147,6 +150,12 @@ return {
 		[defines.events.on_gui_click] = onGuiClick,
 		[defines.events.on_gui_closed] = function(event)
 			if event.gui_type == defines.gui_type.custom and event.element and event.element.valid and event.element.name == "beacon-naming" then
+				local player = game.players[event.player_index]
+				local beacon = beacons.opened[player.index]
+				if beacon then
+					local gui = player.gui.screen['beacon-naming']['beacon-naming-inner']['beacon-naming-table']
+					saveBeacon(beacon, gui)
+				end
 				closeBeaconGUI(game.players[event.player_index])
 			end
 		end,

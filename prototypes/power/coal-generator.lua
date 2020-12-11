@@ -289,7 +289,7 @@ local generatorrecipe = {
 local _group = data.raw['item-subgroup'][generatoritem.subgroup]
 local generatorrecipe_undo = {
 	name = name.."-undo",
-	localised_name = {"recipe-name.dismantle",{"item-name."..name}},
+	localised_name = {"recipe-name.dismantle",{"entity-name."..name}},
 	type = "recipe",
 	ingredients = {
 		{name,1}

@@ -207,7 +207,7 @@ local function onGuiOpened(event)
 	local repairs = gui.content.table.right.repairs
 	local ready = true
 	if struct.requirements.item then
-		repairs['parts-needed'].caption = {"gui.crash-site-parts",struct.requirements.count,struct.requirements.item,{"item-name."..struct.requirements.item}}
+		repairs['parts-needed'].caption = {"gui.crash-site-parts",struct.requirements.count,struct.requirements.item,game.item_prototypes[struct.requirements.item].localised_name}
 		local has_item = player.get_main_inventory().get_item_count(struct.requirements.item) >= struct.requirements.count
 		repairs['parts-complete'].sprite = has_item and "utility/check_mark_white" or "utility/close_white"
 		if not has_item then ready = false end

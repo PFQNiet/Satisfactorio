@@ -278,6 +278,7 @@ local function onInteract(event)
 						if rand < 0 then
 							struct.helditem = {
 								name = name,
+								localised_name = game.item_prototypes[name].localised_name,
 								count = random(entry.amount_min, entry.amount_max)
 							}
 							break
@@ -287,7 +288,7 @@ local function onInteract(event)
 
 				gui.content.table.left.preview.entity = struct.entity
 				local lootbtn = gui.content.table.right.loot['view-lizard-doggo-loot']
-				lootbtn.tooltip = struct.helditem and {"item-name."..struct.helditem.name} or ""
+				lootbtn.tooltip = struct.helditem and struct.helditem.localised_name or ""
 				lootbtn.sprite = struct.helditem and "item/"..struct.helditem.name or nil
 				lootbtn.number = struct.helditem and struct.helditem.count or nil
 				gui.content.table.right.loot['take-lizard-doggo-loot'].enabled = struct.helditem and true or false

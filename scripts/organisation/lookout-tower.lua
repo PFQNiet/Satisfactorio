@@ -37,13 +37,9 @@ local function onVehicle(event)
 		local box = entity.surface.find_entity(tower, entity.position)
 		if player.driving then
 			player.zoom = 0.1
-			player.character_build_distance_bonus = player.character_build_distance_bonus + 100
-			player.character_reach_distance_bonus = player.character_reach_distance_bonus + 100
 			box.minable = false
 		else
 			player.zoom = 1
-			player.character_build_distance_bonus = math.max(0,player.character_build_distance_bonus - 100)
-			player.character_reach_distance_bonus = math.max(0,player.character_reach_distance_bonus - 100)
 			if not entity.get_driver() and not entity.get_passenger() then
 				box.minable = true
 			end

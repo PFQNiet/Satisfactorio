@@ -32,7 +32,7 @@ data.raw.recipe['cargo-wagon'] = recipe
 local _group = data.raw['item-subgroup'][cargo.subgroup]
 local recipe_undo = {
 	name = "cargo-wagon-undo",
-	localised_name = {"recipe-name.dismantle",{"item-name.cargo-wagon"}},
+	localised_name = {"recipe-name.dismantle",{"entity-name.cargo-wagon"}},
 	type = "recipe",
 	ingredients = {
 		{"cargo-wagon",1}

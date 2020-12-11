@@ -45,7 +45,7 @@ local radarrecipe = {
 local _group = data.raw['item-subgroup'][radaritem.subgroup]
 local radarrecipe_undo = {
 	name = basename.."-undo",
-	localised_name = {"recipe-name.dismantle",{"item-name."..basename}},
+	localised_name = {"recipe-name.dismantle",{"entity-name."..basename}},
 	type = "recipe",
 	ingredients = {
 		{basename,1}

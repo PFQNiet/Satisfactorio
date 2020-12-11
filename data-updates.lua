@@ -68,7 +68,7 @@ for _,tech in pairs(data.raw.technology) do
 	if item then
 		local recipe = data.raw.recipe[item.name]
 		local submit = recipe.category == "hub-progressing" and "the-hub" or recipe.category
-		local cost = {"",{"technology-description.submit-to",submit,{"item-name."..submit}},"\n"}
+		local cost = {"",{"technology-description.submit-to",submit,{"entity-name."..submit}},"\n"}
 		for _,ingredient in pairs(recipe.ingredients) do
 			table.insert(cost, {"technology-description.ingredient",ingredient.name or ingredient[1],util.format_number(ingredient.amount or ingredient[2])})
 		end
