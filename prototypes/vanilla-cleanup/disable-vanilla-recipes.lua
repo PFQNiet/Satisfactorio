@@ -71,6 +71,8 @@ for _,key in pairs(to_hide) do
 	if not item.flags then item.flags = {} end
 	table.insert(item.flags, "hidden")
 end
+table.insert(data.raw.item['solid-fuel'].flags, "hide-from-fuel-tooltip")
+table.insert(data.raw.item['rocket-fuel'].flags, "hide-from-fuel-tooltip")
 -- remove next-upgrade
 for _,group in pairs(data.raw) do
 	for _,thing in pairs(group) do
