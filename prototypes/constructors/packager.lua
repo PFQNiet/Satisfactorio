@@ -64,7 +64,6 @@ local packager = {
 	},
 	working_sound = data.raw['assembling-machine']['centrifuge'].working_sound,
 	flags = {
-		"placeable-neutral",
 		"placeable-player",
 		"player-creation"
 	},

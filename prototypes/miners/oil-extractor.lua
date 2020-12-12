@@ -34,7 +34,6 @@ local miner = {
 	energy_usage = "40MW",
 	working_sound = data.raw['mining-drill']['pumpjack'].working_sound,
 	flags = {
-		"placeable-neutral",
 		"placeable-player",
 		"player-creation",
 		"not-deconstructable"

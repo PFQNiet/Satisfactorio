@@ -31,7 +31,6 @@ local hub = {
 	energy_source = {type="void"},
 	energy_usage = "1W",
 	flags = {
-		"placeable-neutral",
 		"placeable-player",
 		"player-creation",
 		"no-automated-item-removal",
@@ -72,7 +71,6 @@ local hubterminal = {
 		volume = 0.5
 	},
 	flags = {
-		"placeable-neutral",
 		"placeable-player",
 		"player-creation",
 		"not-blueprintable",

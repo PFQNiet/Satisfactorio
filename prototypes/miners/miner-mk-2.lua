@@ -34,7 +34,6 @@ local miner = {
 	energy_usage = "12MW",
 	working_sound = data.raw['mining-drill']['electric-mining-drill'].working_sound,
 	flags = {
-		"placeable-neutral",
 		"placeable-player",
 		"player-creation"
 	},
@@ -63,9 +62,6 @@ local minerbox = {
 	dying_explosion = "big-explosion",
 	enable_inventory_bar = false,
 	flags = {
-		"placeable-neutral",
-		"placeable-player",
-		"player-creation",
 		"not-on-map",
 		"not-blueprintable",
 		"not-deconstructable",

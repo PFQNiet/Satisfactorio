@@ -63,8 +63,6 @@ local interface = {
 	corpse = "big-remnants",
 	dying_explosion = "big-explosion",
 	flags = {
-		"placeable-player",
-		"player-creation",
 		"placeable-off-grid"
 	},
 	selection_box = ship.selection_box,

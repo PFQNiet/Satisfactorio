@@ -7,13 +7,14 @@ data:extend(
 		name = name,
 		icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 		icon_size = 64,
-		flags = {"placeable-neutral","not-on-map"},
+		flags = {"placeable-neutral"},
 		order = "r",
 		category = "geothermal",
 		tree_removal_probability = 0,
 		tree_removal_max_distance = 0,
 		randomize_visual_position = false,
 		minable = {
+			result = name,
 			mining_time = 1
 		},
 		collision_box = {{ -2.1, -2.1}, {2.1, 2.1}},

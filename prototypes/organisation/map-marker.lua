@@ -23,7 +23,6 @@ local beacon = {
 	corpse = "small-remnants",
 	dying_explosion = "explosion",
 	flags = {
-		"placeable-neutral",
 		"placeable-player",
 		"player-creation"
 	},

@@ -34,7 +34,6 @@ local elevator = {
 		volume = 0.5
 	},
 	flags = {
-		"placeable-neutral",
 		"placeable-player",
 		"player-creation"
 	},
@@ -114,6 +113,7 @@ silo.rocket_parts_required = 1
 silo.max_health = 1
 silo.fixed_recipe = nil
 silo.selection_priority = 49
+silo.flags = {}
 
 local siloitem = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",

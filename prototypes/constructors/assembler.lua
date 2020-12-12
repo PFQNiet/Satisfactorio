@@ -41,7 +41,6 @@ local assembler = {
 	},
 	working_sound = data.raw['assembling-machine']['assembling-machine-2'].working_sound,
 	flags = {
-		"placeable-neutral",
 		"placeable-player",
 		"player-creation"
 	},

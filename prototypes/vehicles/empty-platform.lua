@@ -76,12 +76,7 @@ local collision = {
 	corpse = "big-remnants",
 	dying_explosion = "big-explosion",
 	flags = {
-		"placeable-player",
-		"placeable-off-grid",
-		"player-creation",
-		"not-deconstructable",
-		"not-blueprintable",
-		"no-copy-paste"
+		"placeable-off-grid"
 	},
 	minable = nil,
 	selection_box = {{-3,-3.5},{3,3.5}},

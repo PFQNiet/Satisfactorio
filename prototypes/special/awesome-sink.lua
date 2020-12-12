@@ -43,7 +43,6 @@ local base = {
 	corpse = "big-remnants",
 	dying_explosion = "big-explosion",
 	flags = {
-		"placeable-neutral",
 		"placeable-player",
 		"player-creation"
 	},
@@ -61,14 +60,8 @@ local storage = {
 	dying_explosion = "big-explosion",
 	enable_inventory_bar = false,
 	flags = {
-		"placeable-neutral",
-		"placeable-player",
-		"player-creation",
 		"placeable-off-grid", -- it goes between two grid squares
-		"not-on-map",
-		"not-deconstructable",
-		"not-blueprintable",
-		"no-copy-paste"
+		"not-on-map"
 	},
 	open_sound = {
 		filename = "__base__/sound/metallic-chest-open.ogg",

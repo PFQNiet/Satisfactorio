@@ -10,7 +10,6 @@ local foundation = {
 	corpse = "big-remnants",
 	dying_explosion = "big-explosion",
 	flags = {
-		"placeable-neutral",
 		"placeable-player",
 		"player-creation",
 		"not-rotatable",

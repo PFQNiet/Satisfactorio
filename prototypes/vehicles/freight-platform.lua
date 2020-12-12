@@ -73,12 +73,7 @@ local walkable = {
 	corpse = "big-remnants",
 	dying_explosion = "big-explosion",
 	flags = {
-		"placeable-player",
-		"placeable-off-grid",
-		"player-creation",
-		"not-deconstructable",
-		"not-blueprintable",
-		"no-copy-paste"
+		"placeable-off-grid"
 	},
 	minable = nil,
 	selection_box = {{-3,-3.5},{3,3.5}},
@@ -99,12 +94,7 @@ local collision = {
 	corpse = "big-remnants",
 	dying_explosion = "big-explosion",
 	flags = {
-		"placeable-player",
-		"placeable-off-grid",
-		"player-creation",
-		"not-deconstructable",
-		"not-blueprintable",
-		"no-copy-paste"
+		"placeable-off-grid"
 	},
 	minable = nil,
 	selection_box = {{-3,-3.5},{3,3.5}},
@@ -118,13 +108,7 @@ local storage = {
 	dying_explosion = "big-explosion",
 	enable_inventory_bar = false,
 	flags = {
-		"placeable-neutral",
-		"placeable-player",
-		"player-creation",
-		"not-on-map",
-		"not-deconstructable",
-		"not-blueprintable",
-		"no-copy-paste"
+		"not-on-map"
 	},
 	open_sound = {
 		filename = "__base__/sound/metallic-chest-open.ogg",

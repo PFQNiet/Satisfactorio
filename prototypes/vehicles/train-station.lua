@@ -22,11 +22,7 @@ stop.minable = {
 stop.placeable_by = {{item=name,count=1}}
 stop.max_health = 1
 stop.selection_priority = 45
-if not stop.flags then stop.flags = {} end
-table.insert(stop.flags, "not-on-map")
-table.insert(stop.flags, "not-blueprintable")
-table.insert(stop.flags, "no-copy-paste")
-table.insert(stop.flags, "not-deconstructable")
+stop.flags = {"filter-directions", "not-on-map"}
 
 local base = {
 	type = "electric-energy-interface",
@@ -95,12 +91,7 @@ local collision = {
 	corpse = "big-remnants",
 	dying_explosion = "big-explosion",
 	flags = {
-		"placeable-player",
-		"placeable-off-grid",
-		"player-creation",
-		"not-deconstructable",
-		"not-blueprintable",
-		"no-copy-paste"
+		"placeable-off-grid"
 	},
 	minable = nil,
 	selection_box = {{-3,-3.5},{3,3.5}},
@@ -171,4 +162,8 @@ combinator.icon = "__Satisfactorio__/graphics/icons/"..name..".png"
 combinator.icon_size = 64
 combinator.icon_mipmaps = 1
 combinator.collision_mask = {}
+combinator.flags = {
+	"not-on-map",
+	"not-rotatable"
+}
 data:extend{combinator}

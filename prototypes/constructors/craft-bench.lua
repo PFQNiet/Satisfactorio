@@ -35,7 +35,6 @@ local bench = {
 	},
 	working_sound = table.deepcopy(data.raw['assembling-machine']['assembling-machine-1'].working_sound),
 	flags = {
-		"placeable-neutral",
 		"placeable-player",
 		"player-creation",
 		"no-automated-item-removal",

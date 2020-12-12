@@ -73,12 +73,7 @@ local walkable = {
 	corpse = "big-remnants",
 	dying_explosion = "big-explosion",
 	flags = {
-		"placeable-player",
-		"placeable-off-grid",
-		"player-creation",
-		"not-deconstructable",
-		"not-blueprintable",
-		"no-copy-paste"
+		"placeable-off-grid"
 	},
 	minable = nil,
 	selection_box = {{-3,-3.5},{3,3.5}},
@@ -99,12 +94,7 @@ local collision = {
 	corpse = "big-remnants",
 	dying_explosion = "big-explosion",
 	flags = {
-		"placeable-player",
-		"placeable-off-grid",
-		"player-creation",
-		"not-deconstructable",
-		"not-blueprintable",
-		"no-copy-paste"
+		"placeable-off-grid"
 	},
 	minable = nil,
 	selection_box = {{-3,-3.5},{3,3.5}},
@@ -150,13 +140,7 @@ local storage = {
 	corpse = "big-remnants",
 	dying_explosion = "big-explosion",
 	flags = {
-		"placeable-neutral",
-		"placeable-player",
-		"player-creation",
-		"not-on-map",
-		"not-deconstructable",
-		"not-blueprintable",
-		"no-copy-paste"
+		"not-on-map"
 	},
 	fluid_box = {
 		base_area = 24,

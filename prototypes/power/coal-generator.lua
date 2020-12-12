@@ -77,13 +77,7 @@ local boiler = {
 	},
 	working_sound = data.raw['boiler']['boiler'].working_sound,
 	flags = {
-		"placeable-neutral",
-		"placeable-player",
-		"player-creation",
-		"not-on-map",
-		"not-deconstructable",
-		"not-blueprintable",
-		"no-copy-paste"
+		"not-on-map"
 	},
 	fluid_boxes = {
 		{
@@ -154,11 +148,7 @@ local accumulator_ns = {
 	discharge_cooldown = 0,
 	collision_box = {{-2.2,-3.7},{2.2,3.7}},
 	flags = {
-		"player-creation",
-		"not-on-map",
-		"not-deconstructable",
-		"not-blueprintable",
-		"no-copy-paste"
+		"not-on-map"
 	},
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
@@ -183,11 +173,7 @@ local accumulator_ew = {
 	discharge_cooldown = 0,
 	collision_box = {{-3.7,-2.2},{3.7,2.2}},
 	flags = {
-		"player-creation",
-		"not-on-map",
-		"not-deconstructable",
-		"not-blueprintable",
-		"no-copy-paste"
+		"not-on-map"
 	},
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
@@ -235,12 +221,7 @@ local generator_ne = {
 	},
 	working_sound = data.raw['generator']['steam-engine'].working_sound,
 	flags = {
-		"placeable-player",
-		"player-creation",
-		"not-on-map",
-		"not-deconstructable",
-		"not-blueprintable",
-		"no-copy-paste"
+		"not-on-map"
 	},
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,

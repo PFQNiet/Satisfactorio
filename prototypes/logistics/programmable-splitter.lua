@@ -37,7 +37,6 @@ local splitter = {
 	corpse = "big-remnants",
 	dying_explosion = "big-explosion",
 	flags = {
-		"placeable-neutral",
 		"placeable-player",
 		"player-creation",
 		"hide-alt-info"
@@ -55,9 +54,6 @@ local bufferbox = {
 	dying_explosion = "big-explosion",
 	enable_inventory_bar = false,
 	flags = {
-		"placeable-neutral",
-		"placeable-player",
-		"player-creation",
 		"not-blueprintable",
 		"not-deconstructable",
 		"no-copy-paste"

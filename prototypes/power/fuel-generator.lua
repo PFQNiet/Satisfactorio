@@ -68,13 +68,7 @@ local interface = {
 	corpse = "big-remnants",
 	dying_explosion = "big-explosion",
 	flags = {
-		"placeable-neutral",
-		"placeable-player",
-		"player-creation",
-		"not-on-map",
-		"not-deconstructable",
-		"not-blueprintable",
-		"no-copy-paste"
+		"not-on-map"
 	},
 	minable = {
 		mining_time = 1,
@@ -94,11 +88,7 @@ local accumulator = {
 	discharge_cooldown = 0,
 	collision_box = {{-4.7,-4.7},{4.7,4.7}},
 	flags = {
-		"player-creation",
-		"not-on-map",
-		"not-deconstructable",
-		"not-blueprintable",
-		"no-copy-paste"
+		"not-on-map"
 	},
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,

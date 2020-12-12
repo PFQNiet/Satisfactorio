@@ -58,8 +58,9 @@ local fakebox = {
 	collision_box = {{-2.2,-2.2},{2.2,2.2}},
 	corpse = "big-remnants",
 	dying_explosion = "big-explosion",
+	open_sound = box.open_sound,
+	close_sound = box.close_sound,
 	flags = {
-		"placeable-neutral",
 		"placeable-player",
 		"player-creation"
 	},

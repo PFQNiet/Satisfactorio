@@ -13,7 +13,6 @@ local pm = {
 	energy_usage = "1W",
 	working_sound = data.raw['mining-drill']['burner-mining-drill'].working_sound,
 	flags = {
-		"placeable-neutral",
 		"placeable-player",
 		"player-creation",
 		"no-automated-item-removal",
@@ -41,9 +40,6 @@ local pmbox = {
 	dying_explosion = "explosion",
 	enable_inventory_bar = false,
 	flags = {
-		"placeable-neutral",
-		"placeable-player",
-		"player-creation",
 		"not-on-map",
 		"not-blueprintable",
 		"not-deconstructable",

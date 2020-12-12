@@ -32,10 +32,6 @@ local extractor = {
 	},
 	energy_usage = "20MW",
 	working_sound = data.raw['assembling-machine']['chemical-plant'].working_sound,
-	flags = {
-		"placeable-player",
-		"player-creation"
-	},
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	max_health = 1,

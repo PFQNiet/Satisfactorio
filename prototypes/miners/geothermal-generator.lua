@@ -13,8 +13,7 @@ local miner = {
 	working_sound = data.raw['mining-drill']['pumpjack'].working_sound,
 	flags = {
 		"placeable-player",
-		"player-creation",
-		"not-deconstructable"
+		"player-creation"
 	},
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
@@ -70,7 +69,6 @@ local accumulator = {
 	discharge_cooldown = 0,
 	collision_box = {{-4.2,-4.2},{4.2,4.2}},
 	flags = {
-		"player-creation",
 		"not-on-map",
 		"not-deconstructable",
 		"not-blueprintable",

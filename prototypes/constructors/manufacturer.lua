@@ -41,7 +41,6 @@ local manufacturer = {
 	},
 	working_sound = data.raw['assembling-machine']['assembling-machine-3'].working_sound,
 	flags = {
-		"placeable-neutral",
 		"placeable-player",
 		"player-creation"
 	},

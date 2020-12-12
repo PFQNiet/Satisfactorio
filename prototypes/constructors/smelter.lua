@@ -41,7 +41,6 @@ local smelter = {
 	},
 	working_sound = data.raw['furnace']['electric-furnace'].working_sound,
 	flags = {
-		"placeable-neutral",
 		"placeable-player",
 		"player-creation"
 	},

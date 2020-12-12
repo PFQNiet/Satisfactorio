@@ -41,7 +41,6 @@ local constructor = {
 	},
 	working_sound = data.raw['assembling-machine']['assembling-machine-1'].working_sound,
 	flags = {
-		"placeable-neutral",
 		"placeable-player",
 		"player-creation"
 	},

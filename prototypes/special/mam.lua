@@ -35,7 +35,6 @@ local mam = {
 		volume = 0.5
 	},
 	flags = {
-		"placeable-neutral",
 		"placeable-player",
 		"player-creation",
 		"no-automated-item-removal",

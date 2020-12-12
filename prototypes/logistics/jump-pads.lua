@@ -41,7 +41,6 @@ local interface = {
 	corpse = "big-remnants",
 	dying_explosion = "big-explosion",
 	flags = {
-		"placeable-neutral",
 		"placeable-player",
 		"player-creation"
 	},
@@ -49,16 +48,6 @@ local interface = {
 		mining_time = 1,
 		result = name
 	},
-	--[[
-	radius_visualisation_specification = {
-		sprite = {
-			filename = "__Satisfactorio__/graphics/particles/"..name.."-landing.png",
-			size = {64,64}
-		},
-		distance = 1.5,
-		offset = {0,-40}
-	},
-	]]
 	selection_box = {{-1.5,-1.5},{1.5,1.5}}
 }
 local vehicle = {
@@ -254,7 +243,6 @@ interface = {
 	corpse = "big-remnants",
 	dying_explosion = "big-explosion",
 	flags = {
-		"placeable-neutral",
 		"placeable-player",
 		"player-creation",
 		"not-rotatable"

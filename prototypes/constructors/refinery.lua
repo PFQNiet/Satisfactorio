@@ -64,7 +64,6 @@ local refinery = {
 	},
 	working_sound = data.raw['assembling-machine']['chemical-plant'].working_sound,
 	flags = {
-		"placeable-neutral",
 		"placeable-player",
 		"player-creation"
 	},

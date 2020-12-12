@@ -27,7 +27,6 @@ local burner = {
 	},
 	working_sound = data.raw['furnace']['stone-furnace'].working_sound,
 	flags = {
-		"placeable-neutral",
 		"placeable-player",
 		"player-creation",
 		"no-automated-item-removal",
