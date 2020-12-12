@@ -44,8 +44,6 @@ local base = {
 	render_layer = "lower-object",
 	collision_box = {{-6.7,-3.2},{6.7,3.2}},
 	collision_mask = {train_platform_layer},
-	corpse = "big-remnants",
-	dying_explosion = "big-explosion",
 	flags = {
 		"placeable-player",
 		"player-creation",
@@ -81,8 +79,6 @@ local collision = {
 	icon_size = 64,
 	collision_box = {{-2.7,-3.2},{2.7,3.2}},
 	collision_mask = {"object-layer", "floor-layer", "water-tile"},
-	corpse = "big-remnants",
-	dying_explosion = "big-explosion",
 	flags = {
 		"placeable-off-grid"
 	},

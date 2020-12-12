@@ -6,8 +6,6 @@ local miner = {
 	},
 	collision_box = {{-4.2,-4.2},{4.2,4.2}},
 	collision_mask = {"item-layer","object-layer","player-layer"},
-	corpse = "big-remnants",
-	dying_explosion = "big-explosion",
 	energy_source = {type = "void"},
 	energy_usage = "200MW",
 	working_sound = data.raw['mining-drill']['pumpjack'].working_sound,
@@ -47,8 +45,6 @@ local interface = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	collision_box = {{-4.2,-4.2},{4.2,4.2}},
-	corpse = "big-remnants",
-	dying_explosion = "big-explosion",
 	minable = {
 		mining_time = 1,
 		result = name

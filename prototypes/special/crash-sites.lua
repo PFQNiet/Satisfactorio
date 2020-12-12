@@ -60,8 +60,6 @@ local interface = {
 	icon_mipmaps = 4,
 	icon_size = 64,
 	collision_box = ship.collision_box,
-	corpse = "big-remnants",
-	dying_explosion = "big-explosion",
 	flags = {
 		"placeable-off-grid"
 	},

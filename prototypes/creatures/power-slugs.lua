@@ -22,8 +22,6 @@ local green = {
 		size = {64,64},
 	},
 	collision_box = {{-0.8,-0.8},{0.8,0.8}},
-	corpse = "big-remnants",
-	dying_explosion = "big-explosion",
 	flags = {
 		"placeable-neutral",
 		"placeable-off-grid",
@@ -48,8 +46,6 @@ local greendec = {
 		size = {64,64},
 	},
 	collision_box = {{-0.8,-0.8},{0.8,0.8}},
-	corpse = "big-remnants",
-	dying_explosion = "big-explosion",
 	flags = {
 		"placeable-player"
 	},
@@ -119,8 +115,6 @@ local yellow = {
 		size = {64,64},
 	},
 	collision_box = {{-0.8,-0.8},{0.8,0.8}},
-	corpse = "big-remnants",
-	dying_explosion = "big-explosion",
 	flags = {
 		"placeable-neutral",
 		"placeable-off-grid",
@@ -145,8 +139,6 @@ local yellowdec = {
 		size = {64,64},
 	},
 	collision_box = {{-0.8,-0.8},{0.8,0.8}},
-	corpse = "big-remnants",
-	dying_explosion = "big-explosion",
 	flags = {
 		"placeable-player"
 	},
@@ -216,8 +208,6 @@ local purple = {
 		size = {64,64},
 	},
 	collision_box = {{-0.8,-0.8},{0.8,0.8}},
-	corpse = "big-remnants",
-	dying_explosion = "big-explosion",
 	flags = {
 		"placeable-neutral",
 		"placeable-off-grid",
@@ -242,8 +232,6 @@ local purpledec = {
 		size = {64,64},
 	},
 	collision_box = {{-0.8,-0.8},{0.8,0.8}},
-	corpse = "big-remnants",
-	dying_explosion = "big-explosion",
 	flags = {
 		"placeable-player"
 	},

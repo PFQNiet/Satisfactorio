@@ -7,8 +7,6 @@ local pm = {
 		size = {32,32}
 	},
 	collision_box = {{-0.2,-0.2},{0.2,0.2}},
-	corpse = "small-remnants",
-	dying_explosion = "explosion",
 	energy_source = {type="void"},
 	energy_usage = "1W",
 	open_sound = data.raw['mining-drill']['burner-mining-drill'].open_sound,
@@ -38,8 +36,6 @@ local pm = {
 
 local pmbox = {
 	collision_box = {{-0.2,-0.2},{0.2,0.2}},
-	corpse = "small-remnants",
-	dying_explosion = "explosion",
 	enable_inventory_bar = false,
 	flags = {
 		"not-on-map",

@@ -25,8 +25,6 @@ local miner = {
 		}
 	},
 	collision_box = {{-2.2,-6.2},{2.2,2.2}},
-	corpse = "big-remnants",
-	dying_explosion = "big-explosion",
 	energy_source = {
 		type = "electric",
 		usage_priority = "secondary-input"

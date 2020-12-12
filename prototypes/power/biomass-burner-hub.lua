@@ -5,8 +5,6 @@ local burner = {
 		size = {96,96},
 	},
 	collision_box = {{-1.2,-1.2},{1.2,1.2}},
-	corpse = "big-remnants",
-	dying_explosion = "big-explosion",
 	energy_source = {
 		type = "electric",
 		usage_priority = "secondary-output"

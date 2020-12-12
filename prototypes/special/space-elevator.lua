@@ -19,10 +19,8 @@ local elevator = {
 		}
 	},
 	collision_box = {{-13.21,-13.2},{13.21,13.2}},
-	corpse = "big-remnants",
 	crafting_categories = {"space-elevator"},
 	crafting_speed = 1,
-	dying_explosion = "big-explosion",
 	energy_source = {type="void"},
 	energy_usage = "1W",
 	open_sound = {

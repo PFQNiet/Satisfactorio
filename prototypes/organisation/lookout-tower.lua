@@ -13,8 +13,6 @@ local tower = {
 	collision_box = {{-1.7,-1.7},{1.7,1.7}},
 	collision_mask = {"item-layer", "object-layer", "water-tile"},
 	selection_box = {{-2,-2},{2,2}},
-	corpse = "big-remnants",
-	dying_explosion = "big-explosion",
 	flags = {
 		"placeable-player",
 		"player-creation",

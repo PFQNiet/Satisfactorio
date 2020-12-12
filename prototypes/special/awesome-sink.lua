@@ -40,8 +40,6 @@ local base = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	collision_box = {{-3.7,-3.2},{3.7,3.2}},
-	corpse = "big-remnants",
-	dying_explosion = "big-explosion",
 	flags = {
 		"placeable-player",
 		"player-creation"
@@ -64,8 +62,6 @@ local base = {
 
 local storage = {
 	collision_box = {{-2.2,-2.2},{2.2,2.2}},
-	corpse = "big-remnants",
-	dying_explosion = "big-explosion",
 	enable_inventory_bar = false,
 	flags = {
 		"placeable-off-grid", -- it goes between two grid squares

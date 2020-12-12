@@ -41,8 +41,6 @@ local base = {
 	render_layer = "lower-object",
 	collision_box = {{-6.7,-3.2},{6.7,3.2}},
 	collision_mask = {train_platform_layer},
-	corpse = "big-remnants",
-	dying_explosion = "big-explosion",
 	flags = {
 		"placeable-player",
 		"player-creation",
@@ -78,8 +76,6 @@ local walkable = {
 	icon_size = 64,
 	collision_box = {{-2.7,-3.2},{2.7,3.2}},
 	collision_mask = {"object-layer", "floor-layer", "water-tile"},
-	corpse = "big-remnants",
-	dying_explosion = "big-explosion",
 	flags = {
 		"placeable-off-grid"
 	},
@@ -99,8 +95,6 @@ local collision = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	collision_box = {{-2.7,-3.2},{2.7,3.2}},
-	corpse = "big-remnants",
-	dying_explosion = "big-explosion",
 	flags = {
 		"placeable-off-grid"
 	},
@@ -112,8 +106,6 @@ local collision = {
 local storage = {
 	collision_box = {{-2.2,-2.2},{2.2,2.2}},
 	collision_mask = {},
-	corpse = "big-remnants",
-	dying_explosion = "big-explosion",
 	enable_inventory_bar = false,
 	flags = {
 		"not-on-map"

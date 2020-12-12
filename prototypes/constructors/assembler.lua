@@ -21,24 +21,16 @@ local assembler = {
 		}
 	},
 	collision_box = {{-2.2,-3.2},{2.2,3.2}},
-	corpse = "big-remnants",
 	crafting_categories = {"assembling"},
 	crafting_speed = 1,
-	dying_explosion = "big-explosion",
 	energy_source = {
 		type = "electric",
 		usage_priority = "secondary-input",
 		drain = "0W"
 	},
 	energy_usage = "15MW",
-	open_sound = {
-		filename = "__base__/sound/machine-open.ogg",
-		volume = 0.5
-	},
-	close_sound = {
-		filename = "__base__/sound/machine-close.ogg",
-		volume = 0.5
-	},
+	open_sound = data.raw['assembling-machine']['assembling-machine-2'].open_sound,
+	close_sound = data.raw['assembling-machine']['assembling-machine-2'].close_sound,
 	working_sound = data.raw['assembling-machine']['assembling-machine-2'].working_sound,
 	flags = {
 		"placeable-player",

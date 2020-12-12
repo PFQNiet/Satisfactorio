@@ -20,10 +20,8 @@ local mam = {
 		}
 	},
 	collision_box = {{-1.7,-0.7},{1.7,0.7}},
-	corpse = "big-remnants",
 	crafting_categories = {"mam"},
 	crafting_speed = 1,
-	dying_explosion = "big-explosion",
 	energy_source = {type="void"},
 	energy_usage = "1W",
 	open_sound = {

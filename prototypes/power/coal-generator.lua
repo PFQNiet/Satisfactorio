@@ -43,8 +43,6 @@ local placeholder = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	collision_box = {{-2.2,-5.7},{2.2,5.7}},
-	corpse = "big-remnants",
-	dying_explosion = "big-explosion",
 	flags = {
 		"placeable-player",
 		"player-creation"
@@ -59,8 +57,6 @@ local placeholder = {
 local boiler = {
 	animation = empty_sprite,
 	collision_box = {{-2.2,-1.7},{2.2,1.7}},
-	corpse = "big-remnants",
-	dying_explosion = "big-explosion",
 	energy_source = {
 		type = "burner",
 		fuel_category = "carbon",
@@ -188,8 +184,6 @@ local generator_ne = {
 	horizontal_animation = empty_sprite,
 	vertical_animation = empty_sprite,
 	collision_box = {{-2.2,-3.7},{2.2,3.7}},
-	corpse = "big-remnants",
-	dying_explosion = "big-explosion",
 	energy_source = {
 		type = "electric",
 		usage_priority = "secondary-output"

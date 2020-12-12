@@ -22,10 +22,8 @@ local refinery = {
 		}
 	},
 	collision_box = {{-3.2,-4.7},{3.2,4.7}},
-	corpse = "big-remnants",
 	crafting_categories = {"refining"},
 	crafting_speed = 1,
-	dying_explosion = "big-explosion",
 	energy_source = {
 		type = "electric",
 		usage_priority = "secondary-input",
@@ -54,14 +52,8 @@ local refinery = {
 			pipe_covers = pipe_covers
 		}
 	},
-	open_sound = {
-		filename = "__base__/sound/machine-open.ogg",
-		volume = 0.5
-	},
-	close_sound = {
-		filename = "__base__/sound/machine-close.ogg",
-		volume = 0.5
-	},
+	open_sound = data.raw['assembling-machine']['chemical-plant'].open_sound,
+	close_sound = data.raw['assembling-machine']['chemical-plant'].close_sound,
 	working_sound = data.raw['assembling-machine']['chemical-plant'].working_sound,
 	flags = {
 		"placeable-player",

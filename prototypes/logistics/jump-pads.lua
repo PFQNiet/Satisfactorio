@@ -38,8 +38,6 @@ local interface = {
 	icon_size = 64,
 	collision_box = {{-1.2,-1.2},{1.2,1.2}},
 	collision_mask = {"object-layer","floor-layer","water-tile"},
-	corpse = "big-remnants",
-	dying_explosion = "big-explosion",
 	flags = {
 		"placeable-player",
 		"player-creation"
@@ -240,8 +238,6 @@ interface = {
 	icon_size = 64,
 	collision_box = {{-2.2,-2.2},{2.2,2.2}},
 	collision_mask = {"object-layer","floor-layer","water-tile"},
-	corpse = "big-remnants",
-	dying_explosion = "big-explosion",
 	flags = {
 		"placeable-player",
 		"player-creation",

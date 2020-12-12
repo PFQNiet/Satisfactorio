@@ -20,8 +20,6 @@ local beacon = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	collision_box = {{-0.2,-0.2},{0.2,0.2}},
-	corpse = "small-remnants",
-	dying_explosion = "explosion",
 	flags = {
 		"placeable-player",
 		"player-creation"

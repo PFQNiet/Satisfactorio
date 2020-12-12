@@ -24,8 +24,6 @@ local extractor = {
 	},
 	collision_box = {{-4.7,-4.7},{4.7,4.7}},
 	collision_mask = {"ground-tile","object-layer",foundation_layer},
-	corpse = "big-remnants",
-	dying_explosion = "big-explosion",
 	energy_source = {
 		type = "electric",
 		usage_priority = "secondary-input"
@@ -81,8 +79,6 @@ local placeholder = {
 	icon_size = 64,
 	collision_box = {{-4.7,-4.7},{4.7,4.7}},
 	collision_mask = {"ground-tile","object-layer",foundation_layer},
-	corpse = "big-remnants",
-	dying_explosion = "big-explosion",
 	flags = {
 		"placeable-player",
 		"player-creation"

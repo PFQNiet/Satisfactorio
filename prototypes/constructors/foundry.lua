@@ -21,24 +21,16 @@ local smelter = {
 		}
 	},
 	collision_box = {{-2.2,-1.7},{2.2,1.7}},
-	corpse = "big-remnants",
 	crafting_categories = {"foundry"},
 	crafting_speed = 1,
-	dying_explosion = "big-explosion",
 	energy_source = {
 		type = "electric",
 		usage_priority = "secondary-input",
 		drain = "0W"
 	},
 	energy_usage = "16MW",
-	open_sound = {
-		filename = "__base__/sound/machine-open.ogg",
-		volume = 0.5
-	},
-	close_sound = {
-		filename = "__base__/sound/machine-close.ogg",
-		volume = 0.5
-	},
+	open_sound = data.raw['furnace']['electric-furnace'].open_sound,
+	close_sound = data.raw['furnace']['electric-furnace'].close_sound,
 	working_sound = data.raw['furnace']['electric-furnace'].working_sound,
 	flags = {
 		"placeable-player",

@@ -20,10 +20,8 @@ local shop = {
 		}
 	},
 	collision_box = {{-1.2,-0.7},{1.2,0.7}},
-	corpse = "big-remnants",
 	crafting_categories = {"awesome-shop"},
 	crafting_speed = 1,
-	dying_explosion = "big-explosion",
 	energy_source = {type = "void"},
 	energy_usage = "1W",
 	open_sound = {

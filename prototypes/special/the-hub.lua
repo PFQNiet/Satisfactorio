@@ -24,10 +24,8 @@ local hub = {
 		}
 	},
 	collision_box = {{-5.3,-3.3},{7.3,3.3}},
-	corpse = "big-remnants",
 	crafting_categories = {"nil"},
 	crafting_speed = 1,
-	dying_explosion = "big-explosion",
 	energy_source = {type="void"},
 	energy_usage = "1W",
 	flags = {
@@ -56,10 +54,8 @@ local hubterminal = {
 		shift = {0,-0.015625}
 	},
 	collision_box = {{-0.35,-0.85},{0.35,0.85}},
-	corpse = "small-remnants",
 	crafting_categories = {"hub-progressing"},
 	crafting_speed = 1,
-	dying_explosion = "explosion",
 	energy_source = {type="void"},
 	energy_usage = "1W",
 	open_sound = {

@@ -12,8 +12,6 @@ local lab = {
 	collision_mask = {},
 	inputs = {},
 	researching_speed = 1,
-	corpse = "big-remnants",
-	dying_explosion = "big-explosion",
 	energy_source = {type="void"},
 	energy_usage = "1W",
 	flags = {"hidden","hide-alt-info"},

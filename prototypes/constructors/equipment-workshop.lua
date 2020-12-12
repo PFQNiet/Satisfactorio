@@ -19,20 +19,12 @@ local workshop = {
 		}
 	},
 	collision_box = {{-2.2,-1.2},{2.2,1.2}},
-	corpse = "big-remnants",
 	crafting_categories = {"equipment"},
 	crafting_speed = 1,
-	dying_explosion = "big-explosion",
 	energy_source = {type="void"},
 	energy_usage = "1W",
-	open_sound = {
-		filename = "__base__/sound/machine-open.ogg",
-		volume = 0.5
-	},
-	close_sound = {
-		filename = "__base__/sound/machine-close.ogg",
-		volume = 0.5
-	},
+	open_sound = data.raw['assembling-machine']['assembling-machine-1'].open_sound,
+	close_sound = data.raw['assembling-machine']['assembling-machine-1'].close_sound,
 	working_sound = table.deepcopy(data.raw['assembling-machine']['assembling-machine-1'].working_sound),
 	flags = {
 		"placeable-player",

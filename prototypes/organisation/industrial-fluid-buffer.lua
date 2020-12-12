@@ -13,8 +13,6 @@ local tank = {
 		volume = 0.5
 	},
 	collision_box = {{-3.2,-3.2},{3.2,3.2}},
-	corpse = "big-remnants",
-	dying_explosion = "big-explosion",
 	flags = {
 		"placeable-player",
 		"player-creation"

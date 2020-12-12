@@ -48,10 +48,8 @@ data:extend({
 			size = {64,64}
 		},
 		collision_box = {{-0.7,-0.7},{0.7,0.7}},
-		corpse = "big-remnants",
 		crafting_categories = {"resource-scanner"},
 		crafting_speed = 1,
-		dying_explosion = "big-explosion",
 		energy_source = {type="void"},
 		energy_usage = "1W",
 		flags = {},
@@ -70,10 +68,8 @@ data:extend({
 			size = {64,64}
 		},
 		collision_box = {{-0.7,-0.7},{0.7,0.7}},
-		corpse = "big-remnants",
 		crafting_categories = {"object-scanner"},
 		crafting_speed = 1,
-		dying_explosion = "big-explosion",
 		energy_source = {type="void"},
 		energy_usage = "1W",
 		flags = {},
