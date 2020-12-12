@@ -11,6 +11,8 @@ local pm = {
 	dying_explosion = "explosion",
 	energy_source = {type="void"},
 	energy_usage = "1W",
+	open_sound = data.raw['mining-drill']['burner-mining-drill'].open_sound,
+	close_sound = data.raw['mining-drill']['burner-mining-drill'].close_sound,
 	working_sound = data.raw['mining-drill']['burner-mining-drill'].working_sound,
 	flags = {
 		"placeable-player",
@@ -50,14 +52,8 @@ local pmbox = {
 	icon_size = pm.icon_size,
 	inventory_size = 1,
 	max_health = 1,
-	open_sound = {
-		filename = "__base__/sound/machine-open.ogg",
-		volume = 0.5
-	},
-	close_sound = {
-		filename = "__base__/sound/machine-close.ogg",
-		volume = 0.5
-	},
+	open_sound = data.raw['mining-drill']['burner-mining-drill'].open_sound,
+	close_sound = data.raw['mining-drill']['burner-mining-drill'].close_sound,
 	minable = {
 		mining_time = 0.5,
 		result = name,

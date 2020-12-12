@@ -56,6 +56,14 @@ local base = {
 		result = name
 	},
 	remove_decoratives = "true",
+	open_sound = {
+		filename = "__base__/sound/machine-open.ogg",
+		volume = 0.5
+	},
+	close_sound = {
+		filename = "__base__/sound/machine-close.ogg",
+		volume = 0.5
+	},
 	selection_box = {{-7,-3.5},{7,3.5}},
 	selection_priority = 40
 }

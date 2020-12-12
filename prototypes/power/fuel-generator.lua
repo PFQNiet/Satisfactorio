@@ -48,6 +48,8 @@ local storage = {
 	},
 	selection_box = {{-5,-5},{5,5}},
 	selection_priority = 40,
+	open_sound = data.raw['assembling-machine']['oil-refinery'].open_sound,
+	close_sound = data.raw['assembling-machine']['oil-refinery'].close_sound,
 	working_sound = data.raw['assembling-machine']['oil-refinery'].working_sound
 }
 local interface = {

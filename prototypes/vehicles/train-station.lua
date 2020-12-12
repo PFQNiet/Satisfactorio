@@ -71,6 +71,8 @@ local base = {
 		result = name
 	},
 	remove_decoratives = "true",
+	open_sound = stop.open_sound,
+	close_sound = stop.close_sound,
 	selection_box = {{-7,-3.5},{7,3.5}},
 	selection_priority = 40
 }

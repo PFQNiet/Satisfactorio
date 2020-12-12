@@ -31,6 +31,8 @@ local extractor = {
 		usage_priority = "secondary-input"
 	},
 	energy_usage = "20MW",
+	open_sound = data.raw['assembling-machine']['chemical-plant'].open_sound,
+	close_sound = data.raw['assembling-machine']['chemical-plant'].close_sound,
 	working_sound = data.raw['assembling-machine']['chemical-plant'].working_sound,
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,

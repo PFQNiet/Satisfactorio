@@ -50,6 +50,14 @@ local base = {
 		mining_time = 1,
 		result = name
 	},
+	open_sound = {
+		filename = "__base__/sound/metallic-chest-open.ogg",
+		volume = 0.5
+	},
+	close_sound = {
+		filename = "__base__/sound/metallic-chest-close.ogg",
+		volume = 0.5
+	},
 	selection_box = {{-4,-3.5},{4,3.5}},
 	selection_priority = 40
 }

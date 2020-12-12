@@ -32,6 +32,8 @@ local miner = {
 		usage_priority = "secondary-input"
 	},
 	energy_usage = "40MW",
+	open_sound = data.raw['mining-drill']['pumpjack'].open_sound,
+	close_sound = data.raw['mining-drill']['pumpjack'].close_sound,
 	working_sound = data.raw['mining-drill']['pumpjack'].working_sound,
 	flags = {
 		"placeable-player",
