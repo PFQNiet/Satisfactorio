@@ -118,8 +118,8 @@ local function onVehicle(event)
 			if not travel[player.index] then
 				local enter = entity.surface.find_entity(entrance,entity.position)
 				local driver = entity.get_driver()
-				if driver ~= (driver.is_player() and player or player.character) or enter.energy == 0 then
-					-- eject passengers, driver only; must have power
+				if enter.energy == 0 then
+					-- must have power
 					player.driving = false
 					player.teleport(entity.position)
 					local exitpos = {

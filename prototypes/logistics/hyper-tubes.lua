@@ -274,6 +274,7 @@ local vehicle = {
 		fuel_inventory_size = 0,
 		render_no_power_icon = false
 	},
+	allow_passengers = false,
 	consumption = "1W",
 	effectivity = 0.5,
 	weight = 1,
