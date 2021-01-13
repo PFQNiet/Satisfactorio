@@ -284,11 +284,21 @@ local function onMove(event)
 	end
 end
 
+local function alternativeHardDrives()
+	if game.default_map_gen_settings.autoplace_controls['x-crashsite'].size == 0 then
+		for _,force in pairs(game.forces) do
+			force.recipes['awesome-shop-hard-drive'].enabled = true
+		end
+	end
+end
+
 return {
 	createCrashSite = createCrashSite,
 
 	on_init = function()
 		global.crash_site = global.crash_site or script_data
+		-- if crash sites are disabled, enable the awesome-shop-hard-drive recipe
+		alternativeHardDrives()
 	end,
 	on_load = function()
 		script_data = global.crash_site or script_data
@@ -298,6 +308,7 @@ return {
 		[defines.events.on_gui_closed] = onGuiClosed,
 		[defines.events.on_gui_click] = onGuiClick,
 
-		[defines.events.on_player_changed_position] = onMove
+		[defines.events.on_player_changed_position] = onMove,
+		[defines.events.on_force_created] = alternativeHardDrives
 	}
 }
