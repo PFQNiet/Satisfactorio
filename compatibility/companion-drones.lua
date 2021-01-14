@@ -1,3 +1,5 @@
+error("Satisfactorio is no longer compatible with Companion Drones")
+
 -- add compatibility for Companion Drones
 local mod = "Companion_Drones"
 if mods[mod] then

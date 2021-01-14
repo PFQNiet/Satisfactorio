@@ -140,8 +140,11 @@ Date: 2020.11.30
     - Inventory trash slot, which can be used to discard any items cluttering your inventory.
     - Sort button added to various storage containers and cars.
 ---------------------------------------------------------------------------------------------------
-Version: 0.3.4
-Date: 2020.12.??
+Version: 0.4.0
+Date: 2021.01.14
+  Major Features:
+    - Build Gun! Now instead of fiddling with crafting and dismantling buildings, just pick a building and place away!
+    - Mining a building now gives the ingredients back, so they can be recycled.
   Balancing:
     - Increase spawn rate of Geyser
   Bugfixes:
@@ -153,3 +156,5 @@ Date: 2020.12.??
     - If Crash Sites are disabled in map generation, Hard Drives can be purchased from the AWESOME Shop
   Ease of use:
     - Added "pipe length" info to pipe GUI for better planning of pipelines
+  Modding:
+    - No longer compatible with Companion Drones, due to the Build Gun

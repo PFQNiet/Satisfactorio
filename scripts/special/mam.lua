@@ -294,7 +294,7 @@ local function onGuiOpened(event)
 				recipe = game.recipe_prototypes[effect.recipe]
 			else
 				title = {"technology-name."..name}
-				image = "technology/mam-sulfur-inflated-pocket-dimension"
+				image = "utility/character_inventory_slots_bonus_modifier_icon"
 				text = {"modifier-description.character-inventory-slots-bonus",effect.modifier}
 			end
 			local col = columns.add{

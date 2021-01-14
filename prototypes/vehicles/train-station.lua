@@ -160,6 +160,7 @@ combinator.icon = "__Satisfactorio__/graphics/icons/"..name..".png"
 combinator.icon_size = 64
 combinator.icon_mipmaps = 1
 combinator.collision_mask = {}
+combinator.minable = nil
 combinator.flags = {
 	"not-on-map",
 	"not-rotatable"

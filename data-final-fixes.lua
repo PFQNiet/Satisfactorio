@@ -27,3 +27,5 @@ for _,entity in pairs(maskutil.collect_prototypes_colliding_with_mask{"object-la
 		entity.collision_mask = mask
 	end
 end
+
+require("prototypes.build-gun")

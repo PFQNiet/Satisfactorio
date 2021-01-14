@@ -42,7 +42,7 @@ local hub = {
 		result = name
 	},
 	name = name,
-	selection_box = {{-6.5,-3.5},{6.5,3.5}},
+	selection_box = {{-5.5,-3.5},{7.5,3.5}},
 	type = "assembling-machine",
 	return_ingredients_on_change = false
 }

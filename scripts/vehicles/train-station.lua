@@ -5,6 +5,7 @@
 local io = require(modpath.."scripts.lualib.input-output")
 local getitems = require(modpath.."scripts.lualib.get-items-from")
 local math2d = require("math2d")
+local refundEntity = require(modpath.."scripts.build-gun").refundEntity
 
 local station = "train-station"
 local freight = "freight-platform"
@@ -25,15 +26,11 @@ for i=0,45-1 do script_data.stations[i] = {} end
 
 local debounce_error = {}
 
-local function refundEntity(entity, reason, event)
+local function denyConstruction(entity, reason, event)
 	-- refund the entity and trigger an error message flying text (but only if event.tick is not too recent from the last one)
 	local player = entity.last_user
 	if player then
-		if not player.cursor_stack.valid_for_read then
-			player.cursor_stack.set_stack{name=entity.name,count=1}
-		else
-			player.insert{name=entity.name,count=1}
-		end
+		refundEntity(player, entity)
 		if not debounce_error[player.force.index] or debounce_error[player.force.index] < event.tick then
 			player.create_local_flying_text{
 				text = reason,
@@ -46,8 +43,8 @@ local function refundEntity(entity, reason, event)
 		end
 	else
 		entity.surface.spill_item_stack(entity.position, {name=entity.name,count=1}, false, nil, false)
+		entity.destroy()
 	end
-	entity.destroy()
 end
 
 local function assertPosition(entity, position)
@@ -69,20 +66,20 @@ local function onBuilt(event)
 		}
 		for _,collider in pairs(colliders) do
 			if collider ~= entity and collider.name ~= "straight-rail" then
-				return refundEntity(entity, {"cant-build-reason.entity-in-the-way",collider.localised_name or {"entity-name."..collider.name}}, event)
+				return denyConstruction(entity, {"cant-build-reason.entity-in-the-way",collider.localised_name or {"entity-name."..collider.name}}, event)
 			end
 			if collider.name == "straight-rail" then
 				-- only allowed on the central line, and even then only in the same direction
 				if collider.direction%4 ~= entity.direction%4 then -- rails are limited to north/east
-					return refundEntity(entity, {"cant-build-reason.entity-in-the-way",collider.localised_name or {"entity-name."..collider.name}}, event)
+					return denyConstruction(entity, {"cant-build-reason.entity-in-the-way",collider.localised_name or {"entity-name."..collider.name}}, event)
 				end
 				if entity.direction == defines.direction.north or entity.direction == defines.direction.south then
 					if collider.position.x ~= entity.position.x then
-						return refundEntity(entity, {"cant-build-reason.entity-in-the-way",collider.localised_name or {"entity-name."..collider.name}}, event)
+						return denyConstruction(entity, {"cant-build-reason.entity-in-the-way",collider.localised_name or {"entity-name."..collider.name}}, event)
 					end
 				else
 					if collider.position.y ~= entity.position.y then
-						return refundEntity(entity, {"cant-build-reason.entity-in-the-way",collider.localised_name or {"entity-name."..collider.name}}, event)
+						return denyConstruction(entity, {"cant-build-reason.entity-in-the-way",collider.localised_name or {"entity-name."..collider.name}}, event)
 					end
 				end
 			end
@@ -95,7 +92,7 @@ local function onBuilt(event)
 			stationpos.y = math.floor(stationpos.y+0.001)
 			-- stationpos should now be on the 2x2 grid, that is the grid where centre points are ODD
 			if stationpos.x%2 ~= 1 or stationpos.y%2 ~= 1 then
-				return refundEntity(entity, {"message.entity-must-be-placed-on-rail-grid",{"entity-name."..entity.name}}, event)
+				return denyConstruction(entity, {"message.entity-must-be-placed-on-rail-grid",{"entity-name."..entity.name}}, event)
 			end
 
 			local stop = entity.surface.create_entity{
@@ -139,7 +136,7 @@ local function onBuilt(event)
 				or assertPosition(entity.surface.find_entity(fluid, before), before) or assertPosition(entity.surface.find_entity(fluid, behind), behind)
 				or assertPosition(entity.surface.find_entity(empty, before), before) or assertPosition(entity.surface.find_entity(empty, behind), behind)
 			) then
-				return refundEntity(entity, {"message.entity-must-be-placed-next-to-platform",{"entity-name."..entity.name}}, event)
+				return denyConstruction(entity, {"message.entity-must-be-placed-next-to-platform",{"entity-name."..entity.name}}, event)
 			end
 
 			if entity.name == freight then

@@ -11,6 +11,8 @@ local car = entrance.."-car"
 local script_data = {}
 local debounce_error = {}
 
+local refundEntity = require(modpath.."scripts.build-gun").refundEntity
+
 local function isHyperTube(entity)
 	return entity.name == tube or entity.name == underground or entity.name == entrance
 end
@@ -49,7 +51,7 @@ local function onBuilt(event)
 	if isHyperTube(entity) then
 		if not isValidHyperTube(entity) then
 			local player = entity.last_user
-			player.insert{name=entity.name,count=1}
+			refundEntity(player, entity)
 			if not debounce_error[player.force.index] or debounce_error[player.force.index] < event.tick then
 				player.create_local_flying_text{
 					text = {"message.hyper-tube-no-junction"},
@@ -60,7 +62,6 @@ local function onBuilt(event)
 				}
 				debounce_error[player.force.index] = event.tick + 60
 			end
-			entity.destroy()
 			return
 		end
 	end
