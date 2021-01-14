@@ -4,6 +4,7 @@
 local util = require("util")
 local string = require(modpath.."scripts.lualib.string")
 local io = require(modpath.."scripts.lualib.input-output")
+local refundEntity = require(modpath.."scripts.build-gun").refundEntity
 
 local elevator = "space-elevator"
 
@@ -17,37 +18,24 @@ local function findElevatorForForce(force)
 	return script_data.elevator[force.index]
 end
 
-local function refundEntity(entity, reason, event)
-	-- refund the entity and trigger an error message flying text (but only if event.tick is not too recent from the last one)
-	local player = entity.last_user
-	if player then
-		if not player.cursor_stack.valid_for_read then
-			player.cursor_stack.set_stack{name=entity.name,count=1}
-		else
-			player.insert{name=entity.name,count=1}
-		end
-		if not debounce_error[player.force.index] or debounce_error[player.force.index] < event.tick then
-			player.create_local_flying_text{
-				text = reason,
-				create_at_cursor = true
-			}
-			player.play_sound{
-				path = "utility/cannot_build"
-			}
-			debounce_error[player.force.index] = event.tick + 60
-		end
-	else
-		entity.surface.spill_item_stack(entity.position, {name=entity.name,count=1}, false, nil, false)
-	end
-	entity.destroy()
-end
-
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not entity or not entity.valid then return end
 	if entity.name == elevator then
 		if findElevatorForForce(entity.force) then
-			refundEntity(entity, {"message.space-elevator-only-one-allowed"}, event)
+			local player = entity.last_user
+			refundEntity(player, entity)
+			if not debounce_error[player.force.index] or debounce_error[player.force.index] < event.tick then
+				player.create_local_flying_text{
+					text = {"message.space-elevator-only-one-allowed"},
+					create_at_cursor = true
+				}
+				player.play_sound{
+					path = "utility/cannot_build"
+				}
+				debounce_error[player.force.index] = event.tick + 60
+			end
+			return
 		else
 			-- position hack to avoid it trying to drop stuff in the rocket silo
 			io.addInput(entity, {-10,13}, {position={entity.position.x-8,entity.position.y}})

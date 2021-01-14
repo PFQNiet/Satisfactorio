@@ -38,6 +38,7 @@ handler.add_lib(require(modpath.."scripts.lualib.enemy-spawning"))
 handler.add_lib(require(modpath.."scripts.lualib.self-driving"))
 handler.add_lib(require(modpath.."scripts.lualib.radioactivity"))
 handler.add_lib(require(modpath.."scripts.lualib.omnilab"))
+handler.add_lib(require(modpath.."scripts.build-gun"))
 handler.add_lib(require(modpath.."scripts.tech-extras"))
 handler.add_lib(require(modpath.."scripts.inventory-sort-and-trash"))
 handler.add_lib(require(modpath.."scripts.map-tweaks"))
@@ -56,5 +57,5 @@ handler.add_lib({
 })
 
 -- Control-time Mod Compatibility
-handler.add_lib(require(modpath.."compatibility.companion-drones-control"))
+-- handler.add_lib(require(modpath.."compatibility.companion-drones-control")) -- no longer compatible
 handler.add_lib(require(modpath.."compatibility.factorissimo2-control"))

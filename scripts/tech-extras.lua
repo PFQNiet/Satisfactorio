@@ -5,7 +5,8 @@ local function onResearch(event)
 	for _,effect in pairs(technology.effects) do
 		if effect.type == "unlock-recipe" then
 			if technology.force.recipes[effect.recipe.."-undo"] then
-				technology.force.recipes[effect.recipe.."-undo"].enabled = true
+				-- build gun: don't enable these any more
+				-- technology.force.recipes[effect.recipe.."-undo"].enabled = true
 			end
 			if technology.force.recipes[effect.recipe.."-manual"] then
 				technology.force.recipes[effect.recipe.."-manual"].enabled = true

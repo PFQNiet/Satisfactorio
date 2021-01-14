@@ -1,4 +1,5 @@
 return { -- ["item"] = {cost, stack}
+	["hard-drive"] = {10,1},
 	--[[
 	["adequate-pioneering"] = {25,1},
 	["pretty-good-pioneering"] = {50,1},

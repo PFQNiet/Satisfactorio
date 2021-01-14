@@ -1,3 +1,5 @@
+error("Satisfactorio is no longer compatible with Companion Drones")
+
 if not script.active_mods['Companion_Drones'] then return {} end
 local paytable = require(modpath.."constants.sink-tradein")
 
