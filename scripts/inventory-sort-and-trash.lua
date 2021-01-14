@@ -86,15 +86,24 @@ local function onGuiClick(event)
 						text = {"message.trash-slot-hub-parts",stack.name,stack.prototype.localised_name},
 						create_at_cursor = true
 					}
+					player.play_sound{
+						path = "utility/cannot_build"
+					}
 				elseif stack.name == "nuclear-waste" then
 					player.create_local_flying_text{
 						text = {"message.trash-slot-nuclear-waste",stack.name,stack.prototype.localised_name},
 						create_at_cursor = true
 					}
+					player.play_sound{
+						path = "utility/cannot_build"
+					}
 				elseif stack.prototype.place_result and not sinkable[stack.name] then
 					player.create_local_flying_text{
 						text = {"message.trash-slot-building",stack.name,stack.prototype.localised_name},
 						create_at_cursor = true
+					}
+					player.play_sound{
+						path = "utility/cannot_build"
 					}
 				else
 					if event.button == defines.mouse_button_type.right and stack.count > 1 then

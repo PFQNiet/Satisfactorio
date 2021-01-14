@@ -1,6 +1,8 @@
 -- uses global.player_build_error_debounce to track force -> last error tick to de-duplicate placement errors
 local debounce_error = {}
 
+local refundEntity = require(modpath.."scripts.build-gun").refundEntity
+
 -- prevent placement of transport belts if it would lead to a belt having more than one input
 local function isValidBelt(entity)
 	-- ensure this entity, and its output neighbour, have fewer than 2 input neighbours
@@ -30,7 +32,7 @@ local function onBuilt(event)
 	if belts[entity.name] then
 		if not isValidBelt(entity) then
 			local player = entity.last_user
-			player.insert{name=entity.name,count=1}
+			refundEntity(player, entity)
 			if not debounce_error[player.force.index] or debounce_error[player.force.index] < event.tick then
 				player.create_local_flying_text{
 					text = {"message.belt-no-naked-merging"},
@@ -41,7 +43,6 @@ local function onBuilt(event)
 				}
 				debounce_error[player.force.index] = event.tick + 60
 			end
-			entity.destroy()
 			return
 		end
 	end
