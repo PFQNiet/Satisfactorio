@@ -618,6 +618,15 @@ local function onInventoryChanged(event)
 		updateWantedList(player)
 	end
 end
+local function onBuilt(event)
+	-- when the player builds something, if it's in the to-do list, remove one
+	local recipe = game.recipe_prototypes[event.created_entity.name]
+	if not recipe then return end
+	local player = game.players[event.player_index]
+	if not script_data[player.index] then script_data[player.index] = {} end
+	local wanted = script_data[player.index]
+	updateItemRequestCount(player, recipe.name, math.max(0,(wanted[recipe.name] or 0) - 1))
+end
 
 return {
 	on_init = function()
@@ -639,6 +648,7 @@ return {
 		[defines.events.on_gui_elem_changed] = onGuiElemChanged,
 		[defines.events.on_gui_confirmed] = onGuiConfirmed,
 		[defines.events.on_gui_click] = onGuiClick,
-		[defines.events.on_player_main_inventory_changed] = onInventoryChanged
+		[defines.events.on_player_main_inventory_changed] = onInventoryChanged,
+		[defines.events.on_built_entity] = onBuilt
 	}
 }

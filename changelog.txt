@@ -158,3 +158,8 @@ Date: 2021.01.14
     - Added "pipe length" info to pipe GUI for better planning of pipelines
   Modding:
     - No longer compatible with Companion Drones, due to the Build Gun
+---------------------------------------------------------------------------------------------------
+Version: 0.4.1
+Date: 2021.01.14
+  Changes:
+    - Building something on your To Do list removes it from said list.
