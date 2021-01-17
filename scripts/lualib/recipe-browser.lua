@@ -317,7 +317,9 @@ local function updateItemRequestCount(player, name, count)
 	if count == 0 then
 		script_data[player.index][name] = nil
 		if table_size(script_data[player.index]) == 0 then
-			player.gui.screen['to-do-list'].visible = false
+			if player.gui.screen['to-do-list'] then
+				player.gui.screen['to-do-list'].visible = false
+			end
 			script_data[player.index] = nil
 		else
 			updateWantedList(player)
