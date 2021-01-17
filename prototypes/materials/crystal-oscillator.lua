@@ -32,7 +32,7 @@ local oscillatorrecipe2 = { -- in Manufacturer
 	result = name,
 	result_count = 2,
 	energy_required = 120,
-	category = "assembling",
+	category = "manufacturing",
 	enabled = false
 }
 
