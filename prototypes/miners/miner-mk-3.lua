@@ -59,10 +59,7 @@ local minerbox = {
 	collision_mask = {},
 	enable_inventory_bar = false,
 	flags = {
-		"not-on-map",
-		"not-blueprintable",
-		"not-deconstructable",
-		"no-copy-paste"
+		"not-on-map"
 	},
 	icon = miner.icon,
 	icon_size = miner.icon_size,

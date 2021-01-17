@@ -19,11 +19,7 @@ box.picture = empty_sprite
 box.minable.mining_time = 1
 box.placeable_by = {item=basename, count=1}
 box.fast_replaceable_group = ""
-if not box.flags then box.flags = {} end
-table.insert(box.flags, "not-on-map")
-table.insert(box.flags, "not-blueprintable")
-table.insert(box.flags, "no-copy-paste")
-table.insert(box.flags, "not-deconstructable")
+box.flags = {"not-on-map"}
 
 -- but in order to allow rotation of the box, we need a rotatable entity
 -- apparently constant combinator is the item of choice for that, so...

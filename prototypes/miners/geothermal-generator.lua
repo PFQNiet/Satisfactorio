@@ -65,10 +65,7 @@ local accumulator = {
 	discharge_cooldown = 0,
 	collision_box = {{-4.2,-4.2},{4.2,4.2}},
 	flags = {
-		"not-on-map",
-		"not-deconstructable",
-		"not-blueprintable",
-		"no-copy-paste"
+		"not-on-map"
 	},
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,

@@ -39,10 +39,7 @@ local pmbox = {
 	enable_inventory_bar = false,
 	flags = {
 		"not-on-map",
-		"not-blueprintable",
-		"not-deconstructable",
-		"no-automated-item-removal",
-		"no-copy-paste"
+		"no-automated-item-removal"
 	},
 	icon = pm.icon,
 	icon_size = pm.icon_size,

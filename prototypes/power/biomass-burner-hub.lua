@@ -25,14 +25,9 @@ local burner = {
 	},
 	working_sound = data.raw['furnace']['stone-furnace'].working_sound,
 	flags = {
-		"placeable-player",
-		"player-creation",
 		"no-automated-item-removal",
 		"no-automated-item-insertion",
-		"not-on-map",
-		"not-deconstructable",
-		"not-blueprintable",
-		"no-copy-paste"
+		"not-on-map"
 	},
 	icon = "__Satisfactorio__/graphics/icons/biomass-burner.png",
 	icon_size = 64,
@@ -56,11 +51,7 @@ local accumulator = {
 	discharge_cooldown = 0,
 	collision_box = burner.collision_box,
 	flags = {
-		"player-creation",
-		"not-on-map",
-		"not-deconstructable",
-		"not-blueprintable",
-		"no-copy-paste"
+		"not-on-map"
 	},
 	icon = "__Satisfactorio__/graphics/icons/biomass-burner.png",
 	icon_size = 64,

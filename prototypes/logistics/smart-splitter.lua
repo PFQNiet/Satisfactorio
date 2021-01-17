@@ -51,9 +51,7 @@ local bufferbox = {
 	collision_mask = {},
 	enable_inventory_bar = false,
 	flags = {
-		"not-blueprintable",
-		"not-deconstructable",
-		"no-copy-paste"
+		"hide-alt-info"
 	},
 	icon = splitter.icon,
 	icon_size = splitter.icon_size,

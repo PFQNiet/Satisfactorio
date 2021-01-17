@@ -118,11 +118,7 @@ pump.fluid_box.pipe_connections[1].position = {0,-1}
 pump.fluid_box.pipe_connections[2].position = {0,1}
 pump.placeable_by = {item=name,count=1}
 pump.next_upgrade = nil
-if not pump.flags then pump.flags = {} end
-table.insert(pump.flags, "not-on-map")
-table.insert(pump.flags, "not-blueprintable")
-table.insert(pump.flags, "no-copy-paste")
-table.insert(pump.flags, "not-deconstructable")
+pump.flags = {"not-on-map"}
 
 local storage = {
 	type = "storage-tank",

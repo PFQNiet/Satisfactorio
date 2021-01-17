@@ -49,9 +49,7 @@ local bufferbox = {
 	collision_mask = {},
 	enable_inventory_bar = false,
 	flags = {
-		"not-blueprintable",
-		"not-deconstructable",
-		"no-copy-paste"
+		"hide-alt-info"
 	},
 	icon = merger.icon,
 	icon_size = merger.icon_size,

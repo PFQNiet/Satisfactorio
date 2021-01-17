@@ -18,9 +18,6 @@ local inserter = {
 	selection_priority = 30,
 	flags = {
 		"not-on-map",
-		"not-deconstructable",
-		"not-blueprintable",
-		"no-copy-paste",
 		"placeable-off-grid"
 	},
 	allow_custom_vectors = true,

@@ -55,11 +55,7 @@ local accumulator = {
 	discharge_cooldown = 0,
 	collision_box = burner.collision_box,
 	flags = {
-		"player-creation",
-		"not-on-map",
-		"not-deconstructable",
-		"not-blueprintable",
-		"no-copy-paste"
+		"not-on-map"
 	},
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
