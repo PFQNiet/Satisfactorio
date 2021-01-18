@@ -120,7 +120,7 @@ for item,spec in pairs(prices) do
 		allow_as_intermediate = false,
 		hide_from_stats = true,
 		hide_from_player_crafting = true,
-		enabled = item == "iron-plate" or item == "iron-stick"
+		enabled = item == "iron-plate" or item == "iron-stick" or item == "power-shard"
 	}
 	data:extend({recipe})
 end

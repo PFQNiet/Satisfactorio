@@ -163,3 +163,7 @@ Version: 0.4.1
 Date: 2021.01.17
   Changes:
     - Building something on your To Do list removes it from said list.
+  Balancing:
+    - Added Power Shard as a purchaseable item from the AWESOME Shop.
+  Bugfixes:
+    - It was possible to merge belts when undergrounds were involved, particularly when flipping them.
