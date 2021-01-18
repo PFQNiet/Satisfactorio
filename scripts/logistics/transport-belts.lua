@@ -7,9 +7,12 @@ local refundEntity = require(modpath.."scripts.build-gun").refundEntity
 local function isValidBelt(entity)
 	-- ensure this entity, and its output neighbour, have fewer than 2 input neighbours
 	local neighbours = entity.belt_neighbours
-	if #neighbours.inputs > 1 then return false end
+	local max_allowed = (entity.type == "underground-belt" and entity.belt_to_ground_type == "output") and 0 or 1
+	if #neighbours.inputs > max_allowed then return false end
 	local out = neighbours.outputs[1]
-	if out and #out.belt_neighbours.inputs > 1 then return false end
+	if not out then return true end
+	max_allowed = (out.type == "underground-belt" and out.belt_to_ground_type == "output") and 0 or 1
+	if #out.belt_neighbours.inputs > max_allowed then return false end
 	return true
 end
 
@@ -51,11 +54,11 @@ local function onRotated(event)
 	local entity = event.entity
 	if not entity or not entity.valid then return end
 	if belts[entity.name] then
-		if not isValidBelt(entity) then
-			if event.entity.type == "underground-belt" then
-				event.entity.rotate()
+		if not isValidBelt(entity) or (entity.type == "underground-belt" and entity.neighbours and not isValidBelt(entity.neighbours)) then
+			if entity.type == "underground-belt" then
+				entity.rotate()
 			else
-				event.entity.direction = event.previous_direction
+				entity.direction = event.previous_direction
 			end
 			local player = game.players[event.player_index]
 			player.create_local_flying_text{
