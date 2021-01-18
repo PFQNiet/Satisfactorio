@@ -193,6 +193,7 @@ local function onResolutionChanged(event)
 	end
 end
 local function onTick(event)
+	if not game.map_settings.pollution.enabled then return end
 	local tick = event.tick
 	local bucket = tick % 1024
 	if #script_data.buckets[bucket] ~= 0 then
