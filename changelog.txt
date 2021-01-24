@@ -167,3 +167,9 @@ Date: 2021.01.17
     - Added Power Shard as a purchaseable item from the AWESOME Shop.
   Bugfixes:
     - It was possible to merge belts when undergrounds were involved, particularly when flipping them.
+---------------------------------------------------------------------------------------------------
+Version: 0.4.2
+Date: 2021.01.24
+  Changes:
+    - Entities with input/output now respond better to neighbouring belts by snapping their types
+    - This also removes the ability to directly chain buildings. There MUST be a belt between them

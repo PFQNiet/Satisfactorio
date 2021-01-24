@@ -32,7 +32,7 @@ local function refundEntity(player, entity)
 			)
 		end
 	end
-	entity.destroy()
+	entity.destroy{raise_destroy=true} -- allow IO to snap loader belts back
 end
 
 local function updateGUI(player)

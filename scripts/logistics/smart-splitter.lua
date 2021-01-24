@@ -181,10 +181,10 @@ local function onTick(event)
 			local candidates = {}
 			for _,dir in pairs(valid) do
 				-- final pass: get inserters that aren't already holding something
-				if not struct[dir][1].held_stack.valid_for_read then
+				if struct[dir][1].active and not struct[dir][1].held_stack.valid_for_read then
 					table.insert(candidates, struct[dir][1].held_stack)
 				end
-				if not struct[dir][2].held_stack.valid_for_read then
+				if struct[dir][2].active and not struct[dir][2].held_stack.valid_for_read then
 					table.insert(candidates, struct[dir][2].held_stack)
 				end
 			end
