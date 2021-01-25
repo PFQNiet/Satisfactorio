@@ -180,24 +180,28 @@ local function spawnNode(resource, surface, cx, cy)
 				}
 				if not surface.is_chunk_generated({chunkpos.x, chunkpos.y}) then
 					queueEntity(entity, surface, chunkpos)
-					if math.random()<0.2 then
-						queueEntity({
-							name = "rock-huge",
-							position = entity.position,
-							nobump = true,
-							force = neutral_force,
-							raise_built = true
-						}, surface, chunkpos)
+					if game.default_map_gen_settings.autoplace_controls['x-deposit'].size > 0 then
+						if math.random()<0.2 then
+							queueEntity({
+								name = "rock-huge",
+								position = entity.position,
+								nobump = true,
+								force = neutral_force,
+								raise_built = true
+							}, surface, chunkpos)
+						end
 					end
 				else
 					surface.create_entity(entity)
-					if math.random()<0.2 then
-						surface.create_entity{
-							name = "rock-huge",
-							position = entity.position,
-							force = neutral_force,
-							raise_built = true
-						}
+					if game.default_map_gen_settings.autoplace_controls['x-deposit'].size > 0 then
+						if math.random()<0.2 then
+							surface.create_entity{
+								name = "rock-huge",
+								position = entity.position,
+								force = neutral_force,
+								raise_built = true
+							}
+						end
 					end
 				end
 			elseif resource.type == "x-crashsite" then
@@ -222,38 +226,44 @@ local function spawnNode(resource, surface, cx, cy)
 				}
 				if not surface.is_chunk_generated({chunkpos.x, chunkpos.y}) then
 					queueEntity(entity, surface, chunkpos)
-					if resource.type == "iron-ore" or resource.type == "copper-ore" or (resource.type == "stone" and math.random()<0.5) then
-						queueEntity({
-							name = resource.type == "stone" and "rock-big" or "rock-big-"..resource.type,
-							position = entity.position,
-							nobump = true,
-							force = neutral_force
-						}, surface, chunkpos)
-					elseif math.random()<0.15 then
-						queueEntity({
-							name = "rock-huge",
-							position = entity.position,
-							nobump = true,
-							force = neutral_force,
-							raise_built = true
-						}, surface, chunkpos)
+					-- only spawn rocks if deposits are enabled
+					if game.default_map_gen_settings.autoplace_controls['x-deposit'].size > 0 then
+						if resource.type == "iron-ore" or resource.type == "copper-ore" or (resource.type == "stone" and math.random()<0.5) then
+							queueEntity({
+								name = resource.type == "stone" and "rock-big" or "rock-big-"..resource.type,
+								position = entity.position,
+								nobump = true,
+								force = neutral_force
+							}, surface, chunkpos)
+						elseif math.random()<0.15 then
+							queueEntity({
+								name = "rock-huge",
+								position = entity.position,
+								nobump = true,
+								force = neutral_force,
+								raise_built = true
+							}, surface, chunkpos)
+						end
 					end
 				else
 					entity.position = surface.find_non_colliding_position(entity.name, entity.position, 0, 1, true)
 					surface.create_entity(entity)
-					if resource.type == "iron-ore" or resource.type == "copper-ore" or (resource.type == "stone" and math.random()<0.5) then
-						surface.create_entity({
-							name = resource.type == "stone" and "rock-big" or "rock-big-"..resource.type,
-							position = entity.position,
-							force = neutral_force
-						})
-					elseif math.random()<0.15 then
-						surface.create_entity({
-							name = "rock-huge",
-							position = entity.position,
-							force = neutral_force,
-							raise_built = true
-						})
+					-- only spawn rocks if deposits are enabled
+					if game.default_map_gen_settings.autoplace_controls['x-deposit'].size > 0 then
+						if resource.type == "iron-ore" or resource.type == "copper-ore" or (resource.type == "stone" and math.random()<0.5) then
+							surface.create_entity({
+								name = resource.type == "stone" and "rock-big" or "rock-big-"..resource.type,
+								position = entity.position,
+								force = neutral_force
+							})
+						elseif math.random()<0.15 then
+							surface.create_entity({
+								name = "rock-huge",
+								position = entity.position,
+								force = neutral_force,
+								raise_built = true
+							})
+						end
 					end
 				end
 			end
