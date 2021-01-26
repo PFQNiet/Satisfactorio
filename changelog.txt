@@ -173,3 +173,14 @@ Date: 2021.01.24
   Changes:
     - Entities with input/output now respond better to neighbouring belts by snapping their types
     - This also removes the ability to directly chain buildings. There MUST be a belt between them
+---------------------------------------------------------------------------------------------------
+Version: 0.4.3
+Date: 2021.01.26
+  Changes:
+    - Upped Factorio version required (due to bugfixes in the base game I had previously hacked around)
+    - Removed said "hacking around" as the underlying bugs are now fixed!
+  Bugfixes:
+    - Building outputs can no longer sideload onto pre-existing belts, they will simply fail to snap
+    - Build Gun collision check now uses real built-in range check instead of re-creating it
+    - Mineral deposits (and Huge Rocks) no longer spawn on resource nodes if disabled
+    - "Behemoth Worm" (aka indestructible poison gas rocks) no longer spawn if mineral deposits are disabled

@@ -89,7 +89,12 @@ local function spawnGroup(surface,position,value,basedist)
 	end
 	if realdist > saferange and random()<math.min(10,value*distance)/20 then
 		-- add some gas clouds
-		local name = random() < 0.85 and "big-worm-turret" or "behemoth-worm-turret"
+		local name
+		if game.default_map_gen_settings.autoplace_controls['x-deposit'].size > 0 then
+			name = random() < 0.85 and "big-worm-turret" or "behemoth-worm-turret"
+		else
+			name = "big-worm-turret" -- don't allow Behemoth Worms (indestructible) if resource deposits are turned off - TODO make it a separate option
+		end
 		for i=1,4 do
 			-- find_non_collising_position doesn't support the map gen box, which is needed for worm turrets to give ore nodes some space
 			for _=1,10 do

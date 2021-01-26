@@ -10,13 +10,6 @@ local function canAfford(player, inventory, materials)
 	end
 	return affordable
 end
-local function canReach(player, position, entity)
-	-- building reach is based on the entity's north-facing collision box
-	local box = entity.collision_box
-	local dx = math.max(box.left_top.x + position.x - player.position.x, 0, player.position.x - (box.right_bottom.x + position.x))
-	local dy = math.max(box.left_top.y + position.y - player.position.y, 0, player.position.y - (box.right_bottom.y + position.y))
-	return math.sqrt(dx*dx + dy*dy) <= player.build_distance
-end
 
 local function refundEntity(player, entity)
 	-- if the entity has an undo recipe, refund the components instead
@@ -164,7 +157,7 @@ local function onPutItem(event)
 	if not undo then return end
 	if event.shift_build then return end
 	-- collision is checked by the game engine but reach is not...
-	if not canReach(player, event.position, game.entity_prototypes[name]) then return end
+	if not player.can_place_entity{name = name, position = event.position, direction = event.direction} then return end
 
 	local inventory = player.get_main_inventory()
 	local afford = canAfford(player, inventory, undo.products)
