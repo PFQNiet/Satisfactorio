@@ -84,6 +84,7 @@ local function snapBelt(belt,direction)
 	local neighbour = belt.belt_neighbours[direction][1]
 	if not neighbour then return belt end
 	if string.starts_with(neighbour.name,"loader-") then return belt end
+	if #neighbour.belt_neighbours.inputs > 1 then return belt end -- disallow side-loading
 	return belt.surface.create_entity{
 		name = "loader-"..neighbour.name,
 		position = belt.position,
