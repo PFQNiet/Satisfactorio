@@ -12,10 +12,19 @@ local function canAfford(player, materials, inventory, buffer)
 	end
 	return affordable
 end
+local function getUndoRecipe(prototype)
+	if not prototype then return nil end
+	local place = prototype.items_to_place_this
+	if not place then return nil end
+	for _,item in pairs(place) do
+		local test = game.recipe_prototypes[item.name.."-undo"]
+		if test then return test end
+	end
+end
 
 local function refundEntity(player, entity)
 	-- if the entity has an undo recipe, refund the components instead
-	local undo = game.recipe_prototypes[entity.name.."-undo"]
+	local undo = getUndoRecipe(entity.prototype)
 	local insert = undo and undo.products or {{name=entity.name,amount=1}}
 	for _,refund in pairs(insert) do
 		local spill = refund.amount - player.insert{name=refund.name,count=refund.amount}
@@ -59,7 +68,7 @@ local function updateGUI(player, buffer)
 	gui.visible = false
 
 	local name = (player.cursor_stack.valid_for_read and player.cursor_stack.name) or (player.cursor_ghost and player.cursor_ghost.name) or ""
-	local undo = game.recipe_prototypes[name.."-undo"]
+	local undo = getUndoRecipe(game.entity_prototypes[name])
 	if not undo then return end
 	local inventory = player.get_main_inventory().get_contents()
 	if buffer then buffer = buffer.get_contents() else buffer = {} end
@@ -105,7 +114,8 @@ end
 
 local function onCraft(event)
 	-- if the item to craft has an undo recipe, cancel the craft and put the item in the cursor
-	if game.recipe_prototypes[event.recipe.name.."-undo"] then
+	local undo = getUndoRecipe(game.entity_prototypes[event.recipe.main_product.name])
+	if undo then
 		local player = game.players[event.player_index]
 		-- find the craft in the queue - it should really be the only one under Satisfactorio rules but to be safe...
 		local index = -1
@@ -126,15 +136,16 @@ local function onCraft(event)
 	end
 end
 local function onCursorChange(event)
+	-- also called on main inventory change
+	-- also called from onRemoved to update affordability and re-put a real entity if you mined stuff to afford what you're holding, so event.buffer may exist
 	-- if the player has no item in hand but does have a ghost, they may have pipetted or selected an entity from their hotbar
 	-- if the ghost item has an undo recipe, the base recipe is enabled, and the player can afford it, swap the ghost for a real entity
-	-- also called from onRemoved to update affordability and re-put a real entity if you mined stuff to afford what you're holding, so event.buffer may exist
 	local player = game.players[event.player_index]
 	updateGUI(player)
 	if player.cursor_stack.valid_for_read then return end
 	if not player.cursor_ghost then return end
 	local name = player.cursor_ghost.name
-	local undo = game.recipe_prototypes[name.."-undo"]
+	local undo = getUndoRecipe(game.entity_prototypes[name])
 	if not undo then return end
 	local redo = player.force.recipes[name]
 	if not (redo and redo.enabled) then return end
@@ -149,15 +160,16 @@ local function onBuilt(event)
 	local entity = event.created_entity
 	local name = entity.name
 	-- if the item in the cursor is an undo-able building, check if the player has enough stuff (something else may have pulled items from the player's inventory)
-	local undo = game.recipe_prototypes[name.."-undo"]
+	local undo = getUndoRecipe(game.entity_prototypes[name])
 	if not undo then return end
 
 	local inventory = player.get_main_inventory()
 	local afford = canAfford(player, undo.products, inventory)
+	local source = undo.ingredients[1].name
 	if afford < 1 then
 		-- this shouldn't happen, but may if another player or script changes the player's inventory (eg. drones...)
 		player.clear_cursor() -- cancel the build
-		player.cursor_ghost = name
+		player.cursor_ghost = source
 		player.create_local_flying_text{
 			text = {"not-enough-ingredients"},
 			create_at_cursor = true
@@ -176,9 +188,9 @@ local function onBuilt(event)
 		end
 	end
 	if afford > 1 then
-		player.cursor_stack.set_stack{name=name,count=1}
+		player.cursor_stack.set_stack{name=source,count=1}
 	else
-		player.cursor_ghost = name
+		player.cursor_ghost = source
 	end
 	updateGUI(player)
 end
@@ -208,6 +220,7 @@ return {
 	events = {
 		[defines.events.on_pre_player_crafted_item] = onCraft,
 		[defines.events.on_player_cursor_stack_changed] = onCursorChange,
+		[defines.events.on_player_main_inventory_changed] = onCursorChange,
 		
 		[defines.events.on_built_entity] = onBuilt,
 
