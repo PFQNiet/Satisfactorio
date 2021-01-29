@@ -190,5 +190,5 @@ Date: 2021.01.29
   Bugfixes:
     - The Build Gun no longer siphons items from your inventory when building power poles by dragging
     - Build Gun GUI was updating too often under some circumstances
-    - Buind Gun GUI wasn't updating often enough under other circumstances!
+    - Build Gun GUI wasn't updating often enough under other circumstances!
     - Mining an item while holding a ghost now recalculates whether you can afford it.
