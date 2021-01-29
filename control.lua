@@ -14,6 +14,7 @@ local util = require('util')
 table.deepcopy = util.table.deepcopy
 
 handler.add_lib(require(modpath.."scripts.freeplay"))
+handler.add_lib(require(modpath.."scripts.build-gun")) -- must be early in the event handlers so it can "cancel" build events
 handler.add_lib(require(modpath.."scripts.indestructible"))
 handler.add_libraries(require(modpath.."scripts.creatures"))
 handler.add_libraries(require(modpath.."scripts.constructors"))
@@ -38,7 +39,6 @@ handler.add_lib(require(modpath.."scripts.lualib.enemy-spawning"))
 handler.add_lib(require(modpath.."scripts.lualib.self-driving"))
 handler.add_lib(require(modpath.."scripts.lualib.radioactivity"))
 handler.add_lib(require(modpath.."scripts.lualib.omnilab"))
-handler.add_lib(require(modpath.."scripts.build-gun"))
 handler.add_lib(require(modpath.."scripts.tech-extras"))
 handler.add_lib(require(modpath.."scripts.inventory-sort-and-trash"))
 handler.add_lib(require(modpath.."scripts.map-tweaks"))
