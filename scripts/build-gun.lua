@@ -114,7 +114,7 @@ end
 
 local function onCraft(event)
 	-- if the item to craft has an undo recipe, cancel the craft and put the item in the cursor
-	local undo = getUndoRecipe(game.entity_prototypes[event.recipe.main_product.name])
+	local undo = getUndoRecipe(game.entity_prototypes[event.recipe.prototype.main_product.name])
 	if undo then
 		local player = game.players[event.player_index]
 		-- find the craft in the queue - it should really be the only one under Satisfactorio rules but to be safe...
