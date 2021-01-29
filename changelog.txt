@@ -184,3 +184,11 @@ Date: 2021.01.26
     - Build Gun collision check now uses real built-in range check instead of re-creating it
     - Mineral deposits (and Huge Rocks) no longer spawn on resource nodes if disabled
     - "Behemoth Worm" (aka indestructible poison gas rocks) no longer spawn if mineral deposits are disabled
+---------------------------------------------------------------------------------------------------
+Version: 0.4.4
+Date: 2021.01.29
+  Bugfixes:
+    - The Build Gun no longer siphons items from your inventory when building power poles by dragging
+    - Build Gun GUI was updating too often under some circumstances
+    - Buind Gun GUI wasn't updating often enough under other circumstances!
+    - Mining an item while holding a ghost now recalculates whether you can afford it.

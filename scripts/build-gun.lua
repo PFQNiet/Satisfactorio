@@ -1,12 +1,14 @@
-local function canAfford(player, inventory, materials)
+local function canAfford(player, materials, inventory, buffer)
 	if player.cheat_mode then return 100 end
 	local contents = inventory.get_contents()
+	if buffer then buffer = buffer.get_contents() else buffer = {} end
 	local affordable = math.huge
 	for _,product in pairs(materials) do
-		if (contents[product.name] or 0) < product.amount then
+		local got = (contents[product.name] or 0) + (buffer[product.name] or 0)
+		if got < product.amount then
 			return 0
 		end
-		affordable = math.min(affordable, math.floor(contents[product.name] / product.amount))
+		affordable = math.min(affordable, math.floor(got / product.amount))
 	end
 	return affordable
 end
@@ -28,7 +30,8 @@ local function refundEntity(player, entity)
 	entity.destroy{raise_destroy=true} -- allow IO to snap loader belts back
 end
 
-local function updateGUI(player)
+local function updateGUI(player, buffer)
+	-- if an event buffer is passed, add its contents to the player's inventory for counting purposes
 	local gui = player.gui.screen.buildgun
 	if not gui then
 		gui = player.gui.screen.add{
@@ -59,6 +62,7 @@ local function updateGUI(player)
 	local undo = game.recipe_prototypes[name.."-undo"]
 	if not undo then return end
 	local inventory = player.get_main_inventory().get_contents()
+	if buffer then buffer = buffer.get_contents() else buffer = {} end
 	local cost = undo.products
 	
 	gui.caption = {"gui.build-gun-caption", name, game.item_prototypes[name].localised_name}
@@ -85,7 +89,7 @@ local function updateGUI(player)
 	end
 	for _,product in pairs(cost) do
 		-- second row: progress bars
-		local satisfaction = player.cheat_mode and product.amount or (inventory[product.name] or 0)
+		local satisfaction = player.cheat_mode and product.amount or ((inventory[product.name] or 0) + (buffer[product.name] or 0))
 		local bar = table.add{
 			type = "progressbar",
 			value = satisfaction / product.amount,
@@ -93,14 +97,6 @@ local function updateGUI(player)
 			caption = player.cheat_mode and {"infinity"} or util.format_number(satisfaction)
 		}
 		bar.style.width = 64
-	end
-	for _,product in pairs(cost) do
-		break
-		-- third row: amounts
-		table.add{
-			type = "label",
-			caption = {"gui.fraction","",util.format_number(product.amount)}
-		}
 	end
 
 	gui.visible = true
@@ -132,6 +128,7 @@ end
 local function onCursorChange(event)
 	-- if the player has no item in hand but does have a ghost, they may have pipetted or selected an entity from their hotbar
 	-- if the ghost item has an undo recipe, the base recipe is enabled, and the player can afford it, swap the ghost for a real entity
+	-- also called from onRemoved to update affordability and re-put a real entity if you mined stuff to afford what you're holding, so event.buffer may exist
 	local player = game.players[event.player_index]
 	updateGUI(player)
 	if player.cursor_stack.valid_for_read then return end
@@ -141,26 +138,22 @@ local function onCursorChange(event)
 	if not undo then return end
 	local redo = player.force.recipes[name]
 	if not (redo and redo.enabled) then return end
-	if canAfford(player, player.get_main_inventory(), undo.products) < 1 then return end
+	if canAfford(player, undo.products, player.get_main_inventory(), event.buffer) < 1 then return end
 	player.clear_cursor()
 	player.cursor_stack.set_stack{name=name, count=1}
-	updateGUI(player)
+	-- updateGUI(player)
 end
 
-local function onPutItem(event)
+local function onBuilt(event)
 	local player = game.players[event.player_index]
-	local tobuild = player.cursor_stack
-	if not tobuild.valid_for_read then return end
-	local name = tobuild.name
+	local entity = event.created_entity
+	local name = entity.name
 	-- if the item in the cursor is an undo-able building, check if the player has enough stuff (something else may have pulled items from the player's inventory)
 	local undo = game.recipe_prototypes[name.."-undo"]
 	if not undo then return end
-	if event.shift_build then return end
-	-- collision is checked by the game engine but reach is not...
-	if not player.can_place_entity{name = name, position = event.position, direction = event.direction} then return end
 
 	local inventory = player.get_main_inventory()
-	local afford = canAfford(player, inventory, undo.products)
+	local afford = canAfford(player, undo.products, inventory)
 	if afford < 1 then
 		-- this shouldn't happen, but may if another player or script changes the player's inventory (eg. drones...)
 		player.clear_cursor() -- cancel the build
@@ -172,7 +165,8 @@ local function onPutItem(event)
 		player.play_sound{
 			path = "utility/cannot_build"
 		}
-		updateGUI(player)
+		entity.destroy()
+		-- updateGUI(player)
 		return
 	end
 	if not player.cheat_mode then
@@ -182,7 +176,7 @@ local function onPutItem(event)
 		end
 	end
 	if afford > 1 then
-		player.cursor_stack.set_stack{name=name,count=2}
+		player.cursor_stack.set_stack{name=name,count=1}
 	else
 		player.cursor_ghost = name
 	end
@@ -190,7 +184,8 @@ local function onPutItem(event)
 end
 
 local function onRemoved(event)
-	local cheater = event.player_index and game.players[event.player_index].cheat_mode
+	local player = event.player_index and game.players[event.player_index]
+	local cheater = player and player.cheat_mode
 	if event.buffer then
 		for item,count in pairs(event.buffer.get_contents()) do
 			-- if an undo recipe exists for this item, replace it with the undo results
@@ -206,13 +201,15 @@ local function onRemoved(event)
 			end
 		end
 	end
+	onCursorChange(event)
 end
 
 return {
 	events = {
 		[defines.events.on_pre_player_crafted_item] = onCraft,
 		[defines.events.on_player_cursor_stack_changed] = onCursorChange,
-		[defines.events.on_pre_build] = onPutItem,
+		
+		[defines.events.on_built_entity] = onBuilt,
 
 		[defines.events.on_player_mined_entity] = onRemoved,
 		[defines.events.on_robot_mined_entity] = onRemoved
