@@ -12,6 +12,5 @@ for name,recipe in pairs(data.raw.recipe) do
 		assert(item, "Cannot find item "..itemname)
 		if not item.flags then item.flags = {} end
 		table.insert(item.flags, "only-in-cursor")
-		item.stack_size = math.max(5,item.stack_size) -- must be at least 2 so that the build gun cursor can hold two. Setting 5 makes it play nicer with cheat mode
 	end
 end
