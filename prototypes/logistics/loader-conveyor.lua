@@ -22,11 +22,12 @@ data:extend({belt})
 -- create duplicate belt types for existing types
 for _,name in pairs({"","fast-","express-","turbo-","ultimate-"}) do
 	local belt = table.deepcopy(data.raw['transport-belt'][name..'transport-belt'])
+	belt.localised_name = {"entity-name."..belt.name}
 	belt.name = "loader-"..belt.name
 	belt.next_upgrade = nil
 	belt.fast_replaceable_group = "loader-belt"
 	belt.minable = {mining_time=1}
-	belt.selectable_in_game = false
+	-- belt.selectable_in_game = false
 	belt.collision_mask = {"transport-belt-layer"}
 	belt.flags = {"not-on-map"}
 	data:extend{belt}
