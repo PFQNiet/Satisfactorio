@@ -192,3 +192,8 @@ Date: 2021.01.29
     - Build Gun GUI was updating too often under some circumstances
     - Build Gun GUI wasn't updating often enough under other circumstances!
     - Mining an item while holding a ghost now recalculates whether you can afford it.
+---------------------------------------------------------------------------------------------------
+Version: 0.5.0
+Date: ????
+  Changes:
+    - Added IO markers to all placeholder graphics for easier planning/visualisation
