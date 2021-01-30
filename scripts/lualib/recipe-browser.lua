@@ -389,7 +389,7 @@ local function onGuiElemChanged(event)
 					["alt-turbofuel"] = true
 				}
 				for _,tech in pairs(player.force.technologies) do
-					if tech.enabled and (not tech.prototype.hidden) and (tech.research_unit_ingredients[1].name ~= "hard-drive" or alt_only[tech.name]) then
+					if tech.enabled and (not tech.prototype.hidden) and ((tech.research_unit_ingredients[1] and tech.research_unit_ingredients[1].name ~= "hard-drive") or alt_only[tech.name]) then
 						for _,result in pairs(tech.effects) do
 							if result.type == "unlock-recipe" and potential_recipes[result.recipe] then
 								table.insert(techs,tech)
