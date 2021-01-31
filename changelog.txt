@@ -201,3 +201,11 @@ Date: 2021.01.30
     - Added IO markers to all placeholder graphics for easier planning/visualisation
   Bugfixes:
     - The Build Gun was still broken, of course.
+---------------------------------------------------------------------------------------------------
+Version: 0.5.1
+Date: 2021.01.31
+  Bugfixes:
+    - Recipe browser crashed when another mod added a tech with no cost
+    - Typos in localisation
+    - Game crash when placing an underground belt directly next to an input/output
+    - To-do list did not properly decrement when placing certain entities
