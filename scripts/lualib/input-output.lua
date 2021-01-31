@@ -85,8 +85,9 @@ local function snapBelt(belt,direction)
 	if not neighbour then return belt end
 	if string.starts_with(neighbour.name,"loader-") then return belt end
 	if #neighbour.belt_neighbours.inputs > 1 then return belt end -- disallow side-loading
+	local myname = neighbour.name:gsub("underground","transport")
 	return belt.surface.create_entity{
-		name = "loader-"..neighbour.name,
+		name = "loader-"..myname,
 		position = belt.position,
 		direction = belt.direction,
 		force = belt.force,
@@ -268,11 +269,12 @@ local function onBuilt(event)
 	if not entity or not entity.valid then return end
 	if entity.type ~= "transport-belt" and entity.type ~= "underground-belt" then return end
 	if entity.name == "loader-conveyor" then return end
+	local myname = entity.name:gsub("underground","transport")
 	for side,belts in pairs(entity.belt_neighbours) do
 		for _,belt in pairs(belts) do
 			if string.starts_with(belt.name,"loader-") then
-				if belt.name ~= "loader-"..entity.name then
-					replaceBelt(belt, "loader-"..entity.name)
+				if belt.name ~= "loader-"..myname then
+					replaceBelt(belt, "loader-"..myname)
 				end
 			end
 		end
@@ -282,13 +284,14 @@ local function onRotated(event)
 	local entity = event.entity
 	if not entity or not entity.valid then return end
 	if entity.type ~= "transport-belt" and entity.type ~= "underground-belt" then return end
+	local myname = entity.name:gsub("underground","transport")
 	-- rotation may create new links, but won't affect old links
 	-- at worst, it disconnects them if the belts are now facing each other - in which case they become each others' output, I think! (check this)
 	for side,belts in pairs(entity.belt_neighbours) do
 		for _,belt in pairs(belts) do
 			if string.starts_with(belt.name,"loader-") then
-				if belt.name ~= "loader-"..entity.name then
-					replaceBelt(belt, "loader-"..entity.name)
+				if belt.name ~= "loader-"..myname then
+					replaceBelt(belt, "loader-"..myname)
 				end
 			end
 		end
