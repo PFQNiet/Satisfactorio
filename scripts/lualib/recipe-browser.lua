@@ -624,7 +624,11 @@ local function onBuilt(event)
 	local entity = event.created_entity
 	if not (entity and entity.valid) then return end
 	-- when the player builds something, if it's in the to-do list, remove one
-	local recipe = game.recipe_prototypes[entity.name]
+	local place = entity.prototype.items_to_place_this
+	if not place then return end
+	local _,item = next(place)
+	-- building recipes are assumed to be named the same as the item they produce
+	local recipe = game.recipe_prototypes[item.name]
 	if not recipe then return end
 	local player = game.players[event.player_index]
 	if not script_data[player.index] then script_data[player.index] = {} end
