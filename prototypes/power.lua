@@ -20,6 +20,7 @@ data:extend{
 require("prototypes.power.coal-generator")
 require("prototypes.power.fuel-generator")
 require("prototypes.power.nuclear-power-plant")
+require("prototypes.power.geothermal-generator")
 require("prototypes.power.power-pole-mk-1")
 require("prototypes.power.power-pole-mk-2")
 require("prototypes.power.power-pole-mk-3")

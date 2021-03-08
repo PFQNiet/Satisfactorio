@@ -1,5 +1,5 @@
--- track built generators and place a fake accumulator on top of them
--- if the accumulator ever runs out of power, then the network is overdrawn and should be shut down
+-- track built generators and place a 1W drain on top of them
+-- if the drain ever runs low on power, then the network is overdrawn and should be shut down
 -- generators on the network are disabled, and a GUI allows re-enabling them
 
 -- uses global.power_trip.accumulators to track the hidden accumulators
@@ -15,6 +15,7 @@ local function registerGenerator(burner, generator, accumulator_name)
 	local accumulator = generator.surface.create_entity{
 		name = accumulator_name,
 		position = generator.position,
+		direction = generator.direction,
 		force = generator.force,
 		raise_built = true
 	}
@@ -102,7 +103,7 @@ end
 local function onTick(event)
 	for _,entry in pairs(script_data.accumulators) do
 		if type(entry) == "table" then -- skip numeric pointers
-			if entry.generator.active and entry.accumulator.energy == 0 then
+			if entry.generator.active and entry.accumulator.energy < entry.accumulator.electric_buffer_size then
 				-- don't count running out of fuel as a power trip
 				if entry.burner and entry.burner.burner and entry.burner.burner.remaining_burning_fuel == 0 then
 					-- just ran out of fuel
@@ -161,7 +162,7 @@ local function onGuiClick(event)
 			if type(entry) == "table" then -- ignore pointers to accumulators, just do actual entries
 				if entry.generator.force == force and entry.generator.electric_network_id == network then
 					toggle(entry, true)
-					entry.accumulator.energy = 1
+					entry.accumulator.energy = entry.accumulator.electric_buffer_size
 				end
 			end
 		end

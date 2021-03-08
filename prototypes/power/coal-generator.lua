@@ -104,11 +104,11 @@ local interface = {
 	localised_description = {"entity-description."..name},
 	energy_source = {
 		type = "electric",
-		buffer_capacity = "75MW",
+		buffer_capacity = "75000001W",
 		usage_priority = "secondary-output",
 		drain = "0W"
 	},
-	energy_production = "75MW", -- may be adjusted in case of low fuel
+	energy_production = "75000001W", -- may be adjusted in case of low fuel
 	pictures = empty_sprite,
 	max_health = 1,
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
@@ -126,55 +126,28 @@ local interface = {
 	placeable_by = {item=name,count=1},
 	selection_box = {{-2.5,-6},{2.5,6}}
 }
-local accumulator_ns = {
+local accumulator = {
+	type = "electric-energy-interface",
+	name = name.."-buffer",
 	picture = {
 		filename = "__core__/graphics/empty.png",
 		size = {1,1}
 	},
 	energy_source = {
 		type = "electric",
-		buffer_capacity = "1J",
-		usage_priority = "tertiary"
+		buffer_capacity = "1W",
+		usage_priority = "secondary-input"
 	},
-	charge_cooldown = 0,
-	discharge_cooldown = 0,
-	collision_box = {{-2.2,-5.7},{2.2,5.7}},
+	energy_usage = "1W",
+	collision_box = interface.collision_box,
 	flags = {
 		"not-on-map"
 	},
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	max_health = 1,
-	minable = nil,
-	name = name.."-accumulator-ns",
-	selection_box = {{-2.5,-6},{2.5,6}},
-	selection_priority = 30,
-	type = "accumulator"
-}
-local accumulator_ew = {
-	picture = {
-		filename = "__core__/graphics/empty.png",
-		size = {1,1}
-	},
-	energy_source = {
-		type = "electric",
-		buffer_capacity = "1J",
-		usage_priority = "tertiary"
-	},
-	charge_cooldown = 0,
-	discharge_cooldown = 0,
-	collision_box = {{-5.7,-2.2},{5.7,2.2}},
-	flags = {
-		"not-on-map"
-	},
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
-	icon_size = 64,
-	max_health = 1,
-	minable = nil,
-	name = name.."-accumulator-ew",
-	selection_box = {{-6,-2.5},{6,2.5}},
-	selection_priority = 30,
-	type = "accumulator"
+	selection_box = interface.selection_box,
+	selectable_in_game = false
 }
 
 local generatoritem = {
@@ -229,4 +202,4 @@ local generatorrecipe_undo = {
 	enabled = false
 }
 
-data:extend({boiler, steaming, interface, accumulator_ns, accumulator_ew, generatoritem, generatorrecipe, generatorrecipe_undo})
+data:extend({boiler, steaming, interface, accumulator, generatoritem, generatorrecipe, generatorrecipe_undo})

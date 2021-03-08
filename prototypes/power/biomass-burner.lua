@@ -14,7 +14,7 @@ local burner = {
 		fuel_category = "chemical",
 		fuel_inventory_size = 1
 	},
-	max_power_output = "30MW",
+	max_power_output = "30000001W",
 	open_sound = {
 		filename = "__base__/sound/machine-open.ogg",
 		volume = 0.5
@@ -42,17 +42,18 @@ local burner = {
 	type = "burner-generator"
 }
 local accumulator = {
+	type = "electric-energy-interface",
+	name = name.."-buffer",
 	picture = {
 		filename = "__core__/graphics/empty.png",
 		size = {1,1}
 	},
 	energy_source = {
 		type = "electric",
-		buffer_capacity = "1J",
-		usage_priority = "tertiary"
+		buffer_capacity = "1W",
+		usage_priority = "secondary-input"
 	},
-	charge_cooldown = 0,
-	discharge_cooldown = 0,
+	energy_usage = "1W",
 	collision_box = burner.collision_box,
 	flags = {
 		"not-on-map"
@@ -60,11 +61,8 @@ local accumulator = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	max_health = 1,
-	minable = nil,
-	name = name.."-accumulator",
 	selection_box = burner.selection_box,
-	selection_priority = 30,
-	type = "accumulator"
+	selectable_in_game = false
 }
 
 local burneritem = {

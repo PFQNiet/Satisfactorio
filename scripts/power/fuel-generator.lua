@@ -6,7 +6,7 @@ local powertrip = require(modpath.."scripts.lualib.power-trip")
 
 local storage = "fuel-generator"
 local buffer = storage.."-eei"
-local accumulator = storage.."-accumulator"
+local accumulator = storage.."-buffer"
 local energy = "energy"
 
 local script_data = {}
@@ -59,7 +59,7 @@ local function onTick(event)
 			local max_power = 150
 			-- attempt to remove the full amount - if it's limited by the amount actually present then the return value will reflect that
 			local available = storage.remove_fluid{name=energy, amount=max_power}
-			eei.power_production = available*1000*1000/60 -- convert to joules-per-tick
+			eei.power_production = (available*1000*1000+1)/60 -- convert to joules-per-tick
 		end
 	end
 end

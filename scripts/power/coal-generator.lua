@@ -5,12 +5,7 @@ local powertrip = require(modpath.."scripts.lualib.power-trip")
 
 local boiler = "coal-generator"
 local buffer = "coal-generator-eei"
-local accumulator = {
-	[defines.direction.north] = "coal-generator-accumulator-ns",
-	[defines.direction.east] = "coal-generator-accumulator-ew",
-	[defines.direction.south] = "coal-generator-accumulator-ns",
-	[defines.direction.west] = "coal-generator-accumulator-ew"
-}
+local accumulator = "coal-generator-buffer"
 local energy = "energy"
 
 local script_data = {}
@@ -29,7 +24,7 @@ local function onBuilt(event)
 			raise_built = true
 		}
 		eei.rotatable = false
-		powertrip.registerGenerator(entity, eei, accumulator[entity.direction])
+		powertrip.registerGenerator(entity, eei, accumulator)
 		script_data[entity.unit_number%60][entity.unit_number] = entity
 	end
 end
@@ -63,7 +58,7 @@ local function onTick(event)
 			local max_power = 75
 			-- attempt to remove the full amount - if it's limited by the amount actually present then the return value will reflect that
 			local available = storage.remove_fluid{name=energy, amount=max_power}
-			eei.power_production = available*1000*1000/60 -- convert to joules-per-tick
+			eei.power_production = (available*1000*1000+1)/60 -- convert to joules-per-tick, +1 for the buffer
 		end
 	end
 end

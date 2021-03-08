@@ -2,7 +2,7 @@ local powertrip = require(modpath.."scripts.lualib.power-trip")
 
 local miner = "geothermal-generator"
 local gen = miner.."-eei"
-local accumulator = miner.."-accumulator"
+local accumulator = miner.."-buffer"
 
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity

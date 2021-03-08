@@ -6,7 +6,7 @@ local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not entity or not entity.valid then return end
 	if entity.name == burner or entity.name == burner_hub then
-		powertrip.registerGenerator(entity, entity, entity.name.."-accumulator")
+		powertrip.registerGenerator(entity, entity, entity.name.."-buffer")
 	end
 end
 local function onRemoved(event)

@@ -33,10 +33,10 @@ local interface = {
 	name = name.."-eei",
 	energy_source = {
 		type = "electric",
-		buffer_capacity = "200MW",
+		buffer_capacity = "200000001W",
 		usage_priority = "primary-output"
 	},
-	energy_production = "200MW",
+	energy_production = "200000001W", -- produce 1 extra watt for the buffer -- TODO implement variable power output for these
 	animation = {
 		filename = "__Satisfactorio__/graphics/placeholders/"..name..".png",
 		size = {288,288}
@@ -52,29 +52,27 @@ local interface = {
 	selection_box = {{-4.5,-4.5},{4.5,4.5}}
 }
 local accumulator = {
+	type = "electric-energy-interface",
+	name = name.."-buffer",
 	picture = {
 		filename = "__core__/graphics/empty.png",
 		size = {1,1}
 	},
 	energy_source = {
 		type = "electric",
-		buffer_capacity = "1J",
-		usage_priority = "tertiary"
+		buffer_capacity = "1W",
+		usage_priority = "secondary-input"
 	},
-	charge_cooldown = 0,
-	discharge_cooldown = 0,
-	collision_box = {{-4.2,-4.2},{4.2,4.2}},
+	energy_usage = "1W",
+	collision_box = interface.collision_box,
 	flags = {
 		"not-on-map"
 	},
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	max_health = 1,
-	minable = nil,
-	name = name.."-accumulator",
-	selection_box = {{-4.5,-4.5},{4.5,4.5}},
-	selection_priority = 30,
-	type = "accumulator"
+	selection_box = interface.selection_box,
+	selectable_in_game = false
 }
 
 local mineritem = {
