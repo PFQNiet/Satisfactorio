@@ -84,9 +84,9 @@ local function createFusebox(player)
 	end
 	local frame = flow.content
 	local types = {
-		["storage-tank"] = "storage_tank_gui",
 		["burner-generator"] = "entity_with_energy_source_gui",
 		["electric-energy-interface"] = "electric_energy_interface_gui",
+		["furnace"] = "furnace_gui",
 		["default"] = "assembling_machine_gui"
 	}
 	flow.anchor = {
@@ -106,8 +106,6 @@ local function onTick(event)
 				-- don't count running out of fuel as a power trip
 				if entry.burner and entry.burner.burner and entry.burner.burner.remaining_burning_fuel == 0 then
 					-- just ran out of fuel
-				elseif entry.burner and entry.burner.type == "storage-tank" and entry.burner.get_fluid_count() == 0 then
-					-- likewise, ran out of fuel
 				else
 					-- power failure!
 					toggle(entry,false)

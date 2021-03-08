@@ -3,80 +3,85 @@ local getitems = require(modpath.."scripts.lualib.get-items-from")
 local math2d = require("math2d")
 local powertrip = require(modpath.."scripts.lualib.power-trip")
 
-local base = "coal-generator"
-local boiler = "coal-generator-boiler"
-local boiler_pos = {0,4}
-local generator_ne = "coal-generator-generator-ne"
-local generator_sw = "coal-generator-generator-sw"
-local generator = {
-	[defines.direction.north] = generator_ne,
-	[defines.direction.east] = generator_ne,
-	[defines.direction.south] = generator_sw,
-	[defines.direction.west] = generator_sw
-}
-local generator_pos = {0,-2}
+local boiler = "coal-generator"
+local buffer = "coal-generator-eei"
 local accumulator = {
 	[defines.direction.north] = "coal-generator-accumulator-ns",
 	[defines.direction.east] = "coal-generator-accumulator-ew",
 	[defines.direction.south] = "coal-generator-accumulator-ns",
 	[defines.direction.west] = "coal-generator-accumulator-ew"
 }
+local energy = "energy"
+
+local script_data = {}
+for i=0,60-1 do script_data[i] = {} end
 
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not entity or not entity.valid then return end
-	if entity.name == base then
-		-- spawn boiler and generator
-		local boil = entity.surface.create_entity{
-			name = boiler,
-			position = math2d.position.add(entity.position, math2d.position.rotate_vector(boiler_pos, entity.direction*45)),
+	if entity.name == boiler then
+		io.addInput(entity, {1,5.5})
+		local eei = entity.surface.create_entity{
+			name = buffer,
+			position = entity.position,
 			direction = entity.direction,
 			force = entity.force,
 			raise_built = true
 		}
-		local gen = entity.surface.create_entity{
-			name = generator[entity.direction],
-			position = math2d.position.add(entity.position, math2d.position.rotate_vector(generator_pos, entity.direction*45)),
-			direction = entity.direction,
-			force = entity.force,
-			raise_built = true
-		}
-		io.addInput(entity, {1,5.5}, boil)
-		powertrip.registerGenerator(boil, gen, accumulator[entity.direction])
-		-- make the base intangible (TODO: remove the base outright and put graphics on the child entities instead)
-		entity.operable = false
-		entity.rotatable = false
-		gen.rotatable = false
+		eei.rotatable = false
+		powertrip.registerGenerator(entity, eei, accumulator[entity.direction])
+		script_data[entity.unit_number%60][entity.unit_number] = entity
 	end
 end
 
 local function onRemoved(event)
 	local entity = event.entity
 	if not entity or not entity.valid then return end
-	if entity.name == base or entity.name == boiler or entity.name == generator_ne or entity.name == generator_sw then
-		-- find the base that should be right here
-		local floor = entity.surface.find_entity(base,entity.position)
-		if not floor or not floor.valid then
-			game.print("Couldn't find the floor")
-			return
-		end
-		local boil = entity.surface.find_entity(boiler, math2d.position.add(floor.position, math2d.position.rotate_vector(boiler_pos, floor.direction*45)))
-		local gen = entity.surface.find_entity(generator[entity.direction], math2d.position.add(floor.position, math2d.position.rotate_vector(generator_pos, floor.direction*45)))
-		powertrip.unregisterGenerator(boil)
+	if entity.name == boiler or entity.name == buffer then
+		local store = entity.name == boiler and entity or entity.surface.find_entity(boiler, entity.position)
+		local gen = entity.name == buffer and entity or entity.surface.find_entity(buffer, entity.position)
+		script_data[store.unit_number%60][store.unit_number] = nil
+		powertrip.unregisterGenerator(store)
+		io.remove(store, event)
 		if entity.name ~= boiler then
-			-- safely get items from the boiler
-			getitems.burner(boil, event and event.buffer or nil)
-			boil.destroy()
+			store.destroy()
 		end
-		if entity.name ~= generator_ne and entity.name ~= generator_sw then
+		if entity.name ~= buffer then
 			gen.destroy()
 		end
-		io.remove(floor, event)
-		floor.destroy()
+	end
+end
+
+local function onTick(event)
+	for i,storage in pairs(script_data[event.tick%60]) do
+		-- each station will "tick" once every 60 in-game ticks, ie. every second
+		-- power production is 75MW, so each "tick" can buffer up to 75MJ given enough fuel
+		local eei = storage.surface.find_entity(buffer, storage.position)
+		if eei.active then
+			local fluid_amount = storage.get_fluid_count(energy)
+			-- each unit of "energy" is 1MW
+			local max_power = 75
+			-- attempt to remove the full amount - if it's limited by the amount actually present then the return value will reflect that
+			local available = storage.remove_fluid{name=energy, amount=max_power}
+			eei.power_production = available*1000*1000/60 -- convert to joules-per-tick
+		end
+	end
+end
+local function onGuiOpened(event)
+	local player = game.players[event.player_index]
+	if event.entity and event.entity.valid and event.entity.name == buffer then
+		-- opening the EEI instead opens the tank
+		player.opened = event.entity.surface.find_entity(boiler, event.entity.position)
 	end
 end
 
 return {
+	on_init = function()
+		global.coal_generators = global.coal_generators or script_data
+	end,
+	on_load = function()
+		script_data = global.coal_generators or script_data
+	end,
 	events = {
 		[defines.events.on_built_entity] = onBuilt,
 		[defines.events.on_robot_built_entity] = onBuilt,
@@ -86,6 +91,9 @@ return {
 		[defines.events.on_player_mined_entity] = onRemoved,
 		[defines.events.on_robot_mined_entity] = onRemoved,
 		[defines.events.on_entity_died] = onRemoved,
-		[defines.events.script_raised_destroy] = onRemoved
+		[defines.events.script_raised_destroy] = onRemoved,
+
+		[defines.events.on_tick] = onTick,
+		[defines.events.on_gui_opened] = onGuiOpened
 	}
 }

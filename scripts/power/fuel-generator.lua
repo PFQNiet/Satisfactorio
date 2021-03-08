@@ -7,6 +7,7 @@ local powertrip = require(modpath.."scripts.lualib.power-trip")
 local storage = "fuel-generator"
 local buffer = storage.."-eei"
 local accumulator = storage.."-accumulator"
+local energy = "energy"
 
 local script_data = {}
 for i=0,60-1 do script_data[i] = {} end
@@ -52,17 +53,13 @@ local function onTick(event)
 		-- each station will "tick" once every 60 in-game ticks, ie. every second
 		-- power production is 150MW, so each "tick" can buffer up to 150MJ given enough fuel
 		local eei = storage.surface.find_entity(buffer, storage.position)
-		local fluid_type, fluid_amount = next(storage.get_fluid_contents())
-		if fluid_type and fluid_amount > 0 and eei.active then
-			local fuel_value = game.fluid_prototypes[fluid_type].fuel_value
-			if fuel_value > 0 then
-				local energy_to_full_charge = 150*1000*1000 -- 150MJ
-				local fuel_to_full_charge = energy_to_full_charge / fuel_value
-				-- attempt to remove the full amount - if it's limited by the amount actually present then the return value will reflect that
-				local fuel_consumed_this_second = storage.remove_fluid{name=fluid_type, amount=fuel_to_full_charge}
-				local energy_gained_this_second = fuel_consumed_this_second * fuel_value -- should be 150MJ but may be less if fuel is low
-				eei.power_production = energy_gained_this_second/60 -- convert to joules-per-tick
-			end
+		if eei.active then
+			local fluid_amount = storage.get_fluid_count(energy)
+			-- each unit of "energy" is 1MW
+			local max_power = 150
+			-- attempt to remove the full amount - if it's limited by the amount actually present then the return value will reflect that
+			local available = storage.remove_fluid{name=energy, amount=max_power}
+			eei.power_production = available*1000*1000/60 -- convert to joules-per-tick
 		end
 	end
 end
@@ -72,6 +69,7 @@ local function onGuiOpened(event)
 		-- opening the EEI instead opens the tank
 		player.opened = event.entity.surface.find_entity(storage, event.entity.position)
 	end
+	-- TODO add Flush button to the tank
 end
 
 return {

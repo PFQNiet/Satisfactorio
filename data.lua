@@ -31,6 +31,7 @@ data:extend({
 	{type="recipe-category",name="mam"},
 	{type="recipe-category",name="awesome-shop"},
 	{type="recipe-category",name="coal-generator"},
+	{type="recipe-category",name="fuel-generator"},
 	{type="recipe-category",name="nuclear-power"},
 	{type="item-group",name="special",order="91",icon="__Satisfactorio__/graphics/item-group/special.png",icon_size=64},
 	{type="item-group",name="milestones",order="92",icon="__Satisfactorio__/graphics/icons/the-hub.png",icon_size=64},

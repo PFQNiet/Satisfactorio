@@ -6,53 +6,106 @@ local empty_sprite = {
 }
 
 local name = "fuel-generator"
-local storage = {
-	type = "storage-tank",
-	name = name,
-	flow_length_in_ticks = 360,
-	window_bounding_box = {{-0.125,0.6875},{0.1875,1.1875}},
-	pictures = {
-		window_background = data.raw['storage-tank']['storage-tank'].pictures.window_background,
-		fluid_background = data.raw['storage-tank']['storage-tank'].pictures.fluid_background,
-		flow_sprite = data.raw['storage-tank']['storage-tank'].pictures.flow_sprite,
-		gas_flow = data.raw['storage-tank']['storage-tank'].pictures.gas_flow,
-		picture = {
-			filename = "__Satisfactorio__/graphics/placeholders/"..name..".png",
-			size = {320,320}
-		}
+
+-- There IS an entity type for burning fuel, however it produces variable power for a fixed fluid consumption
+-- This entity instead produces fixed power for a variable fluid consumption
+local boiler = {
+	animation = {
+		filename = "__Satisfactorio__/graphics/placeholders/"..name..".png",
+		size = {320,320}
 	},
-	max_health = 1,
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
-	icon_size = 64,
 	collision_box = {{-4.7,-4.7},{4.7,4.7}},
+	energy_source = {type = "void"}, -- the fluid is the fuel
+	energy_usage = "150MW",
+	open_sound = {
+		filename = "__base__/sound/machine-open.ogg",
+		volume = 0.5
+	},
+	close_sound = {
+		filename = "__base__/sound/machine-close.ogg",
+		volume = 0.5
+	},
+	working_sound = data.raw['assembling-machine']['oil-refinery'].working_sound,
 	flags = {
 		"placeable-player",
 		"player-creation"
 	},
-	fluid_box = {
-		base_area = 0.1,
-		base_level = -1,
-		pipe_connections = {
-			{
-				type = "input",
-				position = {0.5,-5.5}
-			}
+	fluid_boxes = {
+		{
+			base_area = 0.01,
+			base_level = -1,
+			pipe_connections = {
+				{
+					position = {0.5,-5.5},
+					type = "input"
+				}
+			},
+			pipe_covers = table.deepcopy(data.raw.boiler.boiler.fluid_box.pipe_covers),
+			production_type = "input"
 		},
-		pipe_covers = table.deepcopy(data.raw['storage-tank']['storage-tank'].fluid_box.pipe_covers)
+		{
+			base_area = 1.5,
+			base_level = 1,
+			filter = "energy",
+			pipe_connections = {},
+			production_type = "output"
+		}
 	},
+	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon_size = 64,
+	max_health = 1,
 	minable = {
 		mining_time = 1,
 		result = name
 	},
+	source_inventory_size = 0,
+	result_inventory_size = 0,
+	name = name,
 	selection_box = {{-5,-5},{5,5}},
 	selection_priority = 40,
-	open_sound = data.raw['assembling-machine']['oil-refinery'].open_sound,
-	close_sound = data.raw['assembling-machine']['oil-refinery'].close_sound,
-	working_sound = data.raw['assembling-machine']['oil-refinery'].working_sound
+	type = "furnace",
+	crafting_speed = 1,
+	crafting_categories = {"fuel-generator"}
 }
+local steaming1 = {
+	name = name.."-fuel",
+	type = "recipe",
+	ingredients = {{type="fluid", name="fuel", amount=0.25}},
+	results = {{type="fluid", name="energy", amount=150}},
+	energy_required = 1,
+	category = "fuel-generator",
+	allow_intermediates = false,
+	allow_as_intermediate = false,
+	hide_from_player_crafting = true
+}
+local steaming2 = {
+	name = name.."-biofuel",
+	type = "recipe",
+	ingredients = {{type="fluid", name="liquid-biofuel", amount=0.2}},
+	results = {{type="fluid", name="energy", amount=150}},
+	energy_required = 1,
+	category = "fuel-generator",
+	allow_intermediates = false,
+	allow_as_intermediate = false,
+	hide_from_player_crafting = true
+}
+local steaming3 = {
+	name = name.."-turbofuel",
+	type = "recipe",
+	ingredients = {{type="fluid", name="turbofuel", amount=0.075}},
+	results = {{type="fluid", name="energy", amount=150}},
+	energy_required = 1,
+	category = "fuel-generator",
+	allow_intermediates = false,
+	allow_as_intermediate = false,
+	hide_from_player_crafting = true
+}
+
 local interface = {
 	type = "electric-energy-interface",
 	name = name.."-eei",
+	localised_name = {"entity-name."..name},
+	localised_description = {"entity-description."..name},
 	energy_source = {
 		type = "electric",
 		buffer_capacity = "150MW",
@@ -72,6 +125,8 @@ local interface = {
 		mining_time = 1,
 		result = name
 	},
+	open_sound = boiler.open_sound,
+	close_sound = boiler.close_sound,
 	placeable_by = {item=name,count=1},
 	selection_box = {{-5,-5},{5,5}}
 }
@@ -152,4 +207,4 @@ local generatorrecipe_undo = {
 	enabled = false
 }
 
-data:extend({storage, interface, accumulator, generatoritem, generatorrecipe, generatorrecipe_undo})
+data:extend({boiler, steaming1, steaming2, steaming3, interface, accumulator, generatoritem, generatorrecipe, generatorrecipe_undo})
