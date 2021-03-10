@@ -10,43 +10,6 @@ local empty_sprite = {
 }
 
 local name = "nuclear-power-plant"
-local placeholder = {
-	type = "constant-combinator",
-	name = name,
-	activity_led_light_offsets = {{0,0},{0,0},{0,0},{0,0}},
-	activity_led_sprites = empty_sprite,
-	circuit_wire_connection_points = data.raw['constant-combinator']['constant-combinator'].circuit_wire_connection_points,
-	item_slot_count = 0,
-	sprites = {
-		north = {
-			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-n.png",
-			size = {608,672}
-		},
-		east = {
-			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-e.png",
-			size = {672,608}
-		},
-		south = {
-			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-s.png",
-			size = {608,672}
-		},
-		west = {
-			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-w.png",
-			size = {672,608}
-		}
-	},
-	max_health = 1,
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
-	icon_size = 64,
-	collision_box = {{-9.2,-10.2},{9.2,10.2}},
-	flags = {
-		"placeable-player",
-		"player-creation"
-	},
-	minable = nil, -- mine either the boiler or the generator
-	selection_box = {{-9.5,-10.5},{9.5,10.5}},
-	selection_priority = 40
-}
 local boiler = {
 	animation = {
 		north = {
@@ -70,8 +33,7 @@ local boiler = {
 	energy_source = {
 		type = "burner",
 		fuel_category = "nuclear",
-		fuel_inventory_size = 1,
-		burnt_inventory_size = 1
+		fuel_inventory_size = 1
 	},
 	energy_usage = "2.5GW",
 	open_sound = {
@@ -124,16 +86,18 @@ local boiler = {
 }
 local steaming = {
 	name = name.."-steam",
+	localised_name = {"recipe-name.nuclear-power"},
 	localised_description = {"recipe-description.nuclear-power"},
 	type = "recipe",
-	ingredients = {{type="fluid", name="water", amount=5}},
+	ingredients = {{type="fluid", name="water", amount=5/60}},
 	results = {
-		{type="fluid", name="energy", amount=2500},
-		{type="item", name="nuclear-waste", amount=0, probability=0} -- managed manually by script
+		{type="fluid", name="energy", amount=2500/60},
+		{type="item", name="nuclear-waste", amount=0} -- managed manually by script
 	},
 	main_product = "nuclear-waste",
-	energy_required = 1,
+	energy_required = 1/60,
 	category = "nuclear-power",
+	show_amount_in_title = false,
 	allow_intermediates = false,
 	allow_as_intermediate = false,
 	hide_from_player_crafting = true
@@ -155,6 +119,7 @@ local interface = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	collision_box = {{-9.2,-10.2},{9.2,10.2}},
+	collision_mask = {},
 	flags = {
 		"not-on-map"
 	},
@@ -181,6 +146,7 @@ local accumulator = {
 	},
 	energy_usage = "1W",
 	collision_box = interface.collision_box,
+	collision_mask = {},
 	flags = {
 		"not-on-map"
 	},

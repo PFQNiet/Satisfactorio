@@ -68,7 +68,8 @@ local function onTick(event)
 			-- every 12 ticks of full consumption, produce one nuclear waste
 			if consumed > 2500 * 12 then
 				consumed = consumed - 2500 * 12
-				storage.get_inventory(defines.inventory.assembling_machine_output).insert({name="nuclear-waste",count=1})
+				storage.get_inventory(defines.inventory.assembling_machine_output).insert({name=waste,count=1})
+				storage.force.item_production_statistics.on_flow(waste,1)
 			end
 			script_data.consumed[storage.unit_number] = consumed
 		end

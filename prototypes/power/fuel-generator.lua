@@ -70,10 +70,13 @@ local boiler = {
 local steaming1 = {
 	name = name.."-fuel",
 	type = "recipe",
-	ingredients = {{type="fluid", name="fuel", amount=0.25}},
-	results = {{type="fluid", name="energy", amount=150}},
-	energy_required = 1,
+	localised_name = {"recipe-name."..name.."-power"},
+	localised_description = {"recipe-description."..name.."-power"},
+	ingredients = {{type="fluid", name="fuel", amount=0.25/60}},
+	results = {{type="fluid", name="energy", amount=150/60}},
+	energy_required = 1/60,
 	category = "fuel-generator",
+	show_amount_in_title = false,
 	allow_intermediates = false,
 	allow_as_intermediate = false,
 	hide_from_player_crafting = true
@@ -81,10 +84,13 @@ local steaming1 = {
 local steaming2 = {
 	name = name.."-biofuel",
 	type = "recipe",
-	ingredients = {{type="fluid", name="liquid-biofuel", amount=0.2}},
-	results = {{type="fluid", name="energy", amount=150}},
-	energy_required = 1,
+	localised_name = {"recipe-name."..name.."-power"},
+	localised_description = {"recipe-description."..name.."-power"},
+	ingredients = {{type="fluid", name="liquid-biofuel", amount=0.2/60}},
+	results = {{type="fluid", name="energy", amount=150/60}},
+	energy_required = 1/60,
 	category = "fuel-generator",
+	show_amount_in_title = false,
 	allow_intermediates = false,
 	allow_as_intermediate = false,
 	hide_from_player_crafting = true
@@ -92,10 +98,13 @@ local steaming2 = {
 local steaming3 = {
 	name = name.."-turbofuel",
 	type = "recipe",
-	ingredients = {{type="fluid", name="turbofuel", amount=0.075}},
-	results = {{type="fluid", name="energy", amount=150}},
-	energy_required = 1,
+	localised_name = {"recipe-name."..name.."-power"},
+	localised_description = {"recipe-description."..name.."-power"},
+	ingredients = {{type="fluid", name="turbofuel", amount=0.075/60}},
+	results = {{type="fluid", name="energy", amount=150/60}},
+	energy_required = 1/60,
 	category = "fuel-generator",
+	show_amount_in_title = false,
 	allow_intermediates = false,
 	allow_as_intermediate = false,
 	hide_from_player_crafting = true
@@ -118,6 +127,7 @@ local interface = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	collision_box = {{-4.7,-4.7},{4.7,4.7}},
+	collision_mask = {},
 	flags = {
 		"not-on-map"
 	},
@@ -144,6 +154,7 @@ local accumulator = {
 	},
 	energy_usage = "1W",
 	collision_box = interface.collision_box,
+	collision_mask = {},
 	flags = {
 		"not-on-map"
 	},

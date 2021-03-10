@@ -89,10 +89,13 @@ local boiler = {
 local steaming = {
 	name = name.."-steam",
 	type = "recipe",
-	ingredients = {{type="fluid", name="water", amount=0.75}},
-	results = {{type="fluid", name="energy", amount=75}},
-	energy_required = 1,
+	localised_name = {"recipe-name."..name.."-steam"},
+	localised_description = {"recipe-description."..name.."-steam"},
+	ingredients = {{type="fluid", name="water", amount=0.75/60}},
+	results = {{type="fluid", name="energy", amount=75/60}},
+	energy_required = 1/60,
 	category = "coal-generator",
+	show_amount_in_title = false,
 	allow_intermediates = false,
 	allow_as_intermediate = false,
 	hide_from_player_crafting = true
@@ -114,6 +117,7 @@ local interface = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	collision_box = {{-2.2,-5.7},{2.2,5.7}},
+	collision_mask = {},
 	flags = {
 		"not-on-map"
 	},
@@ -140,6 +144,7 @@ local accumulator = {
 	},
 	energy_usage = "1W",
 	collision_box = interface.collision_box,
+	collision_mask = {},
 	flags = {
 		"not-on-map"
 	},

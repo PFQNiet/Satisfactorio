@@ -65,6 +65,7 @@ local accumulator = {
 	},
 	energy_usage = "1W",
 	collision_box = interface.collision_box,
+	collision_mask = {},
 	flags = {
 		"not-on-map"
 	},
