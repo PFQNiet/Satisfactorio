@@ -91,7 +91,7 @@ local steaming = {
 	type = "recipe",
 	ingredients = {{type="fluid", name="water", amount=5/60}},
 	results = {
-		{type="fluid", name="energy", amount=2500/60},
+		{type="fluid", name="energy", amount=2500/1000/60},
 		{type="item", name="nuclear-waste", amount=0} -- managed manually by script
 	},
 	main_product = "nuclear-waste",

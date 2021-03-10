@@ -92,7 +92,7 @@ local steaming = {
 	localised_name = {"recipe-name."..name.."-steam"},
 	localised_description = {"recipe-description."..name.."-steam"},
 	ingredients = {{type="fluid", name="water", amount=0.75/60}},
-	results = {{type="fluid", name="energy", amount=75/60}},
+	results = {{type="fluid", name="energy", amount=75/1000/60}},
 	energy_required = 1/60,
 	category = "coal-generator",
 	show_amount_in_title = false,

@@ -16,6 +16,7 @@ local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not entity or not entity.valid then return end
 	if entity.name == boiler then
+		entity.fluidbox[2] = {name=energy,amount=0.1} -- avoid auto-flush
 		io.addInput(entity, {-2,10})
 		io.addOutput(entity, {2,10}, nil, defines.direction.south)
 		entity.rotatable = false
@@ -57,17 +58,24 @@ local function onTick(event)
 		local eei = storage.surface.find_entity(buffer, storage.position)
 		if eei.active then
 			local fluid_amount = storage.get_fluid_count(energy)
-			-- each unit of "energy" is 1MW
-			local max_power = 2500
-			-- attempt to remove the full amount - if it's limited by the amount actually present then the return value will reflect that
-			local available = storage.remove_fluid{name=energy, amount=max_power}
-			eei.power_production = (available*1000*1000+1)/60 -- convert to joules-per-tick
+			-- each unit of "energy" is 1GW
+			local max_power = 2.5
+			local fluidbox = storage.fluidbox[2] -- output box
+			local amount = 0
+			if fluidbox then
+				amount = math.max(0, math.min(max_power, fluidbox.amount - 0.1)) -- epsilon to avoid auto-flush
+				fluidbox.amount = fluidbox.amount - amount
+				storage.fluidbox[2] = fluidbox
+				eei.power_production = (amount*1000*1000*1000+1)/60 -- convert to joules-per-tick, +1 for the buffer
+			else
+				eei.power_production = 0
+			end
 
 			local consumed = script_data.consumed[storage.unit_number] or 0
-			consumed = consumed + available
+			consumed = consumed + amount
 			-- every 12 ticks of full consumption, produce one nuclear waste
-			if consumed > 2500 * 12 then
-				consumed = consumed - 2500 * 12
+			if consumed > 2.5 * 12 then
+				consumed = consumed - 2.5 * 12
 				storage.get_inventory(defines.inventory.assembling_machine_output).insert({name=waste,count=1})
 				storage.force.item_production_statistics.on_flow(waste,1)
 			end
