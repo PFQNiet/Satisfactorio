@@ -27,6 +27,8 @@ local miner = {
 	collision_box = {{-2.2,-6.2},{2.2,2.2}},
 	energy_source = {
 		type = "electric",
+		buffer_capacity = "40MW",
+		input_flow_limit = "40MW",
 		usage_priority = "secondary-input"
 	},
 	energy_usage = "40MW",

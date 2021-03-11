@@ -26,6 +26,8 @@ local smelter = {
 	energy_source = {
 		type = "electric",
 		usage_priority = "secondary-input",
+		buffer_capacity = "16MW",
+		input_flow_limit = "16MW",
 		drain = "0W"
 	},
 	energy_usage = "16MW",

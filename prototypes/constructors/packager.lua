@@ -27,6 +27,8 @@ local packager = {
 	energy_source = {
 		type = "electric",
 		usage_priority = "secondary-input",
+		buffer_capacity = "10MW",
+		input_flow_limit = "10MW",
 		drain = "0W"
 	},
 	energy_usage = "10MW",

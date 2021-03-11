@@ -103,7 +103,7 @@ end
 local function onTick(event)
 	for _,entry in pairs(script_data.accumulators) do
 		if type(entry) == "table" then -- skip numeric pointers
-			if entry.generator.active and entry.accumulator.energy > 0 and entry.accumulator.energy < entry.accumulator.electric_buffer_size then
+			if entry.generator.active and entry.accumulator.energy > 0 and entry.accumulator.energy < entry.accumulator.electric_buffer_size*0.999 then
 				-- don't count running out of fuel as a power trip
 				if entry.burner and entry.burner.burner and entry.burner.burner.remaining_burning_fuel == 0 then
 					-- just ran out of fuel

@@ -14,6 +14,7 @@ local base = {
 	energy_source = {
 		type = "electric",
 		buffer_capacity = "30MW",
+		input_flow_limit = "30MW",
 		usage_priority = "secondary-input",
 		drain = "0W"
 	},

@@ -10,6 +10,8 @@ pump.pumping_speed = 300/60/60 -- 300/minute
 pump.max_health = 1
 box.base_area = 0.02/box.height -- capacity = 2m^3
 pump.energy_source.drain = "0W"
+pump.energy_source.buffer_capacity = "4MW"
+pump.energy_source.input_flow_limit = "4MW"
 pump.energy_usage = "4MW"
 
 local pumpitem = data.raw.item[basename]

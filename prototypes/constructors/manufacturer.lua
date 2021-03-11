@@ -26,6 +26,8 @@ local manufacturer = {
 	energy_source = {
 		type = "electric",
 		usage_priority = "secondary-input",
+		buffer_capacity = "55MW",
+		input_flow_limit = "55MW",
 		drain = "0W"
 	},
 	energy_usage = "55MW",

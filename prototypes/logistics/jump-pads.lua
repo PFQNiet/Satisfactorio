@@ -6,6 +6,7 @@ local interface = {
 	energy_source = {
 		type = "electric",
 		buffer_capacity = "2MW",
+		input_flow_limit = "2MW",
 		usage_priority = "secondary-input",
 		drain = "0W"
 	},
@@ -225,6 +226,7 @@ interface = {
 	energy_source = {
 		type = "electric",
 		buffer_capacity = "5MW",
+		input_flow_limit = "5MW",
 		usage_priority = "secondary-input",
 		drain = "0W"
 	},
