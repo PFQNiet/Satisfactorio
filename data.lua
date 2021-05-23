@@ -7,7 +7,8 @@ data:extend({
 	{type="fuel-category",name="carbon"}, -- coal, compacted coal, coke
 	{type="fuel-category",name="liquid-fuel"}, -- liquid biofuel, fuel, turbofuel
 	{type="fuel-category",name="packaged-fuel"}, -- packaged fuel
-	{type="fuel-category",name="packaged-alt-fuel"}, -- packaged turbofuel, packaged heavy oil residue, packaged oil, battery
+	{type="fuel-category",name="packaged-alt-fuel"}, -- packaged turbofuel, packaged heavy oil residue, packaged oil
+	{type="fuel-category",name="battery"}, -- batteries
 	{type="resource-category",name="solid"},
 	{type="resource-category",name="water"},
 	{type="resource-category",name="crude-oil"},

@@ -7,7 +7,7 @@ local item = {
 	subgroup = "parts",
 	order = "h[bauxite]-c["..name.."]",
 	stack_size = 100,
-	fuel_category = "packaged-fuel",
+	fuel_category = "battery",
 	fuel_value = "6GJ"
 }
 
