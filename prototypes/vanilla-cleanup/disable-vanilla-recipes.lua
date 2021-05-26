@@ -65,17 +65,19 @@ local to_hide = {
 	"gate", "gun-turret", "laser-turret", "flamethrower-turret", "artillery-turret", "artillery-targeting-remote", "rocket-silo"
 }
 for _,key in pairs(to_hide) do
-	local item = data.raw.item[key] or data.raw['item-with-entity-data'][key] or data.raw.tool[key] or data.raw.module[key]
-		or data.raw.gun[key] or data.raw.ammo[key] or data.raw.capsule[key] or data.raw.armor[key]
-		or data.raw['spidertron-remote'][key] or data.raw['repair-tool'][key]
-	if not item.flags then item.flags = {} end
-	table.insert(item.flags, "hidden")
+	for type,_ in pairs(defines.prototypes.item) do
+		local item = data.raw[type][key]
+		if item then
+			if not item.flags then item.flags = {} end
+			table.insert(item.flags, "hidden")
+		end
+	end
 end
 table.insert(data.raw.item['solid-fuel'].flags, "hide-from-fuel-tooltip")
 table.insert(data.raw.item['rocket-fuel'].flags, "hide-from-fuel-tooltip")
 -- remove next-upgrade
-for _,group in pairs(data.raw) do
-	for _,thing in pairs(group) do
+for group,_ in pairs(defines.prototypes.entity) do
+	for _,thing in pairs(data.raw[group]) do
 		if thing.next_upgrade then thing.next_upgrade = nil end
 	end
 end

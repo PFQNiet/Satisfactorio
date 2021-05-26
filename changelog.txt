@@ -214,3 +214,5 @@ Version: 0.6.0
 Date: ????
   Changes:
     - Coal, Fuel and Nuclear generators are now simpler entities
+  Scripting:
+    - Make use of defines.prototypes for cleaner code
