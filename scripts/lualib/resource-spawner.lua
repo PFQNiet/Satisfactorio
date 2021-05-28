@@ -214,6 +214,22 @@ local function spawnNode(resource, surface, cx, cy)
 				else
 					crash_site.createCrashSite(surface, {tx,ty})
 				end
+			elseif resource.type == "geyser" then
+				pval = purity -- always just one node
+				local tx = cx+x+0.5
+				local ty = cy+y+0.5
+				local chunkpos = {x=math.floor(tx/32), y=math.floor(ty/32)}
+				local entity = {
+					name = resource.type,
+					position = {tx,ty},
+					force = neutral_force,
+					amount = 60*pval
+				}
+				if not surface.is_chunk_generated({chunkpos.x, chunkpos.y}) then
+					queueEntity(entity, surface, chunkpos)
+				else
+					surface.create_entity(entity)
+				end
 			else
 				local tx = cx+math.floor(x+0.5)
 				local ty = cy+math.floor(y+0.5)
@@ -449,7 +465,7 @@ local function onInit()
 	registerResource("raw-quartz", 600, 1, 6, 3)
 	registerResource("bauxite", 800, 2, 6, 5)
 	registerResource("uranium-ore", 1000, 2, 2, 6)
-	registerResource("geyser", 550, 1, 1, 4)
+	registerResource("geyser", 550, 1, 4, 4)
 
 	registerResource("x-plant", 100, 1, 3, 0)
 	registerResource("x-deposit", 100, 1, 10, 0) -- "value" is unused

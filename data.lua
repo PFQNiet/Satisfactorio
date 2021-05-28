@@ -24,6 +24,8 @@ data:extend({
 	{type="recipe-category",name="assembling"},
 	{type="recipe-category",name="manufacturing"},
 	{type="recipe-category",name="refining"},
+	{type="recipe-category",name="blending"},
+	{type="recipe-category",name="accelerating"},
 	{type="recipe-category",name="packaging"},
 	{type="recipe-category",name="resource-scanner"},
 	{type="recipe-category",name="object-scanner"},
