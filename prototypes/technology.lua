@@ -510,7 +510,6 @@ addTech("hub-tier7-nuclear-power", "hub/factory", "hub-progressing", "hub-tier7"
 }, {
 	{type="unlock-recipe",recipe="nuclear-power-plant"},
 	{type="unlock-recipe",recipe="sulfuric-acid"},
-	{type="unlock-recipe",recipe="uranium-pellet"},
 	{type="unlock-recipe",recipe="uranium-fuel-cell"},
 	{type="unlock-recipe",recipe="electromagnetic-control-rod"},
 	{type="unlock-recipe",recipe="nuclear-fuel"},

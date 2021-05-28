@@ -79,7 +79,7 @@ local loot = {
 		amount_min = 1,
 		amount_max = 1
 	},
-	["nuclear-waste"] = {
+	["uranium-waste"] = {
 		probability = 2.5,
 		amount_min = 1,
 		amount_max = 1

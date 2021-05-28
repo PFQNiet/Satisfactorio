@@ -89,7 +89,7 @@ local function onGuiClick(event)
 					player.play_sound{
 						path = "utility/cannot_build"
 					}
-				elseif stack.name == "nuclear-waste" then
+				elseif stack.name == "uranium-waste" or stack.name == "plutonium-waste" then
 					player.create_local_flying_text{
 						text = {"message.trash-slot-nuclear-waste",stack.name,stack.prototype.localised_name},
 						create_at_cursor = true

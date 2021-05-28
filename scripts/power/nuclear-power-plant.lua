@@ -7,7 +7,6 @@ local boiler = "nuclear-power-plant"
 local buffer = boiler.."-eei"
 local accumulator = boiler.."-buffer"
 local energy = "energy"
-local waste = "nuclear-waste"
 
 local script_data = {generators = {}, consumed = {}}
 for i=0,60-1 do script_data.generators[i] = {} end

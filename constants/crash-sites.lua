@@ -63,7 +63,7 @@ local loot = {
 		probability = 0.1,
 		amount = {5,10}
 	},
-	["nuclear-waste"] = {
+	["uranium-waste"] = {
 		probability = 0.01,
 		amount = {50,100}
 	}

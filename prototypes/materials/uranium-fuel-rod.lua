@@ -1,12 +1,12 @@
 -- repurpose vanilla nuclear fuel
-local name = "nuclear-fuel-rod"
+local name = "uranium-fuel-rod"
 local basename = "nuclear-fuel"
 
 local ingot = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	name = basename,
-	order = "k[uranium]-d["..basename.."]",
+	order = "k[uranium]-b["..basename.."]",
 	stack_size = 50,
 	subgroup = "nuclear",
 	fuel_category = "nuclear",

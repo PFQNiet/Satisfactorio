@@ -102,6 +102,7 @@ local function addRadiationForInventory(inventory)
 		+ (contents['plutonium-pellet'] or 0) * 20
 		+ (contents['encased-plutonium-cell'] or 0) * 120
 		+ (contents['plutonium-fuel-rod'] or 0) * 120
+		+ (contents['plutonium-waste'] or 0) * 20
 end
 local function addRadiationForItemStack(stack)
 	if not (stack and stack.valid and stack.valid_for_read) then return 0 end
@@ -113,7 +114,8 @@ local function addRadiationForItemStack(stack)
 		["non-fissile-uranium"] = 0.75,
 		["plutonium-pellet"] = 20,
 		["encased-plutonium-cell"] = 120,
-		["plutonium-fuel-rod"] = 120
+		["plutonium-fuel-rod"] = 120,
+		["plutonium-waste"] = 20
 	}
 	
 	if not radioactive_items[stack.name] then return 0 end
