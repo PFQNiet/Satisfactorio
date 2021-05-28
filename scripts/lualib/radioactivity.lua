@@ -95,19 +95,25 @@ local function addRadiationForInventory(inventory)
 	-- once an inventory has been identified, check it for radioactive items
 	local contents = inventory.get_contents()
 	return (contents['uranium-ore'] or 0) * 15
-		+ (contents['uranium-pellet'] or 0) * 7.5
-		+ (contents['uranium-fuel-cell'] or 0) * 7.5
-		+ (contents['nuclear-fuel'] or 0) * 60
-		+ (contents['nuclear-waste'] or 0) * 20
+		+ (contents['uranium-fuel-cell'] or 0) * 0.5
+		+ (contents['nuclear-fuel'] or 0) * 50
+		+ (contents['uranium-waste'] or 0) * 10
+		+ (contents['non-fissile-uranium'] or 0) * 0.75
+		+ (contents['plutonium-pellet'] or 0) * 20
+		+ (contents['encased-plutonium-cell'] or 0) * 120
+		+ (contents['plutonium-fuel-rod'] or 0) * 120
 end
 local function addRadiationForItemStack(stack)
 	if not (stack and stack.valid and stack.valid_for_read) then return 0 end
 	local radioactive_items = {
 		["uranium-ore"] = 15,
-		["uranium-pellet"] = 7.5,
-		["uranium-fuel-cell"] = 7.5,
-		["nuclear-fuel"] = 60,
-		["nuclear-waste"] = 20
+		["uranium-fuel-cell"] = 0.5,
+		["nuclear-fuel"] = 50,
+		["uranium-waste"] = 10,
+		["non-fissile-uranium"] = 0.75,
+		["plutonium-pellet"] = 20,
+		["encased-plutonium-cell"] = 120,
+		["plutonium-fuel-rod"] = 120
 	}
 	
 	if not radioactive_items[stack.name] then return 0 end
