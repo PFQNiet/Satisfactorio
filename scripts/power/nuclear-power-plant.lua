@@ -51,6 +51,16 @@ local function onRemoved(event)
 	end
 end
 
+local WASTE = {
+	["nuclear-fuel"] = {
+		name = "uranium-waste",
+		amount = 10 -- per minute
+	},
+	["plutonium-fuel-rod"] = {
+		name = "plutonium-waste",
+		amount = 1
+	}
+}
 local function onTick(event)
 	for i,storage in pairs(script_data.generators[event.tick%60]) do
 		-- each station will "tick" once every 60 in-game ticks, ie. every second
@@ -71,13 +81,17 @@ local function onTick(event)
 				eei.power_production = 0
 			end
 
+			local fuel = storage.burner.currently_burning.name
 			local consumed = script_data.consumed[storage.unit_number] or 0
 			consumed = consumed + amount
-			-- every 12 ticks of full consumption, produce one nuclear waste
-			if consumed > 2.5 * 12 then
-				consumed = consumed - 2.5 * 12
-				storage.get_inventory(defines.inventory.assembling_machine_output).insert({name=waste,count=1})
-				storage.force.item_production_statistics.on_flow(waste,1)
+			-- every 6 seconds (uranium) or 1 minute (plutonium) of full consumption, produce one waste of the corresponding type
+			if fuel and WASTE[fuel] then
+				if consumed > 2.5 * 60 / WASTE[fuel].amount then
+					consumed = consumed - 2.5 * 60 / WASTE[fuel].amount
+					storage.get_inventory(defines.inventory.assembling_machine_output).insert({name=WASTE[fuel].name,count=1})
+					storage.force.item_production_statistics.on_flow(WASTE[fuel].name,1)
+				end
+				storage.bonus_progress = consumed / (2.5 * 60 / WASTE[fuel].amount)
 			end
 			script_data.consumed[storage.unit_number] = consumed
 		end
