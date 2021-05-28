@@ -40,6 +40,15 @@ local function onResearch(event)
 		technology.force.recipes[technology.name].enabled = false
 		technology.force.recipes[technology.name.."-done"].enabled = true
 	end
+	
+	if technology.name == "space-elevator-phase4" and not game.finished then
+		game.set_game_state{
+			game_finished = true,
+			player_won = true,
+			can_continue = true,
+			victorious_force = technology.force
+		}
+	end
 end
 local function onTechEffectsReset(event)
 	-- if/when a force's tech effects are reset, re-apply the unlocks above for all researched techs

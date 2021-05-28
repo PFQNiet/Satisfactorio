@@ -56,7 +56,7 @@ for base,prereq in pairs(alts) do
 			effects = {
 				recipe
 					and {type="unlock-recipe",recipe=base}
-					or {type="character-inventory-slots-bonus",modifier=5,use_icon_overlay_constant=false}
+					or {type="character-inventory-slots-bonus",modifier=6,use_icon_overlay_constant=false}
 			},
 			-- hidden = true -- avoid cluttering tech screen?
 		}
