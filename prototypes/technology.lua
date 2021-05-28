@@ -478,6 +478,8 @@ addTech("hub-tier7-bauxite-refinement", "hub/factory", "hub-progressing", "hub-t
 	{type="unlock-recipe",recipe="aluminium-scrap"},
 	{type="unlock-recipe",recipe="aluminium-ingot"},
 	{type="unlock-recipe",recipe="alclad-aluminium-sheet"},
+	{type="unlock-recipe",recipe="packaged-alumina-solution"},
+	{type="unlock-recipe",recipe="unpack-alumina-solution"},
 	{type="unlock-recipe",recipe="scanner-bauxite"},
 	{type="unlock-recipe",recipe="scanner-raw-quartz"}
 })
@@ -512,6 +514,8 @@ addTech("hub-tier7-nuclear-power", "hub/factory", "hub-progressing", "hub-tier7"
 	{type="unlock-recipe",recipe="uranium-fuel-cell"},
 	{type="unlock-recipe",recipe="electromagnetic-control-rod"},
 	{type="unlock-recipe",recipe="nuclear-fuel"},
+	{type="unlock-recipe",recipe="packaged-sulfuric-acid"},
+	{type="unlock-recipe",recipe="unpack-sulfuric-acid"},
 	{type="unlock-recipe",recipe="scanner-uranium-ore"},
 	{type="unlock-recipe",recipe="scanner-sulfur"}
 })
