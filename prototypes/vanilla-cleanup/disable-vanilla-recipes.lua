@@ -47,7 +47,7 @@ local to_hide = {
 	"small-lamp", "red-wire", "green-wire", "arithmetic-combinator", "decider-combinator", "constant-combinator", "power-switch", "programmable-speaker",
 	"stone-brick", "hazard-concrete", "refined-concrete", "refined-hazard-concrete", "landfill", "cliff-explosives",
 	"repair-pack",
-	"boiler", "steam-engine", "solar-panel", "accumulator", "nuclear-reactor", "heat-pipe", "heat-exchanger", "steam-turbine",
+	"boiler", "steam-engine", "solar-panel", "nuclear-reactor", "heat-pipe", "heat-exchanger", "steam-turbine",
 	"burner-mining-drill", "electric-mining-drill", "offshore-pump", "pumpjack",
 	"stone-furnace", "steel-furnace", "electric-furnace",
 	"assembling-machine-1", "assembling-machine-2", "assembling-machine-3", "oil-refinery", "chemical-plant", "centrifuge", "lab",
