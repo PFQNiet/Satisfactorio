@@ -58,12 +58,12 @@ local function onTick(event)
 		-- power consumption ranges based on recipe and crafting progress
 		-- entry.accelerator, entry.interface
 		if not entry.accelerator.is_crafting() then
-			entry.interface.energy_usage = 0
+			entry.interface.power_usage = 0
 		else
 			local recipe = entry.accelerator.get_recipe().name
 			local range = POWER[recipe] or {500,1500}
 			local pow = range[1] + (range[2] - range[1]) * entry.accelerator.crafting_progress
-			entry.interface.energy_usage = pow * 1000 * 1000 / 60 -- megawatts => joules/tick
+			entry.interface.power_usage = pow * 1000 * 1000 / 60 -- megawatts => joules/tick
 			entry.interface.electric_buffer_size = entry.interface.energy_usage
 		end
 	end

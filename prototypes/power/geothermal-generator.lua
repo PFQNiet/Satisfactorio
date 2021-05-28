@@ -36,7 +36,7 @@ local interface = {
 		buffer_capacity = "200000001W",
 		usage_priority = "primary-output"
 	},
-	energy_production = "200000001W", -- produce 1 extra watt for the buffer -- TODO implement variable power output for these
+	energy_production = "200000001W", -- produce 1 extra watt for the buffer
 	animation = {
 		filename = "__Satisfactorio__/graphics/placeholders/"..name..".png",
 		size = {288,288}
