@@ -10,8 +10,8 @@ local ingot = {
 }
 
 local ingredients = {
-	{"aluminium-scrap",12},
-	{"silica",7}
+	{"aluminium-scrap",6},
+	{"silica",5}
 }
 local ingotrecipe1 = {
 	name = name.."-manual",
@@ -34,7 +34,7 @@ local ingotrecipe2 = { -- in Foundry
 	ingredients = ingredients,
 	result = name,
 	result_count = 4,
-	energy_required = 3,
+	energy_required = 4,
 	category = "foundry",
 	icons = {
 		{ icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64 },

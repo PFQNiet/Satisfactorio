@@ -10,8 +10,8 @@ local sink = {
 }
 
 local ingredients = {
-	{"alclad-aluminium-sheet",8},
-	{"rubber",14}
+	{"alclad-aluminium-sheet",5},
+	{"copper-plate",3}
 }
 local sinkrecipe1 = { -- by hand in Craft Bench
 	name = name.."-manual",
@@ -28,7 +28,7 @@ local sinkrecipe2 = { -- in Assembler
 	type = "recipe",
 	ingredients = ingredients,
 	result = name,
-	energy_required = 12,
+	energy_required = 8,
 	category = "assembling",
 	enabled = false
 }

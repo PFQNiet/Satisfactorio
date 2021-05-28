@@ -7,7 +7,7 @@ local rod = {
 	icon_size = 64,
 	name = basename,
 	order = "a[iron]-b["..name.."]",
-	stack_size = 100,
+	stack_size = 200,
 	subgroup = "parts",
 	type = "item"
 }

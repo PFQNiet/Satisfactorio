@@ -7,7 +7,7 @@ local plate = {
 	icon_size = 64,
 	name = basename,
 	order = "d[steel]-a["..basename.."]",
-	stack_size = 100,
+	stack_size = 200,
 	subgroup = "parts",
 	type = "item"
 }

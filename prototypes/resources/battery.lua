@@ -6,40 +6,29 @@ local item = {
 	icon_size = 64,
 	subgroup = "parts",
 	order = "h[bauxite]-c["..name.."]",
-	stack_size = 100,
+	stack_size = 200,
 	fuel_category = "battery",
 	fuel_value = "6GJ"
 }
 
 local ingredients = {
-	{"alclad-aluminium-sheet",8},
-	{"wire",16},
-	{"sulfur",20},
-	{"plastic-bar",8}
+	{type="fluid",name="sulfuric-acid",amount=2.5},
+	{type="fluid",name="alumina-solution",amount=2},
+	{"aluminium-casing",1}
 }
-local recipe1 = { -- by hand in Craft Bench
-	name = name.."-manual",
-	type = "recipe",
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
-	icon_size = 64,
-	ingredients = ingredients,
-	result = name,
-	result_count = 3,
-	energy_required = 16/4,
-	category = "craft-bench",
-	hide_from_player_crafting = true,
-	enabled = false
-}
-local recipe2 = { -- in Manufacturer
+local recipe = { -- in blender
 	name = name,
 	type = "recipe",
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	ingredients = ingredients,
-	result = name,
-	result_count = 3,
-	energy_required = 32,
-	category = "manufacturing",
+	results = {
+		{name,1},
+		{type="fluid",name="water",amount=1.5}
+	},
+	main_product = name,
+	energy_required = 3,
+	category = "blending",
 	enabled = false
 }
-data:extend({item,recipe1,recipe2})
+data:extend({item,recipe})

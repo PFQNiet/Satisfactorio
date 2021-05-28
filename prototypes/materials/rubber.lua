@@ -4,7 +4,7 @@ local rubber = {
 	icon_size = 64,
 	name = name,
 	order = "f[oil]-b["..name.."]",
-	stack_size = 100,
+	stack_size = 200,
 	subgroup = "parts",
 	type = "item"
 }

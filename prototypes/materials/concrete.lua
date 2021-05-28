@@ -6,7 +6,7 @@ local plate = {
 	icon_size = 64,
 	name = name,
 	order = "c[stone]-a["..name.."]",
-	stack_size = 100,
+	stack_size = 500,
 	subgroup = "ingots",
 	type = "item"
 }

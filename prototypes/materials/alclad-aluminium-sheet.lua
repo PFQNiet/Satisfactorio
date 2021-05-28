@@ -4,21 +4,21 @@ local ingot = {
 	icon_size = 64,
 	name = name,
 	order = "h[bauxite]-a["..name.."]",
-	stack_size = 100,
+	stack_size = 200,
 	subgroup = "parts",
 	type = "item"
 }
 
 local ingredients = {
-	{"aluminium-ingot",8},
-	{"copper-ingot",3}
+	{"aluminium-ingot",3},
+	{"copper-ingot",1}
 }
 local ingotrecipe1 = {
 	name = name.."-manual",
 	type = "recipe",
 	ingredients = ingredients,
 	result = name,
-	result_count = 4,
+	result_count = 3,
 	energy_required = 8/4,
 	category = "craft-bench",
 	hide_from_player_crafting = true,
@@ -29,7 +29,7 @@ local ingotrecipe2 = { -- in Assembler
 	type = "recipe",
 	ingredients = ingredients,
 	result = name,
-	result_count = 4,
+	result_count = 3,
 	energy_required = 8,
 	category = "assembling",
 	enabled = false

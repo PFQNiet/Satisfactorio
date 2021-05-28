@@ -71,19 +71,6 @@ local recipes = {
 		icons = {"silica"}
 	},
 	{
-		name = "radio-control-system",
-		ingredients = {
-			{"heat-sink",10},
-			{"supercomputer",1},
-			{"quartz-crystal",30}
-		},
-		result = "radio-control-unit",
-		result_count = 3,
-		energy_required = 48,
-		category = "manufacturing",
-		icons = {"supercomputer"}
-	},
-	{
 		name = "cheap-silica",
 		ingredients = {
 			{"raw-quartz",3},
@@ -109,15 +96,17 @@ local recipes = {
 		icons = {"crystal-oscillator"}
 	},
 	{
-		name = "casted-screw",
+		name = "turbo-blend-fuel",
 		ingredients = {
-			{"iron-ingot",5}
+			{type="fluid",name="fuel",amount=2},
+			{type="fluid",name="heavy-oil",amount=4},
+			{"sulfur",3},
+			{"petroleum-coke",3}
 		},
-		result = "iron-gear-wheel",
-		result_count = 20,
-		energy_required = 24,
-		category = "constructing",
-		icons = {"iron-ingot"}
+		results = {{type="fluid",name="turbofuel",amount=6}},
+		energy_required = 8,
+		category = "blending",
+		icons = {"fuel", "heavy-oil-residue"}
 	},
 	{
 		name = "iron-wire",
@@ -126,6 +115,17 @@ local recipes = {
 		},
 		result = "wire",
 		result_count = 9,
+		energy_required = 24,
+		category = "constructing",
+		icons = {"iron-ingot"}
+	},
+	{
+		name = "cast-screw",
+		ingredients = {
+			{"iron-ingot",5}
+		},
+		result = "iron-gear-wheel",
+		result_count = 20,
 		energy_required = 24,
 		category = "constructing",
 		icons = {"iron-ingot"}
@@ -261,7 +261,7 @@ local recipes = {
 		icons = {"compacted-coal"}
 	},
 	{
-		name = "signal-beacon",
+		name = "crystal-beacon",
 		ingredients = {
 			{"steel-plate",4},
 			{"steel-pipe",16},
@@ -481,6 +481,19 @@ local recipes = {
 		icons = {"rubber"}
 	},
 	{
+		name = "automated-miner",
+		ingredients = {
+			{"motor",1},
+			{"steel-pipe",4},
+			{"iron-stick",4},
+			{"iron-plate",2}
+		},
+		result = "portable-miner",
+		energy_required = 60,
+		category = "manufacturing",
+		icons = {"motor"}
+	},
+	{
 		name = "caterium-computer",
 		ingredients = {
 			{"electronic-circuit",7},
@@ -518,7 +531,7 @@ local recipes = {
 		icons = {"heavy-oil-residue"}
 	},
 	{
-		name = "rubber-cable",
+		name = "insulated-cable",
 		ingredients = {
 			{"wire",9},
 			{"rubber",6}
@@ -591,18 +604,6 @@ local recipes = {
 		energy_required = 24,
 		category = "assembling",
 		icons = {"steel-ingot"}
-	},
-	{
-		name = "diluted-packaged-fuel",
-		ingredients = {
-			{type="fluid",name="heavy-oil",amount=1},
-			{"packaged-water",2}
-		},
-		result = "packaged-fuel",
-		result_count = 2,
-		energy_required = 2,
-		category = "refining",
-		icons = {"packaged-water"}
 	},
 	{
 		name = "recycled-plastic",
@@ -693,32 +694,6 @@ local recipes = {
 		icons = {"rubber"}
 	},
 	{
-		name = "turbofuel",
-		ingredients = {
-			{type="fluid",name="fuel",amount=6},
-			{"compacted-coal",4}
-		},
-		results = {{type="fluid",name="turbofuel",amount=5}},
-		main_product = "turbofuel",
-		subgroup = "fluid-recipe",
-		energy_required = 16,
-		category = "refining",
-		icons = {}
-	},
-	{
-		name = "turbo-heavy-fuel",
-		ingredients = {
-			{type="fluid",name="heavy-oil",amount=4},
-			{"compacted-coal",4}
-		},
-		results = {{type="fluid",name="turbofuel",amount=4}},
-		main_product = "turbofuel",
-		subgroup = "fluid-recipe",
-		energy_required = 8,
-		category = "refining",
-		icons = {"heavy-oil-residue"}
-	},
-	{
 		name = "quickwire-cable",
 		ingredients = {
 			{"quickwire",3},
@@ -743,7 +718,7 @@ local recipes = {
 		icons = {"quickwire"}
 	},
 	{
-		name = "silicone-high-speed-connector",
+		name = "silicon-high-speed-connector",
 		ingredients = {
 			{"quickwire",60},
 			{"silica",25},
@@ -781,7 +756,7 @@ local recipes = {
 		icons = {"rubber"}
 	},
 	{
-		name = "silicone-circuit-board",
+		name = "silicon-circuit-board",
 		ingredients = {
 			{"copper-plate",11},
 			{"silica",11}
@@ -793,56 +768,251 @@ local recipes = {
 		icons = {"silica"}
 	},
 	{
-		name = "heat-exchanger",
+		name = "diluted-packaged-fuel",
 		ingredients = {
-			{"alclad-aluminium-sheet",20},
-			{"copper-plate",30}
+			{type="fluid",name="heavy-oil",amount=1},
+			{"packaged-water",2}
 		},
-		result = "heat-sink",
-		result_count = 7,
-		energy_required = 32,
-		category = "assembling",
-		icons = {"copper-sheet"}
+		result = "packaged-fuel",
+		result_count = 2,
+		energy_required = 2,
+		category = "refining",
+		icons = {"packaged-water"}
 	},
 	{
-		name = "turbo-rigour-motor",
+		name = "turbofuel",
 		ingredients = {
-			{"motor",7},
-			{"radio-control-unit",5},
-			{"processing-unit",9},
-			{"stator",7}
+			{type="fluid",name="fuel",amount=6},
+			{"compacted-coal",4}
 		},
-		result = "turbo-motor",
-		result_count = 3,
-		energy_required = 64,
+		results = {{type="fluid",name="turbofuel",amount=5}},
+		main_product = "turbofuel",
+		subgroup = "fluid-recipe",
+		energy_required = 16,
+		category = "refining",
+		icons = {}
+	},
+	{
+		name = "turbo-heavy-fuel",
+		ingredients = {
+			{type="fluid",name="heavy-oil",amount=4},
+			{"compacted-coal",4}
+		},
+		results = {{type="fluid",name="turbofuel",amount=4}},
+		main_product = "turbofuel",
+		subgroup = "fluid-recipe",
+		energy_required = 8,
+		category = "refining",
+		icons = {"heavy-oil-residue"}
+	},
+	{
+		name = "classic-battery",
+		ingredients = {
+			{"sulfur",6},
+			{"alclad-aluminium-sheet",7},
+			{"plastic-bar",8},
+			{"wire",12}
+		},
+		result = "battery",
+		result_count = 4,
+		energy_required = 8,
 		category = "manufacturing",
-		icons = {"ai-limiter"}
+		icons = {"plastic-bar"}
+	},
+	{
+		name = "electric-motor",
+		ingredients = {
+			{"electromagnetic-control-rod",1},
+			{"rotor",2}
+		},
+		result = "motor",
+		result_count = 2,
+		energy_required = 16,
+		category = "assembling",
+		icons = {"electromagnetic-control-rod"}
+	},
+	{
+		name = "oc-supercomputer",
+		ingredients = {
+			{"radio-control-unit",3},
+			{"cooling-system",3}
+		},
+		result = "supercomputer",
+		result_count = 1,
+		energy_required = 20,
+		category = "assembling",
+		icons = {"cooling-system"}
+	},
+	{
+		name = "super-state-computer",
+		ingredients = {
+			{"computer",3},
+			{"electromagnetic-control-rod",2},
+			{"battery",20},
+			{"wire",45}
+		},
+		result = "supercomputer",
+		result_count = 2,
+		energy_required = 50,
+		category = "manufacturing",
+		icons = {"electromagnetic-control-rod"}
+	},
+	{
+		name = "sloppy-alumina",
+		ingredients = {
+			{"bauxite",10},
+			{type="fluid",name="water",amount=10}
+		},
+		results = {{type="fluid",name="alumina-solution",amount=12}},
+		energy_required = 3,
+		category = "refining",
+		icons = {"water"}
+	},
+	{
+		name = "alclad-casing",
+		ingredients = {
+			{"aluminium-ingot",20},
+			{"copper-ingot",10}
+		},
+		result = "aluminium-casing",
+		result_count = 15,
+		energy_required = 8,
+		category = "assembling",
+		icons = {"copper-ingot"}
 	},
 	{
 		name = "pure-aluminium-ingot",
 		ingredients = {
-			{"aluminium-scrap",12}
+			{"aluminium-scrap",2}
 		},
 		result = "aluminium-ingot",
-		result_count = 3,
-		energy_required = 5,
+		result_count = 1,
+		energy_required = 2,
 		category = "smelter",
 		icons = {}
 	},
 	{
 		name = "electrode-aluminium-scrap",
 		ingredients = {
-			{type="fluid",name="alumina-solution",amount=3},
-			{"coal",1}
+			{type="fluid",name="alumina-solution",amount=12},
+			{"petroleum-coke",4}
 		},
 		results = {
-			{"aluminium-scrap",5},
-			{type="fluid",name="water",amount=1}
+			{"aluminium-scrap",20},
+			{type="fluid",name="water",amount=7}
 		},
 		main_product = "aluminium-scrap",
-		energy_required = 2,
+		energy_required = 4,
 		category = "refining",
-		icons = {"coal"}
+		icons = {"petroleum-coke"}
+	},
+	{
+		name = "diluted-fuel",
+		ingredients = {
+			{type="fluid",name="heavy-oil",amount=5},
+			{type="fluid",name="water",amount=10}
+		},
+		results = {{type="fluid",name="fuel",amount=10}},
+		energy_required = 6,
+		category = "blending",
+		icons = {"water"}
+	},
+	{
+		name = "radio-control-system",
+		ingredients = {
+			{"crystal-oscillator",1},
+			{"electronic-circuit",10},
+			{"aluminium-casing",60},
+			{"rubber",30}
+		},
+		result = "radio-control-unit",
+		result_count = 3,
+		energy_required = 40,
+		category = "manufacturing",
+		icons = {"crystal-oscillator"}
+	},
+	{
+		name = "instant-scrap",
+		ingredients = {
+			{"bauxite",15},
+			{"coal",10},
+			{type="fluid",name="sulfuric-acid",amount=5},
+			{type="fluid",name="water",amount=6}
+		},
+		results = {
+			{"aluminium-scrap",30},
+			{type="fluid",name="water",amount=5}
+		},
+		main_product = "aluminium-scrap",
+		energy_required = 6,
+		category = "blending",
+		icons = {"bauxite"}
+	},
+	{
+		name = "radio-connection-unit",
+		ingredients = {
+			{"heat-sink",4},
+			{"advanced-circuit",2},
+			{"quartz-crystal",12}
+		},
+		result = "radio-control-unit",
+		result_count = 1,
+		energy_required = 16,
+		category = "manufacturing",
+		icons = {"advanced-circuit"}
+	},
+	{
+		name = "cooling-device",
+		ingredients = {
+			{"heat-sink",5},
+			{"motor",1},
+			{type="fluid",name="nitrogen-gas",amount=24}
+		},
+		result = "cooling-system",
+		result_count = 2,
+		energy_required = 32,
+		category = "blending",
+		icons = {"motor"}
+	},
+	{
+		name = "heat-exchanger",
+		ingredients = {
+			{"aluminium-casing",3},
+			{"rubber",3}
+		},
+		result = "heat-sink",
+		result_count = 1,
+		energy_required = 6,
+		category = "assembling",
+		icons = {"rubber"}
+	},
+	{
+		name = "heat-fused-frame",
+		ingredients = {
+			{"heavy-modular-frame",1},
+			{"aluminium-ingot",50},
+			{type="fluid",name="nitric-acid",amount=8},
+			{type="fluid",name="fuel",amount=10}
+		},
+		result = "fused-modular-frame",
+		result_count = 1,
+		energy_required = 20,
+		category = "blending",
+		icons = {"nitric-fuel"}
+	},
+	{
+		name = "turbo-electric-motor",
+		ingredients = {
+			{"motor",7},
+			{"radio-control-unit",9},
+			{"electromagnetic-control-rod",5},
+			{"rotor",7}
+		},
+		result = "turbo-motor",
+		result_count = 3,
+		energy_required = 64,
+		category = "manufacturing",
+		icons = {"electromagnetic-control-rod"}
 	},
 	{
 		name = "electromagnetic-connection-rod",
@@ -859,21 +1029,21 @@ local recipes = {
 	{
 		name = "infused-uranium-cell",
 		ingredients = {
-			{"uranium-pellet",40},
-			{"sulfur",45},
-			{"silica",45},
-			{"quickwire",75}
+			{"uranium-ore",5},
+			{"silica",3},
+			{"sulfur",5},
+			{"quickwire",15}
 		},
 		result = "uranium-fuel-cell",
-		result_count = 35,
-		energy_required = 120,
+		result_count = 4,
+		energy_required = 12,
 		category = "manufacturing",
 		icons = {"sulfur"}
 	},
 	{
-		name = "nuclear-fuel-unit",
+		name = "uranium-fuel-unit",
 		ingredients = {
-			{"uranium-fuel-cell",50},
+			{"uranium-fuel-cell",100},
 			{"electromagnetic-control-rod",10},
 			{"crystal-oscillator",3},
 			{"map-marker",6}
@@ -883,7 +1053,62 @@ local recipes = {
 		energy_required = 300,
 		category = "manufacturing",
 		icons = {"crystal-oscillator"}
-	}
+	},
+	{
+		name = "instant-plutonium-cell",
+		ingredients = {
+			{"non-fissile-uranium",150},
+			{"aluminium-casing",20}
+		},
+		result = "encased-plutonium-cell",
+		result_count = 20,
+		energy_required = 120,
+		category = "accelerating",
+		icons = {"non-fisile-uraniumd"}
+	},
+	{
+		name = "fertile-uranium",
+		ingredients = {
+			{"uranium-ore",5},
+			{"uranium-waste",5},
+			{"nitric-acid",3},
+			{"sulfuric-acid",5}
+		},
+		results = {
+			{"non-fissile-uranium",20},
+			{type="fluid",name="water",amount=8}
+		},
+		main_product = "non-fissile-uranium",
+		energy_required = 12,
+		category = "blending",
+		icons = {"urenium-ore"}
+	},
+	{
+		name = "plutonium-fuel-unit",
+		ingredients = {
+			{"encased-plutonium-cell",20},
+			{"pressure-conversion-cube",1}
+		},
+		result = "plutonium-fuel-rod",
+		result_count = 1,
+		energy_required = 120,
+		category = "assembling",
+		icons = {"pressure-conversion-cube"}
+	},
+	{
+		name = "turbo-pressure-motor",
+		ingredients = {
+			{"motor",4},
+			{"pressure-conversion-cube",1},
+			{"packaged-nitrogen-gas",24},
+			{"stator",8}
+		},
+		result = "turbo-motor",
+		result_count = 2,
+		energy_required = 32,
+		category = "manufacturing",
+		icons = {"pressure-conversion-cube"}
+	},
 }
 
 return recipes

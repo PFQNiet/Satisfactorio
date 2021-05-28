@@ -10,8 +10,7 @@ local rcu = {
 }
 
 local ingredients = {
-	{"heat-sink",4},
-	{"rubber",16},
+	{"aluminium-casing",32},
 	{"crystal-oscillator",1},
 	{"computer",1}
 }
@@ -20,6 +19,7 @@ local rcurecipe1 = { -- by hand in Craft Bench
 	type = "recipe",
 	ingredients = ingredients,
 	result = name,
+	result_count = 2,
 	energy_required = 18/4,
 	category = "craft-bench",
 	hide_from_player_crafting = true,
@@ -30,7 +30,8 @@ local rcurecipe2 = { -- in Manufacturer
 	type = "recipe",
 	ingredients = ingredients,
 	result = name,
-	energy_required = 24,
+	result_count = 2,
+	energy_required = 48,
 	category = "manufacturing",
 	enabled = false
 }

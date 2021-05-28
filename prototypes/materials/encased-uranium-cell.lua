@@ -13,17 +13,21 @@ local ingot = {
 }
 
 local ingredients = {
-	{"uranium-pellet",40},
-	{"concrete",9}
+	{"uranium-ore",10},
+	{"concrete",3},
+	{type="fluid",name="sulfuric-acid",amount=8}
 }
-local ingotrecipe = { -- in Assembler
+local ingotrecipe = { -- in Blender
 	name = basename,
 	type = "recipe",
 	ingredients = ingredients,
-	result = basename,
-	result_count = 10,
-	energy_required = 60,
-	category = "assembling",
+	results = {
+		{name,5},
+		{type="fluid",name="sulfuric-acid",amount=2}
+	},
+	main_product = name,
+	energy_required = 12,
+	category = "blending",
 	enabled = false
 }
 

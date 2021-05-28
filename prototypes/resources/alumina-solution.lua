@@ -14,16 +14,16 @@ local fluid = {
 }
 
 local ingredients = {
-	{"bauxite",7},
-	{type="fluid",name="water",amount=10}
+	{"bauxite",12},
+	{type="fluid",name="water",amount=18}
 }
 local recipe = { -- in Refinery
 	name = name,
 	type = "recipe",
 	ingredients = ingredients,
 	results = {
-		{type="fluid",name=name,amount=8},
-		{"silica",2}
+		{type="fluid",name=name,amount=12},
+		{"silica",5}
 	},
 	main_product = name,
 	subgroup = "fluid-recipe",

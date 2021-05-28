@@ -15,7 +15,7 @@ local ingot = {
 }
 
 local ingredients = {
-	{"uranium-fuel-cell",25},
+	{"uranium-fuel-cell",50},
 	{"encased-industrial-beam",3},
 	{"electromagnetic-control-rod",5}
 }

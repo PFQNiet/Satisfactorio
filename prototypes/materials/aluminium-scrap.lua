@@ -11,7 +11,7 @@ local scrap = {
 
 local ingredients = {
 	{type="fluid",name="alumina-solution",amount=4},
-	{"petroleum-coke",1}
+	{"coal",2}
 }
 local scraprecipe = { -- in Refinery
 	name = name,
@@ -19,7 +19,7 @@ local scraprecipe = { -- in Refinery
 	ingredients = ingredients,
 	results = {
 		{name,6},
-		{type="fluid",name="water",amount=1}
+		{type="fluid",name="water",amount=2}
 	},
 	main_product = name,
 	energy_required = 1,
