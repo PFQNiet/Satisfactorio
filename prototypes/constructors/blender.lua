@@ -27,8 +27,6 @@ local blender = {
 	energy_source = {
 		type = "electric",
 		usage_priority = "secondary-input",
-		buffer_capacity = "75MW",
-		input_flow_limit = "75MW",
 		drain = "0W"
 	},
 	energy_usage = "75MW",

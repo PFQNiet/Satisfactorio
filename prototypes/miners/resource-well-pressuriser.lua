@@ -9,15 +9,14 @@ local miner = {
 	collision_box = {{-4.7,-4.7},{4.7,4.7}},
 	energy_source = {
 		type = "electric",
-		buffer_capacity = "150MW",
-		input_flow_limit = "150MW",
 		usage_priority = "secondary-input"
 	},
 	energy_usage = "150MW",
 	working_sound = data.raw['mining-drill']['pumpjack'].working_sound,
 	flags = {
 		"placeable-player",
-		"player-creation"
+		"player-creation",
+		"not-rotatable"
 	},
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
@@ -42,6 +41,17 @@ local mineritem = {
 	place_result = name,
 	stack_size = 1,
 	subgroup = "production-fluid",
+	type = "item"
+}
+
+local mineritem = {
+	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon_size = 64,
+	name = name,
+	order = "f["..name.."]",
+	place_result = name,
+	stack_size = 1,
+	subgroup = "production-miner",
 	type = "item"
 }
 

@@ -11,8 +11,7 @@ accumulator.energy_source = {
 	type = "electric",
 	buffer_capacity = "360GJ",
 	usage_priority = "tertiary",
-	input_flow_limit = "100MW",
-
+	input_flow_limit = "100MW"
 }
 accumulator.energy_usage = "30MW"
 accumulator.selection_box = {{-1.5,-1.5},{1.5,1.5}}

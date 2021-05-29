@@ -26,8 +26,6 @@ local assembler = {
 	energy_source = {
 		type = "electric",
 		usage_priority = "secondary-input",
-		buffer_capacity = "15MW",
-		input_flow_limit = "15MW",
 		drain = "0W"
 	},
 	energy_usage = "15MW",

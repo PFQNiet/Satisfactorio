@@ -76,6 +76,7 @@ data:extend({
 	{type="item-subgroup",group="milestones",name="hub-tier5",order="f"},
 	{type="item-subgroup",group="milestones",name="hub-tier6",order="g"},
 	{type="item-subgroup",group="milestones",name="hub-tier7",order="h"},
+	{type="item-subgroup",group="milestones",name="hub-tier8",order="i"},
 	{type="item-subgroup",group="space-elevator",name="space-parts",order="a"},
 	{type="item-subgroup",group="mam-research",name="mam-hard-drive",order="a"},
 	{type="item-subgroup",group="mam-research",name="mam-alien-organisms",order="b"},

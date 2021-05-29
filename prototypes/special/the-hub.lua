@@ -318,7 +318,7 @@ local siloitem = {
 data:extend({silo,rocket,shadow,siloitem})
 
 -- Dummy recipes that can be used to designate the tiers of HUB progress
-for i=0,7 do
+for i=0,8 do
 	data:extend{{
 		type = "recipe",
 		name = "hub-tier"..i,

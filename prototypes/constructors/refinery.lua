@@ -27,8 +27,6 @@ local refinery = {
 	energy_source = {
 		type = "electric",
 		usage_priority = "secondary-input",
-		buffer_capacity = "30MW",
-		input_flow_limit = "30MW",
 		drain = "0W"
 	},
 	energy_usage = "30MW",

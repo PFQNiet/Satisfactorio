@@ -1,4 +1,4 @@
-local name = "resource-well-pressuriser"
+local name = "resource-well-extractor"
 local miner = {
 	animations = {
 		filename = "__Satisfactorio__/graphics/placeholders/"..name..".png",
@@ -10,8 +10,7 @@ local miner = {
 	working_sound = data.raw['mining-drill']['pumpjack'].working_sound,
 	flags = {
 		"placeable-player",
-		"player-creation",
-		"not-rotatable"
+		"player-creation"
 	},
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
@@ -40,6 +39,17 @@ local miner = {
 		},
 		pipe_covers = data.raw['mining-drill']['pumpjack'].output_fluid_box.pipe_covers
 	}
+}
+
+local mineritem = {
+	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon_size = 64,
+	name = name,
+	order = "g["..name.."]",
+	place_result = name,
+	stack_size = 1,
+	subgroup = "production-miner",
+	type = "item"
 }
 
 local ingredients = {

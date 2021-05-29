@@ -1,10 +1,9 @@
 local name = "drone"
 -- code "borrowed" from Companion Drones
 local dronesize = 0.6
-local drone =
-{
+local drone = {
 	type = "spider-vehicle",
-	name = drone,
+	name = name,
 	collision_box = {{-1 * dronesize, -1 * dronesize}, {1 * dronesize, 1 * dronesize}},
 	selection_box = {{-1 * dronesize, -1 * dronesize}, {1 * dronesize, 1 * dronesize}},
 	drawing_box = {{-3 * dronesize, -4 * dronesize}, {3 * dronesize, 2 * dronesize}},
@@ -196,7 +195,7 @@ local carrecipe = {
 	hide_from_stats = true,
 	enabled = false
 }
-local _group = data.raw['item-subgroup'][caritem.subgroup]
+local _group = data.raw['item-subgroup'][drone_item.subgroup]
 local carrecipe_undo = {
 	name = name.."-undo",
 	localised_name = {"recipe-name.dismantle",{"entity-name."..name}},
@@ -208,7 +207,7 @@ local carrecipe_undo = {
 	energy_required = 1,
 	category = "unbuilding",
 	subgroup = _group.group .. "-undo",
-	order = _group.order .. "-" .. caritem.order,
+	order = _group.order .. "-" .. drone_item.order,
 	allow_decomposition = false,
 	allow_intermediates = false,
 	allow_as_intermediate = false,

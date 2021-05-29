@@ -65,8 +65,6 @@ local interface = {
 	localised_description = {"entity-description."..name},
 	energy_source = {
 		type = "electric",
-		buffer_capacity = "1500MW",
-		input_flow_limit = "1500MW",
 		usage_priority = "secondary-output",
 		drain = "0W"
 	},

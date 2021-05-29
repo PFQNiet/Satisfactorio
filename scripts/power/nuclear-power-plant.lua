@@ -80,17 +80,19 @@ local function onTick(event)
 				eei.power_production = 0
 			end
 
-			local fuel = storage.burner.currently_burning.name
 			local consumed = script_data.consumed[storage.unit_number] or 0
 			consumed = consumed + amount
-			-- every 6 seconds (uranium) or 1 minute (plutonium) of full consumption, produce one waste of the corresponding type
-			if fuel and WASTE[fuel] then
-				if consumed > 2.5 * 60 / WASTE[fuel].amount then
-					consumed = consumed - 2.5 * 60 / WASTE[fuel].amount
-					storage.get_inventory(defines.inventory.assembling_machine_output).insert({name=WASTE[fuel].name,count=1})
-					storage.force.item_production_statistics.on_flow(WASTE[fuel].name,1)
+			if storage.burner.currently_burning then
+				local fuel = storage.burner.currently_burning.name
+				-- every 6 seconds (uranium) or 1 minute (plutonium) of full consumption, produce one waste of the corresponding type
+				if fuel and WASTE[fuel] then
+					if consumed > 2.5 * 60 / WASTE[fuel].amount then
+						consumed = consumed - 2.5 * 60 / WASTE[fuel].amount
+						storage.get_inventory(defines.inventory.assembling_machine_output).insert({name=WASTE[fuel].name,count=1})
+						storage.force.item_production_statistics.on_flow(WASTE[fuel].name,1)
+					end
+					storage.bonus_progress = consumed / (2.5 * 60 / WASTE[fuel].amount)
 				end
-				storage.bonus_progress = consumed / (2.5 * 60 / WASTE[fuel].amount)
 			end
 			script_data.consumed[storage.unit_number] = consumed
 		end

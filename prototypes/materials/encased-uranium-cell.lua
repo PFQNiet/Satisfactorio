@@ -22,10 +22,10 @@ local ingotrecipe = { -- in Blender
 	type = "recipe",
 	ingredients = ingredients,
 	results = {
-		{name,5},
+		{basename,5},
 		{type="fluid",name="sulfuric-acid",amount=2}
 	},
-	main_product = name,
+	main_product = basename,
 	energy_required = 12,
 	category = "blending",
 	enabled = false

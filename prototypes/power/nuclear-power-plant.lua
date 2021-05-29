@@ -95,7 +95,7 @@ local steaming = {
 		{type="item", name="uranium-waste", amount=0}, -- managed manually by script
 		{type="item", name="plutonium-waste", amount=0} -- managed manually by script
 	},
-	main_product = "nuclear-waste",
+	main_product = "energy",
 	energy_required = 1/60,
 	category = "nuclear-power",
 	show_amount_in_title = false,

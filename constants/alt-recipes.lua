@@ -104,6 +104,8 @@ local recipes = {
 			{"petroleum-coke",3}
 		},
 		results = {{type="fluid",name="turbofuel",amount=6}},
+		main_product = "turbofuel",
+		subgroup = "fluid-recipe",
 		energy_required = 8,
 		category = "blending",
 		icons = {"fuel", "heavy-oil-residue"}
@@ -817,7 +819,7 @@ local recipes = {
 		result_count = 4,
 		energy_required = 8,
 		category = "manufacturing",
-		icons = {"plastic-bar"}
+		icons = {"plastic"}
 	},
 	{
 		name = "electric-motor",
@@ -864,6 +866,8 @@ local recipes = {
 			{type="fluid",name="water",amount=10}
 		},
 		results = {{type="fluid",name="alumina-solution",amount=12}},
+		main_product = "alumina-solution",
+		subgroup = "fluid-recipe",
 		energy_required = 3,
 		category = "refining",
 		icons = {"water"}
@@ -913,6 +917,8 @@ local recipes = {
 			{type="fluid",name="water",amount=10}
 		},
 		results = {{type="fluid",name="fuel",amount=10}},
+		main_product = "fuel",
+		subgroup = "fluid-recipe",
 		energy_required = 6,
 		category = "blending",
 		icons = {"water"}
@@ -959,7 +965,7 @@ local recipes = {
 		result_count = 1,
 		energy_required = 16,
 		category = "manufacturing",
-		icons = {"advanced-circuit"}
+		icons = {"high-speed-connector"}
 	},
 	{
 		name = "cooling-device",
@@ -998,7 +1004,7 @@ local recipes = {
 		result_count = 1,
 		energy_required = 20,
 		category = "blending",
-		icons = {"nitric-fuel"}
+		icons = {"fuel"}
 	},
 	{
 		name = "turbo-electric-motor",
@@ -1064,15 +1070,15 @@ local recipes = {
 		result_count = 20,
 		energy_required = 120,
 		category = "accelerating",
-		icons = {"non-fisile-uraniumd"}
+		icons = {"non-fissile-uranium"}
 	},
 	{
 		name = "fertile-uranium",
 		ingredients = {
 			{"uranium-ore",5},
 			{"uranium-waste",5},
-			{"nitric-acid",3},
-			{"sulfuric-acid",5}
+			{type="fluid",name="nitric-acid",amount=3},
+			{type="fluid",name="sulfuric-acid",amount=5}
 		},
 		results = {
 			{"non-fissile-uranium",20},
@@ -1081,7 +1087,7 @@ local recipes = {
 		main_product = "non-fissile-uranium",
 		energy_required = 12,
 		category = "blending",
-		icons = {"urenium-ore"}
+		icons = {"uranium"}
 	},
 	{
 		name = "plutonium-fuel-unit",
