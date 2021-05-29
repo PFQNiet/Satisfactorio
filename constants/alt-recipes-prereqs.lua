@@ -69,7 +69,7 @@ return {
 	["classic-battery"] = {"hub-tier7-aeronautical-engineering"},
 	["electric-motor"] = {"hub-tier7-aeronautical-engineering"},
 	["oc-supercomputer"] = {"hub-tier7-aeronautical-engineering","hub-tier8-advanced-aluminium-production"},
-	["super-state-supercomputer"] = {"hub-tier7-aeronautical-engineering","hub-tier8-nuclear-power"},
+	["super-state-computer"] = {"hub-tier7-aeronautical-engineering","hub-tier8-nuclear-power"},
 	["sloppy-alumina"] = {"hub-tier7-bauxite-refinement"},
 	["alclad-casing"] = {"hub-tier7-bauxite-refinement"},
 	["pure-aluminium-ingot"] = {"hub-tier7-bauxite-refinement"},
