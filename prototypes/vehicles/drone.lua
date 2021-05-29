@@ -171,7 +171,7 @@ local drone_item = {
 	icon = "__Satisfactorio__/graphics/icons/drone.png",
 	icon_size = 64,
 	subgroup = "transport",
-	order = "s-b["..name.."]",
+	order = "u-b["..name.."]",
 	stack_size = 1,
 	place_result = name
 }

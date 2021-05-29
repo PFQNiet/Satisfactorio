@@ -32,6 +32,7 @@ local function prepareHardDriveTech(force)
 			local rand = math.random(#valid)
 			table.insert(selected, valid[rand])
 			table.remove(valid, rand)
+			if #valid == 0 then break end
 		end
 	end
 	script_data.research[force.index] = {

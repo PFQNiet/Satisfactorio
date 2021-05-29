@@ -608,7 +608,8 @@ addTech("space-elevator-phase3", "space/adaptive-control-unit", "space-elevator"
 	{"modular-engine",500},
 	{"adaptive-control-unit",100}
 }, {
-	{type="unlock-recipe",recipe="hub-tier7"}
+	{type="unlock-recipe",recipe="hub-tier7"},
+	{type="unlock-recipe",recipe="hub-tier8"}
 })
 addTech("space-elevator-phase4", "space/assembly-director-system", "space-elevator", "space-parts", "e-4", 1, {"space-elevator-phase3"}, {
 	{"assembly-director-system",4000},
