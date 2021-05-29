@@ -11,7 +11,8 @@ local miner = {
 	working_sound = data.raw['mining-drill']['pumpjack'].working_sound,
 	flags = {
 		"placeable-player",
-		"player-creation"
+		"player-creation",
+		"not-rotatable"
 	},
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,

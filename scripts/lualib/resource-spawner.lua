@@ -451,6 +451,10 @@ local function onInit()
 	registerResource("uranium-ore", 1000, 2, 2, 6)
 	registerResource("geyser", 550, 2, 6, 4)
 
+	registerResource("water-well", 500, 1, 1, 1)
+	registerResource("crude-oil-well", 700, 1, 1, 3)
+	registerResource("nitrogen-gas-well", 900, 1, 1, 6)
+
 	registerResource("x-plant", 100, 1, 3, 0)
 	registerResource("x-deposit", 100, 1, 10, 0) -- "value" is unused
 	registerResource("x-powerslug", 160, 1, 10, 0) -- "value" is dynamic 1-5 based on slug type

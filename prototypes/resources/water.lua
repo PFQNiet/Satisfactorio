@@ -31,6 +31,8 @@ local node = {
 	map_grid = false,
 	resource_patch_search_radius = 0
 }
+node.stages.sheet.filename = "__Satisfactorio__/graphics/resources/water.png"
+node.stages.sheet.hr_version.filename = "__Satisfactorio__/graphics/resources/hr-water.png"
 data:extend({node})
 
 local fluid = data.raw.fluid[name]

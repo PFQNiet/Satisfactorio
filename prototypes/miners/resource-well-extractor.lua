@@ -1,43 +1,17 @@
-local name = "oil-extractor"
+local name = "resource-well-pressuriser"
 local miner = {
-	allowed_effects = {"speed","consumption"},
-	module_specification = {module_slots = 3},
 	animations = {
-		north = {
-			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-n.png",
-			size = {160,288},
-			shift = {0,-2}
-		},
-		east = {
-			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-e.png",
-			size = {288,160},
-			shift = {2,0}
-		},
-		south = {
-			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-s.png",
-			size = {160,288},
-			shift = {0,2}
-		},
-		west = {
-			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-w.png",
-			size = {288,160},
-			shift = {-2,0}
-		}
+		filename = "__Satisfactorio__/graphics/placeholders/"..name..".png",
+		size = {96,96}
 	},
-	collision_box = {{-2.2,-6.2},{2.2,2.2}},
-	energy_source = {
-		type = "electric",
-		buffer_capacity = "40MW",
-		input_flow_limit = "40MW",
-		usage_priority = "secondary-input"
-	},
-	energy_usage = "40MW",
-	open_sound = data.raw['mining-drill']['pumpjack'].open_sound,
-	close_sound = data.raw['mining-drill']['pumpjack'].close_sound,
+	collision_box = {{-1.2,-1.2},{1.2,1.2}},
+	energy_source = {type = "void"},
+	energy_usage = "15MW",
 	working_sound = data.raw['mining-drill']['pumpjack'].working_sound,
 	flags = {
 		"placeable-player",
-		"player-creation"
+		"player-creation",
+		"not-rotatable"
 	},
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
@@ -46,11 +20,11 @@ local miner = {
 		mining_time = 1,
 		result = name
 	},
-	mining_speed = 1, -- base 120/min
+	mining_speed = 1,
 	name = name,
-	resource_categories = {"crude-oil"},
-	resource_searching_radius = 1.49,
-	selection_box = {{-2.5,-6.5},{2.5,2.5}},
+	resource_categories = {"resource-node"},
+	resource_searching_radius = 0.49,
+	selection_box = {{-1.5,-1.5},{1.5,1.5}},
 	type = "mining-drill",
 	vector_to_place_result = {0,0},
 	output_fluid_box = {
@@ -58,31 +32,19 @@ local miner = {
 		base_level = 1,
 		pipe_connections = {
 			{positions = {
-				{0,-7},
-				{7,0},
-				{0,7},
-				{-7,0}
+				{0,-2},
+				{2,0},
+				{0,2},
+				{-2,0}
 			}}
 		},
 		pipe_covers = data.raw['mining-drill']['pumpjack'].output_fluid_box.pipe_covers
 	}
 }
 
-local mineritem = {
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
-	icon_size = 64,
-	name = name,
-	order = "b["..name.."]",
-	place_result = name,
-	stack_size = 1,
-	subgroup = "production-fluid",
-	type = "item"
-}
-
 local ingredients = {
-	{"motor",15},
-	{"encased-industrial-beam",20},
-	{"copper-cable",60}
+	{"steel-plate",10},
+	{"plastic-bar",10}
 }
 local minerrecipe = {
 	name = name,

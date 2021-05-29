@@ -12,6 +12,8 @@ data:extend({
 	{type="resource-category",name="solid"},
 	{type="resource-category",name="water"},
 	{type="resource-category",name="crude-oil"},
+	{type="resource-category",name="resource-well"},
+	{type="resource-category",name="resource-node"},
 	{type="resource-category",name="geothermal"},
 	{type="recipe-category",name="nil"},
 	{type="recipe-category",name="craft-bench"},
