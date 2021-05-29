@@ -12,3 +12,6 @@ require("prototypes.vehicles.train-station")
 require("prototypes.vehicles.freight-platform")
 require("prototypes.vehicles.fluid-freight-platform")
 require("prototypes.vehicles.empty-platform")
+
+require("prototypes.vehicles.drone-port")
+require("prototypes.vehicles.drone")
