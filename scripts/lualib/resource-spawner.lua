@@ -51,6 +51,7 @@ local function registerResource(name, radius, min, max, value)
 	end
 	-- buffer determines how big a space the resource node reserves for itself (+2 border) and spreads its contents
 	local buffer = 8 * math.sqrt(settings.size) -- setting size too small may result in just single nodes as there's nowhere to spawn others!
+	if name == "geyser" then buffer = buffer * 2 end
 
 	resources.add_node(name, {
 		type = name,
@@ -100,13 +101,14 @@ local function spawnNode(resource, surface, cx, cy)
 	for _=1,30 do
 		local theta = math.random()*math.pi*2
 		local r = math.sqrt(math.random())*resource.border
+		local spread = resource.type == "geyser" and 8 or 4.5
 		local x = math.cos(theta)*r
 		local y = math.sin(theta)*r
 		local ok = true
 		for _,p in pairs(points) do
 			local dx = p[1]-x
 			local dy = p[2]-y
-			if dx*dx+dy*dy < 4.5*4.5 then
+			if dx*dx+dy*dy < spread*spread then
 				ok = false
 				break
 			end

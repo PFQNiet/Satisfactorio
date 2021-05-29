@@ -117,3 +117,39 @@ nitro.stages = {sheet = {
 	variation_count = 1
 }}
 data:extend({water,oil,nitro})
+
+data:extend({
+	{
+		type = "autoplace-control",
+		name = "water-well",
+		order = "l",
+		richness = true,
+		category = "resource"
+	},
+	{
+		type = "autoplace-control",
+		name = "crude-oil-well",
+		order = "m",
+		richness = true,
+		category = "resource"
+	},
+	{
+		type = "autoplace-control",
+		name = "nitrogen-gas-well",
+		order = "n",
+		richness = true,
+		category = "resource"
+	},
+	{
+		type = "noise-layer",
+		name = "water-well"
+	},
+	{
+		type = "noise-layer",
+		name = "crude-oil-well"
+	},
+	{
+		type = "noise-layer",
+		name = "nitrogen-gas-well"
+	}
+})

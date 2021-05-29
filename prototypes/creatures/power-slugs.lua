@@ -307,7 +307,7 @@ data:extend({
 		name = "x-powerslug",
 		order = "t",
 		richness = false,
-		category = "resource"
+		category = "terrain"
 	},
 	{
 		type = "noise-layer",

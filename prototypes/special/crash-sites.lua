@@ -74,7 +74,7 @@ data:extend({
 		name = "x-crashsite",
 		order = "u",
 		richness = false,
-		category = "resource"
+		category = "terrain"
 	},
 	{
 		type = "noise-layer",

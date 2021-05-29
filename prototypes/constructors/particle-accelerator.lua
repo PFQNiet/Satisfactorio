@@ -6,19 +6,19 @@ local accelerator = {
 	animation = {
 		north = {
 			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-n.png",
-			size = {288,256}
+			size = {608,384}
 		},
 		east = {
 			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-e.png",
-			size = {256,288}
+			size = {384,608}
 		},
 		south = {
 			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-s.png",
-			size = {288,256}
+			size = {608,384}
 		},
 		west = {
 			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-w.png",
-			size = {256,288}
+			size = {384,608}
 		}
 	},
 	collision_box = {{-9.2,-5.7},{9.2,5.7}},
@@ -65,7 +65,8 @@ local interface = {
 	localised_description = {"entity-description."..name},
 	energy_source = {
 		type = "electric",
-		usage_priority = "secondary-output",
+		buffer_capacity = "1500MW",
+		usage_priority = "secondary-input",
 		drain = "0W"
 	},
 	energy_usage = "1500MW", -- adjusted based on recipe

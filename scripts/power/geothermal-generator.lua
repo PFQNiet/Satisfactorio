@@ -25,7 +25,7 @@ local function onBuilt(event)
 		entity.destroy()
 		powertrip.registerGenerator(nil, gen, accumulator)
 
-		script_data[entity.unit_number%60][entity.unit_number] = {node=node, generator=gen}
+		script_data[gen.unit_number%60][gen.unit_number] = {node=node, generator=gen}
 	end
 end
 
@@ -44,7 +44,7 @@ local function onTick(event)
 		-- entry.node, entry.generator
 		local min = entry.node.amount/120*100
 		local max = entry.node.amount/120*300
-		local t = (event.tick + entry.generator.unit_number) / (60 * 60) * math.pi
+		local t = (event.tick + entry.generator.unit_number * 133) / (60 * 60) * math.pi
 		local pow = (min + max) / 2 + (max - min) / 2 * math.sin(t)
 		entry.generator.power_production = (pow * 1000 * 1000 + 1) / 60 -- MW to joules-per-tick, plus one for the buffer
 	end

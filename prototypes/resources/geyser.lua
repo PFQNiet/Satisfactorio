@@ -46,7 +46,7 @@ data:extend(
 		name = name,
 		order = "v",
 		richness = false,
-		category = "resource"
+		category = "terrain"
 	},
 	{
 		type = "noise-layer",

@@ -61,11 +61,11 @@ local function onTick(event)
 			entry.interface.power_usage = 0
 		else
 			local recipe = entry.accelerator.get_recipe().name
-			local scale = 1 + (entry.accelerator.speed_bonus-1)*2
+			local scale = 1 + entry.accelerator.speed_bonus*2
 			local range = POWER[recipe] or {500,1500}
 			local pow = (range[1] + (range[2] - range[1]) * entry.accelerator.crafting_progress) * scale
 			entry.interface.power_usage = pow * 1000 * 1000 / 60 -- megawatts => joules/tick
-			entry.interface.electric_buffer_size = entry.interface.energy_usage
+			entry.interface.electric_buffer_size = entry.interface.power_usage
 		end
 	end
 end
