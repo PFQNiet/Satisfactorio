@@ -213,6 +213,7 @@ Date: 2021.01.31
 Version: 0.6.0
 Date: ????
   Changes:
+    - Implemented Update 4 changes
     - Coal, Fuel and Nuclear generators are now simpler entities
   Scripting:
     - Make use of defines.prototypes for cleaner code

@@ -24,6 +24,7 @@
 local crash_site = require(modpath.."scripts.lualib.crash-sites")
 local enemies = require(modpath.."scripts.lualib.enemy-spawning")
 local resources = require(modpath..'scripts.lualib.resources')
+local string = require(modpath..'scripts.lualib.string')
 
 local script_data = {
 	queued = {}
@@ -219,6 +220,10 @@ local function spawnNode(resource, surface, cx, cy)
 			else
 				local tx = cx+math.floor(x+0.5)
 				local ty = cy+math.floor(y+0.5)
+				if string.ends_with(resource.type, "-well") then
+					tx = tx + 0.5
+					ty = ty + 0.5
+				end
 				local chunkpos = {x=math.floor(tx/32), y=math.floor(ty/32)}
 				local entity = {
 					name = resource.type,

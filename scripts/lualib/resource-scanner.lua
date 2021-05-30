@@ -116,22 +116,31 @@ local function onGuiClick(event)
 			return
 		end
 		local type = getUnlockedScans(player.force)[index].products[1].name
-		local rdata = resource_list[type]
-		if not rdata then
-			player.print("Selected resource "..type.." has no resource data")
-			return
+		local rdatas
+		if type == "crude-oil" then
+			rdatas = {resource_list[type], resource_list[type.."-well"]}
+		elseif type == "water" or type == "nitrogen-gas" then
+			rdatas = {resource_list[type.."-well"]}
+		else
+			rdatas = {resource_list[type]}
 		end
-
-		queueEffect(event.tick + 30, {type="pulse", player=player})
-		-- find nearest grid squares having nodes
 		local nodes = {}
-		local origin = {math.floor(player.position.x/rdata.gridsize), math.floor(player.position.y/rdata.gridsize)}
-		for dx=-2,2 do
-			for dy=-2,2 do
-				if rdata.grid[player.surface.index][origin[2]+dy] and rdata.grid[player.surface.index][origin[2]+dy][origin[1]+dx] then
-					-- ignore origin node as it is fake
-					if origin[1]+dx ~= 0 or origin[2]+dy ~= 0 then
-						table.insert(nodes, rdata.grid[player.surface.index][origin[2]+dy][origin[1]+dx])
+		for _,rdata in pairs(rdatas) do
+			if not rdata then
+				player.print("Selected resource "..type.." has no resource data")
+				return
+			end
+
+			queueEffect(event.tick + 30, {type="pulse", player=player})
+			-- find nearest grid squares having nodes
+			local origin = {math.floor(player.position.x/rdata.gridsize), math.floor(player.position.y/rdata.gridsize)}
+			for dx=-2,2 do
+				for dy=-2,2 do
+					if rdata.grid[player.surface.index][origin[2]+dy] and rdata.grid[player.surface.index][origin[2]+dy][origin[1]+dx] then
+						-- ignore origin node as it is fake
+						if origin[1]+dx ~= 0 or origin[2]+dy ~= 0 then
+							table.insert(nodes, rdata.grid[player.surface.index][origin[2]+dy][origin[1]+dx])
+						end
 					end
 				end
 			end
@@ -163,7 +172,7 @@ local function onGuiClick(event)
 			queueEffect(event.tick + distance + 30, {
 				type = "ping",
 				player = player,
-				resource = rdata.type,
+				resource = type,
 				position = pos
 			})
 		end
@@ -231,6 +240,11 @@ local function onTick(event)
 				local ttl = 20*60
 				-- graphics are created with no offset and placeholder text, as they are immediately updated in updatePings()
 				-- TODO make it compatible with Sandbox, where there is no effect.player.character
+				local fluids = {
+					water = true,
+					['crude-oil'] = true,
+					['nitrogen-gas'] = true
+				}
 				table.insert(script_data.pings, {
 					player = effect.player,
 					position = effect.position,
@@ -243,7 +257,7 @@ local function onTick(event)
 							players = {effect.player}
 						},
 						item = rendering.draw_sprite{
-							sprite = (effect.resource == "crude-oil" and "fluid" or "item").."/"..effect.resource,
+							sprite = (fluids[effect.resource] and "fluid" or "item").."/"..effect.resource,
 							target = effect.player.position,
 							surface = effect.player.surface,
 							time_to_live = ttl,

@@ -34,11 +34,12 @@ local template = {
 			variation_count = 1
 		}
 	},
+	highlight = true,
 	map_color = {r=0, g=0, b=0},
 	infinite = true,
 	infinite_depletion_amount = 0,
 	minimum = 1,
-	normal = 30,
+	normal = 3000,
 	map_grid = false,
 	resource_patch_search_radius = 10
 }
@@ -70,25 +71,26 @@ template = {
 	order = "y",
 	category = "resource-node",
 	minable = {
-		mining_time = 2,
+		mining_time = 1,
 		results = {{
 			type = "fluid",
 			-- name = "water", -- to be populated in clones
-			amount_min = 1,
-			amount_max = 1,
+			amount_min = 0.5,
+			amount_max = 0.5,
 			probability = 1
 		}}
 	},
-	collision_box = {{-0.1, -0.1}, {0.1, 0.1}},
-	selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
+	collision_box = {{-1.1, -1.1}, {1.1, 1.1}},
+	selection_box = {{-1.5, -1.5}, {1.5, 1.5}},
 	autoplace = nil,
 	stage_counts = {0},
 	-- stages = {}, -- to be populated in clones
+	highlight = true,
 	map_color = {r=0, g=0, b=0},
 	infinite = true,
 	infinite_depletion_amount = 0,
 	minimum = 1,
-	normal = 30,
+	normal = 3000,
 	map_grid = false,
 	resource_patch_search_radius = 10
 }
