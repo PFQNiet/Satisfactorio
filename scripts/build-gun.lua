@@ -51,7 +51,7 @@ local function updateGUI(player, buffer)
 		}
 		gui.style.horizontally_stretchable = false
 		gui.style.use_header_filler = false
-		gui.style.width = 460
+		gui.style.width = 540
 		local flow = gui.add{
 			type = "flow",
 			direction = "horizontal",

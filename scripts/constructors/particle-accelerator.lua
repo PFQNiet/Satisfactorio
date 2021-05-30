@@ -12,9 +12,9 @@ local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not entity or not entity.valid then return end
 	if entity.name == accelerator then
-		io.addInput(entity, {-8,6.5})
-		io.addInput(entity, {-6,6.5})
-		io.addOutput(entity, {8,-6.5})
+		io.addInput(entity, {-8,5.5})
+		io.addInput(entity, {-6,5.5})
+		io.addOutput(entity, {-8,-5.5})
 
 		local pow = entity.surface.create_entity{
 			name = eei,

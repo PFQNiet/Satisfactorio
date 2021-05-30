@@ -20,8 +20,8 @@ local template = {
 			probability = 1
 		}}
 	},
-	collision_box = {{-4.6, -4.6}, {4.6, 4.6}},
-	selection_box = {{-5, -5}, {5, 5}},
+	collision_box = {{-4.9, -4.9}, {4.9, 4.9}},
+	selection_box = {{-3, -3}, {3, 3}},
 	selection_priority = 25,
 	autoplace = nil,
 	stage_counts = {0},
@@ -80,8 +80,8 @@ template = {
 			probability = 1
 		}}
 	},
-	collision_box = {{-1.1, -1.1}, {1.1, 1.1}},
-	selection_box = {{-1.5, -1.5}, {1.5, 1.5}},
+	collision_box = {{-1.4, -1.4}, {1.4, 1.4}},
+	selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
 	autoplace = nil,
 	stage_counts = {0},
 	-- stages = {}, -- to be populated in clones
