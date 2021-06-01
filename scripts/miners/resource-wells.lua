@@ -45,13 +45,14 @@ local function onBuilt(event)
 			local total_yield = 0
 			for maxrange=16,100 do
 				-- keep trying with bigger and bigger ranges until we get at least one satellite spawned
+				local offset = math.random()
 				for i=0,11 do
 					-- TODO vary based on map richness settings
 					local purity = math.random(1,4)
 					if purity == 3 then purity = 2 end
 					if math.random() < 0.75 then
 						local r = math.random(9,maxrange)
-						local th = i/12*math.pi*2
+						local th = (offset+i/12)*math.pi*2
 						local dx = math.floor(r*math.cos(th))+0.5
 						local dy = math.floor(r*math.sin(th))+0.5
 						local pos = entity.surface.find_non_colliding_position(nodetype, {entity.position.x+dx, entity.position.y+dy}, 5, 1, true)

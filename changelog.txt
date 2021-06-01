@@ -215,5 +215,6 @@ Date: ????
   Changes:
     - Implemented Update 4 changes
     - Coal, Fuel and Nuclear generators are now simpler entities
+    - Hypertubes now allow junctions and keyboard input to change directions
   Scripting:
     - Make use of defines.prototypes for cleaner code
