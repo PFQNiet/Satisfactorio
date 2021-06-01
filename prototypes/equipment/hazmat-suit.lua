@@ -6,7 +6,7 @@ local item = {
 	icon_size = 64,
 	infinite = true,
 	order = "s-e1["..name.."]",
-	subgroup = "armor",
+	subgroup = "environment",
 	stack_size = 1,
 	resistances = {
 		{
@@ -81,7 +81,7 @@ local filter = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	order = "s-e2["..name.."]",
-	subgroup = "armor",
+	subgroup = "environment",
 	stack_size = 50
 }
 local filterrecipe1 = { -- manually in equipment workshop

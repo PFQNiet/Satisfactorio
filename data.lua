@@ -65,6 +65,7 @@ data:extend({
 	{type="item-subgroup",group="intermediate-products",name="packed-fluid",order="s-p"},
 	{type="item-subgroup",group="intermediate-products",name="unpack-fluid",order="s-q"},
 	{type="item-subgroup",group="combat",name="melee",order="9"},
+	{type="item-subgroup",group="combat",name="environment",order="f"},
 	{type="item-subgroup",group="fluids",name="fluid-resource",order="s-a"},
 	{type="item-subgroup",group="fluids",name="fluid-product",order="s-b"},
 	{type="item-subgroup",group="fluids",name="fluid-fuel",order="s-c"},
