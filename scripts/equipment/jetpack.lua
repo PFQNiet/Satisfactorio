@@ -38,6 +38,7 @@ local function onJump(event)
 				raise_built = true
 			}
 			car.set_driver(player)
+			car.operable = false
 			local struct = {
 				player = player,
 				car = car,

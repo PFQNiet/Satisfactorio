@@ -222,8 +222,6 @@ return {
 		[defines.events.on_entity_died] = onRemoved,
 		[defines.events.script_raised_destroy] = onRemoved,
 
-		[defines.events.on_player_rotated_entity] = onRotated,
-
 		[defines.events.on_player_driving_changed_state] = onVehicle,
 		[defines.events.on_tick] = onTick
 	}
