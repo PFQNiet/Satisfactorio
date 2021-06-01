@@ -100,7 +100,7 @@ for _,pic in pairs(entity.pictures) do
 		pic.hr_version.tint = {1,0.8,0}
 	end
 end
-entity.fluid_box.pipe_connections[2].max_underground_distance = 5
+entity.fluid_box.pipe_connections[2].max_underground_distance = 20
 entity.fluid_box.filter = "hyper-tube"
 entity.fast_replaceable_group = "hyper-tube"
 

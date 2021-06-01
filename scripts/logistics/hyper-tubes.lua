@@ -12,6 +12,7 @@ local script_data = {}
 local debounce_error = {}
 
 local refundEntity = require(modpath.."scripts.build-gun").refundEntity
+local math2d = require("math2d")
 
 local function isHyperTube(entity)
 	return entity.name == tube or entity.name == underground or entity.name == entrance
@@ -27,44 +28,9 @@ local function getUndergroundPipeExit(entrance)
 	end
 	return nil
 end
-local function _array_filter(array, test)
-	local ret = {}
-	for _,item in pairs(array) do
-		if test(item) then
-			table.insert(ret,item)
-		end
-	end
-	return ret
-end
-local function isValidHyperTube(entity)
-	-- ensure this entity, and its neighbours, have fewer than 3 neighbours
-	local neighbours = _array_filter(entity.neighbours[1], isHyperTube)
-	if #neighbours > 2 then return false end
-	for _,other in pairs(neighbours) do
-		if #_array_filter(other.neighbours[1], isHyperTube) > 2 then return false end
-	end
-	return true
-end
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not entity or not entity.valid then return end
-	if isHyperTube(entity) then
-		if not isValidHyperTube(entity) then
-			local player = entity.last_user
-			refundEntity(player, entity)
-			if not debounce_error[player.force.index] or debounce_error[player.force.index] < event.tick then
-				player.create_local_flying_text{
-					text = {"message.hyper-tube-no-junction"},
-					create_at_cursor = true
-				}
-				player.play_sound{
-					path = "utility/cannot_build"
-				}
-				debounce_error[player.force.index] = event.tick + 60
-			end
-			return
-		end
-	end
 	if entity.name == entrance then
 		-- known valid due to return statement above
 		entity.surface.create_entity{
@@ -83,23 +49,6 @@ local function onRemoved(event)
 		local box = entity.surface.find_entity(car, entity.position)
 		if box and box.valid then
 			box.destroy()
-		end
-	end
-end
-local function onRotated(event)
-	local entity = event.entity
-	if not entity or not entity.valid then return end
-	if isHyperTube(entity) then
-		if not isValidHyperTube(entity) then
-			event.entity.direction = event.previous_direction
-			local player = game.players[event.player_index]
-			player.create_local_flying_text{
-				text = {"message.hyper-tube-no-junction"},
-				create_at_cursor = true
-			}
-			player.play_sound{
-				path = "utility/cannot_build"
-			}
 		end
 	end
 end
@@ -172,16 +121,30 @@ local function onTick(event)
 			if data.offset - SPEED < 0.5 and data.offset >= 0.5 then
 				-- crossed the mid-point, so check for next direction
 				data.direction_last = data.direction
-				if data.entity.name ~= underground then
+				if data.entity.name ~= underground then -- undergrounds must continue straight
+					local directions = {
+						(data.direction + defines.direction.north) % 8,
+						(data.direction + defines.direction.east) % 8,
+						(data.direction + defines.direction.west) % 8
+					}
+					-- allow keyboard input to change directions
+					if player.riding_state.acceleration == defines.riding.acceleration.accelerating then table.insert(directions, 1, defines.direction.north) end
+					if player.riding_state.acceleration == defines.riding.acceleration.reversing then table.insert(directions, 1, defines.direction.south) end
+					if player.riding_state.direction == defines.riding.direction.right then table.insert(directions, 1, defines.direction.east) end
+					if player.riding_state.direction == defines.riding.direction.left then table.insert(directions, 1, defines.direction.west) end
+
 					data.direction = nil
-					for _,neighbour in pairs(data.entity.neighbours[1]) do
-						if neighbour ~= data.entity_last and isHyperTube(neighbour) then
-							-- there can be only one so if we find one then assume it's valid
-							if data.entity.position.y > neighbour.position.y then data.direction = defines.direction.north
-							elseif data.entity.position.x < neighbour.position.x then data.direction = defines.direction.east
-							elseif data.entity.position.y < neighbour.position.y then data.direction = defines.direction.south
-							else data.direction = defines.direction.west
-							end
+					for _,direction in pairs(directions) do
+						local neighbour = data.entity.surface.find_entities_filtered{
+							position = math2d.position.add(
+								data.entity.position,
+								math2d.position.rotate_vector({0,-1}, direction/8*360)
+							),
+							name = {tube, underground, entrance}
+						}[1]
+						if neighbour then
+							-- directions is in order of preference so if we find one then assume it's valid
+							data.direction = direction
 							break
 						end
 					end
