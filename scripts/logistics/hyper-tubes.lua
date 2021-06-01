@@ -105,7 +105,7 @@ local function onVehicle(event)
 		end
 	end
 end
-local SPEED = 24/60 -- tiles per tick, so 0.25 = 15 tiles per second
+local SPEED = 24/60 -- tiles per tick, must be <1; 24/60 = 24m/s = 86.4kmh
 local function onTick(event)
 	local travel = script_data
 	if not travel then return end
@@ -167,12 +167,10 @@ local function onTick(event)
 				end
 			end
 			if data.offset >= nextoffset then
-				data.entity.minable = true
 				data.entity_last = data.entity
 				if data.entity.name == underground then
 					local exit = getUndergroundPipeExit(data.entity)
 					if exit then
-						exit.minable = true
 						data.entity_last = exit
 					end
 				end
@@ -184,11 +182,6 @@ local function onTick(event)
 						name = {tube, underground, entrance}
 					}[1]
 					if next then
-						next.minable = false
-						if next.name == underground then
-							local exit = getUndergroundPipeExit(next)
-							if exit then exit.minable = false end
-						end
 						data.entity = next
 						data.offset = data.offset - nextoffset
 					else
