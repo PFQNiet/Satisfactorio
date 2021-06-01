@@ -12,7 +12,6 @@ local script_data = {}
 local debounce_error = {}
 
 local refundEntity = require(modpath.."scripts.build-gun").refundEntity
-local math2d = require("math2d")
 
 local function isHyperTube(entity)
 	return entity.name == tube or entity.name == underground or entity.name == entrance
@@ -136,10 +135,10 @@ local function onTick(event)
 					data.direction = nil
 					for _,direction in pairs(directions) do
 						local neighbour = data.entity.surface.find_entities_filtered{
-							position = math2d.position.add(
-								data.entity.position,
-								math2d.position.rotate_vector({0,-1}, direction/8*360)
-							),
+							position = {
+								data.entity.position.x + vectors[direction][1],
+								data.entity.position.y + vectors[direction][2]
+							},
 							name = {tube, underground, entrance}
 						}[1]
 						if neighbour then
@@ -183,14 +182,14 @@ local function onTick(event)
 					local next = data.entity.surface.find_entities_filtered{
 						position = {data.entity.position.x + nextoffset * vectors[data.direction][1], data.entity.position.y + nextoffset * vectors[data.direction][2]},
 						name = {tube, underground, entrance}
-					}
-					if #next > 0 then
-						data.entity = next[1]
-						next.minable = nil
+					}[1]
+					if next then
+						next.minable = false
 						if next.name == underground then
 							local exit = getUndergroundPipeExit(next)
 							if exit then exit.minable = false end
 						end
+						data.entity = next
 						data.offset = data.offset - nextoffset
 					else
 						data.direction = nil
