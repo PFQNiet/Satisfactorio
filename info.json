@@ -9,6 +9,7 @@
 	"dependencies":
 	[
 		"base >= 1.1.34",
-		"?Factorissimo2 >= 2.4.2"
+		"?Factorissimo2 >= 2.4.2",
+		"?GCKI >= 1.1.1"
 	]
 }

@@ -142,7 +142,7 @@ local function onVehicle(event)
 		end
 	end
 end
-local SPEED = 16/60 -- tiles per tick, must be <1; 16/60 = 16m/s = 57.6kmh
+local SPEED = 12/60 -- tiles per tick, must be <1; 12/60 = 12m/s = 43.2kmh
 local function onTick(event)
 	for pid,data in pairs(script_data) do
 		local player = game.players[pid]
