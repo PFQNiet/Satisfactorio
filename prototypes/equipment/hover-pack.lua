@@ -97,6 +97,8 @@ local interface = {
 	name = name.."-eei",
 	energy_source = {
 		type = "electric",
+		render_no_power_icon = false,
+		render_no_network_icon = false,
 		buffer_capacity = "100MW",
 		input_flow_limit = "100MW",
 		usage_priority = "secondary-input",
@@ -113,7 +115,8 @@ local interface = {
 	collision_box = {{-16,-16},{16,16}},
 	collision_mask = {},
 	flags = {
-		"not-on-map"
+		"not-on-map",
+		"placeable-off-grid"
 	},
 	selection_box = {{-16,-16},{16,16}},
 	selectable_in_game = false

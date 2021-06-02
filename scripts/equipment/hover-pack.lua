@@ -102,7 +102,7 @@ end
 local function onTick(event)
 	for pid,struct in pairs(script_data) do
 		local powersource = findNearestPowerPole(struct.car.surface,struct.position)
-		if struct.exiting then powersource = nil end
+		if struct.exiting or (struct.start_tick < event.tick-2 and struct.interface.energy == 0) then powersource = nil end
 		local powerdistance = powersource and math2d.position.distance(struct.position, powersource.position) or math.huge
 		local battery = struct.battery
 		battery.energy = math.max(0,battery.max_energy-powerdistance*1000*1000)
@@ -145,6 +145,10 @@ local function onTick(event)
 		struct.car.teleport{
 			struct.position[1],
 			struct.position[2] - struct.height
+		}
+		struct.interface.teleport{
+			struct.position[1],
+			struct.position[2]
 		}
 		rendering.set_target(struct.aura, struct.car, {0,struct.height}) -- stay at ground level
 		rendering.set_target(struct.shadow, struct.car, {struct.height+1,struct.height})
