@@ -8,7 +8,6 @@ pipe.icon = "__Satisfactorio__/graphics/icons/"..name..".png"
 pipe.icon_size = 64
 pipe.icon_mipmaps = 0
 pipe.max_health = 1
-pipe.subgroup = "pipe-distribution"
 pipe.collision_mask = {"object-layer","train-layer"}
 box.height = 0.0065
 box.base_area = 0.01/box.height
@@ -17,6 +16,7 @@ local pipeitem = data.raw.item[basename]
 pipeitem.icon = pipe.icon
 pipeitem.icon_mipmaps = 0
 pipeitem.stack_size = 50
+pipeitem.subgroup = "pipe-distribution"
 
 local ingredients = {{"copper-plate",1}}
 local piperecipe = {

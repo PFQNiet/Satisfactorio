@@ -8,7 +8,6 @@ pump.icon_size = 64
 pump.icon_mipmaps = 0
 pump.pumping_speed = 300/60/60 -- 300/minute
 pump.max_health = 1
-pump.subgroup = "pipe-distribution"
 box.base_area = 0.02/box.height -- capacity = 2m^3
 pump.energy_source.drain = "0W"
 pump.energy_source.buffer_capacity = "4MW"
@@ -19,6 +18,7 @@ local pumpitem = data.raw.item[basename]
 pumpitem.icon = pump.icon
 pumpitem.icon_mipmaps = 0
 pumpitem.stack_size = 5
+pumpitem.subgroup = "pipe-distribution"
 
 local ingredients = {{"copper-plate",2},{"rotor",2}}
 local pumprecipe = {

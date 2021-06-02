@@ -96,7 +96,7 @@ local tankitem = {
 	order = "d["..name.."]",
 	place_result = name,
 	stack_size = 5,
-	subgroup = "energy-pipe-distribution",
+	subgroup = "pipe-distribution",
 	type = "item"
 }
 
