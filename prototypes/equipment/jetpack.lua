@@ -45,6 +45,7 @@ local vehicle = {
 	selectable_in_game = false,
 	flags = {
 		"not-on-map",
+		"building-direction-8-way",
 		"placeable-off-grid",
 		"no-automated-item-removal",
 		"no-automated-item-insertion",

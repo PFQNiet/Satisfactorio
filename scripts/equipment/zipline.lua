@@ -202,6 +202,10 @@ local function onTick(event)
 					data.position = math2d.position.add(data.source.position, {overshoot*math.cos(data.direction), -overshoot*math.sin(data.direction)})
 					offset = select(3,distance_to_line_segment(data.position, data.source.position, data.target.position))
 					data.timeout = 150
+					-- update orientation of "car" and shadow
+					data.car.orientation = math.fmod(2 + 0.25-data.direction/(math.pi*2), 1)
+					local shadowdir = math.floor(struct.car.orientation*8+0.5)%8
+					rendering.set_sprite(data.shadow, shadow.."-"..shadowdir)
 				end
 			end
 			if data.car.valid then

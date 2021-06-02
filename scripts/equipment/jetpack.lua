@@ -110,9 +110,16 @@ local function onTick(event)
 		rendering.set_target(struct.shadow, struct.car, {altitude+1,altitude})
 		rendering.set_x_scale(struct.shadow, 1-altitude/40)
 		rendering.set_y_scale(struct.shadow, 1-altitude/40)
+		if acceleration[1] ~= 0 or acceleration[2] ~= 0 then
+			local angle = math.atan2(-acceleration[2], acceleration[1])
+			struct.car.orientation = math.fmod(2 + 0.25 - angle/(math.pi*2), 1)
+			local direction = math.floor(struct.car.orientation*8+0.5)%8
+			rendering.set_sprite(struct.shadow, shadow.."-"..direction)
+		end
 
 		if struct.time >= 420 then
 			script_data[struct.player.index] = nil
+			local direction = math.floor(struct.car.orientation*8+0.5)%8
 			struct.car.destroy()
 			struct.player.teleport(struct.position)
 			local character = struct.player.character
@@ -132,6 +139,7 @@ local function onTick(event)
 					character.teleport({struct.position[1]-5, struct.position[2]})
 					-- then find an empty space at the target
 					character.teleport(surface.find_non_colliding_position("character",struct.position,0,0.05))
+					character.direction = direction
 				end
 			end
 		end
