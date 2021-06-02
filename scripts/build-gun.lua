@@ -24,16 +24,19 @@ end
 
 local function refundEntity(player, entity)
 	-- if the entity has an undo recipe, refund the components instead
-	local undo = getUndoRecipe(entity.prototype)
-	local insert = undo and undo.products or {{name=entity.name,amount=1}}
-	for _,refund in pairs(insert) do
-		local spill = refund.amount - player.insert{name=refund.name,count=refund.amount}
-		if spill > 0 then
-			player.surface.spill_item_stack(
-				player.position,
-				{name = refund.name, count = spill},
-				true, player.force, false
-			)
+	if not (player and player.cheat_mode) then
+		local undo = getUndoRecipe(entity.prototype)
+		local insert = undo and undo.products or {{name=entity.name,amount=1}}
+		for _,refund in pairs(insert) do
+			local spill = refund.amount
+			if player then spill = spill - player.insert{name=refund.name,count=refund.amount} end
+			if spill > 0 then
+				(player or entity).surface.spill_item_stack(
+					(player or entity).position,
+					{name = refund.name, count = spill},
+					true, player and player.force or nil, false
+				)
+			end
 		end
 	end
 	entity.destroy{raise_destroy=true} -- allow IO to snap loader belts back

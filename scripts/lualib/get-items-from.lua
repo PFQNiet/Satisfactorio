@@ -58,9 +58,24 @@ local function retrieveItemsFromBurner(burner, target)
 		end
 	end
 end
+local function retrieveItemsFromDrone(drone, target)
+	-- collect items from the spider trunk and place them in target event buffer
+	local source = drone.get_inventory(defines.inventory.spider_trunk)
+	for i = 1, #source do
+		local stack = source[i]
+		if stack.valid and stack.valid_for_read then
+			if target then
+				target.insert(stack)
+			else
+				drone.surface.spill_item_stack(drone.position, stack, true, drone.force, false)
+			end
+		end
+	end
+end
 
 return {
 	assembler = retrieveItemsFromAssembler,
 	storage = retrieveItemsFromStorage,
-	burner = retrieveItemsFromBurner
+	burner = retrieveItemsFromBurner,
+	spider = retrieveItemsFromDrone
 }

@@ -1,6 +1,6 @@
 -- uses global.space_elevator.elevator as table of Force index -> elevator
 -- uses global.space-elevator.phase as table of Player index -> phase shown in GUI - if different to current selection then GUI needs refresh, otherwise just update counts
--- uses global.player_build_error_debounce'] to track force -> last error tick to de-duplicate placement errors
+-- uses global.player_build_error_debounce to track force -> last error tick to de-duplicate placement errors
 local util = require("util")
 local string = require(modpath.."scripts.lualib.string")
 local io = require(modpath.."scripts.lualib.input-output")

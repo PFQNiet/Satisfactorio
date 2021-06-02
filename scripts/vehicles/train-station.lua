@@ -29,8 +29,8 @@ local debounce_error = {}
 local function denyConstruction(entity, reason, event)
 	-- refund the entity and trigger an error message flying text (but only if event.tick is not too recent from the last one)
 	local player = entity.last_user
+	refundEntity(player, entity)
 	if player then
-		refundEntity(player, entity)
 		if not debounce_error[player.force.index] or debounce_error[player.force.index] < event.tick then
 			player.create_local_flying_text{
 				text = reason,
@@ -41,9 +41,6 @@ local function denyConstruction(entity, reason, event)
 			}
 			debounce_error[player.force.index] = event.tick + 60
 		end
-	else
-		entity.surface.spill_item_stack(entity.position, {name=entity.name,count=1}, false, nil, false)
-		entity.destroy()
 	end
 end
 
