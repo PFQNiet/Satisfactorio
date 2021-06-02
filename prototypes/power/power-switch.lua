@@ -4,6 +4,7 @@ local pole = data.raw['power-switch'][name]
 pole.icon = "__Satisfactorio__/graphics/icons/"..name..".png"
 pole.icon_mipmaps = 0
 pole.max_health = 1
+pole.subgroup = "energy-pipe-distribution"
 
 local poleitem = data.raw.item[name]
 poleitem.icon = pole.icon

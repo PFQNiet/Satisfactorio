@@ -2,7 +2,7 @@ local name = "crash-site"
 data:extend({
 	{
 		name = "scanner-"..name,
-		localised_name = {"recipe-name.scanner",{"entity-name."..name}},
+		localised_name = {"recipe-name.scanner-crash-sites"},
 		type = "recipe",
 		ingredients = {},
 		result = name,
