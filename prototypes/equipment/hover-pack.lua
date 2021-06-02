@@ -84,13 +84,39 @@ local fakeequip = {
 	energy_source = {
 		type = "electric",
 		usage_priority = "secondary-output",
-		buffer_capacity = (6*60).."MJ" -- 1MJ/tick
+		buffer_capacity = "16MJ" -- flight range from nearest power pole
 	},
 	shape = {
 		width = 1,
 		height = 1,
 		type = "full"
 	}
+}
+local interface = {
+	type = "electric-energy-interface",
+	name = name.."-eei",
+	energy_source = {
+		type = "electric",
+		buffer_capacity = "100MW",
+		input_flow_limit = "100MW",
+		usage_priority = "secondary-input",
+		drain = "0W"
+	},
+	energy_usage = "100MW",
+	picture = {
+		filename = "__core__/graphics/empty.png",
+		size = {1,1}
+	},
+	max_health = 1,
+	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon_size = 64,
+	collision_box = {{-16,-16},{16,16}},
+	collision_mask = {},
+	flags = {
+		"not-on-map"
+	},
+	selection_box = {{-16,-16},{16,16}},
+	selectable_in_game = false
 }
 local recipe = {
 	name = name,
@@ -107,7 +133,7 @@ local recipe = {
 	enabled = false
 }
 
-data:extend({item, vehicle, grid, category, fakeitem, fakeequip, recipe})
+data:extend({item, vehicle, grid, category, fakeitem, fakeequip, interface, recipe})
 
 local shadow = {
 	type = "sprite",
