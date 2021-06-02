@@ -5,7 +5,7 @@ local plate = {
 	name = name,
 	order = "b["..name.."]",
 	stack_size = 50,
-	subgroup = "space-parts",
+	subgroup = "space-parts-2",
 	type = "item"
 }
 

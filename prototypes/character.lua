@@ -1,5 +1,5 @@
 local char = data.raw.character.character
-char.inventory_size = 16
+char.inventory_size = 18
 char.max_health = 100
 char.crafting_categories = {"building","unbuilding"}
 char.mining_categories = {"solid"}

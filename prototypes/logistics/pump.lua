@@ -8,6 +8,7 @@ pump.icon_size = 64
 pump.icon_mipmaps = 0
 pump.pumping_speed = 300/60/60 -- 300/minute
 pump.max_health = 1
+pump.subgroup = "pipe-distribution"
 box.base_area = 0.02/box.height -- capacity = 2m^3
 pump.energy_source.drain = "0W"
 pump.energy_source.buffer_capacity = "4MW"

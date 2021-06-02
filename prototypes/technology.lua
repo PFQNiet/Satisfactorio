@@ -589,13 +589,13 @@ addTech("hub-tier8-particle-enrichment", "hub/factory", "hub-progressing", "hub-
 })
 
 --[[ SPACE ELEVATOR ]]--
-addTech("space-elevator-phase1", "space/smart-plating", "space-elevator", "space-parts", "e-1", 1, {"hub-tier0-hub-upgrade-6"}, {
+addTech("space-elevator-phase1", "space/smart-plating", "space-elevator", "space-parts-1", "e-1", 1, {"hub-tier0-hub-upgrade-6"}, {
 	{"smart-plating",50}
 }, {
 	{type="unlock-recipe",recipe="hub-tier3"},
 	{type="unlock-recipe",recipe="hub-tier4"}
 })
-addTech("space-elevator-phase2", "space/versatile-framework", "space-elevator", "space-parts", "e-2", 1, {"space-elevator-phase1"}, {
+addTech("space-elevator-phase2", "space/versatile-framework", "space-elevator", "space-parts-2", "e-2", 1, {"space-elevator-phase1"}, {
 	{"smart-plating",500},
 	{"versatile-framework",500},
 	{"automated-wiring",100}
@@ -603,7 +603,7 @@ addTech("space-elevator-phase2", "space/versatile-framework", "space-elevator", 
 	{type="unlock-recipe",recipe="hub-tier5"},
 	{type="unlock-recipe",recipe="hub-tier6"}
 })
-addTech("space-elevator-phase3", "space/adaptive-control-unit", "space-elevator", "space-parts", "e-3", 1, {"space-elevator-phase2"}, {
+addTech("space-elevator-phase3", "space/adaptive-control-unit", "space-elevator", "space-parts-3", "e-3", 1, {"space-elevator-phase2"}, {
 	{"versatile-framework",2500},
 	{"modular-engine",500},
 	{"adaptive-control-unit",100}
@@ -611,7 +611,7 @@ addTech("space-elevator-phase3", "space/adaptive-control-unit", "space-elevator"
 	{type="unlock-recipe",recipe="hub-tier7"},
 	{type="unlock-recipe",recipe="hub-tier8"}
 })
-addTech("space-elevator-phase4", "space/assembly-director-system", "space-elevator", "space-parts", "e-4", 1, {"space-elevator-phase3"}, {
+addTech("space-elevator-phase4", "space/assembly-director-system", "space-elevator", "space-parts-4", "e-4", 1, {"space-elevator-phase3"}, {
 	{"assembly-director-system",4000},
 	{"magnetic-field-generator",4000},
 	{"thermal-propulsion-rocket",1000},
