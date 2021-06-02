@@ -13,6 +13,12 @@ local script_data = {
 	stations = {}
 }
 for i=0,30-1 do script_data.stations[i] = {} end
+local function getStruct(floor)
+	return script_data.stations[floor.unit_number%30][floor.unit_number]
+end
+local function clearStruct(floor)
+	script_data.stations[floor.unit_number%30][floor.unit_number] = nil
+end
 
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
@@ -38,7 +44,9 @@ local function onBuilt(event)
 		io.toggle(entity, {2,3.5}, false)
 		entity.rotatable = false
 		script_data.stations[entity.unit_number%30][entity.unit_number] = {
-			entity = entity,
+			base = entity,
+			fuel = fuel,
+			cargo = store,
 			mode = "input"
 		}
 	end
@@ -48,10 +56,11 @@ local function onRemoved(event)
 	local entity = event.entity
 	if not entity or not entity.valid then return end
 	if entity.name == base or entity.name == storage or entity.name == fuelbox then
-		-- find components
 		local floor = entity.name == base and entity or entity.surface.find_entity(base, entity.position)
-		local store = entity.name == storage and entity or floor.surface.find_entity(storage, math2d.position.add(floor.position, math2d.position.rotate_vector(storage_pos, floor.direction*45)))
-		local fuel = entity.name == fuelbox and entity or floor.surface.find_entity(fuelbox, math2d.position.add(floor.position, math2d.position.rotate_vector(fuelbox_pos, floor.direction*45)))
+		local data = getStruct(floor)
+
+		local store = data.cargo
+		local fuel = data.fuel
 		if entity.name ~= storage then
 			getitems.storage(store, event and event.buffer or nil)
 			store.destroy()
@@ -61,6 +70,7 @@ local function onRemoved(event)
 			fuel.destroy()
 		end
 		io.remove(floor, event)
+
 		script_data.stations[floor.unit_number%30][floor.unit_number] = nil
 		if entity.name ~= base then
 			floor.destroy()
@@ -71,40 +81,73 @@ end
 local function onGuiOpened(event)
 	local player = game.players[event.player_index]
 	if event.gui_type == defines.gui_type.entity and event.entity.name == base then
-		-- opening the combinator instead opens the storage
-		player.opened = event.entity.surface.find_entity(storage, math2d.position.add(event.entity.position, math2d.position.rotate_vector(storage_pos, event.entity.direction*45)))
+		-- opening the base instead opens the storage
+		local data = getStruct(event.entity)
+		player.opened = data.cargo
 	end
-	if event.gui_type == defines.gui_type.entity and event.entity.name == storage then
-		local floor = event.entity.surface.find_entity(base, event.entity.position)
-		local struct = script_data.stations[floor.unit_number%30][floor.unit_number]
-		local unloading = struct.mode == "output"
-		-- create additional GUI for switching input/output mode
-		local gui = player.gui.relative
-		if not gui['truck-station-gui'] then
-			local frame = gui.add{
-				type = "frame",
-				name = "truck-station-gui",
-				anchor = {
-					gui = defines.relative_gui_type.container_gui,
-					position = defines.relative_gui_position.right
-				},
-				direction = "vertical",
-				caption = {"gui.truck-station-gui-title"},
-				style = "inset_frame_container_frame"
-			}
-			frame.style.horizontally_stretchable = false
-			frame.style.use_header_filler = false
-			frame.add{
-				type = "switch",
-				name = "truck-station-mode-toggle",
-				switch_state = unloading and "right" or "left",
-				left_label_caption = {"gui.truck-station-mode-load"},
-				right_label_caption = {"gui.truck-station-mode-unload"}
-			}
-		else
-			gui['truck-station-gui'].visible = true
+	if event.gui_type == defines.gui_type.entity and event.entity.valid then
+		if event.entity.name == storage then
+			local floor = event.entity.surface.find_entity(base, event.entity.position)
+			local data = getStruct(floor)
+			local unloading = data.mode == "output"
+			-- create additional GUI for switching input/output mode
+			local gui = player.gui.relative
+			if not gui['truck-station-gui'] then
+				local frame = gui.add{
+					type = "frame",
+					name = "truck-station-gui",
+					anchor = {
+						gui = defines.relative_gui_type.container_gui,
+						position = defines.relative_gui_position.right
+					},
+					direction = "vertical",
+					caption = {"gui.truck-station-gui-title"},
+					style = "inset_frame_container_frame"
+				}
+				frame.style.horizontally_stretchable = false
+				frame.style.use_header_filler = false
+				frame.add{
+					type = "switch",
+					name = "truck-station-mode-toggle",
+					switch_state = unloading and "right" or "left",
+					left_label_caption = {"gui.truck-station-mode-load"},
+					right_label_caption = {"gui.truck-station-mode-unload"}
+				}
+			else
+				gui['truck-station-gui'].visible = true
+			end
+			gui['truck-station-gui']['truck-station-mode-toggle'].switch_state = unloading and "right" or "left"
 		end
-		gui['truck-station-gui']['truck-station-mode-toggle'].switch_state = unloading and "right" or "left"
+		if event.entity.name == storage or event.entity.name == fuelbox then
+			local gui = player.gui.relative
+			-- create fake tabs for switching to the fuel crate
+			if not gui['truck-station-tabs'] then
+				local tabs = gui.add{
+					type = "tabbed-pane",
+					name = "truck-station-tabs",
+					anchor = {
+						gui = defines.relative_gui_type.container_gui,
+						position = defines.relative_gui_position.top
+					},
+					style = "tabbed_pane_with_no_side_padding_and_tabs_hidden"
+				}
+				tabs.add_tab(
+					tabs.add{
+						type = "tab",
+						caption = {"gui.station-fuel-box"}
+					},
+					tabs.add{type="empty-widget"}
+				)
+				tabs.add_tab(
+					tabs.add{
+						type = "tab",
+						caption = {"gui.station-cargo"}
+					},
+					tabs.add{type="empty-widget"}
+				)
+			end
+			gui['truck-station-tabs'].selected_tab_index = event.entity.name == fuelbox and 1 or 2
+		end
 	end
 end
 local function onGuiSwitch(event)
@@ -112,25 +155,46 @@ local function onGuiSwitch(event)
 		local player = game.players[event.player_index]
 		if player.opened.name == storage then
 			local floor = player.opened.surface.find_entity(base, player.opened.position)
-			local struct = script_data.stations[floor.unit_number%30][floor.unit_number]
+			local data = getStruct(floor)
 			local unload = event.element.switch_state == "right"
-			struct.mode = unload and "output" or "input"
+			data.mode = unload and "output" or "input"
 			io.toggle(floor,{0,3.5},not unload)
 			io.toggle(floor,{2,3.5},unload)
 		end
 	end
 end
 local function onGuiClosed(event)
-	if event.gui_type == defines.gui_type.entity and event.entity.name == storage then
+	if event.gui_type == defines.gui_type.entity and event.entity.valid then
 		local player = game.players[event.player_index]
-		local gui = player.gui.relative['truck-station-gui']
-		if gui then gui.destroy() end
+		if event.entity.name == storage then
+			local gui = player.gui.relative['truck-station-gui']
+			if gui then gui.destroy() end
+		end
+		if event.entity.name == storage or event.entity.name == fuelbox then
+			local gui = player.gui.relative['truck-station-tabs']
+			if gui then gui.destroy() end
+		end
+	end
+end
+local function onGuiTabChange(event)
+	if event.element.valid and event.element.name == "truck-station-tabs" then
+		local player = game.players[event.player_index]
+		local opened = player.opened -- either the storage or the fuelbox
+		local floor = opened.surface.find_entity(base, opened.position)
+		local data = getStruct(floor)
+		if event.element.selected_tab_index == 1 then
+			player.opened = data.fuel
+		else
+			player.opened = data.cargo
+		end
 	end
 end
 
 local function onTick(event)
 	for i,struct in pairs(script_data.stations[event.tick%30]) do
-		local station = struct.entity
+		local station = struct.base
+		local fuel = struct.fuel
+		local store = struct.cargo
 		local mode = struct.mode
 		if station.energy > 0 then
 			-- each station will "tick" once every 30 in-game ticks, ie. every half-second
@@ -142,11 +206,6 @@ local function onTick(event)
 			local done = false
 			for _,vehicle in pairs(vehicles) do
 				if vehicle.speed == 0 then
-					local is_output = mode == "output"
-					local vehicleinventory = vehicle.get_inventory(defines.inventory.car_trunk)
-					local store = station.surface.find_entity(storage, math2d.position.add(station.position, math2d.position.rotate_vector(storage_pos, station.direction*45)))
-					local storeinventory = store.get_inventory(defines.inventory.chest)
-					local fuel = station.surface.find_entity(fuelbox, math2d.position.add(station.position, math2d.position.rotate_vector(fuelbox_pos, station.direction*45)))
 					-- always load fuel if possible
 					local fuelinventory = vehicle.get_inventory(defines.inventory.fuel)
 					local fuelstore = fuel.get_inventory(defines.inventory.chest)
@@ -155,6 +214,10 @@ local function onTick(event)
 							fuelstore.remove({name=fuelstore[1].name, count=fuelinventory.insert(fuelstore[1])})
 						end
 					end
+
+					local is_output = mode == "output"
+					local vehicleinventory = vehicle.get_inventory(defines.inventory.car_trunk)
+					local storeinventory = store.get_inventory(defines.inventory.chest)
 					-- transfer one item stack
 					local from = is_output and vehicleinventory or storeinventory
 					local to = is_output and storeinventory or vehicleinventory
@@ -199,6 +262,7 @@ return {
 		[defines.events.on_gui_opened] = onGuiOpened,
 		[defines.events.on_gui_closed] = onGuiClosed,
 		[defines.events.on_gui_switch_state_changed] = onGuiSwitch,
+		[defines.events.on_gui_selected_tab_changed] = onGuiTabChange,
 
 		[defines.events.on_tick] = onTick
 	}
