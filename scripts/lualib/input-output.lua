@@ -24,9 +24,14 @@ local function addToBufferOrSpillTransportBelt(belt, buffer)
 end
 
 local function findStructureFromBelt(belt)
+	-- grab the "train platform" layer, which is the only collision layer on train stations
+	local station_layer
+	for k,_ in pairs(game.entity_prototypes['train-station'].collision_mask) do
+		station_layer = k
+	end
 	local candidates = belt.surface.find_entities_filtered{
 		position = belt.position,
-		collision_mask = "object-layer"
+		collision_mask = {"object-layer", station_layer}
 	}
 	for _,entity in pairs(candidates) do
 		if script_data[entity.unit_number] then

@@ -722,7 +722,7 @@ local function onTick(event)
 					if qpos == 1 and not (ddata.state.status == "loading" or ddata.state.status == "takeoff" or ddata.state.status == "landing") then
 						-- it's my turn!
 						state.status = "arriving"
-						state.delay = event.tick + 25*60
+						state.delay = event.tick + (script_data.drone_demo and 5 or 25)*60
 						drone.autopilot_destination = destination.position
 					else
 						drone.autopilot_destination = math2d.position.add(
@@ -767,7 +767,7 @@ local function onTick(event)
 						end
 						if not fueltarget.is_empty() and fueltarget[1].count >= 10 then
 							state.status = "leaving"
-							state.delay = event.tick + 25*60
+							state.delay = event.tick + (script_data.drone_demo and 1 or 25)*60
 						end
 					end
 				end

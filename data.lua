@@ -135,30 +135,37 @@ local find_logo = [[
 	game.surfaces.nauvis.daytime = 0
 ]]
 data.raw['utility-constants'].default.main_menu_simulations = {
-	plastic = {
+	refinery = {
 		checkboard = false,
-		save = "__Satisfactorio__/menu-simulations/plastic.zip",
+		save = "__Satisfactorio__/menu-simulations/satis-demo-refinery.zip",
 		length = 30 * 60,
 		init = find_logo,
 		update = [[]]
 	},
 	coal_power = {
 		checkboard = false,
-		save = "__Satisfactorio__/menu-simulations/coal-power.zip",
+		save = "__Satisfactorio__/menu-simulations/satis-demo-coal-power.zip",
 		length = 30 * 60,
 		init = find_logo,
 		update = [[]]
 	},
 	self_driving = {
 		checkboard = false,
-		save = "__Satisfactorio__/menu-simulations/self-driving.zip",
+		save = "__Satisfactorio__/menu-simulations/satis-demo-self-driving.zip",
 		length = 30 * 60,
 		init = find_logo,
 		update = [[]]
 	},
 	space_elevator = {
 		checkboard = false,
-		save = "__Satisfactorio__/menu-simulations/space-elevator.zip",
+		save = "__Satisfactorio__/menu-simulations/satis-demo-space-elevator.zip",
+		length = 30 * 60,
+		init = find_logo,
+		update = [[]]
+	},
+	drones = {
+		checkboard = false,
+		save = "__Satisfactorio__/menu-simulations/satis-demo-drones.zip",
 		length = 30 * 60,
 		init = find_logo,
 		update = [[]]

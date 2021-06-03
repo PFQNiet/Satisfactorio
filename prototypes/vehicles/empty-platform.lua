@@ -46,8 +46,7 @@ local base = {
 	collision_mask = {train_platform_layer},
 	flags = {
 		"placeable-player",
-		"player-creation",
-		"not-on-map"
+		"player-creation"
 	},
 	minable = {
 		mining_time = 1,

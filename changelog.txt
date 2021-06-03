@@ -211,7 +211,7 @@ Date: 2021.01.31
     - To-do list did not properly decrement when placing certain entities
 ---------------------------------------------------------------------------------------------------
 Version: 0.6.0
-Date: ????
+Date: 2021.06.03
   Changes:
     - Implemented Update 4 changes
     - Coal, Fuel and Nuclear generators are now simpler entities
