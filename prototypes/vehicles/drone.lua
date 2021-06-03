@@ -1,6 +1,6 @@
 local name = "drone"
 -- code "borrowed" from Companion Drones
-local dronesize = 0.6
+local dronesize = 1.6
 local drone = {
 	type = "spider-vehicle",
 	name = name,
@@ -54,7 +54,7 @@ local drone = {
 		effectivity = 1,
 		fuel_inventory_size = 1
 	},
-	movement_energy_consumption = "100MW",
+	movement_energy_consumption = "400MW",
 	automatic_weapon_cycling = true,
 	chain_shooting_cooldown_modifier = 0.5,
 	spider_engine = {
@@ -146,8 +146,8 @@ table.insert(layers, 1, {
 	frame_count = 8,
 	line_length = 8,
 	animation_speed = 0.5,
-	scale = 1.13/4,
-	shift = util.by_pixel(-0.5, 20),
+	scale = 1/2*dronesize,
+	shift = util.by_pixel(-0.5, 20*dronesize),
 	direction_count = 1,
 	hr_version = {
 		filename = "__base__/graphics/entity/rocket-silo/hr-10-jet-flame.png",
@@ -159,11 +159,25 @@ table.insert(layers, 1, {
 		frame_count = 8,
 		line_length = 8,
 		animation_speed = 0.5,
-		scale = 1.13/8,
-		shift = util.by_pixel(-1, 20),
+		scale = 1/4*dronesize,
+		shift = util.by_pixel(-1, 20*dronesize),
 		direction_count = 1,
 	}
 })
+
+local speed_sticker = {
+	type = "sticker",
+	name = name.."-speed-sticker",
+	flags = {"not-on-map"},
+	animation = util.empty_sprite(),
+	duration_in_ticks = 100,
+	target_movement_modifier_from = 1,
+	target_movement_modifier_to = 1,
+	vehicle_speed_modifier_from = 5,
+	vehicle_speed_modifier_to = 5,
+	vehicle_friction_modifier_from = 1,
+	vehicle_friction_modifier_to = 1
+}
 
 local drone_item = {
 	type = "item-with-entity-data",
@@ -220,4 +234,4 @@ local carrecipe_undo = {
 	enabled = false
 }
 
-data:extend({drone, leg, drone_item, carrecipe, carrecipe_undo})
+data:extend({drone, leg, drone_item, speed_sticker, carrecipe, carrecipe_undo})
