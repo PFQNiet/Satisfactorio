@@ -43,16 +43,20 @@ local function onBuilt(event)
 			local nodetype = string.remove_suffix(well.name, "-well").."-node"
 			local nodes = {}
 			local total_yield = 0
+			local settings = game.default_map_gen_settings.autoplace_controls[well.name] or {frequency=1,richness=1,size=1}
+			-- settings.size/6 = chance for node to appear in a given slot
+			-- settings.richness = scaling factor for total purity, default 12
 			for maxrange=16,100 do
 				-- keep trying with bigger and bigger ranges until we get at least one satellite spawned
 				local offset = math.random()
+				local total_purity = 12*settings.richness
 				for i=0,11 do
-					-- TODO vary based on map richness settings
 					local purity = math.random(1,4)
+					if purity > total_purity then purity = total_purity end
 					if purity == 3 then purity = 2 end
-					if math.random() < 0.75 then
+					if math.random() < settings.size/6 then
 						local r = math.random(9,maxrange)
-						local th = (offset+i/12)*math.pi*2
+						local th = (offset+i*5/12)*math.pi*2
 						local dx = math.floor(r*math.cos(th))+0.5
 						local dy = math.floor(r*math.sin(th))+0.5
 						local pos = entity.surface.find_non_colliding_position(nodetype, {entity.position.x+dx, entity.position.y+dy}, 5, 1, true)
@@ -74,6 +78,8 @@ local function onBuilt(event)
 							table.insert(nodes, node_id)
 						end
 					end
+					total_purity = total_purity - purity
+					if total_purity <= 0 then break end
 				end
 				if #nodes > 0 then break end
 			end
