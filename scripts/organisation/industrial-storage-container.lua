@@ -1,4 +1,5 @@
 local io = require(modpath.."scripts.lualib.input-output")
+local getitems = require(modpath.."scripts.lualib.get-items-from")
 
 local box = "steel-chest"
 local fakebox = "industrial-storage-container-placeholder"
@@ -33,6 +34,7 @@ local function onRemoved(event)
 			fake.destroy()
 		end
 		if entity ~= real then
+			getitems.storage(real, event and event.buffer or nil)
 			real.destroy()
 		end
 	end

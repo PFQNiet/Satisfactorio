@@ -16,6 +16,7 @@ local inserter = {
 	collision_mask = {},
 	selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
 	selection_priority = 30,
+	selectable_in_game = false,
 	flags = {
 		"not-on-map",
 		"placeable-off-grid"
