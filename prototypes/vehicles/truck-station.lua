@@ -101,6 +101,7 @@ local storage = {
 	picture = empty_sprite,
 	placeable_by = {item=name,count=1},
 	selection_box = {{-3.5,-3.5},{3.5,3.5}},
+	selectable_in_game = false,
 	type = "container"
 }
 local fuelbox = {
@@ -129,6 +130,7 @@ local fuelbox = {
 	picture = empty_sprite,
 	placeable_by = {item=name,count=1},
 	selection_box = {{-0.5,-0.5},{0.5,0.5}},
+	selectable_in_game = false,
 	type = "container"
 }
 

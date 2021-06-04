@@ -291,6 +291,7 @@ local vehicle = {
 	collision_box = entity.collision_box,
 	selection_box = entity.selection_box,
 	selection_priority = 40,
+	selectable_in_game = false,
 	minable = nil,
 	flags = {
 		"not-on-map",

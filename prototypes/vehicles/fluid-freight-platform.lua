@@ -81,6 +81,7 @@ local walkable = {
 	},
 	minable = nil,
 	selection_box = {{-3,-3.5},{3,3.5}},
+	selectable_in_game = false,
 	selection_priority = 30
 }
 local collision = {
@@ -100,6 +101,7 @@ local collision = {
 	},
 	minable = nil,
 	selection_box = {{-3,-3.5},{3,3.5}},
+	selectable_in_game = false,
 	selection_priority = 30
 }
 
@@ -108,6 +110,7 @@ pump.name = name.."-pump"
 pump.collision_box = {{-0.2,-0.2},{0.2,0.2}}
 pump.collision_mask = {}
 pump.selection_box = {{-0.5,-0.5},{0.5,0.5}}
+pump.selectable_in_game = false
 pump.energy_source = {type="void"}
 pump.animations = empty_sprite
 pump.fluid_animation = empty_sprite
@@ -163,6 +166,7 @@ local storage = {
 	},
 	placeable_by = {item=name,count=1},
 	selection_box = {{-2.5,-2.5},{2.5,2.5}},
+	selectable_in_game = false,
 	two_direction_only = false,
 	window_bounding_box = {{-0.125,0.6875},{0.1875,1.1875}},
 	working_sound = data.raw['storage-tank']['storage-tank'].working_sound

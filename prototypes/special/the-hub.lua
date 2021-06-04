@@ -193,6 +193,7 @@ local silo = table.deepcopy(data.raw['rocket-silo']['rocket-silo'])
 silo.name = "ficsit-freighter"
 silo.collision_box = {{-1.3,-1.3},{1.3,1.3}}
 silo.selection_box = {{-1.5,-1.5},{1.5,1.5}}
+silo.selectable_in_game = false
 silo.energy_source = {type="void"}
 silo.rocket_parts_required = 1
 silo.max_health = 1

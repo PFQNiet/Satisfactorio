@@ -115,6 +115,7 @@ local tower_vehicle = {
 	collision_box = tower.collision_box,
 	selection_box = tower.selection_box,
 	selection_priority = 40,
+	selectable_in_game = false,
 	minable = nil,
 	flags = {
 		"not-on-map",

@@ -218,3 +218,8 @@ Date: 2021.06.03
     - Hypertubes now allow junctions and keyboard input to change directions
   Scripting:
     - Make use of defines.prototypes for cleaner code
+---------------------------------------------------------------------------------------------------
+Version: 0.6.1
+Date: 2021.06.04
+  Changes:
+    - Sub-components of various entites are no longer selectable directly

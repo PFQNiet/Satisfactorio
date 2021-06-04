@@ -6,6 +6,7 @@ box.icon = "__Satisfactorio__/graphics/icons/"..name..".png"
 box.icon_mipmaps = 0
 box.max_health = 1
 box.enable_inventory_bar = false
+box.selectable_in_game = false
 box.inventory_size = 25
 box.picture = {
 	filename = "__Satisfactorio__/graphics/placeholders/"..name..".png",

@@ -82,6 +82,7 @@ local minerbox = {
 	placeable_by = {item=name,count=1},
 	selection_box = {{-1.5,-1.5},{1.5,1.5}},
 	selection_priority = 60,
+	selectable_in_game = false,
 	type = "container"
 }
 

@@ -88,6 +88,7 @@ local storage = {
 	picture = empty_sprite,
 	placeable_by = {item=name,count=1},
 	selection_box = {{-2.5,-2.5},{2.5,2.5}},
+	selectable_in_game = false,
 	type = "container"
 }
 

@@ -111,6 +111,7 @@ silo.rocket_parts_required = 1
 silo.max_health = 1
 silo.fixed_recipe = nil
 silo.selection_priority = 49
+silo.selectable_in_game = false
 silo.flags = {}
 
 local siloitem = {
