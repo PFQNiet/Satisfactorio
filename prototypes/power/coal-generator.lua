@@ -108,7 +108,7 @@ local interface = {
 	energy_source = {
 		type = "electric",
 		buffer_capacity = "75000001W",
-		usage_priority = "secondary-output",
+		usage_priority = "primary-output",
 		drain = "0W"
 	},
 	energy_production = "75000001W", -- may be adjusted in case of low fuel
