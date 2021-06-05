@@ -13,6 +13,18 @@ end
 
 -- fast-transfer items to or from the target entity, returns whether items were actually moved
 local function fastTransfer(player, target, half)
+	if not player.can_reach_entity(target) then
+		player.surface.create_entity{
+			name = "flying-text",
+			position = {target.position.x, target.position.y - 0.5},
+			text = {"cant-reach"},
+			render_player_index = player.index
+		}
+		player.play_sound{
+			path = "utility/cannot_build"
+		}
+		return false
+	end
 	if player.cursor_stack.valid_for_read then
 		-- player is holding an item => insert it into the container
 		local name = player.cursor_stack.name
