@@ -204,7 +204,7 @@ local function onTick(event)
 					data.timeout = 150
 					-- update orientation of "car" and shadow
 					data.car.orientation = math.fmod(2 + 0.25-data.direction/(math.pi*2), 1)
-					local shadowdir = math.floor(struct.car.orientation*8+0.5)%8
+					local shadowdir = math.floor(data.car.orientation*8+0.5)%8
 					rendering.set_sprite(data.shadow, shadow.."-"..shadowdir)
 				end
 			end
