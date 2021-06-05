@@ -72,7 +72,7 @@ local steaming1 = {
 	type = "recipe",
 	localised_name = {"recipe-name."..name.."-power"},
 	localised_description = {"recipe-description."..name.."-power"},
-	ingredients = {{type="fluid", name="fuel", amount=0.25/60}},
+	ingredients = {{type="fluid", name="fuel", amount=0.2/60}},
 	results = {{type="fluid", name="energy", amount=150/1000/60}},
 	energy_required = 1/60,
 	category = "fuel-generator",

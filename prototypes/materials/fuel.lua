@@ -11,7 +11,7 @@ local fluid = {
 	default_temperature = 25,
 	base_color = {169,94,31},
 	flow_color = {255,182,77},
-	fuel_value = "600MJ"
+	fuel_value = "750MJ"
 }
 
 local recipe1 = { -- in Refinery

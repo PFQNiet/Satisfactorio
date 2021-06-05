@@ -230,3 +230,8 @@ Date: 2021.06.05
     - (Industrial) Storage Containers didn't show their contents in the UI, now fixed (kinda)
   Ease of use:
     - "Smart" fast-transfer: transferring items into or out of a Truck Station or Drone port will intelligently select between the fuel box and cargo inventories
+---------------------------------------------------------------------------------------------------
+Version: 0.6.3
+Date: 2021.06.05
+  Changes:
+    - Fuel value of Fuel updated
