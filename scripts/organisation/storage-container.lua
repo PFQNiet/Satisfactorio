@@ -1,3 +1,5 @@
+local register = require(modpath.."scripts.organisation.containers").register
+
 local io = require(modpath.."scripts.lualib.input-output")
 local getitems = require(modpath.."scripts.lualib.get-items-from")
 
@@ -18,6 +20,7 @@ local function onBuilt(event)
 		io.addInput(entity, {0,2}, realbox)
 		io.addOutput(entity, {0,-2}, realbox)
 		entity.rotatable = false
+		register(entity, realbox)
 	end
 end
 

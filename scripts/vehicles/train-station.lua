@@ -4,8 +4,9 @@
 -- uses global.train.accounted to track train IDs that have already been counted by a station in the last cycle
 local io = require(modpath.."scripts.lualib.input-output")
 local getitems = require(modpath.."scripts.lualib.get-items-from")
-local math2d = require("math2d")
+local fastTransfer = require(modpath.."scripts.organisation.containers").fastTransfer
 local refundEntity = require(modpath.."scripts.build-gun").refundEntity
+local math2d = require("math2d")
 
 local station = "train-station"
 local freight = "freight-platform"
@@ -472,6 +473,16 @@ local function onTick(event)
 	end
 end
 
+local function onFastTransfer(event, half)
+	local player = game.players[event.player_index]
+	local target = player.selected
+	if not (target and target.valid and target.name == freight) then return end
+	-- just passthru the event to the underlying container
+	local realbox = target.surface.find_entity(freight.."-box", math2d.position.add(target.position, math2d.position.rotate_vector(storage_pos, target.direction*45)))
+	if not realbox then return end
+	fastTransfer(player, target, half)
+end
+
 return {
 	on_init = function()
 		global.trains = global.trains or script_data
@@ -496,6 +507,9 @@ return {
 		[defines.events.on_gui_closed] = onGuiClosed,
 		[defines.events.on_gui_switch_state_changed] = onGuiSwitch,
 
-		[defines.events.on_tick] = onTick
+		[defines.events.on_tick] = onTick,
+
+		["fast-entity-transfer-hook"] = function(event) onFastTransfer(event, false) end,
+		["fast-entity-split-hook"] = function(event) onFastTransfer(event, true) end
 	}
 }

@@ -223,3 +223,10 @@ Version: 0.6.1
 Date: 2021.06.04
   Changes:
     - Sub-components of various entites are no longer selectable directly
+---------------------------------------------------------------------------------------------------
+Version: 0.6.2
+Date: 2021.06.05
+  Bugfixes:
+    - (Industrial) Storage Containers didn't show their contents in the UI, now fixed (kinda)
+  Ease of use:
+    - "Smart" fast-transfer: transferring items into or out of a Truck Station or Drone port will intelligently select between the fuel box and cargo inventories

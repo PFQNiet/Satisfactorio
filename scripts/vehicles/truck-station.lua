@@ -1,6 +1,7 @@
 -- uses global.trucks.stations to list all truck stations
 local io = require(modpath.."scripts.lualib.input-output")
 local getitems = require(modpath.."scripts.lualib.get-items-from")
+local fastTransfer = require(modpath.."scripts.organisation.containers").fastTransfer
 local math2d = require("math2d")
 
 local base = "truck-station"
@@ -241,6 +242,28 @@ local function onTick(event)
 	end
 end
 
+local function onFastTransfer(event, half)
+	local player = game.players[event.player_index]
+	local target = player.selected
+	if not (target and target.valid and target.name == base) then return end
+	local data = getStruct(target)
+	if not data then return end
+	if player.cursor_stack.valid_for_read then
+		-- vehicles accept all fuel so just check if a fuel value exists on the item
+		if player.cursor_stack.prototype.fuel_value then
+			-- attempt to place in fuel box
+			if fastTransfer(player, data.fuel, half) then return end
+		end
+		-- otherwise, or if it can't go in the fuel box, put it in cargo
+		fastTransfer(player, data.cargo, half)
+	else
+		-- retrieve items from cargo, or from fuel box if cargo is empty
+		if not fastTransfer(player, data.cargo, half) then
+			fastTransfer(player, data.fuel, half)
+		end
+	end
+end
+
 return {
 	on_init = function()
 		global.trucks = global.trucks or script_data
@@ -264,6 +287,9 @@ return {
 		[defines.events.on_gui_switch_state_changed] = onGuiSwitch,
 		[defines.events.on_gui_selected_tab_changed] = onGuiTabChange,
 
-		[defines.events.on_tick] = onTick
+		[defines.events.on_tick] = onTick,
+
+		["fast-entity-transfer-hook"] = function(event) onFastTransfer(event, false) end,
+		["fast-entity-split-hook"] = function(event) onFastTransfer(event, true) end
 	}
 }

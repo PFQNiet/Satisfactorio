@@ -3,6 +3,7 @@
 -- uses global.player_build_error_debounce to track force -> last error tick to de-duplicate placement errors
 local io = require(modpath.."scripts.lualib.input-output")
 local getitems = require(modpath.."scripts.lualib.get-items-from")
+local fastTransfer = require(modpath.."scripts.organisation.containers").fastTransfer
 local refundEntity = require(modpath.."scripts.build-gun").refundEntity
 local math2d = require("math2d")
 
@@ -892,6 +893,29 @@ local function onSetupSpiderRemote(event)
 	end
 end
 
+local function onFastTransfer(event, half)
+	local player = game.players[event.player_index]
+	local target = player.selected
+	if not (target and target.valid and target.name == base) then return end
+	local data = getStruct(target)
+	if not data then return end
+	if player.cursor_stack.valid_for_read then
+		-- if the player is holding batteries, try putting them in the fuel box
+		if player.cursor_stack.name == "battery" then
+			if fastTransfer(player, data.fuel, half) then return end
+		end
+		-- otherwise, or if it can't go in the fuel box, put it in export
+		fastTransfer(player, data.export, half)
+	else
+		-- retrieve items from import, or from export, or from fuel box - whichever is the first successful one
+		if not fastTransfer(player, data.import, half) then
+			if not fastTransfer(player, data.export, half) then
+				fastTransfer(player, data.fuel, half)
+			end
+		end
+	end
+end
+
 return {
 	on_init = function()
 		global.drones = global.drones or script_data
@@ -922,6 +946,9 @@ return {
 		[defines.events.on_player_configured_spider_remote] = onSetupSpiderRemote,
 
 		[defines.events.on_spider_command_completed] = onSpiderDone,
-		[defines.events.on_tick] = onTick
+		[defines.events.on_tick] = onTick,
+
+		["fast-entity-transfer-hook"] = function(event) onFastTransfer(event, false) end,
+		["fast-entity-split-hook"] = function(event) onFastTransfer(event, true) end
 	}
 }
