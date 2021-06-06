@@ -111,6 +111,7 @@ local function manageMamGUI(player)
 		end
 		return
 	end
+	if player.opened_gui_type ~= defines.gui_type.entity then return end
 	local entity = player.opened
 	if not (entity and entity.valid and entity.name == mam) then return end
 	local gui = player.gui.relative
