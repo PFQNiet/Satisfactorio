@@ -244,3 +244,4 @@ Date: 2021.06.11
     - Added GUI to Power Storage
   Bugfixes:
     - Fix crash when trying to fast-transfer from a tree
+    - Rails now work properly in the Build Gun
