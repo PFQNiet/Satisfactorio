@@ -8,7 +8,7 @@ local function register(combinator, storage)
 	}
 end
 local function getRegistration(entity)
-	return script_data[entity.unit_number%60][entity.unit_number]
+	return entity and entity.valid and entity.unit_number and script_data[entity.unit_number%60][entity.unit_number]
 end
 
 -- fast-transfer items to or from the target entity, returns whether items were actually moved
