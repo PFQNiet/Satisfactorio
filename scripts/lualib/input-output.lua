@@ -66,6 +66,7 @@ local function replaceBelt(entity, type, buffer)
 			position = entity.position,
 			direction = entity.direction,
 			force = entity.force,
+			raise_built = true,
 			fast_replace = true,
 			spill = false
 		}
@@ -75,6 +76,7 @@ local function replaceBelt(entity, type, buffer)
 			position = entity.position,
 			direction = entity.direction,
 			force = entity.force,
+			raise_built = true,
 			fast_replace = true,
 			spill = false
 		}
