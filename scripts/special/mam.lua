@@ -361,14 +361,16 @@ local function onGuiOpened(event)
 				}
 				craft.add{type="empty-widget"}
 				craft.add{type="empty-widget"}
-				craft.add{
-					type = "sprite",
-					sprite = recipe.products[1].type.."/"..recipe.products[1].name
-				}
-				craft.add{
-					type = "label",
-					caption = {"gui.hard-drive-recipe-ingredient",{recipe.products[1].type.."-name."..recipe.products[1].name},recipe.products[1].amount}
-				}
+				for _,product in pairs(recipe.products) do
+					craft.add{
+						type = "sprite",
+						sprite = product.type.."/"..product.name
+					}
+					craft.add{
+						type = "label",
+						caption = {"gui.hard-drive-recipe-ingredient",{product.type.."-name."..product.name},product.amount}
+					}
+				end
 			else
 				local desc = list.add{
 					type = "label",

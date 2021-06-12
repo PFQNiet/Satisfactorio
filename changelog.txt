@@ -255,3 +255,4 @@ Date: 2021.06.12
     - Fixed incorrect icons for resource wells
     - Fixed that Water Extractors did not show on the map
     - Fixed map colour of Splitters/Mergers
+    - Fixed Alt Recipe selection screen not showing byproducts properly
