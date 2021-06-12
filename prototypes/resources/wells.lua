@@ -102,13 +102,13 @@ water.map_color = data.raw.resource['water'].map_color
 water.stages = table.deepcopy(data.raw.resource['water'].stages)
 oil = table.deepcopy(template)
 oil.name = "crude-oil-node"
-oil.icons[1].icon = "__Satisfactorio__/graphics/icons/crude-oil.png"
+oil.icons[2].icon = "__Satisfactorio__/graphics/icons/crude-oil.png"
 oil.minable.results[1].name = "crude-oil"
 oil.map_color = data.raw.resource['crude-oil'].map_color
 oil.stages = table.deepcopy(data.raw.resource['crude-oil'].stages)
 nitro = table.deepcopy(template)
 nitro.name = "nitrogen-gas-node"
-nitro.icons[1].icon = "__Satisfactorio__/graphics/icons/nitrogen-gas.png"
+nitro.icons[2].icon = "__Satisfactorio__/graphics/icons/nitrogen-gas.png"
 nitro.minable.results[1].name = "nitrogen-gas"
 nitro.map_color = {r=180,g=180,b=180}
 nitro.stages = {sheet = {
