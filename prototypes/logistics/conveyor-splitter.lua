@@ -38,6 +38,7 @@ local splitter = {
 		"placeable-player",
 		"player-creation"
 	},
+	friendly_map_color = data.raw['utility-constants'].default.chart.default_friendly_color_by_type.splitter,
 	minable = {
 		mining_time = 0.5,
 		result = name
@@ -49,6 +50,7 @@ local bufferbox = {
 	collision_mask = {},
 	enable_inventory_bar = false,
 	flags = {
+		"not-on-map",
 		"hide-alt-info"
 	},
 	icon = splitter.icon,

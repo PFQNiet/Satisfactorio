@@ -35,6 +35,10 @@ local extractor = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	max_health = 1,
+	flags = {
+		"placeable-player",
+		"player-creation"
+	},
 	minable = {
 		mining_time = 1,
 		result = name

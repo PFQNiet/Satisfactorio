@@ -247,8 +247,10 @@ Date: 2021.06.11
     - Rails now work properly in the Build Gun
 ---------------------------------------------------------------------------------------------------
 Version: 0.6.5
-Date: ????
+Date: 2021.06.12
   Changes:
     - Fixed price of Rifle Ammo in AWESOME shop
   Bugfixes:
     - Fixed incorrect icons for resource wells
+    - Fixed that Water Extractors did not show on the map
+    - Fixed map colour of Splitters/Mergers
