@@ -249,8 +249,9 @@ Date: 2021.06.11
 Version: 0.6.5
 Date: 2021.06.12
   Changes:
-    - Fixed price of Rifle Ammo in AWESOME shop
+    - Added UI to better show flight time of the Jetpack
   Bugfixes:
+    - Fixed price of Rifle Ammo in AWESOME shop
     - Fixed incorrect icons for resource wells
     - Fixed that Water Extractors did not show on the map
     - Fixed map colour of Splitters/Mergers

@@ -48,6 +48,27 @@ local function onJump(event)
 					surface = car.surface,
 					target = car
 				},
+				ring = rendering.draw_circle{
+					color = {24,24,24},
+					radius = 0.5,
+					width = 5, -- +-2/32 of a tile
+					filled = false,
+					target = car,
+					target_offset = {1,-2},
+					surface = car.surface,
+					players = {player}
+				},
+				arc = rendering.draw_arc{
+					color = {43,227,39},
+					min_radius = 0.5-2/32,
+					max_radius = 0.5+2/32,
+					start_angle = -math.pi/2,
+					angle = math.pi*2,
+					target = car,
+					target_offset = {1,-2},
+					surface = car.surface,
+					players = {player}
+				},
 				time = 0,
 				position = {car.position.x,car.position.y},
 				momentum = {0,0}
@@ -110,6 +131,7 @@ local function onTick(event)
 		rendering.set_target(struct.shadow, struct.car, {altitude+1,altitude})
 		rendering.set_x_scale(struct.shadow, 1-altitude/40)
 		rendering.set_y_scale(struct.shadow, 1-altitude/40)
+		rendering.set_angle(struct.arc, battery.energy/battery.max_energy*math.pi*2)
 		if acceleration[1] ~= 0 or acceleration[2] ~= 0 then
 			local angle = math.atan2(-acceleration[2], acceleration[1])
 			struct.car.orientation = math.fmod(2 + 0.25 - angle/(math.pi*2), 1)
