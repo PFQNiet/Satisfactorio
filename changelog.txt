@@ -245,3 +245,8 @@ Date: 2021.06.11
   Bugfixes:
     - Fix crash when trying to fast-transfer from a tree
     - Rails now work properly in the Build Gun
+---------------------------------------------------------------------------------------------------
+Version: 0.6.5
+Date: ????
+  Changes:
+    - Fixed price of Rifle Ammo in AWESOME shop

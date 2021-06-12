@@ -10,7 +10,7 @@ return { -- ["item"] = {cost, stack}
 	["confusing-creature"] = {200,1},
 	["golden-nut"] = {1000,1},
 	]]
-	["firearm-magazine"] = {1,25},
+	["firearm-magazine"] = {2,5},
 	["spiked-rebar"] = {1,25},
 	["map-marker"] = {1,10},
 	-- ["ficsit-coffee-cup"] = {1,1},
