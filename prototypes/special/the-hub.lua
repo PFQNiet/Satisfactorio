@@ -191,6 +191,9 @@ data:extend({hub,hubterminal,hubgraphic_north,hubgraphic_east,hubgraphic_south,h
 
 local silo = table.deepcopy(data.raw['rocket-silo']['rocket-silo'])
 silo.name = "ficsit-freighter"
+silo.icon = "__Satisfactorio__/graphics/icons/drop-pod.png"
+silo.icon_size = 64
+silo.icon_mipmaps = 1
 silo.collision_box = {{-1.3,-1.3},{1.3,1.3}}
 silo.selection_box = {{-1.5,-1.5},{1.5,1.5}}
 silo.selectable_in_game = false
@@ -305,18 +308,7 @@ shadow.collision_box[1][2] = shadow.collision_box[1][2] / 3
 shadow.collision_box[2][1] = shadow.collision_box[2][1] / 3
 shadow.collision_box[2][2] = shadow.collision_box[2][2] / 3
 
-local siloitem = {
-	icon = "__Satisfactorio__/graphics/icons/the-hub.png",
-	icon_size = 64,
-	name = silo.name,
-	flags = {"hidden"},
-	order = "a["..silo.name.."]",
-	subgroup = "special",
-	stack_size = 1,
-	type = "item"
-}
-
-data:extend({silo,rocket,shadow,siloitem})
+data:extend({silo,rocket,shadow})
 
 -- Dummy recipes that can be used to designate the tiers of HUB progress
 for i=0,8 do

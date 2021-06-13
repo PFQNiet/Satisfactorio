@@ -148,7 +148,14 @@ local parts = addTech("hub-tier0-hub-upgrade-1", "hub/hub-upgrade-1-2", "hub-pro
 	{type="unlock-recipe",recipe="equipment-workshop"},
 	{type="unlock-recipe",recipe="portable-miner"},
 	{type="character-inventory-slots-bonus",modifier=3,use_icon_overlay_constant=false},
-	{type="nothing",effect_description={"technology-effect.add-storage-to-hub"}}
+	{
+		type = "nothing",
+		effect_description = {"technology-effect.add-storage-to-hub"},
+		icons = {
+			{icon = "__Satisfactorio__/graphics/icons/the-hub.png", icon_size = 64},
+			{icon = "__Satisfactorio__/graphics/icons/personal-storage-box.png", icon_size = 64, scale = 0.25, shift = {-8,8}}
+		}
+	}
 })
 parts.recipe.enabled = true
 addTech("hub-tier0-hub-upgrade-2", "hub/hub-upgrade-1-2", "hub-progressing", "hub-tier0", "a-0-2", 1, {"hub-tier0-hub-upgrade-1"}, {
@@ -160,7 +167,14 @@ addTech("hub-tier0-hub-upgrade-2", "hub/hub-upgrade-1-2", "hub-progressing", "hu
 	{type="unlock-recipe",recipe="wire"},
 	{type="unlock-recipe",recipe="copper-cable"},
 	{type="unlock-recipe",recipe="scanner-copper-ore"},
-	{type="nothing",effect_description={"technology-effect.add-biomass-burner-to-hub"}}
+	{
+		type = "nothing",
+		effect_description = {"technology-effect.add-biomass-burner-to-hub"},
+		icons = {
+			{icon = "__Satisfactorio__/graphics/icons/the-hub.png", icon_size = 64},
+			{icon = "__Satisfactorio__/graphics/icons/biomass-burner.png", icon_size = 64, scale = 0.25, shift = {-8,8}}
+		}
+	}
 })
 addTech("hub-tier0-hub-upgrade-3", "hub/hub-upgrade-3", "hub-progressing", "hub-tier0", "a-0-3", 1, {"hub-tier0-hub-upgrade-2"}, {
 	{"iron-plate",20},
@@ -190,7 +204,14 @@ addTech("hub-tier0-hub-upgrade-5", "hub/hub-upgrade-5", "hub-progressing", "hub-
 	{type="unlock-recipe",recipe="miner-mk-1"},
 	{type="unlock-recipe",recipe="iron-chest"},
 	{type="character-inventory-slots-bonus",modifier=3,use_icon_overlay_constant=false},
-	{type="nothing",effect_description={"technology-effect.add-biomass-burner-to-hub"}}
+	{
+		type = "nothing",
+		effect_description = {"technology-effect.add-biomass-burner-to-hub"},
+		icons = {
+			{icon = "__Satisfactorio__/graphics/icons/the-hub.png", icon_size = 64},
+			{icon = "__Satisfactorio__/graphics/icons/biomass-burner.png", icon_size = 64, scale = 0.25, shift = {-8,8}}
+		}
+	}
 })
 addTech("hub-tier0-hub-upgrade-6", "hub/hub-upgrade-6", "hub-progressing", "hub-tier0", "a-0-6", 1, {"hub-tier0-hub-upgrade-5"}, {
 	{"iron-stick",100},
@@ -202,7 +223,14 @@ addTech("hub-tier0-hub-upgrade-6", "hub/hub-upgrade-6", "hub-progressing", "hub-
 	{type="unlock-recipe",recipe="biomass-burner"},
 	{type="unlock-recipe",recipe="biomass-from-leaves"},
 	{type="unlock-recipe",recipe="biomass-from-wood"},
-	{type="nothing",effect_description={"technology-effect.add-ficsit-freighter-to-hub"}},
+	{
+		type = "nothing",
+		effect_description = {"technology-effect.add-ficsit-freighter-to-hub"},
+		icons = {
+			{icon = "__Satisfactorio__/graphics/icons/the-hub.png", icon_size = 64},
+			{icon = "__Satisfactorio__/graphics/icons/drop-pod.png", icon_size = 64, scale = 0.25, shift = {-8,8}}
+		}
+	},
 	{type="unlock-recipe",recipe="hub-tier1"},
 	{type="unlock-recipe",recipe="hub-tier2"}
 })
@@ -617,7 +645,13 @@ addTech("space-elevator-phase4", "space/assembly-director-system", "space-elevat
 	{"thermal-propulsion-rocket",1000},
 	{"nuclear-pasta",1000}
 }, {
-	{type="nothing",effect_description={"technology-effect.win-the-game"}}
+	{
+		type = "nothing",
+		effect_description = {"technology-effect.win-the-game"},
+		icons = {
+			{icon = "__Satisfactorio__/graphics/icons/satisfactory-pioneering.png", icon_size = 64}
+		}
+	}
 })
 
 --[[ MAM ]]--
@@ -896,7 +930,13 @@ addTech("mam-quartz-frequency-mapping", "mam/map", "mam", "mam-quartz", "m-7-7",
 	{"crystal-oscillator",10},
 	{"map-marker",10}
 }, {
-	{type="nothing",effect_description={"technology-effect.map"}}
+	{
+		type = "nothing",
+		effect_description = {"technology-effect.map"},
+		icons = {
+			{icon = "__Satisfactorio__/graphics/technology/mam/map.png", icon_size = 256}
+		}
+	}
 })
 addTech("mam-quartz-radio-signal-scanning", "mam/crash-site", "mam", "mam-quartz", "m-7-8", 300, {"mam-quartz-frequency-mapping"}, {
 	{"crystal-oscillator",50},
@@ -971,7 +1011,13 @@ addTech("mam-sulfur-inflated-pocket-dimension", "mam/thumbsup", "mam", "mam-sulf
 local alt_recipe_tech = addTech("mam-hard-drive", "mam/hard-drive", "mam", "mam-hard-drive", "m-0", 600, {"hub-tier1-field-research"}, {
 	{"hard-drive",1}
 }, {
-	{type="nothing",effect_description={"technology-effect.alt-recipe"}}
+	{
+		type = "nothing",
+		effect_description = {"technology-effect.alt-recipe"},
+		icons = {
+			{icon = "__Satisfactorio__/graphics/icons/hard-drive.png", icon_size = 64}
+		}
+	}
 })
 alt_recipe_tech.technology.max_level = "infinite"
 
