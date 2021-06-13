@@ -263,3 +263,5 @@ Date: 2021.06.13
   Changes:
     - Increased stack size of all Buildings so that the Build Gun can better show affordable amount
     - Added "Scanner" icon to resource/object scan "recipe" icons
+  Bugfixes:
+    - Fixed incorrect locale for capsule item tooltips

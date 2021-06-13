@@ -11,6 +11,7 @@ local item = {
 		type = "use-on-self",
 		attack_parameters = {
 			type = "projectile",
+			activation_type = "consume",
 			range = 0,
 			cooldown = 300,
 			ammo_category = "capsule",
