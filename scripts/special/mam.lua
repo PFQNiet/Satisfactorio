@@ -344,6 +344,9 @@ local function onGuiOpened(event)
 				}
 				craft.style.top_margin = 8
 				craft.style.bottom_margin = 8
+				local getname = function(what)
+					return game[what.type.."_prototypes"][what.name].localised_name
+				end
 				for _,ingredient in pairs(recipe.ingredients) do
 					craft.add{
 						type = "sprite",
@@ -351,7 +354,7 @@ local function onGuiOpened(event)
 					}
 					craft.add{
 						type = "label",
-						caption = {"gui.hard-drive-recipe-ingredient",{ingredient.type.."-name."..ingredient.name},ingredient.amount}
+						caption = {"gui.hard-drive-recipe-ingredient",getname(ingredient),ingredient.amount}
 					}
 				end
 				craft.add{type="empty-widget"}
@@ -368,7 +371,7 @@ local function onGuiOpened(event)
 					}
 					craft.add{
 						type = "label",
-						caption = {"gui.hard-drive-recipe-ingredient",{product.type.."-name."..product.name},product.amount}
+						caption = {"gui.hard-drive-recipe-ingredient",getname(product),product.amount}
 					}
 				end
 			else
