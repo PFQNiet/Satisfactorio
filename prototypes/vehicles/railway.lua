@@ -5,6 +5,7 @@ local rail = data.raw['rail-planner']['rail']
 rail.icon = "__Satisfactorio__/graphics/icons/railway.png"
 rail.icon_size = 64
 rail.icon_mipmaps = 1
+rail.stack_size = 50
 local ingredients = {
 	{"steel-pipe",1},
 	{"steel-plate",1}
@@ -49,6 +50,7 @@ local recipe_undo = {
 data:extend({recipe_undo})
 
 rail = data.raw.item['rail-signal']
+rail.stack_size = 50
 local signal = data.raw.recipe['rail-signal']
 signal.category = "building"
 signal.allow_intermediates = false
@@ -81,6 +83,7 @@ recipe_undo = {
 data:extend({recipe_undo})
 
 rail = data.raw.item['rail-chain-signal']
+rail.stack_size = 50
 signal = data.raw.recipe['rail-chain-signal']
 signal.category = "building"
 signal.allow_intermediates = false

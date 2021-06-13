@@ -93,7 +93,7 @@ local mineritem = {
 	name = name,
 	order = "c["..name.."]",
 	place_result = name,
-	stack_size = 1,
+	stack_size = 50,
 	subgroup = "production-miner",
 	type = "item"
 }

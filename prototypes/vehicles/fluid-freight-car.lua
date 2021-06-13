@@ -11,6 +11,7 @@ fluid.icons = {
 	{icon = "__Satisfactorio__/graphics/icons/freight-car.png", icon_size = 64},
 	{icon = "__Satisfactorio__/graphics/icons/water.png", icon_size = 64, scale = 0.25, shift = {-8,8}}
 }
+fluid.stack_size = 50
 
 local ingredients = {
 	{"heavy-modular-frame",4},

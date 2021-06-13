@@ -17,7 +17,7 @@ table.insert(box.flags,"no-automated-item-removal")
 local boxitem = data.raw.item[basename]
 boxitem.icon = box.icon
 boxitem.icon_mipmaps = 0
-boxitem.stack_size = 1
+boxitem.stack_size = 50
 
 local ingredients = {
 	{"iron-plate",6},

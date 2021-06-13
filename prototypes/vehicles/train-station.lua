@@ -101,7 +101,7 @@ local item = {
 	name = name,
 	order = "a[train-system]-b[platforms]-a["..name.."]",
 	place_result = name,
-	stack_size = 1,
+	stack_size = 50,
 	subgroup = "train-transport",
 	type = "item"
 }

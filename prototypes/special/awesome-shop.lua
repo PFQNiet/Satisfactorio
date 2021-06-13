@@ -55,7 +55,7 @@ local shopitem = {
 	name = name,
 	order = "s-b["..name.."]",
 	place_result = name,
-	stack_size = 1,
+	stack_size = 50,
 	subgroup = "special",
 	type = "item"
 }

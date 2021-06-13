@@ -23,7 +23,7 @@ radar.pictures = {
 local radaritem = data.raw.item[basename]
 radaritem.icon = radar.icon
 radaritem.icon_mipmaps = 0
-radaritem.stack_size = 1
+radaritem.stack_size = 50
 radaritem.subgroup = "logistics-observation"
 
 local ingredients = {

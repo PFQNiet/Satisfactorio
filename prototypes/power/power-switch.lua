@@ -8,7 +8,7 @@ pole.max_health = 1
 local poleitem = data.raw.item[name]
 poleitem.icon = pole.icon
 poleitem.icon_mipmaps = 0
-poleitem.stack_size = 1
+poleitem.stack_size = 50
 poleitem.subgroup = "energy-pipe-distribution"
 
 local ingredients = {

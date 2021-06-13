@@ -72,7 +72,7 @@ local fakebox = {
 local boxitem = data.raw.item[basename]
 boxitem.icon = box.icon
 boxitem.icon_mipmaps = 0
-boxitem.stack_size = 1
+boxitem.stack_size = 50
 boxitem.place_result = fakebox.name
 
 local ingredients = {

@@ -54,7 +54,7 @@ local smelteritem = {
 	name = name,
 	order = "b["..name.."]",
 	place_result = name,
-	stack_size = 1,
+	stack_size = 50,
 	subgroup = "production-smelter",
 	type = "item"
 }

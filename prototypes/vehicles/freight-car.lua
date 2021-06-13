@@ -11,6 +11,7 @@ cargo.icons = {
 	{icon = "__Satisfactorio__/graphics/icons/freight-car.png", icon_size = 64},
 	{icon = "__Satisfactorio__/graphics/icons/hub-parts.png", icon_size = 64, scale = 0.25, shift = {-8,8}}
 }
+cargo.stack_size = 50
 
 local ingredients = {
 	{"heavy-modular-frame",4},

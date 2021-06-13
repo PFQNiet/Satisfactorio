@@ -25,7 +25,7 @@ accumulator.picture = {
 local accumulatoritem = data.raw.item[basename]
 accumulatoritem.icon = accumulator.icon
 accumulatoritem.icon_mipmaps = 0
-accumulatoritem.stack_size = 1
+accumulatoritem.stack_size = 50
 accumulatoritem.subgroup = "production-power"
 accumulatoritem.order = "g[power-storage]"
 

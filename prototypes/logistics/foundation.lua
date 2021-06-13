@@ -35,7 +35,7 @@ local foundationitem = {
 	name = name,
 	order = "a["..name.."]",
 	place_result = name,
-	stack_size = 20,
+	stack_size = 50,
 	subgroup = "logistics-wall",
 	type = "item"
 }

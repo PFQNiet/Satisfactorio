@@ -121,7 +121,7 @@ local stationitem = {
 	name = name,
 	order = "u-a["..name.."]",
 	place_result = name,
-	stack_size = 1,
+	stack_size = 50,
 	subgroup = "transport",
 	type = "item"
 }

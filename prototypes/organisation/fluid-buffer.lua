@@ -68,7 +68,7 @@ local tankitem = {
 	name = name,
 	order = "s["..name.."]",
 	place_result = name,
-	stack_size = 1,
+	stack_size = 50,
 	subgroup = "storage",
 	type = "item"
 }

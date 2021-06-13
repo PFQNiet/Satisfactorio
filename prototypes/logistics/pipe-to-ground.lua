@@ -17,7 +17,7 @@ box.pipe_connections[2].max_underground_distance = 5
 local pipeitem = data.raw.item[basename]
 pipeitem.icon = pipe.icon
 pipeitem.icon_mipmaps = 0
-pipeitem.stack_size = 20
+pipeitem.stack_size = 50
 pipeitem.subgroup = "pipe-distribution"
 
 local ingredients = {{"copper-plate",8}}

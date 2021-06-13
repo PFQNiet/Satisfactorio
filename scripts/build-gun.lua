@@ -151,7 +151,8 @@ local function onCraft(event)
 			player.cancel_crafting{index=index,count=event.queued_count}
 			player.clear_cursor()
 			local item = event.recipe.prototype.products[1].name
-			player.cursor_stack.set_stack{name=item, count=game.item_prototypes[item].stack_size}
+			local affordable = canAfford(player, undo.products, player.get_main_inventory())
+			player.cursor_stack.set_stack{name=item, count=math.min(affordable,game.item_prototypes[item].stack_size)}
 			if player.opened_self then player.opened = nil end
 		end
 	end
@@ -170,9 +171,10 @@ local function onCursorChange(event)
 	if not (redo and redo.enabled) then return end
 	local undo = getUndoRecipe(name)
 	if not undo then return end
-	if canAfford(player, undo.products, player.get_main_inventory(), event.buffer) < 1 then return end
+	local affordable = canAfford(player, undo.products, player.get_main_inventory(), event.buffer)
+	if affordable < 1 then return end
 	player.clear_cursor()
-	player.cursor_stack.set_stack{name=name, count=game.item_prototypes[name].stack_size}
+	player.cursor_stack.set_stack{name=name, count=math.min(affordable,game.item_prototypes[name].stack_size)}
 	-- updateGUI(player)
 end
 

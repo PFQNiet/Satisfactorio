@@ -74,7 +74,7 @@ local splitteritem = {
 	name = name,
 	order = "c[splitter]-d["..name.."]",
 	place_result = name,
-	stack_size = 20,
+	stack_size = 50,
 	subgroup = "belt",
 	type = "item"
 }

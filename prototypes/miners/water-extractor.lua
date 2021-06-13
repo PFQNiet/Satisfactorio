@@ -97,7 +97,7 @@ local extractoritem = {
 	name = name,
 	order = "a["..name.."]",
 	place_result = name.."-placeholder",
-	stack_size = 1,
+	stack_size = 50,
 	subgroup = "production-fluid",
 	type = "item"
 }

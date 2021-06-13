@@ -15,6 +15,7 @@ train = data.raw['item-with-entity-data']['locomotive']
 train.icon = "__Satisfactorio__/graphics/icons/electric-locomotive.png"
 train.icon_size = 64
 train.icon_mipmaps = 1
+train.stack_size = 50
 local fuelcat = {
 	type = "fuel-category",
 	name = "train-power"

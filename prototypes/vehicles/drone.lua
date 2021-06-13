@@ -186,7 +186,7 @@ local drone_item = {
 	icon_size = 64,
 	subgroup = "transport",
 	order = "u-b["..name.."]",
-	stack_size = 1,
+	stack_size = 50,
 	place_result = name
 }
 

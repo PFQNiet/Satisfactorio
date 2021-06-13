@@ -87,7 +87,7 @@ local blenderitem = {
 	name = name,
 	order = "e["..name.."]",
 	place_result = name,
-	stack_size = 1,
+	stack_size = 50,
 	subgroup = "production-manufacturer",
 	type = "item"
 }

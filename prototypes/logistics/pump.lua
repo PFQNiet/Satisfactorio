@@ -17,7 +17,7 @@ pump.energy_usage = "4MW"
 local pumpitem = data.raw.item[basename]
 pumpitem.icon = pump.icon
 pumpitem.icon_mipmaps = 0
-pumpitem.stack_size = 5
+pumpitem.stack_size = 50
 pumpitem.subgroup = "pipe-distribution"
 
 local ingredients = {{"copper-plate",2},{"rotor",2}}
