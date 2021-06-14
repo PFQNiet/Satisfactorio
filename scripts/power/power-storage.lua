@@ -109,7 +109,13 @@ local function onTick(event)
 				for _,val in pairs(struct.rolling_average) do
 					avg = avg + val -- /60 values * 60t/s
 				end
-				if avg > 0 then
+				if avg == 0 then
+					if energy > 0 then
+						caption = {"gui.battery-flow-full"}
+					else
+						caption = {"gui.battery-flow-empty"}
+					end
+				elseif avg > 0 then
 					local time_to_full = math.ceil((struct.capacity - energy) / avg)
 					caption = {
 						"gui.battery-flow-charge",
