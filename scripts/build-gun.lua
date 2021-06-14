@@ -251,6 +251,7 @@ local function onRemoved(event)
 					if script_data[player.index] >= 6 then
 						script_data[player.index] = script_data[player.index] % 6
 						pay = true
+						count = 1 -- only refund one of the rails
 					end
 				end
 				for _,product in pairs(undo.products) do
