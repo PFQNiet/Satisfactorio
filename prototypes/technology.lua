@@ -764,7 +764,7 @@ addTech("mam-caterium-smart-splitter", "mam/smart-splitter", "mam", "mam-cateriu
 }, {
 	{type="unlock-recipe",recipe="smart-splitter"}
 })
-addTech("mam-caterium-power-switch", "mam/power-switch", "mam", "mam-caterium", "m-2-b", 300, {"mam-caterium-high-speed-connector"}, {
+addTech("mam-caterium-power-switch", "mam/power-switch", "mam", "mam-caterium", "m-2-b", 300, {"mam-caterium-ai-limiter"}, {
 	{"steel-plate",100},
 	{"processing-unit",50}
 }, {
