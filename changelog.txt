@@ -267,3 +267,4 @@ Date: 2021.06.13
   Bugfixes:
     - Fixed incorrect locale for capsule item tooltips
     - More locale fixes
+    - Fixed cost of underground belts/pipes (was double what it should have been)

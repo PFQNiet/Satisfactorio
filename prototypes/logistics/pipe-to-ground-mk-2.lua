@@ -31,15 +31,14 @@ pipeitem.place_result = name
 pipeitem.order = pipeitem.order.."-2"
 
 local ingredients = {
-	{"copper-plate",16},
-	{"plastic-bar",8}
+	{"copper-plate",8},
+	{"plastic-bar",4}
 }
 local piperecipe = {
 	name = name,
 	type = "recipe",
 	ingredients = ingredients,
 	result = name,
-	result_count = 2,
 	energy_required = 0.5,
 	category = "building",
 	allow_intermediates = false,
@@ -54,7 +53,7 @@ local piperecipe_undo = {
 	show_amount_in_title = false,
 	type = "recipe",
 	ingredients = {
-		{name,2}
+		{name,1}
 	},
 	results = ingredients,
 	energy_required = 0.5,

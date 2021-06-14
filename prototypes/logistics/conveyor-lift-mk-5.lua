@@ -34,13 +34,12 @@ beltitem.stack_size = 20
 beltitem.place_result = basename
 beltitem.order = belt.order
 
-local ingredients = {{"alclad-aluminium-sheet",8}}
+local ingredients = {{"alclad-aluminium-sheet",4}}
 local beltrecipe = {
 	name = basename,
 	type = "recipe",
 	ingredients = ingredients,
 	result = basename,
-	result_count = 2,
 	energy_required = 0.5,
 	category = "building",
 	allow_intermediates = false,
@@ -55,7 +54,7 @@ local beltrecipe_undo = {
 	show_amount_in_title = false,
 	type = "recipe",
 	ingredients = {
-		{basename,2}
+		{basename,1}
 	},
 	results = ingredients,
 	energy_required = 0.5,

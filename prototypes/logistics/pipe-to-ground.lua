@@ -20,13 +20,12 @@ pipeitem.icon_mipmaps = 0
 pipeitem.stack_size = 50
 pipeitem.subgroup = "pipe-distribution"
 
-local ingredients = {{"copper-plate",8}}
+local ingredients = {{"copper-plate",4}}
 local piperecipe = {
 	name = basename,
 	type = "recipe",
 	ingredients = ingredients,
 	result = basename,
-	result_count = 2,
 	energy_required = 0.5,
 	category = "building",
 	allow_intermediates = false,
@@ -41,7 +40,7 @@ local piperecipe_undo = {
 	show_amount_in_title = false,
 	type = "recipe",
 	ingredients = {
-		{basename,2}
+		{basename,1}
 	},
 	results = ingredients,
 	energy_required = 0.5,
