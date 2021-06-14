@@ -123,7 +123,6 @@ local recipe = {
 	name = name,
 	ingredients = ingredients,
 	result = name,
-	result_count = 2,
 	energy_required = 0.5,
 	category = "building",
 	allow_intermediates = false,
@@ -137,7 +136,7 @@ local undo = {
 	name = name.."-undo",
 	localised_name = {"recipe-name.dismantle",{"entity-name."..name}},
 	ingredients = {
-		{name,2}
+		{name,1}
 	},
 	results = ingredients,
 	energy_required = 0.5,
