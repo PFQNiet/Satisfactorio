@@ -7,6 +7,7 @@ for name,recipe in pairs(data.raw.recipe) do
 		-- force-disable the recipe, should really only apply to the-hub-undo but just in case...
 		recipe.enabled = false
 
+		-- make the item only available in the cursor
 		local itemname = recipe.ingredients[1][1]
 		local item = data.raw.item[itemname] or data.raw['item-with-entity-data'][itemname] or data.raw['rail-planner'][itemname]
 		assert(item, "Cannot find item "..itemname)

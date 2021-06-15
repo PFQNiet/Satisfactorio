@@ -60,7 +60,7 @@ local function updateGUI(player, buffer)
 			name = "buildgun",
 			direction = "vertical",
 			ignored_by_interaction = true,
-			style = "inner_frame_in_outer_frame"
+			style = "blurry_frame"
 		}
 		gui.style.horizontally_stretchable = false
 		gui.style.use_header_filler = false
@@ -129,7 +129,7 @@ local function updateGUI(player, buffer)
 	end
 
 	gui.visible = true
-	gui.location = {(player.display_resolution.width-460*player.display_scale)/2, player.display_resolution.height-300*player.display_scale}
+	gui.location = {(player.display_resolution.width-540*player.display_scale)/2, player.display_resolution.height-300*player.display_scale}
 end
 
 local function onCraft(event)
