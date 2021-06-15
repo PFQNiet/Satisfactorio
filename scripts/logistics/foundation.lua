@@ -17,34 +17,28 @@ local function onBuilt(event)
 				if math2d.position.distance_squared(target, snapto.position) > 0.1 then
 					-- figure out where to snap to
 					local snapped = math2d.position.subtract(snapto.position, vector)
-					entity.surface.create_entity{
-						name = foundation,
-						position = snapped,
-						force = entity.force,
-						raise_built = true
-					}
-					entity.destroy()
+					entity.teleport(snapped)
 				end
 				-- else position matches so we're already snapped to a foundation
 				break
 			end
 		end
 
-		if entity.valid then
-			-- if the snapping code hasn't destroyed the entity, then add tiles underneath
-			local tiles = {}
-			for dx=-1.5,1.5,1 do
-				for dy=-1.5,1.5,1 do
-					table.insert(tiles,{name=tile,position={entity.position.x+dx,entity.position.y+dy}})
-				end
+		-- add tiles underneath
+		local tiles = {}
+		for dx=-1.5,1.5,1 do
+			for dy=-1.5,1.5,1 do
+				table.insert(tiles,{name=tile,position={entity.position.x+dx,entity.position.y+dy}})
 			end
-			entity.surface.set_tiles(tiles, true, false, true, true)
-			local fish = entity.surface.find_entities_filtered{area=entity.selection_box, type="fish"}
-			for _,f in pairs(fish) do
-				f.destroy()
-			end
-			entity.minable = false
 		end
+		entity.surface.set_tiles(tiles, true, false, true, true)
+
+		local fish = entity.surface.find_entities_filtered{area=entity.selection_box, type="fish"}
+		for _,f in pairs(fish) do
+			f.destroy()
+		end
+
+		entity.minable = false
 	else
 		-- if the building is placed on foundation, then prevent that foundation from being deconstructed if it's marked that way
 		local foundations = entity.surface.find_entities_filtered{area=entity.bounding_box, name=foundation}
@@ -90,7 +84,7 @@ local function onSelectedArea(event)
 		local blocked = 0
 		for _,f in pairs(event.entities) do
 			if f.force == player.force then
-				if #f.surface.find_entities_filtered{area=f.selection_box, force="neutral", invert=true} == 1 then
+				if f.surface.count_entities_filtered{area=f.selection_box, force="neutral", name=foundation, invert=true} == 0 then
 					f.minable = true
 					f.order_deconstruction(player.force, player)
 				else

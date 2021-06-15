@@ -268,3 +268,4 @@ Date: 2021.06.13
     - Fixed incorrect locale for capsule item tooltips
     - More locale fixes
     - Fixed cost of underground belts/pipes (was double what it should have been)
+    - Fix that, in the rare case Foundation snaps to clip into another Foundation, both would be immovable
