@@ -140,6 +140,9 @@ end
 local function addRadiationForCargoWagon(entity)
 	return addRadiationForInventory(entity.get_inventory(defines.inventory.cargo_wagon))
 end
+local function addRadiationForSpiderVehicle(entity)
+	return addRadiationForInventory(entity.get_inventory(defines.inventory.spider_trunk))
+end
 local function addRadiationForCharacter(entity)
 	return addRadiationForInventory(entity.get_inventory(defines.inventory.character_main))
 		+ addRadiationForInventory(entity.get_inventory(defines.inventory.character_trash))
@@ -179,6 +182,7 @@ local radioactivity_functions = {
 	["car"] = addRadiationForCar,
 	["locomotive"] = addRadiationForTrain, -- shouldn't be used since trains are electric
 	["cargo-wagon"] = addRadiationForCargoWagon,
+	["spider-vehicle"] = addRadiationForSpiderVehicle,
 	["character"] = addRadiationForCharacter,
 	["item-entity"] = addRadiationForItemOnGround,
 	["inserter"] = addRadiationForInserter,
