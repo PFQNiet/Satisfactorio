@@ -9,6 +9,7 @@
 -- uses global.radioactivity.count to count the total number of chunks being tracked
 
 local script_data = {
+	enabled = true,
 	chunks = {},
 	buckets = {},
 	count = 0
@@ -205,49 +206,58 @@ local function onResolutionChanged(event)
 	end
 end
 local function onTick(event)
-	if not game.map_settings.pollution.enabled then return end
+	if not script_data.enabled then return end
 	local tick = event.tick
 	local bucket = tick % 1024
-	if #script_data.buckets[bucket] ~= 0 then
-		for _,entry in pairs(script_data.buckets[bucket]) do
-			local area = entry.area
-			local entities = entry.surface.find_entities_filtered{
-				area = area,
-				type = radioactive_containers
-			}
-			local radiation = 0
-			for _,entity in pairs(entities) do
-				-- ensure entity's position is in fact within the bounding box, since find_entities_filtered will find entities even if they just overlap the area slightly
-				if entity.position.x >= area[1][1] and entity.position.x < area[2][1] and entity.position.y >= area[1][2] and entity.position.y < area[2][2] then
-					radiation = radiation + radioactivity_functions[entity.type](entity)
-				end
+	for _,entry in pairs(script_data.buckets[bucket]) do
+		local surface = entry.surface
+		local area = entry.area
+		local x1 = area[1][1]
+		local x2 = area[2][1]
+		local y1 = area[1][2]
+		local y2 = area[2][2]
+		local entities = surface.find_entities_filtered{
+			area = area,
+			type = radioactive_containers
+		}
+		local radiation = 0
+		for _,entity in pairs(entities) do
+			local pos = entity.position
+			local x = pos.x
+			local y = pos.y
+			-- ensure entity's position is in fact within the bounding box, since find_entities_filtered will find entities even if they just overlap the area slightly
+			if x >= x1 and x < x2 and y >= y1 and y < y2 then
+				radiation = radiation + radioactivity_functions[entity.type](entity)
 			end
-			radiation = math.ceil(radiation/100)
-			-- for many chunks, radiation won't change much, so skip update if radiation is the same as last time
-			if radiation ~= entry.radioactivity then
-				entry.radioactivity = radiation
-				-- create/remove entities to diffuse this amount of radiation per minute
-				for i=0,32 do
-					if radiation%2 == 1 then
-						if not entry.entities[i] then
-							entry.entities[i] = entry.surface.create_entity{
-								name = "radioactivity-"..i,
-								position = {entry.area[1][1]+0.5, entry.area[1][2]+0.5},
-								force = game.forces.neutral,
-								raise_built = true
-							}
-						end
-					else
-						if entry.entities[i] then
-							if entry.entities[i].valid then entry.entities[i].destroy() end
-							entry.entities[i] = nil
-						end
+		end
+		radiation = math.ceil(radiation/100)
+		-- for many chunks, radiation won't change much, so skip update if radiation is the same as last time
+		if radiation ~= entry.radioactivity then
+			entry.radioactivity = radiation
+			local entities = entry.entities
+			-- create/remove entities to diffuse this amount of radiation per minute
+			for i=0,32 do
+				local entity = entities[i]
+				if radiation%2 == 1 then
+					if not entity then
+						entities[i] = surface.create_entity{
+							name = "radioactivity-"..i,
+							position = {x1+0.5, y1+0.5},
+							force = game.forces.neutral,
+							raise_built = true
+						}
 					end
-					radiation = bit32.rshift(radiation, 1)
+				else
+					if entity then
+						if entity.valid then entity.destroy() end
+						entities[i] = nil
+					end
 				end
+				radiation = bit32.rshift(radiation, 1)
 			end
 		end
 	end
+
 	if tick%6 == 0 then
 		for _,player in pairs(game.players) do
 			if player.character then
@@ -321,10 +331,34 @@ return {
 		end
 
 		global.radioactivity = global.radioactivity or script_data
+		global.radioactivity.enabled = game.map_settings.pollution.enabled
 	end,
 	on_load = function()
 		script_data = global.radioactivity or script_data
 		setmetatable(script_data.buckets, bucket_metatable)
+	end,
+	on_configuration_changed = function()
+		if global.radioactivity.enabled == nil then
+			global.radioactivity.enabled = game.map_settings.pollution.enabled
+		end
+	end,
+	add_commands = function()
+		if not commands.commands['toggle-radiation'] then
+			commands.add_command("toggle-radiation",{"command.toggle-radiation"},function(event)
+				local player = game.players[event.player_index]
+				if player.admin then
+					if script_data.enabled then
+						script_data.enabled = false
+						game.map_settings.pollution.enabled = false
+						game.print({"message.radiation-disabled",player.name})
+					else
+						script_data.enabled = true
+						game.map_settings.pollution.enabled = true
+						game.print({"message.radiation-enabled",player.name})
+					end
+				end
+			end)
+		end
 	end,
 	events = {
 		[defines.events.on_chunk_generated] = onChunkGenerated,

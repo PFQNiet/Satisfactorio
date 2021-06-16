@@ -46,7 +46,7 @@ handler.add_lib(require(modpath.."scripts.map-tweaks"))
 handler.add_lib({
 	add_commands = function()
 		if not commands.commands['respawn'] then
-			commands.add_command("respawn","Kills your character, allowing you to respawn. Handy if you somehow manage to get yourself stuck.",function(event)
+			commands.add_command("respawn",{"command.respawn"},function(event)
 				local player = game.players[event.player_index]
 				if player.character and not player.character.driving then
 					player.character.die()
