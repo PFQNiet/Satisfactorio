@@ -56,6 +56,7 @@ for resource,colour in pairs(resources) do
 		data:extend{deposit}
 	end
 end
+data.raw['simple-entity']['rock-big-uranium-ore'].emissions_per_second = 12.5/60
 
 hugerock.max_health = 1
 hugerock.collision_box = {{-1.5*1.5,-1.1*1.5},{1.5*1.5,1.1*1.5}}

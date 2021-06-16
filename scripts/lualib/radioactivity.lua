@@ -205,121 +205,156 @@ local function onResolutionChanged(event)
 		gui.location = {(player.display_resolution.width-250*player.display_scale)/2, 160*player.display_scale}
 	end
 end
+
+local function updateChunk(entry)
+	local surface = entry.surface
+	local area = entry.area
+	local x1 = area[1][1]
+	local x2 = area[2][1]
+	local y1 = area[1][2]
+	local y2 = area[2][2]
+	local entities = surface.find_entities_filtered{
+		area = area,
+		type = "container"
+		-- all other entities are somewhat limited in their ability to emit background radiation, whereas containers may emit a LOT.
+		-- uranium rocks and nodes emit pollution directly in fixed amounts
+	}
+	local radiation = 0
+	for _,entity in pairs(entities) do
+		local pos = entity.position
+		local x = pos.x
+		local y = pos.y
+		-- ensure entity's position is in fact within the bounding box, since find_entities_filtered will find entities even if they just overlap the area slightly
+		if x >= x1 and x < x2 and y >= y1 and y < y2 then
+			radiation = radiation + addRadiationForContainer(entity)
+			-- radiation = radiation + radioactivity_functions[entity.type](entity)
+		end
+	end
+	radiation = math.ceil(radiation/100)
+	-- for many chunks, radiation won't change much, so skip update if radiation is the same as last time
+	if radiation ~= entry.radioactivity then
+		entry.radioactivity = radiation
+		local entities = entry.entities
+		-- create/remove entities to diffuse this amount of radiation per minute
+		for i=0,32 do
+			local entity = entities[i]
+			if radiation%2 == 1 then
+				if not entity then
+					entities[i] = surface.create_entity{
+						name = "radioactivity-"..i,
+						position = {x1+0.5, y1+0.5},
+						force = game.forces.neutral,
+						raise_built = true
+					}
+				end
+			else
+				if entity then
+					if entity.valid then entity.destroy() end
+					entities[i] = nil
+				end
+			end
+			radiation = bit32.rshift(radiation, 1)
+		end
+	end
+end
+local function updateGui(player, radiation)
+	local gui = player.gui.screen.radiation
+	if not gui then
+		gui = player.gui.screen.add{
+			type = "frame",
+			name = "radiation",
+			direction = "vertical",
+			caption = {"gui.radiation"},
+			style = "inner_frame_in_outer_frame"
+		}
+		gui.style.horizontally_stretchable = false
+		gui.style.use_header_filler = false
+		gui.style.width = 250
+		local flow = gui.add{
+			type = "flow",
+			direction = "horizontal",
+			name = "content"
+		}
+		flow.style.horizontally_stretchable = true
+		flow.style.vertical_align = "center"
+		local sprite = flow.add{
+			type = "sprite",
+			sprite = "tooltip-category-nuclear"
+		}
+		local bar = flow.add{
+			type = "progressbar",
+			name = "bar",
+			style = "radioactivity-progressbar"
+		}
+		gui.visible = false
+	end
+	if radiation < 1 then
+		if gui.visible then
+			gui.visible = false
+		end
+	else
+		if not gui.visible then
+			gui.visible = true
+			onResolutionChanged({player_index=player.index})
+		end
+		gui.content.bar.value = math.min(radiation/145,1)
+	end
+end
+local function updatePlayerCharacter(player, damage)
+	if player.character then
+		-- radiation damage is based on pollution of the current chunk
+		local radiation = player.character.surface.get_pollution(player.character.position)
+			-- + getRadiationForChunk(player.surface,math.floor(player.position.x/32),math.floor(player.position.y/32))
+		local pos = player.position
+		local cx = pos.x
+		local cy = pos.y
+		local proximity = 8
+		local entities = player.surface.find_entities_filtered{
+			position = player.position,
+			radius = proximity,
+			type = radioactive_containers
+		}
+
+		for _,entity in pairs(entities) do
+			local pos = entity.position
+			local x = pos.x
+			local y = pos.y
+			local dx = x-cx
+			local dy = y-cy
+			local distance2 = dx*dx + dy*dy
+			radiation = radiation + radioactivity_functions[entity.type](entity) / (distance2/(proximity*proximity)*90 + 10) -- falls off with square of distance
+		end
+		
+		-- radiation = radiation + addRadiationForCharacter(player.character)/10 -- note that background radiation is /100, so this is 10x stronger
+		if damage then
+			if radiation >= 1 then
+				local rad = radiation
+				-- anything above 2k is capped
+				if rad > 2000 then rad = 2000 end
+				-- crude approximation of inverse-square law...
+				rad = math.sqrt(rad)
+				-- this gives a number between 0 and 45 or so, re-scale this to max out at 20dps
+				local damage = rad/45*20
+				player.character.damage(damage, game.forces.neutral, "radiation")
+				-- hazmat suit is handled separately
+			end
+		end
+
+		updateGui(player, radiation)
+	end
+end
+
 local function onTick(event)
 	if not script_data.enabled then return end
 	local tick = event.tick
 	local bucket = tick % 1024
 	for _,entry in pairs(script_data.buckets[bucket]) do
-		local surface = entry.surface
-		local area = entry.area
-		local x1 = area[1][1]
-		local x2 = area[2][1]
-		local y1 = area[1][2]
-		local y2 = area[2][2]
-		local entities = surface.find_entities_filtered{
-			area = area,
-			type = radioactive_containers
-		}
-		local radiation = 0
-		for _,entity in pairs(entities) do
-			local pos = entity.position
-			local x = pos.x
-			local y = pos.y
-			-- ensure entity's position is in fact within the bounding box, since find_entities_filtered will find entities even if they just overlap the area slightly
-			if x >= x1 and x < x2 and y >= y1 and y < y2 then
-				radiation = radiation + radioactivity_functions[entity.type](entity)
-			end
-		end
-		radiation = math.ceil(radiation/100)
-		-- for many chunks, radiation won't change much, so skip update if radiation is the same as last time
-		if radiation ~= entry.radioactivity then
-			entry.radioactivity = radiation
-			local entities = entry.entities
-			-- create/remove entities to diffuse this amount of radiation per minute
-			for i=0,32 do
-				local entity = entities[i]
-				if radiation%2 == 1 then
-					if not entity then
-						entities[i] = surface.create_entity{
-							name = "radioactivity-"..i,
-							position = {x1+0.5, y1+0.5},
-							force = game.forces.neutral,
-							raise_built = true
-						}
-					end
-				else
-					if entity then
-						if entity.valid then entity.destroy() end
-						entities[i] = nil
-					end
-				end
-				radiation = bit32.rshift(radiation, 1)
-			end
-		end
+		updateChunk(entry)
 	end
 
-	if tick%6 == 0 then
+	if tick%15 == 0 then
 		for _,player in pairs(game.players) do
-			if player.character then
-				-- radiation damage is based on pollution of the current chunk
-				local radiation = player.character.surface.get_pollution(player.character.position)
-					+ getRadiationForChunk(player.surface,math.floor(player.position.x/32),math.floor(player.position.y/32))
-					+ addRadiationForCharacter(player.character)/10
-				if tick%60 == 0 then
-					if radiation >= 1 then
-						local rad = radiation
-						-- anything above 2k is capped
-						if rad > 2000 then rad = 2000 end
-						-- crude approximation of inverse-square law...
-						rad = math.sqrt(rad)
-						-- this gives a number between 0 and 45 or so, re-scale this to max out at 20dps
-						local damage = rad/45*20
-						player.character.damage(damage, game.forces.neutral, "radiation")
-						-- hazmat suit is handled separately
-					end
-				end
-				local gui = player.gui.screen.radiation
-				if not gui then
-					gui = player.gui.screen.add{
-						type = "frame",
-						name = "radiation",
-						direction = "vertical",
-						caption = {"gui.radiation"},
-						style = "inner_frame_in_outer_frame"
-					}
-					gui.style.horizontally_stretchable = false
-					gui.style.use_header_filler = false
-					gui.style.width = 250
-					local flow = gui.add{
-						type = "flow",
-						direction = "horizontal",
-						name = "content"
-					}
-					flow.style.horizontally_stretchable = true
-					flow.style.vertical_align = "center"
-					local sprite = flow.add{
-						type = "sprite",
-						sprite = "tooltip-category-nuclear"
-					}
-					local bar = flow.add{
-						type = "progressbar",
-						name = "bar",
-						style = "radioactivity-progressbar"
-					}
-					gui.visible = false
-				end
-				if radiation < 1 then
-					if gui.visible then
-						gui.visible = false
-					end
-				else
-					if not gui.visible then
-						gui.visible = true
-						onResolutionChanged({player_index=player.index})
-					end
-					gui.content.bar.value = math.min(radiation/145,1)
-				end
-			end
+			updatePlayerCharacter(player, tick%60 == 0)
 		end
 	end
 end

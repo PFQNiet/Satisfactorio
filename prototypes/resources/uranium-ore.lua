@@ -24,6 +24,7 @@ ore.collision_box = {{-1.6, -1.6}, {1.6, 1.6}}
 ore.selection_box = {{-1.5,-1.5},{1.5,1.5}}
 ore.stages.sheet.scale = 3
 ore.stages.sheet.hr_version.scale = 1.5
+ore.emissions_per_second = 150/60
 
 local item = data.raw.item[basename]
 item.icon = ore.icon
