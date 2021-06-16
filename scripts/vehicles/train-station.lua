@@ -262,11 +262,23 @@ local function onGuiOpened(event)
 	local player = game.players[event.player_index]
 	if event.gui_type ~= defines.gui_type.entity then return end
 	if event.entity.name == station or event.entity.name == freight or event.entity.name == fluid then
-		-- opening the combinator instead opens the storage
-		player.opened = event.entity.surface.find_entities_filtered{
+		local target = event.entity.surface.find_entities_filtered{
 			name = {trainstop, freight.."-box", fluid.."-tank"},
 			area = event.entity.bounding_box
-		}[1]
+		}[1];
+		-- opening the combinator instead opens the storage
+		if target and player.can_reach_entity(target) then
+			player.opened = target
+		else
+			player.opened = nil
+			player.create_local_flying_text{
+				text = {"cant-reach"},
+				create_at_cursor = true
+			}
+			player.play_sound{
+				path = "utility/cannot_build"
+			}
+		end
 	end
 	if event.entity.name == freight.."-box" or event.entity.name == fluid.."-tank" then
 		local floor = event.entity.surface.find_entity(event.entity.name == freight.."-box" and freight or fluid, event.entity.position)

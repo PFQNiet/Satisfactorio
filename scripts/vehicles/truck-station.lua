@@ -79,77 +79,108 @@ local function onRemoved(event)
 	end
 end
 
+local function checkRangeForTabs(player, gui, fuel, cargo)
+	if not (gui and gui.valid) then return end
+	for i,obj in pairs({fuel,cargo}) do
+		local reach = player.can_reach_entity(obj)
+		local tab = gui.tabs[i].tab
+		tab.enabled = reach
+		if reach then tab.tooltip = "" else tab.tooltip = {"cant-reach"} end
+	end
+end
 local function onGuiOpened(event)
 	local player = game.players[event.player_index]
-	if event.gui_type == defines.gui_type.entity and event.entity.name == base then
+	if event.gui_type ~= defines.gui_type.entity then return end
+	if not (event.entity and event.entity.valid) then return end
+	if event.entity.name == base then
 		-- opening the base instead opens the storage
 		local data = getStruct(event.entity)
-		player.opened = data.cargo
-	end
-	if event.gui_type == defines.gui_type.entity and event.entity.valid then
-		if event.entity.name == storage then
-			local floor = event.entity.surface.find_entity(base, event.entity.position)
-			local data = getStruct(floor)
-			local unloading = data.mode == "output"
-			-- create additional GUI for switching input/output mode
-			local gui = player.gui.relative
-			if not gui['truck-station-gui'] then
-				local frame = gui.add{
-					type = "frame",
-					name = "truck-station-gui",
-					anchor = {
-						gui = defines.relative_gui_type.container_gui,
-						position = defines.relative_gui_position.right
-					},
-					direction = "vertical",
-					caption = {"gui.truck-station-gui-title"},
-					style = "inset_frame_container_frame"
-				}
-				frame.style.horizontally_stretchable = false
-				frame.style.use_header_filler = false
-				frame.add{
-					type = "switch",
-					name = "truck-station-mode-toggle",
-					switch_state = unloading and "right" or "left",
-					left_label_caption = {"gui.truck-station-mode-load"},
-					right_label_caption = {"gui.truck-station-mode-unload"}
-				}
-			else
-				gui['truck-station-gui'].visible = true
-			end
-			gui['truck-station-gui']['truck-station-mode-toggle'].switch_state = unloading and "right" or "left"
-		end
-		if event.entity.name == storage or event.entity.name == fuelbox then
-			local gui = player.gui.relative
-			-- create fake tabs for switching to the fuel crate
-			if not gui['truck-station-tabs'] then
-				local tabs = gui.add{
-					type = "tabbed-pane",
-					name = "truck-station-tabs",
-					anchor = {
-						gui = defines.relative_gui_type.container_gui,
-						position = defines.relative_gui_position.top
-					},
-					style = "tabbed_pane_with_no_side_padding_and_tabs_hidden"
-				}
-				tabs.add_tab(
-					tabs.add{
-						type = "tab",
-						caption = {"gui.station-fuel-box"}
-					},
-					tabs.add{type="empty-widget"}
-				)
-				tabs.add_tab(
-					tabs.add{
-						type = "tab",
-						caption = {"gui.station-cargo"}
-					},
-					tabs.add{type="empty-widget"}
-				)
-			end
-			gui['truck-station-tabs'].selected_tab_index = event.entity.name == fuelbox and 1 or 2
+		if player.can_reach_entity(data.cargo) then
+			player.opened = data.cargo
+		else
+			player.opened = nil
+			player.create_local_flying_text{
+				text = {"cant-reach"},
+				create_at_cursor = true
+			}
+			player.play_sound{
+				path = "utility/cannot_build"
+			}
 		end
 	end
+	if event.entity.name ~= storage and event.entity.name ~= fuelbox then return end
+	local floor = event.entity.surface.find_entity(base, event.entity.position)
+	local data = getStruct(floor)
+	if event.entity.name == storage then
+		local unloading = data.mode == "output"
+		-- create additional GUI for switching input/output mode
+		local gui = player.gui.relative
+		if not gui['truck-station-gui'] then
+			local frame = gui.add{
+				type = "frame",
+				name = "truck-station-gui",
+				anchor = {
+					gui = defines.relative_gui_type.container_gui,
+					position = defines.relative_gui_position.right
+				},
+				direction = "vertical",
+				caption = {"gui.truck-station-gui-title"},
+				style = "inset_frame_container_frame"
+			}
+			frame.style.horizontally_stretchable = false
+			frame.style.use_header_filler = false
+			frame.add{
+				type = "switch",
+				name = "truck-station-mode-toggle",
+				switch_state = unloading and "right" or "left",
+				left_label_caption = {"gui.truck-station-mode-load"},
+				right_label_caption = {"gui.truck-station-mode-unload"}
+			}
+		else
+			gui['truck-station-gui'].visible = true
+		end
+		gui['truck-station-gui']['truck-station-mode-toggle'].switch_state = unloading and "right" or "left"
+	end
+	local gui = player.gui.relative
+	-- create fake tabs for switching to the fuel crate
+	if not gui['truck-station-tabs'] then
+		local tabs = gui.add{
+			type = "tabbed-pane",
+			name = "truck-station-tabs",
+			anchor = {
+				gui = defines.relative_gui_type.container_gui,
+				position = defines.relative_gui_position.top
+			},
+			style = "tabbed_pane_with_no_side_padding_and_tabs_hidden"
+		}
+		tabs.add_tab(
+			tabs.add{
+				type = "tab",
+				caption = {"gui.station-fuel-box"}
+			},
+			tabs.add{type="empty-widget"}
+		)
+		tabs.add_tab(
+			tabs.add{
+				type = "tab",
+				caption = {"gui.station-cargo"}
+			},
+			tabs.add{type="empty-widget"}
+		)
+	end
+	gui['truck-station-tabs'].selected_tab_index = event.entity.name == fuelbox and 1 or 2
+	checkRangeForTabs(player, gui['truck-station-tabs'], data.fuel, data.cargo)
+end
+local function onMove(event)
+	-- update tab enabled state based on reach
+	local player = game.players[event.player_index]
+	if player.opened_gui_type ~= defines.gui_type.entity then return end
+	local entity = player.opened
+	if entity.name ~= storage and entity.name ~= fuelbox then return end
+	local floor = entity.surface.find_entity(base, entity.position)
+	local data = getStruct(floor)
+	local gui = player.gui.relative
+	checkRangeForTabs(player, gui['truck-station-tabs'], data.fuel, data.cargo)
 end
 local function onGuiSwitch(event)
 	if event.element.valid and event.element.name == "truck-station-mode-toggle" then
@@ -286,6 +317,7 @@ return {
 		[defines.events.on_gui_closed] = onGuiClosed,
 		[defines.events.on_gui_switch_state_changed] = onGuiSwitch,
 		[defines.events.on_gui_selected_tab_changed] = onGuiTabChange,
+		[defines.events.on_player_changed_position] = onMove,
 
 		[defines.events.on_tick] = onTick,
 

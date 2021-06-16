@@ -241,6 +241,16 @@ local function updateTravelStatsGui(source, destination, stats_table)
 		stats_table.stat_throughput.caption = {"gui.drone-stats-throughput-value", throughput_r}
 	end
 end
+
+local function checkRangeForTabs(player, gui, base, fuel, export, import)
+	if not (gui and gui.valid) then return end
+	for i,obj in pairs({base,fuel,export,import}) do
+		local reach = player.can_reach_entity(obj)
+		local tab = gui.tabs[i].tab
+		tab.enabled = reach
+		if reach then tab.tooltip = "" else tab.tooltip = {"cant-reach"} end
+	end
+end
 local function onGuiOpened(event)
 	local player = game.players[event.player_index]
 	if event.gui_type == defines.gui_type.entity and event.entity.valid then
@@ -295,6 +305,7 @@ local function onGuiOpened(event)
 				tab = event.entity.name == base and 1 or 2
 			end
 			gui['drone-port-tabs'].selected_tab_index = tab
+			checkRangeForTabs(player, gui['drone-port-tabs'], data.base, data.fuel, data.export, data.import)
 
 			if event.entity.name == base and not gui['drone-port-stats'] then
 				table.insert(data.gui, player.index)
@@ -420,6 +431,17 @@ local function onGuiOpened(event)
 			end
 		end
 	end
+end
+local function onMove(event)
+	-- update tab enabled state based on reach
+	local player = game.players[event.player_index]
+	if player.opened_gui_type ~= defines.gui_type.entity then return end
+	local entity = player.opened
+	if entity.name ~= base and entity.name ~= storage and entity.name ~= fuelbox then return end
+	local floor = entity.surface.find_entity(base, entity.position)
+	local data = getStruct(floor)
+	local gui = player.gui.relative
+	checkRangeForTabs(player, gui['drone-port-tabs'], data.base, data.fuel, data.export, data.import)
 end
 local function onGuiClosed(event)
 	if event.gui_type == defines.gui_type.entity and event.entity.valid then
@@ -943,8 +965,9 @@ return {
 		[defines.events.on_gui_text_changed] = onGuiTextChange,
 		[defines.events.on_gui_selection_state_changed] = onGuiSelectionChange,
 		[defines.events.on_gui_selected_tab_changed] = onGuiTabChange,
+		[defines.events.on_player_changed_position] = onMove,
+		
 		[defines.events.on_player_configured_spider_remote] = onSetupSpiderRemote,
-
 		[defines.events.on_spider_command_completed] = onSpiderDone,
 		[defines.events.on_tick] = onTick,
 
