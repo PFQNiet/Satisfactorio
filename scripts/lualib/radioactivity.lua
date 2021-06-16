@@ -223,25 +223,28 @@ local function onTick(event)
 				end
 			end
 			radiation = math.ceil(radiation/100)
-			entry.radioactivity = radiation
-			-- create/remove entities to diffuse this amount of radiation per minute
-			for i=0,32 do
-				if radiation%2 == 1 then
-					if not entry.entities[i] then
-						entry.entities[i] = entry.surface.create_entity{
-							name = "radioactivity-"..i,
-							position = {entry.area[1][1]+0.5, entry.area[1][2]+0.5},
-							force = game.forces.neutral,
-							raise_built = true
-						}
+			-- for many chunks, radiation won't change much, so skip update if radiation is the same as last time
+			if radiation ~= entry.radioactivity then
+				entry.radioactivity = radiation
+				-- create/remove entities to diffuse this amount of radiation per minute
+				for i=0,32 do
+					if radiation%2 == 1 then
+						if not entry.entities[i] then
+							entry.entities[i] = entry.surface.create_entity{
+								name = "radioactivity-"..i,
+								position = {entry.area[1][1]+0.5, entry.area[1][2]+0.5},
+								force = game.forces.neutral,
+								raise_built = true
+							}
+						end
+					else
+						if entry.entities[i] then
+							if entry.entities[i].valid then entry.entities[i].destroy() end
+							entry.entities[i] = nil
+						end
 					end
-				else
-					if entry.entities[i] then
-						if entry.entities[i].valid then entry.entities[i].destroy() end
-						entry.entities[i] = nil
-					end
+					radiation = bit32.rshift(radiation, 1)
 				end
-				radiation = bit32.rshift(radiation, 1)
 			end
 		end
 	end
