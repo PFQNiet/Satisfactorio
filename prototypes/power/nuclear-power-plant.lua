@@ -61,13 +61,6 @@ local boiler = {
 			},
 			pipe_covers = table.deepcopy(data.raw.boiler.boiler.fluid_box.pipe_covers),
 			production_type = "input"
-		},
-		{
-			base_area = 25,
-			base_level = 1,
-			filter = "energy",
-			pipe_connections = {},
-			production_type = "output"
 		}
 	},
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
@@ -86,17 +79,18 @@ local boiler = {
 }
 local steaming = {
 	name = name.."-steam",
+	type = "recipe",
 	localised_name = {"recipe-name.nuclear-power"},
 	localised_description = {"recipe-description.nuclear-power"},
-	type = "recipe",
-	ingredients = {{type="fluid", name="water", amount=5/60}},
+	icon = "__Satisfactorio__/graphics/icons/power.png",
+	icon_size = 64,
+	subgroup = "fluid-fuel",
+	ingredients = {{type="fluid", name="water", amount=5}},
 	results = {
-		{type="fluid", name="energy", amount=2500/1000/60},
 		{type="item", name="uranium-waste", amount=0}, -- managed manually by script
 		{type="item", name="plutonium-waste", amount=0} -- managed manually by script
 	},
-	main_product = "energy",
-	energy_required = 1/60,
+	energy_required = 1,
 	category = "nuclear-power",
 	show_amount_in_title = false,
 	allow_intermediates = false,
@@ -131,7 +125,8 @@ local interface = {
 	open_sound = boiler.open_sound,
 	close_sound = boiler.close_sound,
 	placeable_by = {item=name,count=1},
-	selection_box = {{-9.5,-10.5},{9.5,10.5}}
+	selection_box = {{-9.5,-10.5},{9.5,10.5}},
+	selectable_in_game = false
 }
 local accumulator = {
 	type = "electric-energy-interface",

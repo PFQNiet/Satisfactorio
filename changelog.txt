@@ -274,5 +274,6 @@ Version: 0.6.7
 Date: ????
   Optimisations:
     - Greatly reduced processing time of Radioactivity. If it's still too much, use /toggle-radiation command to disable radiation in-game.
+    - Reworked power production buildings.
   Ease of use:
     - Tabs for composite entities (Truck Station, Drone Port) now disable themselves if you are out of range of that component

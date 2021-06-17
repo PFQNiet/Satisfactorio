@@ -15,7 +15,6 @@ local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not entity or not entity.valid then return end
 	if entity.name == boiler then
-		entity.fluidbox[2] = {name=energy,amount=0.1} -- avoid auto-flush
 		io.addInput(entity, {-2,10})
 		io.addOutput(entity, {2,10}, nil, defines.direction.south)
 		entity.rotatable = false
@@ -53,48 +52,40 @@ end
 local WASTE = {
 	["nuclear-fuel"] = {
 		name = "uranium-waste",
-		amount = 10 -- per minute
+		amount = 6 -- seconds per waste
 	},
 	["plutonium-fuel-rod"] = {
 		name = "plutonium-waste",
-		amount = 1
+		amount = 60 -- seconds per waste
 	}
 }
 local function onTick(event)
 	for i,storage in pairs(script_data.generators[event.tick%60]) do
 		-- each station will "tick" once every 60 in-game ticks, ie. every second
-		-- power production is 2.5GW, so each "tick" can buffer up to 2.5GW given enough fuel
+		-- if the machine is crafting then output power, and don't if not
+		-- if it is running, increment the counter of "running" cycles and if it crosses the threshold then generate waste
+		-- power production is 2.5GW
 		local eei = storage.surface.find_entity(buffer, storage.position)
 		if eei.active then
-			local fluid_amount = storage.get_fluid_count(energy)
-			-- each unit of "energy" is 1GW
-			local max_power = 2.5
-			local fluidbox = storage.fluidbox[2] -- output box
-			local amount = 0
-			if fluidbox then
-				amount = math.max(0, math.min(max_power, fluidbox.amount - 0.1)) -- epsilon to avoid auto-flush
-				fluidbox.amount = fluidbox.amount - amount
-				storage.fluidbox[2] = fluidbox
-				eei.power_production = (amount*1000*1000*1000+1)/60 -- convert to joules-per-tick, +1 for the buffer
+			if storage.is_crafting() then
+				eei.power_production = (2500*1000*1000+1)/60 -- 2.5GW, +1 for the buffer
+
+				local consumed = script_data.consumed[storage.unit_number] or 0
+				consumed = consumed + 1
+				if storage.burner.currently_burning then
+					local fuel = storage.burner.currently_burning.name
+					if fuel and WASTE[fuel] then
+						if consumed >= WASTE[fuel].amount then
+							consumed = consumed - WASTE[fuel].amount
+							storage.get_inventory(defines.inventory.assembling_machine_output).insert({name=WASTE[fuel].name,count=1})
+							storage.force.item_production_statistics.on_flow(WASTE[fuel].name,1)
+						end
+					end
+				end
+				script_data.consumed[storage.unit_number] = consumed
 			else
 				eei.power_production = 0
 			end
-
-			local consumed = script_data.consumed[storage.unit_number] or 0
-			consumed = consumed + amount
-			if storage.burner.currently_burning then
-				local fuel = storage.burner.currently_burning.name
-				-- every 6 seconds (uranium) or 1 minute (plutonium) of full consumption, produce one waste of the corresponding type
-				if fuel and WASTE[fuel] then
-					if consumed > 2.5 * 60 / WASTE[fuel].amount then
-						consumed = consumed - 2.5 * 60 / WASTE[fuel].amount
-						storage.get_inventory(defines.inventory.assembling_machine_output).insert({name=WASTE[fuel].name,count=1})
-						storage.force.item_production_statistics.on_flow(WASTE[fuel].name,1)
-					end
-					storage.bonus_progress = consumed / (2.5 * 60 / WASTE[fuel].amount)
-				end
-			end
-			script_data.consumed[storage.unit_number] = consumed
 		end
 	end
 end

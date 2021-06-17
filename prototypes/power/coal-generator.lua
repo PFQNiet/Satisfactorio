@@ -51,7 +51,7 @@ local boiler = {
 	},
 	fluid_boxes = {
 		{
-			base_area = 0.015,
+			base_area = 0.05,
 			base_level = -1,
 			filter = "water",
 			pipe_connections = {
@@ -62,13 +62,6 @@ local boiler = {
 			},
 			pipe_covers = table.deepcopy(data.raw.boiler.boiler.fluid_box.pipe_covers),
 			production_type = "input"
-		},
-		{
-			base_area = 0.75,
-			base_level = 1,
-			filter = "energy",
-			pipe_connections = {},
-			production_type = "output"
 		}
 	},
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
@@ -80,7 +73,6 @@ local boiler = {
 	},
 	name = name,
 	selection_box = {{-2.5,-6},{2.5,6}},
-	selection_priority = 40,
 	type = "assembling-machine",
 	crafting_speed = 1,
 	crafting_categories = {"coal-generator"},
@@ -91,9 +83,12 @@ local steaming = {
 	type = "recipe",
 	localised_name = {"recipe-name."..name.."-steam"},
 	localised_description = {"recipe-description."..name.."-steam"},
-	ingredients = {{type="fluid", name="water", amount=0.75/60}},
-	results = {{type="fluid", name="energy", amount=75/1000/60}},
-	energy_required = 1/60,
+	icon = "__Satisfactorio__/graphics/icons/power.png",
+	icon_size = 64,
+	subgroup = "fluid-fuel",
+	ingredients = {{type="fluid", name="water", amount=0.75}},
+	results = {},
+	energy_required = 1,
 	category = "coal-generator",
 	show_amount_in_title = false,
 	allow_intermediates = false,
@@ -128,7 +123,8 @@ local interface = {
 	open_sound = boiler.open_sound,
 	close_sound = boiler.close_sound,
 	placeable_by = {item=name,count=1},
-	selection_box = {{-2.5,-6},{2.5,6}}
+	selection_box = {{-2.5,-6},{2.5,6}},
+	selectable_in_game = false
 }
 local accumulator = {
 	type = "electric-energy-interface",

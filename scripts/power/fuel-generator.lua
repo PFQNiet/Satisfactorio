@@ -16,7 +16,6 @@ local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not entity or not entity.valid then return end
 	if entity.name == storage then
-		entity.fluidbox[2] = {name=energy,amount=0.1} -- avoid auto-flush
 		-- add EEI
 		local eei = entity.surface.create_entity{
 			name = buffer,
@@ -52,18 +51,12 @@ end
 local function onTick(event)
 	for i,storage in pairs(script_data[event.tick%60]) do
 		-- each station will "tick" once every 60 in-game ticks, ie. every second
-		-- power production is 150MW, so each "tick" can buffer up to 150MJ given enough fuel
+		-- if the machine is crafting then output power, and don't if not
+		-- power production is 150MW
 		local eei = storage.surface.find_entity(buffer, storage.position)
 		if eei.active then
-			local fluid_amount = storage.get_fluid_count(energy)
-			-- each unit of "energy" is 1GW
-			local max_power = 0.15
-			local fluidbox = storage.fluidbox[2] -- output box
-			if fluidbox then
-				local amount = math.max(0, math.min(max_power, fluidbox.amount - 0.1)) -- epsilon to avoid auto-flush
-				fluidbox.amount = fluidbox.amount - amount
-				storage.fluidbox[2] = fluidbox
-				eei.power_production = (amount*1000*1000*1000+1)/60 -- convert to joules-per-tick, +1 for the buffer
+			if storage.is_crafting() then
+				eei.power_production = (150*1000*1000+1)/60 -- 150MW, +1 for the buffer
 			else
 				eei.power_production = 0
 			end

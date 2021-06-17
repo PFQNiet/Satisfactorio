@@ -32,7 +32,7 @@ local boiler = {
 	},
 	fluid_boxes = {
 		{
-			base_area = 0.01,
+			base_area = 0.05,
 			base_level = -1,
 			pipe_connections = {
 				{
@@ -42,13 +42,6 @@ local boiler = {
 			},
 			pipe_covers = table.deepcopy(data.raw.boiler.boiler.fluid_box.pipe_covers),
 			production_type = "input"
-		},
-		{
-			base_area = 1.5,
-			base_level = 1,
-			filter = "energy",
-			pipe_connections = {},
-			production_type = "output"
 		}
 	},
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
@@ -62,7 +55,6 @@ local boiler = {
 	result_inventory_size = 0,
 	name = name,
 	selection_box = {{-5,-5},{5,5}},
-	selection_priority = 40,
 	type = "furnace",
 	crafting_speed = 1,
 	crafting_categories = {"fuel-generator"}
@@ -72,9 +64,12 @@ local steaming1 = {
 	type = "recipe",
 	localised_name = {"recipe-name."..name.."-power"},
 	localised_description = {"recipe-description."..name.."-power"},
-	ingredients = {{type="fluid", name="fuel", amount=0.2/60}},
-	results = {{type="fluid", name="energy", amount=150/1000/60}},
-	energy_required = 1/60,
+	icon = "__Satisfactorio__/graphics/icons/power.png",
+	icon_size = 64,
+	subgroup = "fluid-fuel",
+	ingredients = {{type="fluid", name="fuel", amount=1}},
+	results = {},
+	energy_required = 5,
 	category = "fuel-generator",
 	show_amount_in_title = false,
 	allow_intermediates = false,
@@ -86,9 +81,12 @@ local steaming2 = {
 	type = "recipe",
 	localised_name = {"recipe-name."..name.."-power"},
 	localised_description = {"recipe-description."..name.."-power"},
-	ingredients = {{type="fluid", name="liquid-biofuel", amount=0.2/60}},
-	results = {{type="fluid", name="energy", amount=150/1000/60}},
-	energy_required = 1/60,
+	icon = "__Satisfactorio__/graphics/icons/power.png",
+	icon_size = 64,
+	subgroup = "fluid-fuel",
+	ingredients = {{type="fluid", name="liquid-biofuel", amount=1}},
+	results = {},
+	energy_required = 5,
 	category = "fuel-generator",
 	show_amount_in_title = false,
 	allow_intermediates = false,
@@ -100,9 +98,12 @@ local steaming3 = {
 	type = "recipe",
 	localised_name = {"recipe-name."..name.."-power"},
 	localised_description = {"recipe-description."..name.."-power"},
-	ingredients = {{type="fluid", name="turbofuel", amount=0.075/60}},
-	results = {{type="fluid", name="energy", amount=150/1000/60}},
-	energy_required = 1/60,
+	icon = "__Satisfactorio__/graphics/icons/power.png",
+	icon_size = 64,
+	subgroup = "fluid-fuel",
+	ingredients = {{type="fluid", name="turbofuel", amount=0.75}},
+	results = {},
+	energy_required = 10,
 	category = "fuel-generator",
 	show_amount_in_title = false,
 	allow_intermediates = false,
@@ -138,7 +139,8 @@ local interface = {
 	open_sound = boiler.open_sound,
 	close_sound = boiler.close_sound,
 	placeable_by = {item=name,count=1},
-	selection_box = {{-5,-5},{5,5}}
+	selection_box = {{-5,-5},{5,5}},
+	selectable_in_game = false
 }
 local accumulator = {
 	type = "electric-energy-interface",
