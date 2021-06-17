@@ -55,10 +55,12 @@ local function onGuiOpened(event)
 	end
 	-- change anchor depending on opened entity
 	local type
-	if player.opened.type == "container" or player.opened.type == "logistic-container" or player.opened.type == "cargo-wagon" then
-		if #player.opened.get_output_inventory() > 1 then
+	if player.opened.type == "container" then
+		if #player.opened.get_inventory(defines.inventory.chest) > 1 then
 			type = defines.relative_gui_type.container_gui
 		end
+	elseif player.opened.type == "cargo-wagon" then
+		type = defines.relative_gui_type.container_gui
 	elseif player.opened.type == "linked-chest" then
 		type = defines.relative_gui_type.linked_container_gui
 	elseif player.opened.type == "car" then
