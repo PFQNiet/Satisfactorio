@@ -107,6 +107,14 @@ local function onGuiClick(event)
 					player.play_sound{
 						path = "utility/cannot_build"
 					}
+				elseif (stack.type == "armor" or stack.type == "gun") and not event.shift then
+					player.create_local_flying_text{
+						text = {"message.trash-slot-equipment"},
+						create_at_cursor = true
+					}
+					player.play_sound{
+						path = "utility/cannot_build"
+					}
 				else
 					if event.button == defines.mouse_button_type.right and stack.count > 1 then
 						stack.count = stack.count - 1

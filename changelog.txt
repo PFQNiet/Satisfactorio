@@ -277,3 +277,4 @@ Date: 2021.06.17
     - Reworked power production buildings.
   Ease of use:
     - Tabs for composite entities (Truck Station, Drone Port) now disable themselves if you are out of range of that component
+    - You must now Shift-click to trash equipment, so you don't accidentally trash it when you meant to equip it.

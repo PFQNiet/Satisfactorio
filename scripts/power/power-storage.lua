@@ -53,7 +53,7 @@ local function onGuiOpened(event)
 			flow.style.horizontal_spacing = 12
 			local sprite = flow.add{
 				type = "sprite-button",
-				sprite = "fluid/energy",
+				sprite = "recipe/coal-generator-steam",
 				style = "transparent_slot"
 			}
 			local flow2 = flow.add{
