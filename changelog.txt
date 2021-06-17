@@ -283,6 +283,7 @@ Version: 0.6.8
 Date: ????
   Changes:
     - Renamed various creature entities to their Satisfactory equivalents
+    - Reduced the amount of time for Resource Scanner pings to respond
   Balancing:
     - Decreased mining time of resource deposits
   Combat Balancing:

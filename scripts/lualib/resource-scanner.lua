@@ -168,7 +168,7 @@ local function onGuiClick(event)
 		for _,pos in pairs(closest) do
 			local dx = pos[1] - player.position.x
 			local dy = pos[2] - player.position.y
-			local distance = math.floor(math.sqrt(dx*dx+dy*dy)+1)
+			local distance = math.floor(math.sqrt(dx*dx+dy*dy)/2+1)
 			queueEffect(event.tick + distance + 30, {
 				type = "ping",
 				player = player,
