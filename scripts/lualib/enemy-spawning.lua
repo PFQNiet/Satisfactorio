@@ -57,12 +57,16 @@ local function spawnGroup(surface,position,value,basedist)
 	if realdist < saferange then
 		-- early spawns should be super easy since you only have the Xeno-Basher
 		value = 1
+		if realdist < saferange/2 and random()<0.5 then
+			-- *very* early spawns may even be undefended
+			return
+		end
 	end
 
 	for name,count in pairs(spawndata[value]) do
 		count = count*(distance^(1/3)) * settings.frequency
 		if random()<count%1 then count = math.ceil(count) else count = math.floor(count) end
-		if realdist < saferange then count = math.min(2,count) end
+		if realdist < saferange then count = 1 end
 		for i=1,count do
 			local offset = getRandomOffset(position)
 			local pos = surface.find_non_colliding_position(name, offset, 10, 0.1)

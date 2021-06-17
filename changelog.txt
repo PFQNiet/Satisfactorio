@@ -285,6 +285,9 @@ Date: ????
     - Renamed various creature entities to their Satisfactory equivalents
   Balancing:
     - Decreased mining time of resource deposits
+  Combat Balancing:
+    - Further reduced the amount of enemies at resource nodes close to your spawn point.
+    - Some nodes may even be totally undefended.
   Bugfixes:
     - Fixed train station not appearing on map
     - Fixed buggy Tips+Tricks
