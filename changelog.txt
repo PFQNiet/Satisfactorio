@@ -280,7 +280,7 @@ Date: 2021.06.17
     - You must now Shift-click to trash equipment, so you don't accidentally trash it when you meant to equip it.
 ---------------------------------------------------------------------------------------------------
 Version: 0.6.8
-Date: ????
+Date: 2021.06.17
   Changes:
     - Renamed various creature entities to their Satisfactory equivalents
     - Reduced the amount of time for Resource Scanner pings to respond
