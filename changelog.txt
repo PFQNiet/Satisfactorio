@@ -278,3 +278,8 @@ Date: 2021.06.17
   Ease of use:
     - Tabs for composite entities (Truck Station, Drone Port) now disable themselves if you are out of range of that component
     - You must now Shift-click to trash equipment, so you don't accidentally trash it when you meant to equip it.
+---------------------------------------------------------------------------------------------------
+Version: 0.6.8
+Date: ????
+  Bugfixes:
+    - Fixed train station not appearing on map

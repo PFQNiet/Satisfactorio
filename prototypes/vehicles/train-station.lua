@@ -22,7 +22,6 @@ stop.minable = {
 stop.placeable_by = {{item=name,count=1}}
 stop.max_health = 1
 stop.selection_priority = 45
-stop.flags = {"filter-directions"}
 
 local base = {
 	type = "electric-energy-interface",
