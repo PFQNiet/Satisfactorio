@@ -287,3 +287,4 @@ Date: ????
     - Decreased mining time of resource deposits
   Bugfixes:
     - Fixed train station not appearing on map
+    - Fixed buggy Tips+Tricks

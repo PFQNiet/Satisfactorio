@@ -18,8 +18,6 @@ tip.simulation = {
 		game.surfaces[1].create_entity{name = "pipe-to-ground", position = {5.5, 3.5}, force = "player", direction = defines.direction.west}
 
 		game.surfaces[1].create_entity{name = "coal-generator", position = {-3, 3.5}, direction = defines.direction.west, force = "player"}
-		game.surfaces[1].create_entity{name = "coal-generator-boiler", position = {1, 3.5}, direction = defines.direction.west, force = "player"}
-		game.surfaces[1].create_entity{name = "coal-generator-generator-sw", position = {-5, 3.5}, direction = defines.direction.west, force = "player"}
 
 		io.generate(game.surfaces[1])
 	]],

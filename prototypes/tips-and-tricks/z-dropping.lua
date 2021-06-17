@@ -95,7 +95,7 @@ tip.simulation = {
 					step_6()
 					return
 				end
-				fake_drop_to(player.selected)
+				fake_drop_to(box)
 			end)
 		end
 		
