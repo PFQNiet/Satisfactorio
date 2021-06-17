@@ -32,7 +32,7 @@ for resource,colour in pairs(resources) do
 	end
 	deposit.localised_name = {"entity-name.resource-deposit",{"item-name."..resource}}
 	deposit.minable = {
-		mining_time = 10,
+		mining_time = 6,
 		mining_particle = "stone-particle",
 		results = {{
 			name = resource,
