@@ -30,7 +30,7 @@ local beltitem = table.deepcopy(data.raw.item[sourcename])
 beltitem.name = basename
 beltitem.icon = belt.icon
 beltitem.icon_mipmaps = 0
-beltitem.stack_size = 20
+beltitem.stack_size = 50
 beltitem.place_result = basename
 beltitem.order = belt.order
 

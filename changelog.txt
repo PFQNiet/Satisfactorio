@@ -292,3 +292,8 @@ Date: 2021.06.17
   Bugfixes:
     - Fixed train station not appearing on map
     - Fixed buggy Tips+Tricks
+---------------------------------------------------------------------------------------------------
+Version: 0.6.9
+Date: ????
+  Changes:
+    - Changed stack size of underground belts to 50 for better fit with Build Gun
