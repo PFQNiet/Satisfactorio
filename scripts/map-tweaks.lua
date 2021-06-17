@@ -7,21 +7,17 @@ return {
 			player.minimap_enabled = player.force.technologies[maptech].researched
 		end,
 		[defines.events.on_tick] = function(event)
-			for _,force in pairs(game.forces) do
-				if not force.technologies[maptech].researched then
-					for _,player in pairs(force.players) do
-						if player.render_mode ~= defines.render_mode.game then
-							player.print({"message.map-needs-research"})
-							player.close_map()
-						end
-					end
+			for _,player in pairs(game.players) do
+				if player.render_mode ~= defines.render_mode.game and not player.minimap_enabled then
+					player.print({"message.map-needs-research"})
+					player.close_map()
 				end
 			end
 		end,
 		["open-map"] = function(event)
 			local player = game.players[event.player_index]
 			if player.render_mode == defines.render_mode.game then
-				if not player.force.technologies[maptech].researched then
+				if not player.minimap_enabled then
 					player.print({"message.map-needs-research"})
 				else
 					player.open_map(player.position)
