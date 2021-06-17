@@ -271,7 +271,7 @@ Date: 2021.06.13
     - Fix that, in the rare case Foundation snaps to clip into another Foundation, both would be immovable
 ---------------------------------------------------------------------------------------------------
 Version: 0.6.7
-Date: ????
+Date: 2021.06.17
   Optimisations:
     - Greatly reduced processing time of Radioactivity. If it's still too much, use /toggle-radiation command to disable radiation in-game.
     - Reworked power production buildings.
