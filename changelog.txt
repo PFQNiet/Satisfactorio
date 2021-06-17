@@ -297,3 +297,5 @@ Version: 0.6.9
 Date: ????
   Changes:
     - Changed stack size of underground belts to 50 for better fit with Build Gun
+  Balancing:
+    - Slightly increased length of underground pipe Mk.2

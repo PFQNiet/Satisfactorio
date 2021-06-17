@@ -9,7 +9,28 @@ pipe.icon = "__Satisfactorio__/graphics/icons/"..name..".png"
 local box = pipe.fluid_box
 box.height = 0.0093
 box.base_area = 0.01/box.height
-for _,pic in pairs(pipe.pictures) do
+local pics_to_tint = {
+	"straight_vertical_single",
+	"straight_vertical",
+	"straight_vertical_window",
+	"straight_horizontal",
+	"straight_horizontal_window",
+	"corner_up_right",
+	"corner_up_left",
+	"corner_down_right",
+	"corner_down_left",
+	"t_up",
+	"t_down",
+	"t_right",
+	"t_left",
+	"cross",
+	"ending_up",
+	"ending_down",
+	"ending_right",
+	"ending_left"
+}
+for _,key in pairs(pics_to_tint) do
+	local pic = pipe.pictures[key]
 	pic.tint = {0.2,0.8,1}
 	if pic.hr_version then
 		pic.hr_version.tint = {0.2,0.8,1}

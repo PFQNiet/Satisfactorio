@@ -15,6 +15,7 @@ pipe.icons = {
 local box = pipe.fluid_box
 box.height = 0.0093
 box.base_area = 0.01/box.height
+box.pipe_connections[2].max_underground_distance = 7
 for _,pic in pairs(pipe.pictures) do
 	pic.tint = {0.2,0.8,1}
 	if pic.hr_version then
