@@ -383,6 +383,10 @@ return {
 	on_configuration_changed = function()
 		local data = global.radioactivity
 		if not data then return end
+		if script.level.is_simulation then
+			data.enabled = false
+			return
+		end
 		if data.enabled == nil then
 			data.enabled = game.map_settings.pollution.enabled
 		end
