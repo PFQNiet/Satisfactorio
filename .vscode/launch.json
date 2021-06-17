@@ -16,6 +16,20 @@
 				"Factorissimo2": true,
 				"GCKI": true
 			},
+			"modsPath": "E:\\Documents\\factorio-mods"
+		},
+		{
+			"type": "factoriomod",
+			"request": "launch",
+			"name": "Factorio Mod Debug (Profile)",
+			"factorioPath": "E:\\Steam (SSD)\\steamapps\\common\\Factorio\\bin\\x64\\factorio.exe",
+			"disableExtraMods": true,
+			"adjustMods": {
+				"debugadapter": true,
+				"Satisfactorio": true,
+				"Factorissimo2": true,
+				"GCKI": true
+			},
 			"modsPath": "E:\\Documents\\factorio-mods",
 			"hookMode": "profile"
 		}
