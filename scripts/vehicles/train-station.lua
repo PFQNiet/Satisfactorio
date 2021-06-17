@@ -492,7 +492,7 @@ local function onFastTransfer(event, half)
 	-- just passthru the event to the underlying container
 	local realbox = target.surface.find_entity(freight.."-box", math2d.position.add(target.position, math2d.position.rotate_vector(storage_pos, target.direction*45)))
 	if not realbox then return end
-	fastTransfer(player, target, half)
+	fastTransfer(player, realbox, half)
 end
 
 return {
