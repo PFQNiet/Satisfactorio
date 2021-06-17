@@ -60,7 +60,8 @@ local function onChunkGenerated(event)
 		surface = surface,
 		area = area, -- normalised to {{x1,y1},{x2,y2}}
 		radioactivity = 0,
-		entities = {}
+		entities = {},
+		containers = {}
 	}
 	chunk[pos.y][pos.x] = entry
 	-- convert count to Grey number and reverse bits to get index into buckets
@@ -213,21 +214,14 @@ local function updateChunk(entry)
 	local x2 = area[2][1]
 	local y1 = area[1][2]
 	local y2 = area[2][2]
-	local entities = surface.find_entities_filtered{
-		area = area,
-		type = "container"
-		-- all other entities are somewhat limited in their ability to emit background radiation, whereas containers may emit a LOT.
-		-- uranium rocks and nodes emit pollution directly in fixed amounts
-	}
+	local entities = entry.containers
 	local radiation = 0
-	for _,entity in pairs(entities) do
-		local pos = entity.position
-		local x = pos.x
-		local y = pos.y
-		-- ensure entity's position is in fact within the bounding box, since find_entities_filtered will find entities even if they just overlap the area slightly
-		if x >= x1 and x < x2 and y >= y1 and y < y2 then
+	for i=#entities,1,-1 do
+		local entity = entities[i]
+		if not entity.valid then
+			table.remove(entities,i)
+		else
 			radiation = radiation + addRadiationForContainer(entity)
-			-- radiation = radiation + radioactivity_functions[entity.type](entity)
 		end
 	end
 	radiation = math.ceil(radiation/100)
@@ -359,6 +353,20 @@ local function onTick(event)
 	end
 end
 
+local function onBuilt(event)
+	local entity = event.created_entity or event.entity
+	if not entity or not entity.valid then return end
+	if entity.type ~= "container" then return end
+	-- exclude fake boxes used in splitters and mergers, as they may only hold one item at a time so contribute negligible radiation to the chunk
+	if entity.name == "conveyor-merger-box" then return end
+	if entity.name == "conveyor-splitter-box" then return end
+	if entity.name == "smart-splitter-box" then return end
+	if entity.name == "programmable-splitter-box" then return end
+	-- add this entity to the chunk's list of containers
+	-- we can assume the chunk structure exists, otherwise the player has just built something in an un-generated chunk!
+	table.insert(script_data.chunks[entity.surface.index][math.floor(entity.position.y/32)][math.floor(entity.position.x/32)].containers, entity)
+end
+
 return {
 	on_init = function()
 		if not global.radioactivity then
@@ -373,8 +381,43 @@ return {
 		setmetatable(script_data.buckets, bucket_metatable)
 	end,
 	on_configuration_changed = function()
-		if global.radioactivity.enabled == nil then
-			global.radioactivity.enabled = game.map_settings.pollution.enabled
+		local data = global.radioactivity
+		if not data then return end
+		if data.enabled == nil then
+			data.enabled = game.map_settings.pollution.enabled
+		end
+		if data.chunks[1] and data.chunks[1][0] and data.chunks[1][0][0] and not data.chunks[1][0][0].containers then
+			-- find existing containers, but not splitter/merger fake boxes, and list them
+			for surface,chunks in pairs(data.chunks) do
+				for y,row in pairs(chunks) do
+					for x,chunk in pairs(row) do
+						local area = chunk.area
+						local x1 = area[1][1]
+						local y1 = area[1][2]
+						local x2 = area[2][1]
+						local y2 = area[2][2]
+						chunk.containers = {}
+						local entities = game.surfaces[surface].find_entities_filtered{
+							area = area,
+							type = "container"
+						}
+						for _,entity in pairs(entities) do
+							if entity.name ~= "conveyor-merger-box"
+							and entity.name ~= "conveyor-splitter-box"
+							and entity.name ~= "smart-splitter-box"
+							and entity.name ~= "programmable-splitter-box" then
+								local pos = entity.position
+								local x = pos.x
+								local y = pos.y
+								-- ensure entity's position is in fact within the bounding box, since find_entities_filtered will find entities even if they just overlap the area slightly
+								if x >= x1 and x < x2 and y >= y1 and y < y2 then
+									table.insert(chunk.containers, entity)
+								end
+							end
+						end
+					end
+				end
+			end
 		end
 	end,
 	add_commands = function()
@@ -398,6 +441,12 @@ return {
 	events = {
 		[defines.events.on_chunk_generated] = onChunkGenerated,
 		[defines.events.on_tick] = onTick,
+
+		[defines.events.on_built_entity] = onBuilt,
+		[defines.events.on_robot_built_entity] = onBuilt,
+		[defines.events.script_raised_built] = onBuilt,
+		[defines.events.script_raised_revive] = onBuilt,
+		-- removing entities will invalidate them, which will be detected when the chunk is scanned
 
 		[defines.events.on_player_display_resolution_changed] = onResolutionChanged,
 		[defines.events.on_player_display_scale_changed] = onResolutionChanged

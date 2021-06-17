@@ -16,7 +16,8 @@
 				"Factorissimo2": true,
 				"GCKI": true
 			},
-			"modsPath": "E:\\Documents\\factorio-mods"
+			"modsPath": "E:\\Documents\\factorio-mods",
+			"hookMode": "profile"
 		}
 	]
 }
