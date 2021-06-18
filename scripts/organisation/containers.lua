@@ -27,6 +27,7 @@ local function fastTransfer(player, target, half)
 	end
 	if player.cursor_stack.valid_for_read then
 		-- player is holding an item => insert it into the container
+		if player.cursor_stack.prototype.has_flag("only-in-cursor") then return false end
 		local name = player.cursor_stack.name
 		local inserted = half and target.insert{name=name,count=math.ceil(player.cursor_stack.count/2)} or target.insert(player.cursor_stack)
 		if inserted == player.cursor_stack.count then
