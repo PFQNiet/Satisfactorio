@@ -18,6 +18,7 @@ local platerecipe = { -- in Assembler
 	type = "recipe",
 	ingredients = ingredients,
 	result = name,
+	result_count = 2,
 	energy_required = 24,
 	category = "assembling",
 	enabled = false

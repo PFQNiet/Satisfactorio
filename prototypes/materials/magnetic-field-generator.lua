@@ -19,6 +19,7 @@ local platerecipe = { -- in Manufacturer
 	type = "recipe",
 	ingredients = ingredients,
 	result = name,
+	result_count = 2,
 	energy_required = 120,
 	category = "manufacturing",
 	enabled = false

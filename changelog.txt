@@ -307,6 +307,7 @@ Date: 2021.06.18
     - Slightly increased length of underground pipe Mk.2
   Bugfixes:
     - Cancelling an autopilot recording by exiting the car now properly cleans up the path drawing
+    - Several Project Assembly parts only produced one, should have been two per craft
   Optimisations:
     - Tidied up Sandbox scenario
     - Improved performance of technology unlock progression system
