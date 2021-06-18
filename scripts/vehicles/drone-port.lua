@@ -53,6 +53,17 @@ local function rejectBuild(event, entity, reason)
 	end
 end
 
+local function findPortTag(floor)
+	return floor.force.find_chart_tags(floor.surface, {{floor.position.x-0.1,floor.position.y-0.1},{floor.position.x+0.1,floor.position.y+0.1}})[1]
+end
+local function renamePortTag(floor, name)
+	local tag = findPortTag(floor)
+	if tag and tag.valid then
+		tag.destroy()
+		floor.force.add_chart_tag(floor.surface, {position=floor.position,icon={type="item",name=base},text=name})
+	end
+end
+
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not entity or not entity.valid then return end
@@ -80,8 +91,9 @@ local function onBuilt(event)
 		io.addInput(entity, {1.5,5.5}, store1)
 		io.addOutput(entity, {3.5,5.5}, store2, defines.direction.south)
 		entity.rotatable = false
+		local name = game.backer_names[math.random(#game.backer_names)]
 		script_data.ports[entity.unit_number%30][entity.unit_number] = {
-			name = game.backer_names[math.random(#game.backer_names)],
+			name = name,
 			base = entity,
 			fuel = fuel,
 			export = store1,
@@ -96,6 +108,7 @@ local function onBuilt(event)
 			guests = {},
 			gui = {}
 		}
+		entity.force.add_chart_tag(entity.surface, {position=entity.position,icon={type="item",name=base},text=name})
 	end
 	if entity.name == drone then
 		-- ensure there is a drone port here
@@ -158,6 +171,10 @@ local function onRemoved(event)
 			end
 		end
 		io.remove(floor, event)
+		local tag = findPortTag(floor)
+		if tag and tag.valid then
+			tag.destroy()
+		end
 
 		script_data.ports[floor.unit_number%30][floor.unit_number] = nil
 		if entity.name ~= base then
@@ -483,6 +500,7 @@ local function onGuiClick(event)
 			local data = getStruct(player.opened)
 			name_flow.children[1].caption = newname
 			data.name = newname
+			renamePortTag(data.base, newname)
 			if data.drone then
 				data.drone.entity_label = newname
 			end
@@ -527,6 +545,7 @@ local function onGuiConfirm(event)
 			local data = getStruct(player.opened)
 			name_flow.children[1].caption = newname
 			data.name = newname
+			renamePortTag(data.base, newname)
 			if data.drone then
 				data.drone.entity_label = newname
 			end

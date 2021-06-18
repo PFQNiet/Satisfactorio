@@ -301,5 +301,6 @@ Date: ????
   Ease of use:
     - Reduced the number of batteries needed for Drones to take off, based on calculated requirement
     - Added "out of fuel" notice to Drones, just in case
+    - Added chart tag to drone ports
   Balancing:
     - Slightly increased length of underground pipe Mk.2
