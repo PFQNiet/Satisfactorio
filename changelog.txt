@@ -327,3 +327,4 @@ Version: 0.7.1
 Date: 2021.06.18
   Bugfixes:
     - Crash when Player Two changed the HUB Milestone being researched
+    - Fixed ability to put building items into containers
