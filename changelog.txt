@@ -313,7 +313,7 @@ Date: 2021.06.18
     - Improved performance of technology unlock progression system
 ---------------------------------------------------------------------------------------------------
 Version: 0.7.0
-Date: ????
+Date: 2021.06.18
   Changes:
     - Crash Sites can be mined after repairing them, but this takes an entire minute to do as they're not _supposed_ to be mined.
     - Crash Site debris can be blown up with Nobelisks
