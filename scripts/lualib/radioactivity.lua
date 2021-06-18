@@ -250,6 +250,21 @@ local function updateChunk(entry)
 			radiation = bit32.rshift(radiation, 1)
 		end
 	end
+	local pollution = surface.get_pollution({x1+1,y1+1})
+	if pollution > 1 then
+		entities = entry.behemoths
+		local damage = pollution
+		for i=#entities,1,-1 do
+			local entity = entities[i]
+			if not entity.valid then
+				table.remove(entities,i)
+			else
+				entity.destructible = true
+				entity.damage(math.min(entity.health-1, damage), game.forces.neutral, "radiation")
+				entity.destructible = false
+			end
+		end
+	end
 end
 local function updateGui(player, radiation)
 	local gui = player.gui.screen.radiation
@@ -356,6 +371,13 @@ end
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not entity or not entity.valid then return end
+	-- we can assume the chunk structure exists, otherwise the player has just built something in an un-generated chunk!
+	local chunk = script_data.chunks[entity.surface.index][math.floor(entity.position.y/32)][math.floor(entity.position.x/32)]
+	if entity.name == "behemoth-worm-turret" then
+		table.insert(chunk.behemoths, entity)
+		return
+	end
+
 	if entity.type ~= "container" then return end
 	-- exclude fake boxes used in splitters and mergers, as they may only hold one item at a time so contribute negligible radiation to the chunk
 	if entity.name == "conveyor-merger-box" then return end
@@ -363,8 +385,7 @@ local function onBuilt(event)
 	if entity.name == "smart-splitter-box" then return end
 	if entity.name == "programmable-splitter-box" then return end
 	-- add this entity to the chunk's list of containers
-	-- we can assume the chunk structure exists, otherwise the player has just built something in an un-generated chunk!
-	table.insert(script_data.chunks[entity.surface.index][math.floor(entity.position.y/32)][math.floor(entity.position.x/32)].containers, entity)
+	table.insert(chunk.containers, entity)
 end
 
 return {
@@ -417,6 +438,34 @@ return {
 								if x >= x1 and x < x2 and y >= y1 and y < y2 then
 									table.insert(chunk.containers, entity)
 								end
+							end
+						end
+					end
+				end
+			end
+		end
+		if data.chunks[1] and data.chunks[1][0] and data.chunks[1][0][0] and not data.chunks[1][0][0].behemoths then
+			-- find existing Behemoth Worms and list them
+			for surface,chunks in pairs(data.chunks) do
+				for y,row in pairs(chunks) do
+					for x,chunk in pairs(row) do
+						local area = chunk.area
+						local x1 = area[1][1]
+						local y1 = area[1][2]
+						local x2 = area[2][1]
+						local y2 = area[2][2]
+						chunk.behemoths = {}
+						local entities = game.surfaces[surface].find_entities_filtered{
+							area = area,
+							name = "behemoth-worm-turret"
+						}
+						for _,entity in pairs(entities) do
+							local pos = entity.position
+							local x = pos.x
+							local y = pos.y
+							-- ensure entity's position is in fact within the bounding box, since find_entities_filtered will find entities even if they just overlap the area slightly
+							if x >= x1 and x < x2 and y >= y1 and y < y2 then
+								table.insert(chunk.behemoths, entity)
 							end
 						end
 					end

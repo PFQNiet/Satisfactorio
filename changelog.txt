@@ -272,7 +272,7 @@ Date: 2021.06.13
 ---------------------------------------------------------------------------------------------------
 Version: 0.6.7
 Date: 2021.06.17
-  Optimisations:
+  Optimizations:
     - Greatly reduced processing time of Radioactivity. If it's still too much, use /toggle-radiation command to disable radiation in-game.
     - Reworked power production buildings.
   Ease of use:
@@ -308,7 +308,7 @@ Date: 2021.06.18
   Bugfixes:
     - Cancelling an autopilot recording by exiting the car now properly cleans up the path drawing
     - Several Project Assembly parts only produced one, should have been two per craft
-  Optimisations:
+  Optimizations:
     - Tidied up Sandbox scenario
     - Improved performance of technology unlock progression system
 ---------------------------------------------------------------------------------------------------
@@ -317,3 +317,6 @@ Date: ????
   Changes:
     - Crash Sites can be mined after repairing them, but this takes an entire minute to do as they're not _supposed_ to be mined.
     - Crash Site debris can be blown up with Nobelisks
+  Balancing:
+    - Nobelisks now destroy trees outright, rather than using the scale-with-distance approach.
+    - Behemoth Worms ("gas emitters") can be destroyed by first weakening them with large amounts of radiation.

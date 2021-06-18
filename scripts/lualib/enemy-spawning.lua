@@ -100,14 +100,15 @@ local function spawnGroup(surface,position,value,basedist)
 			name = "big-worm-turret" -- don't allow Behemoth Worms (indestructible) if resource deposits are turned off - TODO make it a separate option
 		end
 		for i=1,4 do
-			-- find_non_collising_position doesn't support the map gen box, which is needed for worm turrets to give ore nodes some space
+			-- find_non_colliding_position doesn't support the map gen box, which is needed for worm turrets to give ore nodes some space
 			for _=1,10 do
 				local pos = getRandomOffset(position)
 				if not surface.entity_prototype_collides(name, pos, true) then
 					surface.create_entity{
 						name = name,
 						position = pos,
-						force = game.forces.enemy
+						force = game.forces.enemy,
+						raise_built = true
 					}.destructible = false
 					break
 				end

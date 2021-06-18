@@ -134,6 +134,16 @@ local function onTick(event)
 						entity.die(explosion.force)
 					end
 				end
+				if entity.valid and entity.name == "behemoth-worm-turret" then
+					local dx = entity.position.x - pos[1]
+					local dy = entity.position.y - pos[2]
+					if dx*dx+dy*dy < 6*6 then
+						if entity.health < 5 then
+							entity.destructible = true
+							entity.die(explosion.force)
+						end
+					end
+				end
 				if entity.valid and entity.name == "rock-huge" then
 					local dx = entity.position.x - pos[1]
 					local dy = entity.position.y - pos[2]
