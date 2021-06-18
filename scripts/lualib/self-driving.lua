@@ -335,6 +335,7 @@ local function onDriving(event)
 				car.waypoints = {}
 				car.recording = false
 				player.print{"message.self-driving-recording-aborted"}
+				refreshPathRender(car)
 			end
 		end
 	end
