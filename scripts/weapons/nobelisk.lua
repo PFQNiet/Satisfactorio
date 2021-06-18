@@ -73,6 +73,20 @@ local function onEntityDied(event)
 		end
 	end
 end
+local spaceship_wreckage = {
+	["crash-site-spaceship"] = true,
+	["crash-site-spaceship-wreck-big-1"] = true,
+	["crash-site-spaceship-wreck-big-2"] = true,
+	["crash-site-spaceship-wreck-medium-1"] = true,
+	["crash-site-spaceship-wreck-medium-2"] = true,
+	["crash-site-spaceship-wreck-medium-3"] = true,
+	["crash-site-spaceship-wreck-small-1"] = true,
+	["crash-site-spaceship-wreck-small-2"] = true,
+	["crash-site-spaceship-wreck-small-3"] = true,
+	["crash-site-spaceship-wreck-small-4"] = true,
+	["crash-site-spaceship-wreck-small-5"] = true,
+	["crash-site-spaceship-wreck-small-6"] = true
+}
 local function onTick(event)
 	if script_data.explosions[event.tick] then
 		for _,explosion in pairs(script_data.explosions[event.tick]) do
@@ -102,6 +116,7 @@ local function onTick(event)
 					local dx = entity.position.x - pos[1]
 					local dy = entity.position.y - pos[2]
 					local damage = math.max(1,50-(dx*dx+dy*dy))
+					if entity.type == "tree" then damage = 100 end -- just wreck the trees
 					entity.damage(damage, explosion.force, "explosion")
 				end
 				if entity.valid and entity.type == "cliff" then
@@ -124,6 +139,18 @@ local function onTick(event)
 					local dy = entity.position.y - pos[2]
 					if dx*dx+dy*dy < 6*6 then
 						entity.destroy()
+					end
+				end
+				if entity.valid and spaceship_wreckage[entity.name] then
+					local dx = entity.position.x - pos[1]
+					local dy = entity.position.y - pos[2]
+					if dx*dx+dy*dy < 6*6 then
+						entity.destructible = true
+						if entity.is_entity_with_health then
+							entity.die()
+						else
+							entity.destroy()
+						end
 					end
 				end
 			end

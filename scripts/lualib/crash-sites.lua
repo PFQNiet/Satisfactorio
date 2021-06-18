@@ -64,7 +64,7 @@ local function createCrashSite(surface, position)
 			"crash-site-spaceship-wreck-small-4", "crash-site-spaceship-wreck-small-5", "crash-site-spaceship-wreck-small-6"
 		},
 		position = position,
-		radius = 50
+		radius = 55
 	}
 	for _,wreck in pairs(wreckage) do
 		wreck.force = "neutral"
@@ -72,6 +72,7 @@ local function createCrashSite(surface, position)
 	end
 
 	local ship = surface.find_entity(spaceship, position)
+	ship.minable = false
 	local reqs = generateRequirements()
 	local eei
 	if reqs.power > 0 then
@@ -99,7 +100,10 @@ local function onGuiOpened(event)
 	if event.gui_type ~= defines.gui_type.entity then return end
 	if event.entity.name ~= spaceship then return end
 	local struct = script_data.sites[event.entity.unit_number]
-	if not struct then return end
+	if not struct then
+		event.entity.minable = true -- ensure entity can be mined
+		return
+	end
 	script_data.opened[player.index] = event.entity.unit_number
 	
 	local gui = player.gui.screen['crash-site-locked']
@@ -292,6 +296,15 @@ local function alternativeHardDrives()
 	end
 end
 
+local function onRemoved(event)
+	local entity = event.entity
+	if not entity or not entity.valid then return end
+	if entity.name == spaceship then
+		local eei = entity.surface.find_entity(spaceship.."-power", entity.position)
+		if eei and eei.valid then eei.destroy() end
+	end
+end
+
 return {
 	createCrashSite = createCrashSite,
 
@@ -307,6 +320,11 @@ return {
 		[defines.events.on_gui_opened] = onGuiOpened,
 		[defines.events.on_gui_closed] = onGuiClosed,
 		[defines.events.on_gui_click] = onGuiClick,
+
+		[defines.events.on_player_mined_entity] = onRemoved,
+		[defines.events.on_robot_mined_entity] = onRemoved,
+		[defines.events.on_entity_died] = onRemoved,
+		[defines.events.script_raised_destroy] = onRemoved,
 
 		[defines.events.on_player_changed_position] = onMove,
 		[defines.events.on_force_created] = alternativeHardDrives

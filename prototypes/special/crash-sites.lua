@@ -2,7 +2,7 @@
 local ship = data.raw.container['crash-site-spaceship']
 ship.max_health = 1
 ship.inventory_size = 1
-ship.minable = nil
+ship.minable = {mining_time=60}
 ship.open_sound = {
 	filename = "__base__/sound/metallic-chest-open.ogg",
 	volume = 0.5
@@ -16,23 +16,29 @@ ship.close_sound = {
 for _,n in pairs({
 	"crash-site-spaceship-wreck-big-1", "crash-site-spaceship-wreck-big-2"
 }) do
-	data.raw.container[n].max_health = 1
-	data.raw.container[n].minable = nil
-	data.raw.container[n].inventory_size = 6
+	local box = data.raw.container[n]
+	box.max_health = 1
+	box.minable = nil
+	box.inventory_size = 6
+	box.localised_description = {"entity-description.crash-site-debris"}
 end
 for _,n in pairs({
 	"crash-site-spaceship-wreck-medium-1", "crash-site-spaceship-wreck-medium-2", "crash-site-spaceship-wreck-medium-3"
 }) do
-	data.raw.container[n].max_health = 1
-	data.raw.container[n].minable = nil
-	data.raw.container[n].inventory_size = 4
+	local box = data.raw.container[n]
+	box.max_health = 1
+	box.minable = nil
+	box.inventory_size = 4
+	box.localised_description = {"entity-description.crash-site-debris"}
 end
 for _,n in pairs({
 	"crash-site-spaceship-wreck-small-1", "crash-site-spaceship-wreck-small-2", "crash-site-spaceship-wreck-small-3",
 	"crash-site-spaceship-wreck-small-4", "crash-site-spaceship-wreck-small-5", "crash-site-spaceship-wreck-small-6"
 }) do
-	data.raw['simple-entity-with-owner'][n].max_health = 1
-	data.raw['simple-entity-with-owner'][n].minable = nil
+	local box = data.raw['simple-entity-with-owner'][n]
+	box.max_health = 1
+	box.minable = nil
+	box.localised_description = {"entity-description.crash-site-debris"}
 end
 
 -- add an EEI to accept power
@@ -64,7 +70,7 @@ local interface = {
 		"placeable-off-grid"
 	},
 	selection_box = ship.selection_box,
-	selection_priority = 40
+	selectable_in_game = false
 }
 data:extend{interface}
 
