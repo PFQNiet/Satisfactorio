@@ -41,29 +41,31 @@ local function bitrev10(n)
 	return rshift(n,6)
 end
 
+local function getOrCreateChunk(surfid, chunkpos)
+	local obj = script_data.chunks
+	local x = chunkpos.x or chunkpos[1]
+	local y = chunkpos.y or chunkpos[2]
+	if not obj[surfid] then obj[surfid] = {} end
+	obj = obj[surfid]
+	if not obj[y] then obj[y] = {} end
+	obj = obj[y]
+	if not obj[x] then obj[x] = {
+		x = x,
+		y = y,
+		surface = game.surfaces[surfid],
+		area = {{x*32,y*32},{(x+1)*32,(y+1)*32}},
+		radioactivity = 0,
+		entities = {},
+		containers = {},
+		behemoths = {}
+	} end
+	return obj[x]
+end
+
 local function onChunkGenerated(event)
 	local surface = event.surface
 	local pos = event.position
-	local area = event.area
-	area[1] = area[1] or area.left_top
-	area[1][1] = area[1][1] or area[1].x
-	area[1][2] = area[1][2] or area[1].y
-	area[2] = area[2] or area.right_bottom
-	area[2][1] = area[2][1] or area[2].x
-	area[2][2] = area[2][2] or area[2].y
-	if not script_data.chunks[surface.index] then script_data.chunks[surface.index] = {} end
-	local chunk = script_data.chunks[surface.index]
-	if not chunk[pos.y] then chunk[pos.y] = {} end
-	local entry = {
-		x = pos.x,
-		y = pos.y,
-		surface = surface,
-		area = area, -- normalised to {{x1,y1},{x2,y2}}
-		radioactivity = 0,
-		entities = {},
-		containers = {}
-	}
-	chunk[pos.y][pos.x] = entry
+	local entry = getOrCreateChunk(surface.index, pos)
 	-- convert count to Grey number and reverse bits to get index into buckets
 	-- this optimally spreads chunks out among the buckets, although honestly... 1024 buckets is gonna get filled with chunks fast so I dunno why I bothered LMAO
 	local count = (script_data.count or 0) % 1024
@@ -73,15 +75,7 @@ local function onChunkGenerated(event)
 	script_data.count = count+1
 end
 local function getRadiationForChunk(surface, cx, cy)
-	local obj = script_data.chunks
-	if not obj then return 0 end
-	obj = obj[surface.index]
-	if not obj then return 0 end
-	obj = obj[cy]
-	if not obj then return 0 end
-	obj = obj[cx]
-	if not obj then return 0 end
-	return obj.radioactivity
+	return getOrCreateChunk(surface.index, {cx,xy}).radioactivity
 end
 
 local function addRadiationForResource(entity)
@@ -371,8 +365,7 @@ end
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not entity or not entity.valid then return end
-	-- we can assume the chunk structure exists, otherwise the player has just built something in an un-generated chunk!
-	local chunk = script_data.chunks[entity.surface.index][math.floor(entity.position.y/32)][math.floor(entity.position.x/32)]
+	local chunk = getOrCreateChunk(entity.surface.index, {math.floor(entity.position.x/32), math.floor(entity.position.x/32)})
 	if entity.name == "behemoth-worm-turret" then
 		table.insert(chunk.behemoths, entity)
 		return
