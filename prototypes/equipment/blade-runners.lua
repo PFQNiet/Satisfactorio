@@ -61,7 +61,7 @@ data:extend{
 	{
 		type = "item",
 		name = name.."-power",
-		localised_name = {"item-name.exoskeleton-equipment"},
+		localised_name = {"entity-name.generator-buffer",{"item-name."..name}},
 		icon = "__Satisfactorio__/graphics/icons/battery.png",
 		icon_size = 64,
 		stack_size = 1,
@@ -71,6 +71,7 @@ data:extend{
 	{
 		type = "generator-equipment",
 		name = name.."-power",
+		localised_name = {"entity-name.generator-buffer",{"item-name."..name}},
 		sprite = {
 			filename = "__Satisfactorio__/graphics/icons/battery.png",
 			size = {64,64}
