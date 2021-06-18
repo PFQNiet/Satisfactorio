@@ -322,3 +322,8 @@ Date: 2021.06.18
     - Behemoth Worms ("gas emitters") can be destroyed by first weakening them with large amounts of radiation.
   Optimizations:
     - Re-structured locale strings into multiple files instead of one monolithic file
+---------------------------------------------------------------------------------------------------
+Version: 0.7.1
+Date: 2021.06.18
+  Bugfixes:
+    - Crash when Player Two changed the HUB Milestone being researched

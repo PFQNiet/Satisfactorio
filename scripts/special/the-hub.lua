@@ -1,5 +1,5 @@
 -- uses global.hub.terminal as table of Force index -> HUB terminal
--- uses global.hub.milestone_selected as table of Force index -> milestone shown in GUI - if different to current selection then GUI needs refresh, otherwise just update counts
+-- uses global.hub.milestone_selected as table of Player index -> milestone shown in GUI - if different to current selection then GUI needs refresh, otherwise just update counts
 -- uses global.hub.cooldown as table of Force index -> tick at which the Freighter returns
 local util = require("util")
 local math2d = require("math2d")
@@ -406,8 +406,8 @@ local function updateMilestoneGUI(force)
 			local button = flow['hub-milestone-frame']['hub-milestone-submit']
 
 			-- check if the selected milestone has been changed
-			if milestone.name ~= script_data.milestone_selected[force.index] then
-				script_data.milestone_selected[force.index] = milestone.name
+			if milestone.name ~= script_data.milestone_selected[player.index] then
+				script_data.milestone_selected[player.index] = milestone.name
 				inner.visible = milestone.name ~= "none"
 				button.enabled = false
 				table.clear()
