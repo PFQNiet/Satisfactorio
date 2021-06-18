@@ -267,8 +267,9 @@ local function onTick(event)
 				end
 			end
 			station.active = done
-			-- disable input if a vehicle is present, enable it if not
+			-- disable IO if a vehicle is present, enable it if not
 			io.toggle(station,{0,3.5},not done)
+			io.toggle(station,{2,3.5},not done)
 		end
 	end
 end

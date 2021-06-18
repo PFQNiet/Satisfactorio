@@ -297,5 +297,6 @@ Version: 0.6.9
 Date: ????
   Changes:
     - Changed stack size of underground belts to 50 for better fit with Build Gun
+    - Truck stations and Freight platforms now have their outputs disabled as well as their inputs when a vehicle is docked
   Balancing:
     - Slightly increased length of underground pipe Mk.2

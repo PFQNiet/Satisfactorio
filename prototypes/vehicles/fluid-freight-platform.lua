@@ -105,24 +105,6 @@ local collision = {
 	selection_priority = 30
 }
 
-local pump = table.deepcopy(data.raw.pump.pump)
-pump.name = name.."-pump"
-pump.collision_box = {{-0.2,-0.2},{0.2,0.2}}
-pump.collision_mask = {}
-pump.selection_box = {{-0.5,-0.5},{0.5,0.5}}
-pump.selectable_in_game = false
-pump.energy_source = {type="void"}
-pump.animations = empty_sprite
-pump.fluid_animation = empty_sprite
-pump.glass_pictures = empty_sprite
-pump.minable = nil
-pump.pumping_speed = 600/60/60 -- 600/minute
-pump.fluid_box.pipe_connections[1].position = {0,-1}
-pump.fluid_box.pipe_connections[2].position = {0,1}
-pump.placeable_by = {item=name,count=1}
-pump.next_upgrade = nil
-pump.flags = {"not-on-map"}
-
 local storage = {
 	type = "storage-tank",
 	name = name.."-tank",
@@ -142,7 +124,8 @@ local storage = {
 		"not-on-map"
 	},
 	fluid_box = {
-		base_area = 24,
+		height = data.raw.pipe.pipe.fluid_box.height,
+		base_area = 24/data.raw.pipe.pipe.fluid_box.height, -- 2400 capacity
 		pipe_connections = {
 			{position={3,-2},type="output"},
 			{position={3,-1},type="input"},
@@ -229,4 +212,4 @@ local recipe_undo = {
 	enabled = false
 }
 
-data:extend({base,walkable,collision,pump,storage,item,recipe,recipe_undo})
+data:extend({base,walkable,collision,storage,item,recipe,recipe_undo})

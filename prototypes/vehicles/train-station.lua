@@ -148,19 +148,3 @@ local recipe_undo = {
 }
 
 data:extend({base,collision,item,recipe,recipe_undo})
-
-local combinator = table.deepcopy(data.raw['constant-combinator']['constant-combinator'])
-combinator.name = name.."-counter"
-combinator.circuit_wire_max_distance = 2
-combinator.item_slot_count = 200
-combinator.max_health = 1
-combinator.icon = "__Satisfactorio__/graphics/icons/"..name..".png"
-combinator.icon_size = 64
-combinator.icon_mipmaps = 1
-combinator.collision_mask = {}
-combinator.minable = nil
-combinator.flags = {
-	"not-on-map",
-	"not-rotatable"
-}
-data:extend{combinator}

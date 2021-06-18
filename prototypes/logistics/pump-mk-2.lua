@@ -7,8 +7,6 @@ pump.minable.result = name
 pump.icon = "__Satisfactorio__/graphics/icons/"..name..".png"
 pump.pumping_speed = 600/60/60 -- 600/minute
 pump.energy_source.drain = "0W"
-pump.energy_source.buffer_capacity = "8MW"
-pump.energy_source.input_flow_limit = "8MW"
 pump.energy_usage = "8MW"
 local box = pump.fluid_box
 for _,pic in pairs(pump.animations) do

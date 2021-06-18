@@ -13,10 +13,9 @@ local freight = "freight-platform"
 local fluid = "fluid-freight-platform"
 local empty = "empty-platform"
 local trainstop = "train-stop"
-local combinator = "train-station-counter"
 local stop_pos = {2,-2.5}
-local counter_pos = {2.5,-1.5}
 local storage_pos = {3.5,0}
+local tank_pos = {4.5,0}
 
 local script_data = {
 	stations = {},
@@ -101,28 +100,10 @@ local function onBuilt(event)
 				raise_built = true
 			}
 			stop.rotatable = false
-			local counter = entity.surface.create_entity{
-				name = combinator,
-				position = math2d.position.add(entity.position, math2d.position.rotate_vector(counter_pos, entity.direction*45)),
-				direction = entity.direction,
-				force = entity.force,
-				raise_built = true
-			}
-			counter.operable = false
-			-- connect inserters to buffer and only enable if item count = 0
-			counter.connect_neighbour({wire = defines.wire_type.green, target_entity = stop})
-			local control = stop.get_or_create_control_behavior()
-			control.send_to_train = true
-			control.read_from_train = false
-			control.read_stopped_train = false
-			control.set_trains_limit = false
-			control.read_trains_count = false
-			control.enable_disable = false
 
 			script_data.stations[entity.unit_number%45][entity.unit_number] = {
 				station = entity,
-				stop = stop,
-				counter = counter
+				stop = stop
 			}
 		else
 			-- platforms must be adjacent to another platform or a station
@@ -155,43 +136,47 @@ local function onBuilt(event)
 			if entity.name == fluid then
 				entity.surface.create_entity{
 					name = entity.name.."-tank",
-					position = math2d.position.add(entity.position, math2d.position.rotate_vector(storage_pos, entity.direction*45)),
+					position = math2d.position.add(entity.position, math2d.position.rotate_vector(tank_pos, entity.direction*45)),
 					direction = entity.direction,
 					force = entity.force,
 					raise_built = true
 				}.rotatable = false
-				local pump = entity.surface.create_entity{
-					name = entity.name.."-pump",
-					position = math2d.position.add(entity.position, math2d.position.rotate_vector({6.5,-2}, entity.direction*45)),
-					direction = (entity.direction + 2) % 8,
-					force = entity.force,
-					raise_built = true
+				rendering.draw_sprite{
+					sprite = "utility.fluid_indication_arrow",
+					orientation = ((entity.direction+defines.direction.east)%8)/8,
+					render_layer = "arrow",
+					target = entity,
+					target_offset = math2d.position.rotate_vector({6.5,-2}, entity.direction*45),
+					surface = entity.surface,
+					only_in_alt_mode = true
 				}
-				pump.rotatable = false
-				pump.active = false
-				entity.surface.create_entity{
-					name = entity.name.."-pump",
-					position = math2d.position.add(entity.position, math2d.position.rotate_vector({6.5,-1}, entity.direction*45)),
-					direction = (entity.direction + 6) % 8,
-					force = entity.force,
-					raise_built = true
-				}.rotatable = false
-				entity.surface.create_entity{
-					name = entity.name.."-pump",
-					position = math2d.position.add(entity.position, math2d.position.rotate_vector({6.5,1}, entity.direction*45)),
-					direction = (entity.direction + 6) % 8,
-					force = entity.force,
-					raise_built = true
-				}.rotatable = false
-				pump = entity.surface.create_entity{
-					name = entity.name.."-pump",
-					position = math2d.position.add(entity.position, math2d.position.rotate_vector({6.5,2}, entity.direction*45)),
-					direction = (entity.direction + 2) % 8,
-					force = entity.force,
-					raise_built = true
+				rendering.draw_sprite{
+					sprite = "utility.fluid_indication_arrow",
+					orientation = ((entity.direction+defines.direction.west)%8)/8,
+					render_layer = "arrow",
+					target = entity,
+					target_offset = math2d.position.rotate_vector({6.5,-1}, entity.direction*45),
+					surface = entity.surface,
+					only_in_alt_mode = true
 				}
-				pump.rotatable = false
-				pump.active = false
+				rendering.draw_sprite{
+					sprite = "utility.fluid_indication_arrow",
+					orientation = ((entity.direction+defines.direction.west)%8)/8,
+					render_layer = "arrow",
+					target = entity,
+					target_offset = math2d.position.rotate_vector({6.5,1}, entity.direction*45),
+					surface = entity.surface,
+					only_in_alt_mode = true
+				}
+				rendering.draw_sprite{
+					sprite = "utility.fluid_indication_arrow",
+					orientation = ((entity.direction+defines.direction.east)%8)/8,
+					render_layer = "arrow",
+					target = entity,
+					target_offset = math2d.position.rotate_vector({6.5,2}, entity.direction*45),
+					surface = entity.surface,
+					only_in_alt_mode = true
+				}
 			end
 
 			script_data.platforms[entity.unit_number] = {platform=entity, mode="input"}
@@ -229,7 +214,7 @@ local function onRemoved(event)
 	if entity.name == station or entity.name == freight or entity.name == fluid or entity.name == empty then
 		local names
 		if entity.name == station then
-			names = {entity.name.."-walkable", trainstop, combinator}
+			names = {entity.name.."-walkable", trainstop}
 		elseif entity.name == freight then
 			names = {entity.name.."-walkable", entity.name.."-collision", entity.name.."-box"}
 			io.remove(entity, event)
@@ -329,22 +314,6 @@ local function onGuiSwitch(event)
 		if player.opened.name == fluid.."-tank" then
 			local floor = player.opened.surface.find_entity(fluid, player.opened.position)
 			local unload = event.element.switch_state == "right"
-			floor.surface.find_entity(
-				fluid.."-pump",
-				math2d.position.add(floor.position, math2d.position.rotate_vector({6.5,-2}, floor.direction*45))
-			).active = unload
-			floor.surface.find_entity(
-				fluid.."-pump",
-				math2d.position.add(floor.position, math2d.position.rotate_vector({6.5,-1}, floor.direction*45))
-			).active = not unload
-			floor.surface.find_entity(
-				fluid.."-pump",
-				math2d.position.add(floor.position, math2d.position.rotate_vector({6.5,1}, floor.direction*45))
-			).active = not unload
-			floor.surface.find_entity(
-				fluid.."-pump",
-				math2d.position.add(floor.position, math2d.position.rotate_vector({6.5,2}, floor.direction*45))
-			).active = unload
 			local struct = script_data.platforms[floor.unit_number]
 			struct.mode = unload and "output" or "input"
 		end
@@ -394,10 +363,6 @@ local function onTick(event)
 			-- scan attached platforms and, if a matching wagon is present, handle loading/unloading
 			local delta = math2d.position.rotate_vector({0,7},station.direction*45)
 			local position = station.position
-			local inventory = {
-				item = {},
-				fluid = {}
-			}
 			while true do
 				position = math2d.position.add(position, delta)
 				local platform = station.surface.find_entities_filtered{
@@ -428,15 +393,14 @@ local function onTick(event)
 							end
 						end
 					end
-					for name,count in pairs(storeinventory.get_contents()) do
-						inventory.item[name] = (inventory.item[name] or 0) + count
-					end
+					io.toggle(platform,{6.5,-2},not (train and wagon))
 					io.toggle(platform,{6.5,-1},not (train and wagon))
 					io.toggle(platform,{6.5,1},not (train and wagon))
+					io.toggle(platform,{6.5,2},not (train and wagon))
 					platform.active = not not (train and wagon)
 				elseif platform.name == fluid and platform.energy > 0 then
 					local wagon = station.surface.find_entity("fluid-wagon", position)
-					local store = station.surface.find_entity(fluid.."-tank", math2d.position.add(platform.position, math2d.position.rotate_vector(storage_pos, platform.direction*45)))
+					local store = station.surface.find_entity(fluid.."-tank", math2d.position.add(platform.position, math2d.position.rotate_vector(tank_pos, platform.direction*45)))
 					if train and wagon then
 						-- transfer 50 units
 						local from = is_output and wagon or store
@@ -451,35 +415,18 @@ local function onTick(event)
 								break
 							end
 						end
+						if not struct.flipped then
+							store.direction = (platform.direction + 4) % 8
+							struct.flipped = true
+						end
+					else
+						if struct.flipped then
+							store.direction = platform.direction
+							struct.flipped = false
+						end
 					end
-					for name,count in pairs(store.get_fluid_contents()) do
-						inventory.fluid[name] = (inventory.fluid[name] or 0) + count
-					end
-					station.surface.find_entity(
-						fluid.."-pump",
-						math2d.position.add(platform.position, math2d.position.rotate_vector({6.5,-1}, platform.direction*45))
-					).active = not (train and wagon)
-					station.surface.find_entity(
-						fluid.."-pump",
-						math2d.position.add(platform.position, math2d.position.rotate_vector({6.5,1}, platform.direction*45))
-					).active = not (train and wagon)
 					platform.active = not not (train and wagon)
 				end
-			end
-			local signals = {}
-			for key,entries in pairs(inventory) do
-				for name,count in pairs(entries) do
-					local idx = #signals+1
-					signals[idx] = {
-						index = idx,
-						signal = {type=key,name=name},
-						count = count
-					}
-					if idx == 200 then break end -- 200 different items/fluids in one train stop? wtf is wrong with you?
-				end
-			end
-			if struct.counter and struct.counter.valid then
-				struct.counter.get_or_create_control_behavior().parameters = signals
 			end
 		end
 	end
