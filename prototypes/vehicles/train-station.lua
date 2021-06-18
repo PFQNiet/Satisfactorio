@@ -13,6 +13,7 @@ local empty_sprite = {
 }
 
 local stop = data.raw.item['train-stop']
+stop.localised_name = {"entity-name."..name}
 stop.place_result = nil
 stop = data.raw['train-stop']['train-stop']
 stop.minable = {
@@ -21,7 +22,6 @@ stop.minable = {
 }
 stop.placeable_by = {{item=name,count=1}}
 stop.max_health = 1
-stop.selection_priority = 45
 
 local base = {
 	type = "electric-energy-interface",
@@ -76,6 +76,7 @@ local base = {
 local collision = {
 	type = "constant-combinator",
 	name = name.."-walkable",
+	localised_name = {"entity-name."..name},
 	activity_led_light_offsets = {{0,0},{0,0},{0,0},{0,0}},
 	activity_led_sprites = empty_sprite,
 	circuit_wire_connection_points = data.raw['constant-combinator']['constant-combinator'].circuit_wire_connection_points,

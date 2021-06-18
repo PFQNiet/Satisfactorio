@@ -85,6 +85,7 @@ local storage = {
 		result = name
 	},
 	name = name.."-box",
+	localised_name = {"entity-name."..name},
 	picture = empty_sprite,
 	placeable_by = {item=name,count=1},
 	selection_box = {{-2.5,-2.5},{2.5,2.5}},

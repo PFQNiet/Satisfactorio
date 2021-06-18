@@ -34,6 +34,7 @@ local plant = {
 }
 local harvested = {
 	name = name.."-harvested",
+	localised_name = {"entity-name."..name},
 	type = "simple-entity",
 	collision_box = {{-0.2,-0.2},{0.2,0.2}},
 	count_as_rock_for_filtered_deconstruction = true,

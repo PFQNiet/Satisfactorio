@@ -70,6 +70,7 @@ local extractor = {
 local placeholder = {
 	type = "electric-energy-interface",
 	name = name.."-placeholder",
+	localised_name = {"entity-name."..name},
 	energy_source = {
 		type = "electric",
 		buffer_capacity = "20MW",

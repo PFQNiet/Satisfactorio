@@ -57,6 +57,7 @@ local greendec = {
 		result = name
 	},
 	name = name.."-decorative",
+	localised_name = {"entity-name."..name},
 	selection_box = {{-1,-1},{1,1}},
 	render_layer = "lower-object",
 	max_health = 1,
@@ -150,6 +151,7 @@ local yellowdec = {
 		result = name
 	},
 	name = name.."-decorative",
+	localised_name = {"entity-name."..name},
 	selection_box = {{-1,-1},{1,1}},
 	render_layer = "lower-object",
 	max_health = 1,
@@ -243,6 +245,7 @@ local purpledec = {
 		result = name
 	},
 	name = name.."-decorative",
+	localised_name = {"entity-name."..name},
 	selection_box = {{-1,-1},{1,1}},
 	render_layer = "lower-object",
 	max_health = 1,

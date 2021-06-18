@@ -99,6 +99,7 @@ local vehicle2 = {
 	-- a fake car that looks like the player, just without a shadow attached
 	type = "car",
 	name = name.."-flying",
+	localised_name = {"entity-name."..name},
 	animation = {
 		layers = {
 			table.deepcopy(data.raw.character.character.animations[1].running.layers[1]),

@@ -34,12 +34,14 @@ local burner = {
 	max_health = 1,
 	minable = nil,
 	name = name,
+	localised_description = {"entity-description.biomass-burner"},
 	selection_box = {{-1.5,-1.5},{1.5,1.5}},
 	type = "burner-generator"
 }
 local accumulator = {
 	type = "electric-energy-interface",
 	name = name.."-buffer",
+	localised_name = {"entity-name.generator-buffer",{"entity-name."..name}},
 	picture = {
 		filename = "__core__/graphics/empty.png",
 		size = {1,1}

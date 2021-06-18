@@ -55,38 +55,6 @@ local miner = {
 	vector_to_place_result = {0,0}
 }
 
-local minerbox = {
-	collision_box = {{-1.2,-1.2},{1.2,1.2}},
-	collision_mask = {},
-	enable_inventory_bar = false,
-	flags = {
-		"not-on-map"
-	},
-	icon = miner.icon,
-	icon_size = miner.icon_size,
-	inventory_size = 1,
-	max_health = 1,
-	open_sound = {
-		filename = "__base__/sound/machine-open.ogg",
-		volume = 0.5
-	},
-	close_sound = {
-		filename = "__base__/sound/machine-close.ogg",
-		volume = 0.5
-	},
-	minable = {
-		mining_time = 1,
-		result = name,
-	},
-	name = name.."-box",
-	picture = data.raw.container['steel-chest'].picture,
-	placeable_by = {item=name,count=1},
-	selection_box = {{-1.5,-1.5},{1.5,1.5}},
-	selection_priority = 60,
-	selectable_in_game = false,
-	type = "container"
-}
-
 local mineritem = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
@@ -140,4 +108,4 @@ local minerrecipe_undo = {
 	enabled = false
 }
 
-data:extend({miner,minerbox,mineritem,minerrecipe,minerrecipe_undo})
+data:extend({miner,mineritem,minerrecipe,minerrecipe_undo})

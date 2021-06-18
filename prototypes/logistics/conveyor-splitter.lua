@@ -59,6 +59,7 @@ local bufferbox = {
 	max_health = 1,
 	minable = nil,
 	name = name.."-box",
+	localised_name = {"entity-name."..name},
 	picture = empty_sprite,
 	selection_box = {{-0.5,-0.5},{0.5,0.5}},
 	selection_priority = 40,

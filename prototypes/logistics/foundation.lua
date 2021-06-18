@@ -25,7 +25,6 @@ local foundation = {
 	selection_priority = 20,
 	render_layer = "lower-radius-visualization",
 	collision_mask = {foundation_layer},
-	max_health = 1,
 	type = "simple-entity-with-owner"
 }
 

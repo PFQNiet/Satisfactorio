@@ -60,6 +60,7 @@ local tank = {
 }
 local tankin = table.deepcopy(tank)
 tankin.name = name.."-input"
+tankin.localised_name = {"entity-name."..name}
 tankin.minable = nil
 tankin.fluid_box.pipe_connections = {{type="input",position={0,1}}}
 tankin.pictures.picture = {
@@ -75,6 +76,7 @@ tankin.selectable_in_game = false
 
 local tankout = table.deepcopy(tank)
 tankout.name = name.."-output"
+tankout.localised_name = {"entity-name."..name}
 tankout.minable = nil
 tankout.fluid_box.pipe_connections = {{type="output",position={0,-1}}}
 tankout.pictures.picture = {

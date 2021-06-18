@@ -2,6 +2,7 @@
 local name = "loader-conveyor"
 local belt = table.deepcopy(data.raw['transport-belt']['transport-belt'])
 belt.name = name
+belt.localised_name = {"entity-name.machine-io"}
 belt.speed = 8/256
 belt.animation_speed_coefficient = 0
 belt.max_health = 1

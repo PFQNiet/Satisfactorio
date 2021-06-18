@@ -262,6 +262,7 @@ local vehicle = {
 	-- a fake car for the player to enter the tube
 	type = "car",
 	name = name.."-car",
+	localised_name = {"entity-name."..name},
 	animation = {
 		direction_count = 1,
 		filename = "__core__/graphics/empty.png",

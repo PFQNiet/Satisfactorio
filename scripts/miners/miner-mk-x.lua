@@ -1,26 +1,21 @@
 local io = require(modpath.."scripts.lualib.input-output")
 local getitems = require(modpath.."scripts.lualib.get-items-from")
 
-local box_map = {
-	["miner-mk-1-box"] = "miner-mk-1",
-	["miner-mk-2-box"] = "miner-mk-2",
-	["miner-mk-3-box"] = "miner-mk-3"
+local miners = {
+	["miner-mk-1"] = true,
+	["miner-mk-2"] = true,
+	["miner-mk-3"] = true
 }
-
-local miner_map = {
-	["miner-mk-1"] = "miner-mk-1-box",
-	["miner-mk-2"] = "miner-mk-2-box",
-	["miner-mk-3"] = "miner-mk-3-box"
-}
+local box = "miner-box"
 
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not entity or not entity.valid then return end
 	local name = entity.name
-	if miner_map[name] then
+	if miners[name] then
 		-- spawn a box for this drill
 		local store = entity.surface.create_entity{
-			name = miner_map[name],
+			name = box,
 			position = entity.position,
 			force = entity.force,
 			raise_built = true
@@ -34,16 +29,11 @@ local function onRemoved(event)
 	local entity = event.entity
 	if not entity or not entity.valid then return end
 	local name = entity.name
-	if miner_map[name] then
-		local store = entity.surface.find_entity(miner_map[name], entity.position)
+	if miners[name] then
+		local store = entity.surface.find_entity(box, entity.position)
 		getitems.storage(store, event and event.buffer or nil)
 		store.destroy()
 		io.remove(entity, event)
-	end
-	if box_map[name] then
-		local drill = entity.surface.find_entity(box_map[name],entity.position)
-		io.remove(drill, event)
-		drill.destroy()
 	end
 end
 

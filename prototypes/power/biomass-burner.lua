@@ -44,6 +44,7 @@ local burner = {
 local accumulator = {
 	type = "electric-energy-interface",
 	name = name.."-buffer",
+	localised_name = {"entity-name.generator-buffer",{"entity-name."..name}},
 	picture = {
 		filename = "__core__/graphics/empty.png",
 		size = {1,1}

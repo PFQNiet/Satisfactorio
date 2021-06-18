@@ -320,3 +320,5 @@ Date: ????
   Balancing:
     - Nobelisks now destroy trees outright, rather than using the scale-with-distance approach.
     - Behemoth Worms ("gas emitters") can be destroyed by first weakening them with large amounts of radiation.
+  Optimizations:
+    - Re-structured locale strings into multiple files instead of one monolithic file

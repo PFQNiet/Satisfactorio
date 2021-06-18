@@ -106,6 +106,7 @@ data:extend({elevator,elevatoritem,elevatorrecipe,elevatorrecipe_undo})
 
 local silo = table.deepcopy(data.raw['rocket-silo']['rocket-silo'])
 silo.name = "space-elevator-silo"
+silo.localised_name = {"entity-name."..name}
 silo.energy_source = {type="void"}
 silo.rocket_parts_required = 1
 silo.max_health = 1

@@ -1,7 +1,8 @@
 local name = "the-hub"
 local hub = {
-	allowed_effects = {},
-	animation = {
+	type = "simple-entity-with-owner",
+	name = name,
+	picture = {
 		north = {
 			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-ns.png",
 			size = {416,224},
@@ -24,28 +25,19 @@ local hub = {
 		}
 	},
 	collision_box = {{-5.3,-3.3},{7.3,3.3}},
-	crafting_categories = {"nil"},
-	crafting_speed = 1,
-	energy_source = {type="void"},
-	energy_usage = "1W",
-	flags = {
-		"placeable-player",
-		"player-creation",
-		"no-automated-item-removal",
-		"no-automated-item-insertion"
-	},
+	collision_mask = {"object-layer","floor-layer","water-tile"},
+	selection_box = {{-5.5,-3.5},{7.5,3.5}},
+	selectable_in_game = false,
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	max_health = 1,
-	minable = {
-		mining_time = 1,
-		result = name
+	flags = {
+		"placeable-player",
+		"player-creation"
 	},
-	name = name,
-	selection_box = {{-5.5,-3.5},{7.5,3.5}},
-	type = "assembling-machine",
-	return_ingredients_on_change = false
+	render_layer = "floor"
 }
+
 local hubterminal = {
 	allowed_effects = {},
 	animation = {
@@ -87,55 +79,6 @@ local hubterminal = {
 	selection_box = {{-0.5,-1},{0.5,1}},
 	type = "assembling-machine",
 	return_ingredients_on_change = false
-}
-
-local hubgraphic_north = {
-	type = "simple-entity-with-owner",
-	name = name.."-north",
-	picture = {
-		filename = "__Satisfactorio__/graphics/placeholders/"..name.."-ns.png",
-		size = {416,224},
-		shift = {1,0}
-	},
-	collision_box = {{-5.3,-3.3},{7.3,3.3}},
-	collision_mask = {"object-layer","floor-layer","water-tile"},
-	render_layer = "floor"
-}
-local hubgraphic_east = {
-	type = "simple-entity-with-owner",
-	name = name.."-east",
-	picture = {
-		filename = "__Satisfactorio__/graphics/placeholders/"..name.."-ew.png",
-		size = {224,416},
-		shift = {0,1}
-	},
-	collision_box = {{-3.3,-5.3},{3.3,7.3}},
-	collision_mask = {"object-layer","floor-layer","water-tile"},
-	render_layer = "floor"
-}
-local hubgraphic_south = {
-	type = "simple-entity-with-owner",
-	name = name.."-south",
-	picture = {
-		filename = "__Satisfactorio__/graphics/placeholders/"..name.."-ns.png",
-		size = {416,224},
-		shift = {-1,0}
-	},
-	collision_box = {{-7.3,-3.3},{5.3,3.3}},
-	collision_mask = {"object-layer","floor-layer","water-tile"},
-	render_layer = "floor"
-}
-local hubgraphic_west = {
-	type = "simple-entity-with-owner",
-	name = name.."-west",
-	picture = {
-		filename = "__Satisfactorio__/graphics/placeholders/"..name.."-ew.png",
-		size = {224,416},
-		shift = {0,-1}
-	},
-	collision_box = {{-3.3,-7.3},{3.3,5.3}},
-	collision_mask = {"object-layer","floor-layer","water-tile"},
-	render_layer = "floor"
 }
 
 local hubitem = {
@@ -187,7 +130,7 @@ local hubrecipe_undo = {
 	}
 }
 
-data:extend({hub,hubterminal,hubgraphic_north,hubgraphic_east,hubgraphic_south,hubgraphic_west,hubitem,hubrecipe,hubrecipe_undo})
+data:extend({hub,hubterminal,hubitem,hubrecipe,hubrecipe_undo})
 
 local silo = table.deepcopy(data.raw['rocket-silo']['rocket-silo'])
 silo.name = "ficsit-freighter"

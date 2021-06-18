@@ -12,6 +12,7 @@ local item = {
 local vehicle = {
 	type = "car",
 	name = name.."-flying",
+	localised_name = {"item-name."..name},
 	animation = {
 		layers = {
 			table.deepcopy(data.raw.character.character.animations[1].idle.layers[1]),

@@ -66,6 +66,7 @@ local base = {
 local walkable = {
 	type = "constant-combinator",
 	name = name.."-walkable",
+	localised_name = {"entity-name."..name},
 	activity_led_light_offsets = {{0,0},{0,0},{0,0},{0,0}},
 	activity_led_sprites = empty_sprite,
 	circuit_wire_connection_points = data.raw['constant-combinator']['constant-combinator'].circuit_wire_connection_points,
@@ -81,12 +82,12 @@ local walkable = {
 	},
 	minable = nil,
 	selection_box = {{-3,-3.5},{3,3.5}},
-	selectable_in_game = false,
-	selection_priority = 30
+	selectable_in_game = false
 }
 local collision = {
 	type = "constant-combinator",
 	name = name.."-collision",
+	localised_name = {"entity-name."..name},
 	activity_led_light_offsets = {{0,0},{0,0},{0,0},{0,0}},
 	activity_led_sprites = empty_sprite,
 	circuit_wire_connection_points = data.raw['constant-combinator']['constant-combinator'].circuit_wire_connection_points,
@@ -101,8 +102,7 @@ local collision = {
 	},
 	minable = nil,
 	selection_box = {{-3,-3.5},{3,3.5}},
-	selectable_in_game = false,
-	selection_priority = 30
+	selectable_in_game = false
 }
 
 local storage = {
@@ -129,6 +129,7 @@ local storage = {
 		result = name
 	},
 	name = name.."-box",
+	localised_name = {"entity-name."..name},
 	picture = empty_sprite,
 	placeable_by = {item=name,count=1},
 	selection_box = {{-2.5,-2.5},{2.5,2.5}},

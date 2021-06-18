@@ -10,7 +10,7 @@ local function onEquipBody(event)
 		-- Satisfactorio "armour" items have a corresponding grid, which is 2x1 and accepts the "equipment-power-source" and its own equipment item
 		local grid = armour.grid
 		grid.clear()
-		grid.put{name = "equipment-power-source"}
+		grid.put{name = gear.."-power"}
 		grid.put{name = equip}
 	end
 end

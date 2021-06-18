@@ -8,6 +8,7 @@ local empty_sprite = {
 local inserter = {
 	type = "inserter",
 	name = name,
+	localised_name = {"entity-name.machine-io"},
 	icon = "__base__/graphics/icons/fast-inserter.png",
 	icon_mipmaps = 4,
 	icon_size = 64,

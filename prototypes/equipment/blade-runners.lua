@@ -16,7 +16,7 @@ local grid = {
 	locked = true,
 	width = 2,
 	height = 1,
-	equipment_categories = {name, "equipment-power-source"}
+	equipment_categories = {name}
 }
 local category = {
 	type = "equipment-category",
@@ -55,4 +55,36 @@ exo.sprite = {
 }
 exo.energy_consumption = "1MW"
 
-data:extend({item, grid, category})
+data:extend{item, grid, category}
+
+data:extend{
+	{
+		type = "item",
+		name = name.."-power",
+		localised_name = {"item-name.exoskeleton-equipment"},
+		icon = "__Satisfactorio__/graphics/icons/battery.png",
+		icon_size = 64,
+		stack_size = 1,
+		flags = {"hidden"},
+		place_as_equipment_result = name.."-power"
+	},
+	{
+		type = "generator-equipment",
+		name = name.."-power",
+		sprite = {
+			filename = "__Satisfactorio__/graphics/icons/battery.png",
+			size = {64,64}
+		},
+		categories = {name},
+		energy_source = {
+			type = "electric",
+			usage_priority = "primary-output"
+		},
+		power = "1MW",
+		shape = {
+			width = 1,
+			height = 1,
+			type = "full"
+		}
+	}
+}

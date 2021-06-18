@@ -13,17 +13,12 @@ local storage = "wooden-chest"
 local biomassburner = "biomass-burner-hub"
 local powerpole = "small-electric-pole"
 local freighter = "ficsit-freighter"
-local graphics = {
-	[defines.direction.north] = base.."-north",
-	[defines.direction.east] = base.."-east",
-	[defines.direction.south] = base.."-south",
-	[defines.direction.west] = base.."-west"
-}
 
 local script_data = {
 	terminal = {},
 	milestone_selected = {},
-	cooldown = {}
+	cooldown = {},
+	floor_updated = true
 }
 
 local function ejectColliders(entity)
@@ -52,22 +47,9 @@ local burner_2_pos = {-4,-2}
 local powerpole_pos = {-5,0}
 local freighter_pos = {6,0}
 
-local function buildFloor(hub)
-	return hub.surface.create_entity{
-		name = graphics[hub.direction],
-		position = hub.position,
-		force = hub.force,
-		raise_built = true
-	}
-end
 local function removeFloor(hub)
-	-- identify the graphic that was used here
-	local graphic = graphics[hub.direction] -- later this will include graphics for different stages of Tier 0
-	local dec = hub.surface.find_entity(graphic,hub.position)
-	if not dec or not dec.valid then
-		game.print("Couldn't find the graphic")
-		return
-	end
+	local dec = hub.surface.find_entity(base,hub.position)
+	if not dec or not dec.valid then return end
 	dec.destroy()
 	-- remove terminal entity from global list
 	script_data.terminal[hub.force.index] = nil
@@ -533,7 +515,6 @@ local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not entity or not entity.valid then return end
 	if entity.name == base then
-		buildFloor(entity)
 		buildTerminal(entity)
 		buildCraftBench(entity)
 		buildStorageChest(entity)
@@ -548,9 +529,6 @@ local function onBuilt(event)
 			force.technologies['the-hub'].researched = true
 			force.play_sound{path="utility/research_completed"}
 		end
-
-		-- remove base item
-		entity.destroy()
 	end
 end
 
@@ -599,6 +577,17 @@ return {
 	end,
 	on_load = function()
 		script_data = global.hub or script_data
+	end,
+	on_configuration_changed = function()
+		if global.hub and not global.hub.floor_updated then
+			for _,terminal in pairs(global.hub.terminal) do
+				local floor = terminal.surface.find_entity(base, terminal.position)
+				if floor and floor.valid then
+					floor.direction = terminal.direction
+				end
+			end
+			global.hub.floor_updated = true
+		end
 	end,
 	on_nth_tick = {
 		[6] = onTick

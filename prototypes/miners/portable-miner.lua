@@ -52,6 +52,8 @@ local pmbox = {
 		result = name,
 	},
 	name = name.."-box",
+	localised_name = {"entity-name."..name},
+	localised_description = {"entity-description."..name},
 	picture = {
 		filename = "__Satisfactorio__/graphics/placeholders/"..name..".png",
 		size = {32,32}

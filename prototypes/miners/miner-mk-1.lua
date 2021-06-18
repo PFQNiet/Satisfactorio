@@ -74,15 +74,14 @@ local minerbox = {
 		filename = "__base__/sound/machine-close.ogg",
 		volume = 0.5
 	},
-	minable = {
-		mining_time = 1,
-		result = name,
+	name = "miner-box",
+	picture = {
+		filename = "__core__/graphics/empty.png",
+		width = 1,
+		height = 1
 	},
-	name = name.."-box",
-	picture = data.raw.container['steel-chest'].picture,
 	placeable_by = {item=name,count=1},
 	selection_box = {{-1.5,-1.5},{1.5,1.5}},
-	selection_priority = 60,
 	selectable_in_game = false,
 	type = "container"
 }
