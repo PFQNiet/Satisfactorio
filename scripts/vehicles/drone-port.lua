@@ -648,6 +648,11 @@ local function onTick(event)
 		local drone = struct.drone
 		local state = struct.state
 		local guests = struct.guests
+		if drone and drone.autopilot_destination and not drone.burner.currently_burning and not drone.burner.inventory[1].valid_for_read then
+			for _,player in pairs(drone.force.players) do
+				player.add_alert(drone, defines.alert_type.train_out_of_fuel)
+			end
+		end
 		if station.energy > 0 then
 			-- each station will "tick" once every 30 in-game ticks, ie. every half-second
 			if state.status == "no-drone" or state.status == "emergency-recall" then
@@ -683,7 +688,10 @@ local function onTick(event)
 							fuelstore.remove({name=fuelstore[1].name, count=fueltarget.insert(fuelstore[1])})
 						end
 					end
-					if not fueltarget.is_empty() and fueltarget[1].count >= 20 then
+					local distance = math2d.position.distance(station.position, destination.position)
+					local travel_time = distance*2 / 67.9 + 5 -- measured 67.9m/s movement speed, try to get real value here
+					local batteries = travel_time / 15 + 4 -- 1 battery lasts 15 seconds - should really use values from prototypes but whatever
+					if not fueltarget.is_empty() and fueltarget[1].count >= batteries then
 						-- consume base 4 batteries per trip
 						fueltarget[1].count = fueltarget[1].count - 4
 						state.status = "takeoff"

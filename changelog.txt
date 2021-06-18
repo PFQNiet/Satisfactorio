@@ -298,5 +298,8 @@ Date: ????
   Changes:
     - Changed stack size of underground belts to 50 for better fit with Build Gun
     - Truck stations and Freight platforms now have their outputs disabled as well as their inputs when a vehicle is docked
+  Ease of use:
+    - Reduced the number of batteries needed for Drones to take off, based on calculated requirement
+    - Added "out of fuel" notice to Drones, just in case
   Balancing:
     - Slightly increased length of underground pipe Mk.2
