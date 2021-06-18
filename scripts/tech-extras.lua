@@ -1,47 +1,60 @@
+local tech_tree_cache = nil
 -- Technology effects don't include -manual, -undo or awesome-shop- recipes, to avoid polluting the technology GUI
 -- Instead they are unlocked here.
 local function onResearch(event)
 	local technology = event.research
+	local force = technology.force
+	local frecipes = force.recipes
 	for _,effect in pairs(technology.effects) do
 		if effect.type == "unlock-recipe" then
-			if technology.force.recipes[effect.recipe.."-undo"] then
-				-- build gun: don't enable these any more
-				-- technology.force.recipes[effect.recipe.."-undo"].enabled = true
+			-- build gun: don't enable these any more
+			-- if frecipes[effect.recipe.."-undo"] then
+				-- frecipes[effect.recipe.."-undo"].enabled = true
+			-- end
+			if frecipes[effect.recipe.."-manual"] then
+				frecipes[effect.recipe.."-manual"].enabled = true
 			end
-			if technology.force.recipes[effect.recipe.."-manual"] then
-				technology.force.recipes[effect.recipe.."-manual"].enabled = true
-			end
-			if technology.force.recipes["awesome-shop-"..effect.recipe] then
-				technology.force.recipes["awesome-shop-"..effect.recipe].enabled = true
+			if frecipes["awesome-shop-"..effect.recipe] then
+				frecipes["awesome-shop-"..effect.recipe].enabled = true
 			end
 		end
 	end
+
 	-- find techs that depend on the tech we just did, and unlock their associated recipe items
-	for _,tech in pairs(technology.force.technologies) do
-		if technology.force.recipes[tech.name] then
-			local match = false
+	if not tech_tree_cache then
+		tech_tree_cache = {}
+		-- remap techs to the things they unlock
+		for _,tech in pairs(technology.force.technologies) do
+			if frecipes[tech.name] then
+				for _,req in pairs(tech.prerequisites) do
+					if not tech_tree_cache[req.name] then tech_tree_cache[req.name] = {} end
+					table.insert(tech_tree_cache[req.name], tech)
+				end
+			end
+		end
+	end
+	local candidates = tech_tree_cache[technology.name]
+	if candidates then
+		for _,tech in pairs(candidates) do
 			local alldone = true
 			for _,req in pairs(tech.prerequisites) do
 				if not req.researched then
 					alldone = false
 					break
 				end
-				if req.name == technology.name then
-					match = true
-				end
 			end
-			if match and alldone then
-				technology.force.recipes[tech.name].enabled = true
+			if alldone then
+				frecipes[tech.name].enabled = true
 			end
 		end
 	end
-	if technology.force.recipes[technology.name] and technology.force.recipes[technology.name.."-done"] then
+	if frecipes[technology.name] and frecipes[technology.name.."-done"] then
 		-- disable the recipe and enable the "-done" recipe
-		technology.force.recipes[technology.name].enabled = false
-		technology.force.recipes[technology.name.."-done"].enabled = true
+		frecipes[technology.name].enabled = false
+		frecipes[technology.name.."-done"].enabled = true
 	end
 	
-	if technology.name == "space-elevator-phase4" and not game.finished then
+	if technology.name == "space-elevator-phase4" and not game.finished and event.tick > 5 then
 		game.set_game_state{
 			game_finished = true,
 			player_won = true,

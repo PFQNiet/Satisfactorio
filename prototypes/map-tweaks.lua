@@ -7,11 +7,48 @@ data.raw['turret']['small-worm-turret'].autoplace = nil
 data.raw['turret']['medium-worm-turret'].autoplace = nil
 data.raw['turret']['big-worm-turret'].autoplace = nil
 data.raw['turret']['behemoth-worm-turret'].autoplace = nil
--- disable pollution and enemy settings by default
+-- disable enemy settings by default
 local settings = data.raw['map-settings']['map-settings']
--- settings.pollution.enabled = false -- keep enabled for Radioactivity
 settings.enemy_evolution.enabled = false
 settings.enemy_expansion.enabled = false
+
+data.raw['map-gen-presets'].default.blank = {
+	order = "zzz",
+	basic_settings = {
+		water = "none",
+		autoplace_controls = {
+			["iron-ore"] = {size="none"},
+			["copper-ore"] = {size="none"},
+			["stone"] = {size="none"},
+			["coal"] = {size="none"},
+			["crude-oil"] = {size="none"},
+			["caterium-ore"] = {size="none"},
+			["bauxite"] = {size="none"},
+			["raw-quartz"] = {size="none"},
+			["sulfur"] = {size="none"},
+			["uranium-ore"] = {size="none"},
+			["water-well"] = {size="none"},
+			["crude-oil-well"] = {size="none"},
+			["nitrogen-gas-well"] = {size="none"},
+			["trees"] = {size="none"},
+			["x-plant"] = {size="none"},
+			["x-deposit"] = {size="none"},
+			["x-powerslug"] = {size="none"},
+			["x-crashsite"] = {size="none"},
+			["geyser"] = {size="none"},
+			["enemy-base"] = {size="none"}
+		},
+		cliff_settings = {
+			name = "cliff",
+			richness = 0
+		}
+	},
+	advanced_settings = {
+		pollution = {enabled = false},
+		enemy_evolution = {enabled = false},
+		enemy_expansion = {enabled = false},
+	}
+}
 
 -- Minimap and main map are disabled until unlocked by technology later in the game
 data:extend({

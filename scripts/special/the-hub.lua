@@ -263,30 +263,33 @@ local function completeMilestone(technology)
 			end
 		end
 
-		local message = {"", {"message.milestone-reached",technology.name,technology.localised_name}}
-		-- use "real" technology effects for console message
-		for _,effect in pairs(technology.effects) do
-			if effect.type == "unlock-recipe" and (effect.recipe == "hub-tier1" or effect.recipe == "hub-tier2") then
-				if effect.recipe == "hub-tier1" then
-					-- only register it once
-					table.insert(message, {"message.hub-new-tiers-available"})
+		if game.tick > 5 then
+			local message = {"", {"message.milestone-reached",technology.name,technology.localised_name}}
+			-- use "real" technology effects for console message
+			for _,effect in pairs(technology.effects) do
+				if effect.type == "unlock-recipe" and (effect.recipe == "hub-tier1" or effect.recipe == "hub-tier2") then
+					if effect.recipe == "hub-tier1" then
+						-- only register it once
+						table.insert(message, {"message.hub-new-tiers-available"})
+					end
+				elseif effect.type == "unlock-recipe" then
+					-- if it has an associated "undo" recipe, it's a Building, otherwise it's an Equipment
+					local subtype = "equipment"
+					if technology.force.recipes[effect.recipe.."-undo"] then subtype = "building" end
+					if technology.force.recipes[effect.recipe].products[1].type == "fluid" or not game.item_prototypes[technology.force.recipes[effect.recipe].products[1].name].place_result then subtype = "material" end
+					if technology.force.recipes[effect.recipe].category == "resource-scanner" then subtype = "resource" end
+					table.insert(message, {"message.milestone-effect-unlock-"..subtype, effect.recipe, game.recipe_prototypes[effect.recipe].localised_name})
+				elseif effect.type == "character-inventory-slots-bonus" then
+					table.insert(message, {"message.milestone-effect-inventory-bonus",effect.modifier})
+				elseif effect.type == "nothing" then
+					table.insert(message, {"message.milestone-effect-other",effect.effect_description})
+				else
+					table.insert(message, {"message.milestone-effect-unknown",effect.type,effect.modifier or 0})
 				end
-			elseif effect.type == "unlock-recipe" then
-				-- if it has an associated "undo" recipe, it's a Building, otherwise it's an Equipment
-				local subtype = "equipment"
-				if technology.force.recipes[effect.recipe.."-undo"] then subtype = "building" end
-				if technology.force.recipes[effect.recipe].products[1].type == "fluid" or not game.item_prototypes[technology.force.recipes[effect.recipe].products[1].name].place_result then subtype = "material" end
-				if technology.force.recipes[effect.recipe].category == "resource-scanner" then subtype = "resource" end
-				table.insert(message, {"message.milestone-effect-unlock-"..subtype, effect.recipe, game.recipe_prototypes[effect.recipe].localised_name})
-			elseif effect.type == "character-inventory-slots-bonus" then
-				table.insert(message, {"message.milestone-effect-inventory-bonus",effect.modifier})
-			elseif effect.type == "nothing" then
-				table.insert(message, {"message.milestone-effect-other",effect.effect_description})
-			else
-				table.insert(message, {"message.milestone-effect-unknown",effect.type,effect.modifier or 0})
 			end
+			technology.force.print(message)
 		end
-		technology.force.print(message)
+
 		-- launch freighter if needed
 		local time = technology.research_unit_energy
 		if time > 30*60 then

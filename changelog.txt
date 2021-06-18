@@ -294,7 +294,7 @@ Date: 2021.06.17
     - Fixed buggy Tips+Tricks
 ---------------------------------------------------------------------------------------------------
 Version: 0.6.9
-Date: ????
+Date: 2021.06.18
   Changes:
     - Changed stack size of underground belts to 50 for better fit with Build Gun
     - Truck stations and Freight platforms now have their outputs disabled as well as their inputs when a vehicle is docked
@@ -302,5 +302,11 @@ Date: ????
     - Reduced the number of batteries needed for Drones to take off, based on calculated requirement
     - Added "out of fuel" notice to Drones, just in case
     - Added chart tag to drone ports
+    - Added "blank map" preset for when you want no resources at all (eg. map editor)
   Balancing:
     - Slightly increased length of underground pipe Mk.2
+  Bugfixes:
+    - Cancelling an autopilot recording by exiting the car now properly cleans up the path drawing
+  Optimisations:
+    - Tidied up Sandbox scenario
+    - Improved performance of technology unlock progression system
