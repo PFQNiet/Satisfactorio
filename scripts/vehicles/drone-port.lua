@@ -505,7 +505,7 @@ local function onGuiClick(event)
 				data.drone.entity_label = newname
 			end
 		else
-			rename_flow_children[1].text = name_flow.children[1].caption
+			rename_flow.children[1].text = name_flow.children[1].caption
 		end
 		name_flow.visible = true
 		rename_flow.visible = false
@@ -550,7 +550,7 @@ local function onGuiConfirm(event)
 				data.drone.entity_label = newname
 			end
 		else
-			rename_flow_children[1].text = name_flow.children[1].caption
+			rename_flow.children[1].text = name_flow.children[1].caption
 		end
 		name_flow.visible = true
 		rename_flow.visible = false
