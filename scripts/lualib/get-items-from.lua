@@ -22,10 +22,14 @@ local function retrieveItemsFromAssembler(entity, target)
 		-- a craft was left in progress, get the ingredients and give those back too
 		local recipe = entity.get_recipe()
 		for i = 1, #recipe.ingredients do
-			if target then
-				target.insert(recipe.ingredients[i])
-			else
-				entity.surface.spill_item_stack(entity.position, recipe.ingredients[i], true, entity.force, false)
+			local entry = recipe.ingredients[i]
+			if entry.type == "item" then
+				local stack = {name=entry.name, count=entry.amount}
+				if target then
+					target.insert(stack)
+				else
+					entity.surface.spill_item_stack(entity.position, stack, true, entity.force, false)
+				end
 			end
 		end
 	end

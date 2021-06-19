@@ -336,3 +336,5 @@ Date: ????
     - Satisfactory belts: 60/120/270/480/780
     - Satisfactorio belts: 112.5/225/337.5/562.5/787.5
     - I really wish Factorio belts were more flexible...
+  Bugfixes:
+    - Fixed that removing an assembler via script didn't properly refund items

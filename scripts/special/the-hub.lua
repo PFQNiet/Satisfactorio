@@ -86,7 +86,7 @@ local function removeCraftBench(hub, buffer)
 		return
 	end
 	if buffer then
-		getitems.assembler(craft, target)
+		getitems.assembler(craft, buffer)
 	end
 	craft.destroy()
 end

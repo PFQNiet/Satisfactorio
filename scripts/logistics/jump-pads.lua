@@ -57,11 +57,6 @@ local function onRotated(event)
 		if car and car.valid then
 			car.direction = entity.direction
 		end
-	elseif entity.name == car then -- can you even rotate cars? can you even select the car since it's underneath the floor? idk lol
-		local floor = entity.surface.find_entity(launcher, entity.position)
-		if floor and floor.valid then
-			floor.direction = car.direction
-		end
 	end
 end
 
