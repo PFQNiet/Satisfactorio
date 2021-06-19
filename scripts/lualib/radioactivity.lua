@@ -74,9 +74,6 @@ local function onChunkGenerated(event)
 	table.insert(script_data.buckets[bucketindex], entry)
 	script_data.count = count+1
 end
-local function getRadiationForChunk(surface, cx, cy)
-	return getOrCreateChunk(surface.index, {cx,xy}).radioactivity
-end
 
 local function addRadiationForResource(entity)
 	-- the only radioactive resource is uranium-ore
@@ -307,7 +304,7 @@ local function updatePlayerCharacter(player, damage)
 	if player.character then
 		-- radiation damage is based on pollution of the current chunk
 		local radiation = player.character.surface.get_pollution(player.character.position)
-			-- + getRadiationForChunk(player.surface,math.floor(player.position.x/32),math.floor(player.position.y/32))
+		-- + local entities
 		local pos = player.position
 		local cx = pos.x
 		local cy = pos.y
