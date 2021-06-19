@@ -160,6 +160,6 @@ return {
 		[defines.events.on_gui_click] = onGuiClick,
 		[defines.events.on_gui_opened] = onGuiOpened,
 
-		["fast-stack-transfer"] = dropStack
+		-- ["fast-stack-transfer"] = dropStack
 	}
 }
