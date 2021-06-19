@@ -328,3 +328,11 @@ Date: 2021.06.18
   Bugfixes:
     - Crash when Player Two changed the HUB Milestone being researched
     - Fixed ability to put building items into containers
+---------------------------------------------------------------------------------------------------
+Version: 0.7.2
+Date: ????
+  Balancing:
+    - Increased speed of Mk4 conveyor belts so that they're higher than Satisfactory speeds
+    - Satisfactory belts: 60/120/270/480/780
+    - Satisfactorio belts: 112.5/225/337.5/562.5/787.5
+    - I really wish Factorio belts were more flexible...
