@@ -37,7 +37,6 @@ local green = {
 	name = name,
 	selection_box = {{-1,-1},{1,1}},
 	render_layer = "lower-object",
-	max_health = 1,
 	type = "simple-entity-with-owner"
 }
 local greendec = {
@@ -60,7 +59,6 @@ local greendec = {
 	localised_name = {"entity-name."..name},
 	selection_box = {{-1,-1},{1,1}},
 	render_layer = "lower-object",
-	max_health = 1,
 	type = "simple-entity-with-owner"
 }
 local greenitem = {
@@ -131,7 +129,6 @@ local yellow = {
 	name = name,
 	selection_box = {{-1,-1},{1,1}},
 	render_layer = "lower-object",
-	max_health = 1,
 	type = "simple-entity-with-owner"
 }
 local yellowdec = {
@@ -154,7 +151,6 @@ local yellowdec = {
 	localised_name = {"entity-name."..name},
 	selection_box = {{-1,-1},{1,1}},
 	render_layer = "lower-object",
-	max_health = 1,
 	type = "simple-entity-with-owner"
 }
 local yellowitem = {
@@ -225,7 +221,6 @@ local purple = {
 	name = name,
 	selection_box = {{-1,-1},{1,1}},
 	render_layer = "lower-object",
-	max_health = 1,
 	type = "simple-entity-with-owner"
 }
 local purpledec = {
@@ -248,7 +243,6 @@ local purpledec = {
 	localised_name = {"entity-name."..name},
 	selection_box = {{-1,-1},{1,1}},
 	render_layer = "lower-object",
-	max_health = 1,
 	type = "simple-entity-with-owner"
 }
 local purpleitem = {

@@ -70,7 +70,11 @@ local interface = {
 		drain = "0W"
 	},
 	energy_usage = "1500MW", -- adjusted based on recipe
-	pictures = empty_sprite,
+	pictures = {
+		filename = "__core__/graphics/empty.png",
+		width = 1,
+		height = 1
+	},
 	max_health = 1,
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,

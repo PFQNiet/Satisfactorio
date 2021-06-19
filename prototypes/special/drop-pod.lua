@@ -18,7 +18,6 @@ local pod = {
 	name = name,
 	selection_box = {{-1.5,-1.5},{1.5,1.5}},
 	render_layer = "object",
-	max_health = 1,
 	type = "simple-entity-with-owner"
 }
 
