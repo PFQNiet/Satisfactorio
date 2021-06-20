@@ -23,7 +23,7 @@ local wallrecipe = {
 	type = "recipe",
 	ingredients = ingredients,
 	result = basename,
-	energy_required = 0.2,
+	energy_required = 1,
 	category = "building",
 	allow_intermediates = false,
 	allow_as_intermediate = false,
@@ -39,7 +39,7 @@ local wallrecipe_undo = {
 		{basename,1}
 	},
 	results = ingredients,
-	energy_required = 0.2,
+	energy_required = 1,
 	category = "unbuilding",
 	subgroup = _group.group .. "-undo",
 	order = _group.order .. "-" .. wallitem.order,

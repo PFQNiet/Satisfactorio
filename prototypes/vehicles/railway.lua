@@ -66,7 +66,7 @@ recipe_undo = {
 		{"rail-signal",1}
 	},
 	results = signal.ingredients,
-	energy_required = 0.5,
+	energy_required = 1,
 	category = "unbuilding",
 	subgroup = _group.group .. "-undo",
 	order = _group.order .. "-" .. rail.order,
@@ -99,7 +99,7 @@ recipe_undo = {
 		{"rail-chain-signal",1}
 	},
 	results = signal.ingredients,
-	energy_required = 0.5,
+	energy_required = 1,
 	category = "unbuilding",
 	subgroup = _group.group .. "-undo",
 	order = _group.order .. "-" .. rail.order,

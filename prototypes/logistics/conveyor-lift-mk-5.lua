@@ -40,7 +40,7 @@ local beltrecipe = {
 	type = "recipe",
 	ingredients = ingredients,
 	result = basename,
-	energy_required = 0.5,
+	energy_required = 1,
 	category = "building",
 	allow_intermediates = false,
 	allow_as_intermediate = false,
@@ -57,7 +57,7 @@ local beltrecipe_undo = {
 		{basename,1}
 	},
 	results = ingredients,
-	energy_required = 0.5,
+	energy_required = 1,
 	category = "unbuilding",
 	subgroup = _group.group .. "-undo",
 	order = _group.order .. "-" .. beltitem.order,
