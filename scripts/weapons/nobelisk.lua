@@ -14,7 +14,7 @@ local script_data = {
 local function onScriptTriggerEffect(event)
 	local source = event.source_entity and event.source_entity.type == "character" and event.source_entity.player and event.source_entity.player.index or 0
 	if event.effect_id == name then
-		local target
+		local target, offset
 		if event.target_entity and (event.target_entity.type == "unit" or event.target_entity.type == "character" or event.target_entity.type == "car") then
 			target = event.target_entity
 			game.surfaces[event.surface_index].create_entity{
@@ -39,6 +39,7 @@ local function onScriptTriggerEffect(event)
 		if not script_data.queue[source] then script_data.queue[source] = {} end
 		table.insert(script_data.queue[source], {
 			entity = target,
+			surface = target.surface,
 			offset = offset,
 			force = event.source_entity and event.source_entity.force or "player",
 			cause = event.source_entity
@@ -59,16 +60,18 @@ local function onScriptTriggerEffect(event)
 	end
 end
 local function onEntityDied(event)
-	for pid,explosions in pairs(script_data.explosions) do
-		for _,exp in pairs(explosions) do
-			if exp.entity == event.entity then
-				-- drop nobelisk on the ground instead
-				exp.entity = event.entity.surface.create_entity{
-					name = onground,
-					position = event.entity.position,
-					force = exp.force
-				}
-				exp.entity.destructible = false
+	for _,group in pairs({script_data.queue, script_data.explosions}) do
+		for _,explosions in pairs(group) do
+			for _,exp in pairs(explosions) do
+				if exp.entity == event.entity then
+					-- drop nobelisk on the ground instead
+					exp.entity = event.entity.surface.create_entity{
+						name = onground,
+						position = event.entity.position,
+						force = exp.force
+					}
+					exp.entity.destructible = false
+				end
 			end
 		end
 	end
@@ -95,19 +98,19 @@ local function onTick(event)
 				pos[1] = pos[1] + explosion.entity.position.x
 				pos[2] = pos[2] + explosion.entity.position.y
 			end
-			explosion.entity.surface.create_entity{
+			explosion.surface.create_entity{
 				name = "big-explosion",
 				position = pos
 			}
-			if explosion.entity.surface.can_place_entity{
+			if explosion.surface.can_place_entity{
 				name = "medium-scorchmark-tintable",
 				position = pos
-			} then explosion.entity.surface.create_entity{
+			} then explosion.surface.create_entity{
 				name = "medium-scorchmark-tintable",
 				position = pos
 			} end
 			-- find nearby entities-with-health and damage them according to distance from the centre
-			local entities = explosion.entity.surface.find_entities_filtered{
+			local entities = explosion.surface.find_entities_filtered{
 				position = pos,
 				radius = 7
 			}
