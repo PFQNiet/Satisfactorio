@@ -73,6 +73,15 @@ local function onTechEffectsReset(event)
 end
 
 return {
+	on_configuration_changed = function()
+		for _,force in pairs(game.forces) do
+			if force.technologies['mam-quartz-quartz-crystals'].researched then
+				if not force.technologies['mam-quartz-factory-lighting'].researched then
+					force.recipes['mam-quartz-factory-lighting'].enabled = true
+				end
+			end
+		end
+	end,
 	events = {
 		[defines.events.on_research_finished] = onResearch,
 		[defines.events.on_technology_effects_reset] = onTechEffectsReset

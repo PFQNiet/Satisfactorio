@@ -331,6 +331,8 @@ Date: 2021.06.18
 ---------------------------------------------------------------------------------------------------
 Version: 0.7.2
 Date: ????
+  Changes:
+    - Added Factory Light to Quartz tech tree
   Balancing:
     - Increased speed of Mk4 conveyor belts so that they're higher than Satisfactory speeds
     - Satisfactory belts: 60/120/270/480/780

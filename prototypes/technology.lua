@@ -911,22 +911,28 @@ addTech("mam-quartz-quartz-crystals", "mam/quartz-crystal", "mam", "mam-quartz",
 }, {
 	{type="unlock-recipe",recipe="quartz-crystal"}
 })
-addTech("mam-quartz-crystal-oscillator", "mam/crystal-oscillator", "mam", "mam-quartz", "m-7-4", 3, {"mam-quartz-quartz-crystals"}, {
+addTech("mam-quartz-factory-lighting", "mam/lights", "mam", "mam-quartz", "m-7-4", 180, {"mam-quartz-quartz-crystals"}, {
+	{"quartz-crystal",100},
+	{"steel-plate",50}
+}, {
+	{type="unlock-recipe",recipe="small-lamp"}
+})
+addTech("mam-quartz-crystal-oscillator", "mam/crystal-oscillator", "mam", "mam-quartz", "m-7-5", 3, {"mam-quartz-quartz-crystals"}, {
 	{"quartz-crystal",100},
 	{"reinforced-iron-plate",50}
 }, {
 	{type="unlock-recipe",recipe="crystal-oscillator"}
 })
-addTech("mam-quartz-signal-technologies", "mam/key", "mam", "mam-quartz", "m-7-5", 3, {"mam-quartz-crystal-oscillator"}, {
+addTech("mam-quartz-signal-technologies", "mam/key", "mam", "mam-quartz", "m-7-6", 3, {"mam-quartz-crystal-oscillator"}, {
 	{"crystal-oscillator",5}
 }, {})
-addTech("mam-quartz-explorer", "mam/explorer", "mam", "mam-quartz", "m-7-6", 300, {"mam-quartz-signal-technologies"}, {
+addTech("mam-quartz-explorer", "mam/explorer", "mam", "mam-quartz", "m-7-7", 300, {"mam-quartz-signal-technologies"}, {
 	{"crystal-oscillator",10},
 	{"modular-frame",100}
 }, {
 	{type="unlock-recipe",recipe="explorer"}
 })
-addTech("mam-quartz-frequency-mapping", "mam/map", "mam", "mam-quartz", "m-7-7", 300, {"mam-quartz-signal-technologies"}, {
+addTech("mam-quartz-frequency-mapping", "mam/map", "mam", "mam-quartz", "m-7-8", 300, {"mam-quartz-signal-technologies"}, {
 	{"crystal-oscillator",10},
 	{"map-marker",10}
 }, {
@@ -938,21 +944,21 @@ addTech("mam-quartz-frequency-mapping", "mam/map", "mam", "mam-quartz", "m-7-7",
 		}
 	}
 })
-addTech("mam-quartz-radio-signal-scanning", "mam/crash-site", "mam", "mam-quartz", "m-7-8", 300, {"mam-quartz-frequency-mapping"}, {
+addTech("mam-quartz-radio-signal-scanning", "mam/crash-site", "mam", "mam-quartz", "m-7-9", 300, {"mam-quartz-frequency-mapping"}, {
 	{"crystal-oscillator",50},
 	{"motor",100},
 	{"map-marker",10}
 }, {
 	{type="unlock-recipe",recipe="scanner-crash-site"}
 })
-addTech("mam-quartz-radar-technology", "mam/radar-tower", "mam", "mam-quartz", "m-7-9", 3, {"mam-quartz-frequency-mapping"}, {
+addTech("mam-quartz-radar-technology", "mam/radar-tower", "mam", "mam-quartz", "m-7-a", 3, {"mam-quartz-frequency-mapping"}, {
 	{"crystal-oscillator",100},
 	{"heavy-modular-frame",50},
 	{"map-marker",15}
 }, {
 	{type="unlock-recipe",recipe="radar"}
 })
-addTech("mam-quartz-radio-control-unit", "mam/radio-control-unit", "mam", "mam-quartz", "m-7-a", 3, {"mam-quartz-signal-technologies"}, {
+addTech("mam-quartz-radio-control-unit", "mam/radio-control-unit", "mam", "mam-quartz", "m-7-b", 3, {"mam-quartz-signal-technologies"}, {
 	{"crystal-oscillator",100},
 	{"alclad-aluminium-sheet",200}
 }, {
