@@ -231,8 +231,8 @@ local function addOutput(entity, offset, target, direction)
 end
 
 local function remove(entity, event)
-	-- assume it exists - it not existing is an error condition
 	local structs = script_data[entity.unit_number]
+	if not structs then return end
 	for _,struct in pairs(structs) do
 		-- any items held in the inserters or remaining on the belt are added to event.buffer, if it exists, or spilled if not
 		local belt = struct.belt
