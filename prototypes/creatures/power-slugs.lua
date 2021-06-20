@@ -44,7 +44,7 @@ local greendec = {
 		filename = "__Satisfactorio__/graphics/icons/"..name..".png",
 		size = {64,64},
 	},
-	collision_box = {{-0.8,-0.8},{0.8,0.8}},
+	collision_box = {{-0.7,-0.7},{0.7,0.7}},
 	flags = {
 		"placeable-player"
 	},
@@ -136,7 +136,7 @@ local yellowdec = {
 		filename = "__Satisfactorio__/graphics/icons/"..name..".png",
 		size = {64,64},
 	},
-	collision_box = {{-0.8,-0.8},{0.8,0.8}},
+	collision_box = {{-0.7,-0.7},{0.7,0.7}},
 	flags = {
 		"placeable-player"
 	},
@@ -228,7 +228,7 @@ local purpledec = {
 		filename = "__Satisfactorio__/graphics/icons/"..name..".png",
 		size = {64,64},
 	},
-	collision_box = {{-0.8,-0.8},{0.8,0.8}},
+	collision_box = {{-0.7,-0.7},{0.7,0.7}},
 	flags = {
 		"placeable-player"
 	},
