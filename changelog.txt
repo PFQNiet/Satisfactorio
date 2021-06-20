@@ -330,7 +330,7 @@ Date: 2021.06.18
     - Fixed ability to put building items into containers
 ---------------------------------------------------------------------------------------------------
 Version: 0.7.2
-Date: ????
+Date: 2021.06.20
   Changes:
     - Added Factory Light to Quartz tech tree
   Balancing:
@@ -338,5 +338,8 @@ Date: ????
     - Satisfactory belts: 60/120/270/480/780
     - Satisfactorio belts: 112.5/225/337.5/562.5/787.5
     - I really wish Factorio belts were more flexible...
+    - Decreased mining time of all factory buildings (1 > 0.5)
+    - Increased mining time of The HUB (1 > 5)
+    - (Visual only) set "craft time" of all buildings to 1s for consistency
   Bugfixes:
     - Fixed that removing an assembler via script didn't properly refund items

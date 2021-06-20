@@ -47,7 +47,7 @@ local base = {
 		"player-creation"
 	},
 	minable = {
-		mining_time = 1,
+		mining_time = 0.5,
 		result = name
 	},
 	remove_decoratives = "true",
@@ -125,7 +125,7 @@ local storage = {
 	inventory_size = 48,
 	max_health = 1,
 	minable = {
-		mining_time = 1,
+		mining_time = 0.5,
 		result = name
 	},
 	name = name.."-box",

@@ -67,7 +67,7 @@ local boiler = {
 	icon_size = 64,
 	max_health = 1,
 	minable = {
-		mining_time = 1,
+		mining_time = 0.5,
 		result = name
 	},
 	name = name,
@@ -118,7 +118,7 @@ local interface = {
 		"not-on-map"
 	},
 	minable = {
-		mining_time = 1,
+		mining_time = 0.5,
 		result = name
 	},
 	open_sound = boiler.open_sound,

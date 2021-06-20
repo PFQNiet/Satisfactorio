@@ -40,7 +40,7 @@ local extractor = {
 		"player-creation"
 	},
 	minable = {
-		mining_time = 1,
+		mining_time = 0.5,
 		result = name
 	},
 	placeable_by = {item=name,count=1},

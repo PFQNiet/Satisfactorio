@@ -33,7 +33,7 @@ local beacon = {
 		volume = 0.5
 	},
 	minable = {
-		mining_time = 1,
+		mining_time = 0.5,
 		result = name
 	},
 	selection_box = {{-0.5,-0.5},{0.5,0.5}}

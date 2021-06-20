@@ -17,7 +17,7 @@ box.collision_mask = {}
 box.selection_box = {{-1.5,-1.5},{1.5,1.5}}
 box.selectable_in_game = false
 box.picture = empty_sprite
-box.minable.mining_time = 1
+box.minable.mining_time = 0.5
 box.placeable_by = {item=basename, count=1}
 box.next_upgrade = nil
 box.fast_replaceable_group = ""
@@ -64,7 +64,7 @@ local fakebox = {
 		"hide-alt-info"
 	},
 	minable = {
-		mining_time = 1,
+		mining_time = 0.5,
 		result = basename
 	},
 	selection_box = {{-1.5,-2.5},{1.5,2.5}},

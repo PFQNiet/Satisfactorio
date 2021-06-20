@@ -44,7 +44,7 @@ local interface = {
 		"player-creation"
 	},
 	minable = {
-		mining_time = 1,
+		mining_time = 0.5,
 		result = name
 	},
 	selection_box = {{-1.5,-1.5},{1.5,1.5}}
@@ -85,7 +85,7 @@ local vehicle = {
 	selection_priority = 40,
 	selectable_in_game = false,
 	minable = {
-		mining_time = 1,
+		mining_time = 0.5,
 		result = name
 	},
 	flags = {
@@ -250,7 +250,7 @@ interface = {
 		"not-rotatable"
 	},
 	minable = {
-		mining_time = 1,
+		mining_time = 0.5,
 		result = name
 	},
 	selection_box = {{-2.5,-2.5},{2.5,2.5}}

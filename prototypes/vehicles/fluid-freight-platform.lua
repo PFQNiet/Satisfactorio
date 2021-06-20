@@ -47,7 +47,7 @@ local base = {
 		"player-creation"
 	},
 	minable = {
-		mining_time = 1,
+		mining_time = 0.5,
 		result = name
 	},
 	remove_decoratives = "true",
@@ -137,7 +137,7 @@ local storage = {
 	},
 	max_health = 1,
 	minable = {
-		mining_time = 1,
+		mining_time = 0.5,
 		result = name
 	},
 	flow_length_in_ticks = 360,

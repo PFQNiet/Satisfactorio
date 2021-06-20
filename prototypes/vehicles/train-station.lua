@@ -17,7 +17,7 @@ stop.localised_name = {"entity-name."..name}
 stop.place_result = nil
 stop = data.raw['train-stop']['train-stop']
 stop.minable = {
-	mining_time = 1,
+	mining_time = 0.5,
 	result = name
 }
 stop.placeable_by = {{item=name,count=1}}
@@ -63,7 +63,7 @@ local base = {
 		"player-creation"
 	},
 	minable = {
-		mining_time = 1,
+		mining_time = 0.5,
 		result = name
 	},
 	remove_decoratives = "true",

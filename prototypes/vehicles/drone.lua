@@ -35,7 +35,7 @@ local drone = {
 	friction_force = 1,
 	flags = {"placeable-neutral", "player-creation", "placeable-off-grid"},
 	collision_mask = {},
-	minable = {result = name, mining_time = 1},
+	minable = {result = name, mining_time = 0.5},
 	max_health = 1,
 	energy_per_hit_point = 1,
 	guns = {},
