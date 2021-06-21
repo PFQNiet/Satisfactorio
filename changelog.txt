@@ -343,3 +343,4 @@ Date: 2021.06.20
     - (Visual only) set "craft time" of all buildings to 1s for consistency
   Bugfixes:
     - Fixed that removing an assembler via script didn't properly refund items
+    - Fix incorrect delivery requirements for Hover Pack

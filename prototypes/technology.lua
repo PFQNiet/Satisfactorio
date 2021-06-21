@@ -551,9 +551,10 @@ addTech("hub-tier7-hazmat-suit", "hub/equipment", "hub-progressing", "hub-tier7"
 	{type="character-inventory-slots-bonus",modifier=3,use_icon_overlay_constant=false}
 })
 addTech("hub-tier7-hover-pack", "hub/equipment", "hub-progressing", "hub-tier7", "a-7-5", 300, {"space-elevator-phase3"}, {
-	{"aluminium-casing",50},
-	{"quickwire",500},
-	{"gas-filter",50}
+	{"motor",200},
+	{"heavy-modular-frame",100},
+	{"computer",100},
+	{"alclad-aluminium-sheet",200}
 }, {
 	{type="unlock-recipe",recipe="hover-pack"},
 	{type="character-inventory-slots-bonus",modifier=3,use_icon_overlay_constant=false}
