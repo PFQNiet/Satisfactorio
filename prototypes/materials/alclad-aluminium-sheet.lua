@@ -30,7 +30,7 @@ local ingotrecipe2 = { -- in Assembler
 	ingredients = ingredients,
 	result = name,
 	result_count = 3,
-	energy_required = 8,
+	energy_required = 6,
 	category = "assembling",
 	enabled = false
 }
