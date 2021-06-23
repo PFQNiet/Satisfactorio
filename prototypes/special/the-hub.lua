@@ -43,7 +43,7 @@ local hubterminal = {
 		"not-blueprintable",
 		"placeable-off-grid" -- it goes between two tiles
 	},
-	entitiy_info_icon_shift = {0,0},
+	entity_info_icon_shift = {0,0},
 	draw_entity_info_icon_background = false,
 	placeable_by = {item="hub-parts",count=1},
 	return_ingredients_on_change = false
