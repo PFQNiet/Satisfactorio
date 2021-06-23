@@ -19,6 +19,7 @@ local accelerator = makeAssemblingMachine{
 		{"turbo-motor",10}
 	}
 }
+accelerator.machine.minable = nil
 accelerator.machine.selectable_in_game = false
 local interface = {
 	type = "electric-energy-interface",
