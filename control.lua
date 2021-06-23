@@ -1,12 +1,8 @@
 modpath = "__Satisfactorio__."
 local handler = require("event_handler")
 
-if remote.interfaces['SatisfactoryDemoScenario'] then
-	remote.remove_interface('SatisfactoryDemoScenario')
+if script.level.is_simulation and script.mod_name ~= "level" then
 	return
-end
-if script.mod_name == "level" then
-	remote.add_interface('SatisfactoryDemoScenario',{})
 end
 
 -- Add deepcopy for migrations
