@@ -1,189 +1,123 @@
 local name = "biomass"
-data:extend({
-	{
-		type = "item",
-		name = name,
-		icon = "__Satisfactorio__/graphics/icons/"..name..".png",
-		icon_size = 64,
-		subgroup = "organic-resource",
-		order = "f["..name.."]",
-		stack_size = 200,
-		fuel_category = "chemical",
-		fuel_value = "180MJ"
-	}
-})
-
-local ingredients = {
-	{"leaves",10}
+local item = {
+	type = "item",
+	name = name,
+	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon_size = 64,
+	subgroup = "organic-resource",
+	order = "f["..name.."]",
+	stack_size = 200,
+	fuel_category = "chemical",
+	fuel_value = "180MJ"
 }
-local recipe1 = { -- by hand in Craft Bench
-	name = name.."-from-"..ingredients[1][1].."-manual",
-	localised_name = {"recipe-name.x-from-y",{"item-name."..name}, {"item-name."..ingredients[1][1]}},
+data:extend{item}
+
+local ingredient = "leaves"
+local recipe = {
+	name = name.."-from-"..ingredient,
+	localised_name = {"recipe-name.x-from-y",{"item-name."..name}, {"item-name."..ingredient}},
 	type = "recipe",
-	order = "f["..name.."]-a["..ingredients[1][1].."]",
+	order = "f["..name.."]-a["..ingredient.."]",
 	icons = {
 		{ icon = "__Satisfactorio__/graphics/icons/biomass.png", icon_size = 64 },
-		{ icon = "__Satisfactorio__/graphics/icons/"..ingredients[1][1]..".png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
+		{ icon = "__Satisfactorio__/graphics/icons/"..ingredient..".png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
 	},
-	ingredients = ingredients,
-	result = name,
-	result_count = 5,
-	energy_required = 1/4,
-	category = "craft-bench",
-	hide_from_player_crafting = true,
-	enabled = false
-}
-local recipe2 = { -- in Constructor
-	name = name.."-from-"..ingredients[1][1],
-	localised_name = {"recipe-name.x-from-y",{"item-name."..name}, {"item-name."..ingredients[1][1]}},
-	type = "recipe",
-	order = "f["..name.."]-a["..ingredients[1][1].."]",
-	icons = recipe1.icons,
-	ingredients = ingredients,
+	ingredients = {
+		{ingredient,10}
+	},
 	result = name,
 	result_count = 5,
 	energy_required = 5,
 	category = "constructing",
 	enabled = false
 }
-data:extend({recipe1,recipe2})
+copyToHandcraft(recipe, 1)
+data:extend{recipe}
 
-ingredients = {
-	{"wood",4}
-}
-recipe1 = { -- by hand in Craft Bench
-	name = name.."-from-"..ingredients[1][1].."-manual",
-	localised_name = {"recipe-name.x-from-y",{"item-name."..name}, {"item-name."..ingredients[1][1]}},
+ingredient = "wood"
+recipe = {
+	name = name.."-from-"..ingredient,
+	localised_name = {"recipe-name.x-from-y",{"item-name."..name}, {"item-name."..ingredient}},
 	type = "recipe",
-	order = "f["..name.."]-b["..ingredients[1][1].."]",
+	order = "f["..name.."]-b["..ingredient.."]",
 	icons = {
 		{ icon = "__Satisfactorio__/graphics/icons/biomass.png", icon_size = 64 },
-		{ icon = "__Satisfactorio__/graphics/icons/"..ingredients[1][1]..".png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
+		{ icon = "__Satisfactorio__/graphics/icons/"..ingredient..".png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
 	},
-	ingredients = ingredients,
-	result = name,
-	result_count = 20,
-	energy_required = 2/4,
-	category = "craft-bench",
-	hide_from_player_crafting = true,
-	enabled = false
-}
-recipe2 = { -- in Constructor
-	name = name.."-from-"..ingredients[1][1],
-	localised_name = {"recipe-name.x-from-y",{"item-name."..name}, {"item-name."..ingredients[1][1]}},
-	type = "recipe",
-	order = "f["..name.."]-b["..ingredients[1][1].."]",
-	icons = recipe1.icons,
-	ingredients = ingredients,
+	ingredients = {
+		{ingredient,4}
+	},
 	result = name,
 	result_count = 20,
 	energy_required = 4,
 	category = "constructing",
 	enabled = false
 }
-data:extend({recipe1,recipe2})
+copyToHandcraft(recipe, 2)
+data:extend{recipe}
 
-ingredients = {
-	{"mycelia",10}
-}
-recipe1 = { -- by hand in Craft Bench
-	name = name.."-from-"..ingredients[1][1].."-manual",
-	localised_name = {"recipe-name.x-from-y",{"item-name."..name}, {"item-name."..ingredients[1][1]}},
+ingredient = "mycelia"
+recipe = {
+	name = name.."-from-"..ingredient,
+	localised_name = {"recipe-name.x-from-y",{"item-name."..name}, {"item-name."..ingredient}},
 	type = "recipe",
-	order = "f["..name.."]-c["..ingredients[1][1].."]",
+	order = "f["..name.."]-c["..ingredient.."]",
 	icons = {
 		{ icon = "__Satisfactorio__/graphics/icons/biomass.png", icon_size = 64 },
-		{ icon = "__Satisfactorio__/graphics/icons/"..ingredients[1][1]..".png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
+		{ icon = "__Satisfactorio__/graphics/icons/"..ingredient..".png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
 	},
-	ingredients = ingredients,
-	result = name,
-	result_count = 10,
-	energy_required = 1/4,
-	category = "craft-bench",
-	hide_from_player_crafting = true,
-	enabled = false
-}
-recipe2 = { -- in Constructor
-	name = name.."-from-"..ingredients[1][1],
-	localised_name = {"recipe-name.x-from-y",{"item-name."..name}, {"item-name."..ingredients[1][1]}},
-	type = "recipe",
-	order = "f["..name.."]-c["..ingredients[1][1].."]",
-	icons = recipe1.icons,
-	ingredients = ingredients,
+	ingredients = {
+		{ingredient,10}
+	},
 	result = name,
 	result_count = 10,
 	energy_required = 4,
 	category = "constructing",
 	enabled = false
 }
-data:extend({recipe1,recipe2})
+copyToHandcraft(recipe, 1)
+data:extend{recipe}
 
-ingredients = {
-	{"alien-carapace",1}
-}
-recipe1 = { -- by hand in Craft Bench
-	name = name.."-from-"..ingredients[1][1].."-manual",
-	localised_name = {"recipe-name.x-from-y",{"item-name."..name}, {"item-name."..ingredients[1][1]}},
+ingredient = "alien-carapace"
+recipe = {
+	name = name.."-from-"..ingredient,
+	localised_name = {"recipe-name.x-from-y",{"item-name."..name}, {"item-name."..ingredient}},
 	type = "recipe",
-	order = "f["..name.."]-d["..ingredients[1][1].."]",
+	order = "f["..name.."]-d["..ingredient.."]",
 	icons = {
 		{ icon = "__Satisfactorio__/graphics/icons/biomass.png", icon_size = 64 },
-		{ icon = "__Satisfactorio__/graphics/icons/"..ingredients[1][1]..".png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
+		{ icon = "__Satisfactorio__/graphics/icons/"..ingredient..".png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
 	},
-	ingredients = ingredients,
-	result = name,
-	result_count = 100,
-	energy_required = 2/4,
-	category = "craft-bench",
-	hide_from_player_crafting = true,
-	enabled = false
-}
-recipe2 = { -- in Constructor
-	name = name.."-from-"..ingredients[1][1],
-	localised_name = {"recipe-name.x-from-y",{"item-name."..name}, {"item-name."..ingredients[1][1]}},
-	type = "recipe",
-	order = "f["..name.."]-d["..ingredients[1][1].."]",
-	icons = recipe1.icons,
-	ingredients = ingredients,
+	ingredients = {
+		{ingredient,1}
+	},
 	result = name,
 	result_count = 100,
 	energy_required = 4,
 	category = "constructing",
 	enabled = false
 }
-data:extend({recipe1,recipe2})
+copyToHandcraft(recipe, 2)
+data:extend{recipe}
 
-ingredients = {
-	{"alien-organs",1}
-}
-recipe1 = { -- by hand in Craft Bench
-	name = name.."-from-"..ingredients[1][1].."-manual",
-	localised_name = {"recipe-name.x-from-y",{"item-name."..name}, {"item-name."..ingredients[1][1]}},
+ingredient = "alien-organs"
+recipe = {
+	name = name.."-from-"..ingredient,
+	localised_name = {"recipe-name.x-from-y",{"item-name."..name}, {"item-name."..ingredient}},
 	type = "recipe",
-	order = "f["..name.."]-e["..ingredients[1][1].."]",
+	order = "f["..name.."]-e["..ingredient.."]",
 	icons = {
 		{ icon = "__Satisfactorio__/graphics/icons/biomass.png", icon_size = 64 },
-		{ icon = "__Satisfactorio__/graphics/icons/"..ingredients[1][1]..".png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
+		{ icon = "__Satisfactorio__/graphics/icons/"..ingredient..".png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
 	},
-	ingredients = ingredients,
-	result = name,
-	result_count = 200,
-	energy_required = 4/4,
-	category = "craft-bench",
-	hide_from_player_crafting = true,
-	enabled = false
-}
-recipe2 = { -- in Constructor
-	name = name.."-from-"..ingredients[1][1],
-	localised_name = {"recipe-name.x-from-y",{"item-name."..name}, {"item-name."..ingredients[1][1]}},
-	type = "recipe",
-	order = "f["..name.."]-e["..ingredients[1][1].."]",
-	icons = recipe1.icons,
-	ingredients = ingredients,
+	ingredients = {
+		{ingredient,1}
+	},
 	result = name,
 	result_count = 200,
 	energy_required = 8,
 	category = "constructing",
 	enabled = false
 }
-data:extend({recipe1,recipe2})
+copyToHandcraft(recipe, 4)
+data:extend{recipe}

@@ -4,4 +4,3 @@ require("prototypes.vanilla-cleanup.change-rock-decoratives")
 
 -- remove fishing
 data.raw.fish.fish.minable = nil
-data.raw.capsule['raw-fish'].flags = {"hidden"}

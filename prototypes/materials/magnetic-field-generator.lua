@@ -1,5 +1,5 @@
 local name = "magnetic-field-generator"
-local plate = {
+local item = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	name = name,
@@ -9,20 +9,20 @@ local plate = {
 	type = "item"
 }
 
-local ingredients = {
-	{"versatile-framework",5},
-	{"electromagnetic-control-rod",2},
-	{"battery",10}
-}
-local platerecipe = { -- in Manufacturer
+local recipe = {
 	name = name,
 	type = "recipe",
-	ingredients = ingredients,
+	ingredients = {
+		{"versatile-framework",5},
+		{"electromagnetic-control-rod",2},
+		{"battery",10}
+	},
 	result = name,
 	result_count = 2,
 	energy_required = 120,
 	category = "manufacturing",
 	enabled = false
 }
+-- no handcrafting
 
-data:extend({plate,platerecipe})
+data:extend{item,recipe}

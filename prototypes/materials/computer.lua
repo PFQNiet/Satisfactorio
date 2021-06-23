@@ -1,5 +1,5 @@
 local name = "computer"
-local computer = {
+local item = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	name = name,
@@ -9,30 +9,20 @@ local computer = {
 	type = "item"
 }
 
-local ingredients = {
-	{"electronic-circuit",10},
-	{"copper-cable",9},
-	{"plastic-bar",18},
-	{"iron-gear-wheel",52}
-}
-local computerrecipe1 = { -- by hand in Craft Bench
-	name = name.."-manual",
-	type = "recipe",
-	ingredients = ingredients,
-	result = name,
-	energy_required = 18/4,
-	category = "craft-bench",
-	hide_from_player_crafting = true,
-	enabled = false
-}
-local computerrecipe2 = { -- in Manufacturer
+local recipe = {
 	name = name,
 	type = "recipe",
-	ingredients = ingredients,
+	ingredients = {
+		{"circuit-board",10},
+		{"copper-cable",9},
+		{"plastic",18},
+		{"screw",52}
+	},
 	result = name,
 	energy_required = 24,
 	category = "manufacturing",
 	enabled = false
 }
+copyToHandcraft(recipe, 18)
 
-data:extend({computer,computerrecipe1,computerrecipe2})
+data:extend{item,recipe}

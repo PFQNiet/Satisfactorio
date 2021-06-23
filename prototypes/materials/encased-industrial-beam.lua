@@ -1,5 +1,5 @@
 local name = "encased-industrial-beam"
-local beam = {
+local item = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	name = name,
@@ -9,28 +9,18 @@ local beam = {
 	type = "item"
 }
 
-local ingredients = {
-	{"steel-plate",4},
-	{"concrete",5}
-}
-local beamrecipe1 = { -- by hand in Craft Bench
-	name = name.."-manual",
-	type = "recipe",
-	ingredients = ingredients,
-	result = name,
-	energy_required = 5/4,
-	category = "craft-bench",
-	hide_from_player_crafting = true,
-	enabled = false
-}
-local beamrecipe2 = { -- in Assembler
+local recipe = {
 	name = name,
 	type = "recipe",
-	ingredients = ingredients,
+	ingredients = {
+		{"steel-beam",4},
+		{"concrete",5}
+	},
 	result = name,
 	energy_required = 10,
 	category = "assembling",
 	enabled = false
 }
+copyToHandcraft(recipe, 5)
 
-data:extend({beam,beamrecipe1,beamrecipe2})
+data:extend{item,recipe}

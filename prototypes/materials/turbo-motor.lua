@@ -1,5 +1,5 @@
 local name = "turbo-motor"
-local motor = {
+local item = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	name = name,
@@ -9,30 +9,20 @@ local motor = {
 	type = "item"
 }
 
-local ingredients = {
-	{"heat-sink",4},
-	{"radio-control-unit",2},
-	{"motor",4},
-	{"rubber",24}
-}
-local motorrecipe1 = { -- by hand in Craft Bench
-	name = name.."-manual",
-	type = "recipe",
-	ingredients = ingredients,
-	result = name,
-	energy_required = 32/4,
-	category = "craft-bench",
-	hide_from_player_crafting = true,
-	enabled = false
-}
-local motorrecipe2 = { -- in Manufacturer
+local recipe = {
 	name = name,
 	type = "recipe",
-	ingredients = ingredients,
+	ingredients = {
+		{"heat-sink",4},
+		{"radio-control-unit",2},
+		{"motor",4},
+		{"rubber",24}
+	},
 	result = name,
 	energy_required = 32,
 	category = "manufacturing",
 	enabled = false
 }
+copyToHandcraft(recipe, 32)
 
-data:extend({motor,motorrecipe1,motorrecipe2})
+data:extend{item,recipe}

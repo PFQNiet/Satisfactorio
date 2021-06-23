@@ -15,6 +15,7 @@ table.deepcopy = util.table.deepcopy
 
 handler.add_lib(require(modpath.."scripts.freeplay"))
 handler.add_lib(require(modpath.."scripts.build-gun")) -- must be early in the event handlers so it can "cancel" build events
+handler.add_lib(require(modpath.."scripts.lualib.recipe-browser")) -- should be early in event handlers so it can handle insta-swapped entities
 handler.add_lib(require(modpath.."scripts.indestructible"))
 handler.add_libraries(require(modpath.."scripts.creatures"))
 handler.add_libraries(require(modpath.."scripts.constructors"))
@@ -27,7 +28,6 @@ handler.add_libraries(require(modpath.."scripts.power"))
 handler.add_libraries(require(modpath.."scripts.vehicles"))
 handler.add_libraries(require(modpath.."scripts.weapons"))
 handler.add_lib(require(modpath.."scripts.lualib.input-output"))
-handler.add_lib(require(modpath.."scripts.lualib.recipe-browser"))
 handler.add_lib(require(modpath.."scripts.lualib.radioactivity"))
 handler.add_lib(require(modpath.."scripts.lualib.resources"))
 handler.add_lib(require(modpath.."scripts.lualib.resource-spawner"))
@@ -57,5 +57,4 @@ handler.add_lib({
 })
 
 -- Control-time Mod Compatibility
--- handler.add_lib(require(modpath.."compatibility.companion-drones-control")) -- no longer compatible
 handler.add_lib(require(modpath.."compatibility.factorissimo2-control"))

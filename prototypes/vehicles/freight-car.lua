@@ -13,45 +13,12 @@ cargo.icons = {
 }
 cargo.stack_size = 50
 
-local ingredients = {
-	{"heavy-modular-frame",4},
-	{"steel-pipe",10}
-}
-local recipe = {
+local recipe = makeBuildingRecipe{
 	name = "cargo-wagon",
-	type = "recipe",
-	ingredients = ingredients,
-	result = "cargo-wagon",
-	energy_required = 1,
-	category = "building",
-	allow_intermediates = false,
-	allow_as_intermediate = false,
-	hide_from_stats = true,
-	enabled = false
+	ingredients = {
+		{"heavy-modular-frame",4},
+		{"steel-pipe",10}
+	},
+	result = "cargo-wagon"
 }
 data.raw.recipe['cargo-wagon'] = recipe
-local _group = data.raw['item-subgroup'][cargo.subgroup]
-local recipe_undo = {
-	name = "cargo-wagon-undo",
-	localised_name = {"recipe-name.dismantle",{"entity-name.cargo-wagon"}},
-	type = "recipe",
-	ingredients = {
-		{"cargo-wagon",1}
-	},
-	results = ingredients,
-	energy_required = 1,
-	category = "unbuilding",
-	subgroup = _group.group .. "-undo",
-	order = _group.order .. "-" .. cargo.order,
-	allow_decomposition = false,
-	allow_intermediates = false,
-	allow_as_intermediate = false,
-	hide_from_stats = true,
-	icons = {
-		{icon = "__base__/graphics/icons/deconstruction-planner.png", icon_size = 64},
-		{icon = "__Satisfactorio__/graphics/icons/freight-car.png", icon_size = 64},
-		{icon = "__Satisfactorio__/graphics/icons/hub-parts.png", icon_size = 64, scale = 0.25, shift = {-8,8}}
-	},
-	enabled = false
-}
-data:extend({recipe_undo})

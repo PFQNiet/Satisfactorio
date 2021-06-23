@@ -1,38 +1,24 @@
--- adjust vanilla iron stick
 local name = "iron-rod"
-local basename = "iron-stick"
-
-local rod = {
+local item = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
-	name = basename,
+	name = name,
 	order = "a[iron]-b["..name.."]",
 	stack_size = 200,
 	subgroup = "parts",
 	type = "item"
 }
 
-local ingredients = {
-	{"iron-ingot",1}
-}
-local rodrecipe1 = { -- by hand in Craft Bench
-	name = basename.."-manual",
+local recipe = {
+	name = name,
 	type = "recipe",
-	ingredients = ingredients,
-	result = basename,
-	energy_required = 1/4,
-	category = "craft-bench",
-	hide_from_player_crafting = true
-}
-local rodrecipe2 = { -- in Smelter
-	name = basename,
-	type = "recipe",
-	ingredients = ingredients,
-	result = basename,
+	ingredients = {
+		{"iron-ingot",1}
+	},
+	result = name,
 	energy_required = 4,
 	category = "constructing"
 }
+copyToHandcraft(recipe,1)
 
-data:extend({rodrecipe1})
-data.raw.item[basename] = rod
-data.raw.recipe[basename] = rodrecipe2
+data:extend{item,recipe}

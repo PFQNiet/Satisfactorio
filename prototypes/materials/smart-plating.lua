@@ -1,5 +1,5 @@
 local name = "smart-plating"
-local plate = {
+local item = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	name = name,
@@ -9,18 +9,18 @@ local plate = {
 	type = "item"
 }
 
-local ingredients = {
-	{"reinforced-iron-plate",1},
-	{"rotor",1}
-}
-local platerecipe = { -- in Assembler
+local recipe = {
 	name = name,
 	type = "recipe",
-	ingredients = ingredients,
+	ingredients = {
+		{"reinforced-iron-plate",1},
+		{"rotor",1}
+	},
 	result = name,
 	energy_required = 30,
 	category = "assembling",
 	enabled = false
 }
+-- no handcrafting
 
-data:extend({plate,platerecipe})
+data:extend{item,recipe}

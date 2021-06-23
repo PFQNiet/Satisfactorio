@@ -8,8 +8,8 @@ tip.simulation = {
 		local chest = game.surfaces[1].create_entity{name = "iron-chest", position = {4.5, -2.5}, force = "player"}
 		local inventory = chest.get_inventory(defines.inventory.chest)
 		inventory.insert{name = "iron-plate", count = 100}
-		inventory.insert{name = "iron-gear-wheel", count = 100}
-		inventory.insert{name = "electronic-circuit", count = 100}
+		inventory.insert{name = "screw", count = 100}
+		inventory.insert{name = "circuit-board", count = 100}
 		game.surfaces[1].create_entity{name = "storage-container-placeholder", position = {4.5, -2.5}, direction = defines.direction.east, force = "player"}
 
 		local pipe = game.surfaces[1].create_entity{name = "pipe", position = {4.5, 3.5}, force = "player"}

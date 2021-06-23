@@ -344,3 +344,10 @@ Date: 2021.06.20
   Bugfixes:
     - Fixed that removing an assembler via script didn't properly refund items
     - Fix incorrect delivery requirements for Hover Pack
+---------------------------------------------------------------------------------------------------
+Version: 0.8.0
+Date: ????
+  Changes:
+    - Total overhaul of the code!!!
+    - The only way to go fast, is to go well.
+    - Astonishingly, still compatible with earlier saves. Migrations are epic.

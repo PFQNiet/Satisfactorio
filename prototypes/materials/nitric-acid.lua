@@ -1,5 +1,4 @@
 local name = "nitric-acid"
-
 local fluid = {
 	type = "fluid",
 	name = name,
@@ -13,15 +12,14 @@ local fluid = {
 	flow_color = {240,240,180}
 }
 
-local ingredients = {
-	{type="fluid",name="nitrogen-gas",amount=12},
-	{type="fluid",name="water",amount=3},
-	{"iron-plate",1}
-}
-local recipe = { -- in Blender
+local recipe = {
 	name = name,
 	type = "recipe",
-	ingredients = ingredients,
+	ingredients = {
+		{type="fluid",name="nitrogen-gas",amount=12},
+		{type="fluid",name="water",amount=3},
+		{"iron-plate",1}
+	},
 	results = {{type="fluid",name="nitric-acid",amount=3}},
 	subgroup = "fluid-recipe",
 	energy_required = 6,
@@ -29,4 +27,4 @@ local recipe = { -- in Blender
 	enabled = false
 }
 
-data:extend({fluid,recipe})
+data:extend{fluid,recipe}

@@ -1,5 +1,5 @@
 local name = "plutonium-pellet"
-local ingot = {
+local item = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	name = name,
@@ -9,19 +9,19 @@ local ingot = {
 	type = "item"
 }
 
-local ingredients = {
-	{"non-fissile-uranium",100},
-	{"uranium-waste",25}
-}
-local ingotrecipe = { -- in Particle Accelerator
+local recipe = {
 	name = name,
 	type = "recipe",
-	ingredients = ingredients,
+	ingredients = {
+		{"non-fissile-uranium",100},
+		{"uranium-waste",25}
+	},
 	result = name,
 	result_count = 30,
 	energy_required = 60,
 	category = "accelerating",
 	enabled = false
 }
+-- no handcrafting
 
-data:extend({ingot,ingotrecipe})
+data:extend{item,recipe}

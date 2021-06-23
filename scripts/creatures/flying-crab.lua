@@ -1,5 +1,5 @@
 local name = "flying-crab"
-local spawner = "small-worm-turret"
+local spawner = "flying-crab-hatcher"
 local spawn = "crab-spawn"
 local impact = "crab-impact"
 

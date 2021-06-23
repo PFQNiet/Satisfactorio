@@ -10,4 +10,4 @@ local item = {
 }
 
 -- no recipe as it is a by-product
-data:extend({item})
+data:extend{item}

@@ -6,7 +6,7 @@ local powershard = {
 	icon_size = 64,
 	stack_size = 50,
 	subgroup = "mineral-resource",
-	order = "k[power-slugs]-a["..shardname.."]",
+	order = "s[power-slugs]-a["..shardname.."]",
 	category = "speed",
 	tier = 3,
 	effect = {
@@ -14,291 +14,104 @@ local powershard = {
 		speed = {bonus=0.5}
 	}
 }
+data:extend{powershard}
 
-local name = "green-power-slug"
-local green = {
-	picture = {
-		filename = "__Satisfactorio__/graphics/icons/"..name..".png",
-		size = {64,64},
-	},
-	collision_box = {{-0.8,-0.8},{0.8,0.8}},
-	flags = {
-		"placeable-neutral",
-		"placeable-off-grid",
-		"not-on-map"
-	},
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
-	icon_size = 64,
-	max_health = 1,
-	minable = {
-		mining_time = 5,
-		result = name
-	},
-	name = name,
-	selection_box = {{-1,-1},{1,1}},
-	render_layer = "lower-object",
-	type = "simple-entity-with-owner"
-}
-local greendec = {
-	picture = {
-		filename = "__Satisfactorio__/graphics/icons/"..name..".png",
-		size = {64,64},
-	},
-	collision_box = {{-0.7,-0.7},{0.7,0.7}},
-	flags = {
-		"placeable-player"
-	},
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
-	icon_size = 64,
-	max_health = 1,
-	minable = {
-		mining_time = 0.5,
-		result = name
-	},
-	name = name.."-decorative",
-	localised_name = {"entity-name."..name},
-	selection_box = {{-1,-1},{1,1}},
-	render_layer = "lower-object",
-	type = "simple-entity-with-owner"
-}
-local greenitem = {
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
-	icon_size = 64,
-	name = name,
-	order = "k[power-slugs]-b["..name.."]",
-	place_result = name.."-decorative",
-	stack_size = 50,
-	subgroup = "mineral-resource",
-	type = "item"
-}
-local greenrecipe1 = {
-	type = "recipe",
-	name = shardname.."-from-"..name.."-manual",
-	localised_name = {"recipe-name.x-from-y",{"item-name."..shardname},{"entity-name."..name}},
-	order = "p-1",
-	ingredients = {{name,1}},
-	result = shardname,
-	result_count = 1,
-	energy_required = 4/4,
-	category = "craft-bench",
-	icons = {
-		{icon = "__Satisfactorio__/graphics/icons/"..shardname..".png", icon_size = 64},
-		{icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
-	},
-	hide_from_stats = true,
-	hide_from_player_crafting = true,
-	enabled = false
-}
-local greenrecipe2 = {
-	type = "recipe",
-	name = shardname.."-from-"..name,
-	localised_name = {"recipe-name.x-from-y",{"item-name."..shardname},{"entity-name."..name}},
-	order = "p-1",
-	ingredients = {{name,1}},
-	result = shardname,
-	result_count = 1,
-	energy_required = 8,
-	category = "constructing",
-	icons = {
-		{icon = "__Satisfactorio__/graphics/icons/"..shardname..".png", icon_size = 64},
-		{icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
-	},
-	hide_from_stats = true,
-	enabled = false
+local function makePowerSlug(params)
+	---@type string
+	local name = params.name
+	---@type string
+	local order = params.order
+	---@type int
+	local shards = params.shards
+	---@type int
+	local time = params.craft_time
+	---@type int
+	local hand = params.hand_craft_time
+
+	local slug = {
+		type = "simple-entity-with-owner",
+		name = name,
+		icon = graphics.."icons/"..name..".png",
+		icon_size = 64,
+		selection_box = {{-1,-1},{1,1}},
+		collision_box = {{-0.7,-0.7},{0.7,0.7}},
+		picture = {
+			filename = graphics.."icons/"..name..".png",
+			size = {64,64}
+		},
+		render_layer = "lower-object",
+		flags = {
+			"placeable-neutral",
+			"placeable-off-grid",
+			"not-on-map"
+		},
+		max_health = 1,
+		minable = {
+			mining_time = 5,
+			result = name
+		}
+	}
+	local decorative = table.deepcopy(slug)
+	decorative.name = name.."-decorative"
+	decorative.localised_name = {"entity-name."..name}
+	decorative.flags = {"placeable-player"}
+
+	local item = {
+		type = "item",
+		name = name,
+		icon = graphics.."icons/"..name..".png",
+		icon_size = 64,
+		place_result = name.."-decorative",
+		stack_size = 50,
+		subgroup = "mineral-resource",
+		order = "s[power-slugs]-"..order.."["..name.."]"
+	}
+	local recipe = {
+		type = "recipe",
+		name = shardname.."-from-"..name,
+		localised_name = {"recipe-name.x-from-y",{"item-name."..shardname},{"entity-name."..name}},
+		ingredients = {{name,1}},
+		result = shardname,
+		result_count = shards,
+		energy_required = time,
+		category = "constructing",
+		order = "s[power-slugs]-"..order.."["..name.."]",
+		icons = {
+			{icon = "__Satisfactorio__/graphics/icons/"..shardname..".png", icon_size = 64},
+			{icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
+		},
+		enabled = false
+	}
+	copyToHandcraft(recipe, hand)
+
+	data:extend{slug, decorative, item, recipe}
+end
+
+makePowerSlug{
+	name = "green-power-slug",
+	order = "b",
+	shards = 1,
+	craft_time = 8,
+	hand_craft_time = 4
 }
 
-name = "yellow-power-slug"
-local yellow = {
-	picture = {
-		filename = "__Satisfactorio__/graphics/icons/"..name..".png",
-		size = {64,64},
-	},
-	collision_box = {{-0.8,-0.8},{0.8,0.8}},
-	flags = {
-		"placeable-neutral",
-		"placeable-off-grid",
-		"not-on-map"
-	},
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
-	icon_size = 64,
-	max_health = 1,
-	minable = {
-		mining_time = 5,
-		result = name
-	},
-	name = name,
-	selection_box = {{-1,-1},{1,1}},
-	render_layer = "lower-object",
-	type = "simple-entity-with-owner"
-}
-local yellowdec = {
-	picture = {
-		filename = "__Satisfactorio__/graphics/icons/"..name..".png",
-		size = {64,64},
-	},
-	collision_box = {{-0.7,-0.7},{0.7,0.7}},
-	flags = {
-		"placeable-player"
-	},
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
-	icon_size = 64,
-	max_health = 1,
-	minable = {
-		mining_time = 0.5,
-		result = name
-	},
-	name = name.."-decorative",
-	localised_name = {"entity-name."..name},
-	selection_box = {{-1,-1},{1,1}},
-	render_layer = "lower-object",
-	type = "simple-entity-with-owner"
-}
-local yellowitem = {
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
-	icon_size = 64,
-	name = name,
-	order = "k[power-slugs]-c["..name.."]",
-	place_result = name.."-decorative",
-	stack_size = 50,
-	subgroup = "mineral-resource",
-	type = "item"
-}
-local yellowrecipe1 = {
-	type = "recipe",
-	name = shardname.."-from-"..name.."-manual",
-	localised_name = {"recipe-name.x-from-y",{"item-name."..shardname},{"entity-name."..name}},
-	order = "p-2",
-	ingredients = {{name,1}},
-	result = shardname,
-	result_count = 2,
-	energy_required = 6/4,
-	category = "craft-bench",
-	icons = {
-		{icon = "__Satisfactorio__/graphics/icons/"..shardname..".png", icon_size = 64},
-		{icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
-	},
-	hide_from_stats = true,
-	hide_from_player_crafting = true,
-	enabled = false
-}
-local yellowrecipe2 = {
-	type = "recipe",
-	name = shardname.."-from-"..name,
-	localised_name = {"recipe-name.x-from-y",{"item-name."..shardname},{"entity-name."..name}},
-	order = "p-2",
-	ingredients = {{name,1}},
-	result = shardname,
-	result_count = 2,
-	energy_required = 12,
-	category = "constructing",
-	icons = {
-		{icon = "__Satisfactorio__/graphics/icons/"..shardname..".png", icon_size = 64},
-		{icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
-	},
-	hide_from_stats = true,
-	enabled = false
+makePowerSlug{
+	name = "yellow-power-slug",
+	order = "c",
+	shards = 2,
+	craft_time = 12,
+	hand_craft_time = 6
 }
 
-name = "purple-power-slug"
-local purple = {
-	picture = {
-		filename = "__Satisfactorio__/graphics/icons/"..name..".png",
-		size = {64,64},
-	},
-	collision_box = {{-0.8,-0.8},{0.8,0.8}},
-	flags = {
-		"placeable-neutral",
-		"placeable-off-grid",
-		"not-on-map"
-	},
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
-	icon_size = 64,
-	max_health = 1,
-	minable = {
-		mining_time = 5,
-		result = name
-	},
-	name = name,
-	selection_box = {{-1,-1},{1,1}},
-	render_layer = "lower-object",
-	type = "simple-entity-with-owner"
-}
-local purpledec = {
-	picture = {
-		filename = "__Satisfactorio__/graphics/icons/"..name..".png",
-		size = {64,64},
-	},
-	collision_box = {{-0.7,-0.7},{0.7,0.7}},
-	flags = {
-		"placeable-player"
-	},
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
-	icon_size = 64,
-	max_health = 1,
-	minable = {
-		mining_time = 0.5,
-		result = name
-	},
-	name = name.."-decorative",
-	localised_name = {"entity-name."..name},
-	selection_box = {{-1,-1},{1,1}},
-	render_layer = "lower-object",
-	type = "simple-entity-with-owner"
-}
-local purpleitem = {
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
-	icon_size = 64,
-	name = name,
-	order = "k[power-slugs]-d["..name.."]",
-	place_result = name.."-decorative",
-	stack_size = 50,
-	subgroup = "mineral-resource",
-	type = "item"
-}
-local purplerecipe1 = {
-	type = "recipe",
-	name = shardname.."-from-"..name.."-manual",
-	localised_name = {"recipe-name.x-from-y",{"item-name."..shardname},{"entity-name."..name}},
-	order = "p-3",
-	ingredients = {{name,1}},
-	result = shardname,
-	result_count = 5,
-	energy_required = 12/4,
-	category = "craft-bench",
-	icons = {
-		{icon = "__Satisfactorio__/graphics/icons/"..shardname..".png", icon_size = 64},
-		{icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
-	},
-	hide_from_stats = true,
-	hide_from_player_crafting = true,
-	enabled = false
-}
-local purplerecipe2 = {
-	type = "recipe",
-	name = shardname.."-from-"..name,
-	localised_name = {"recipe-name.x-from-y",{"item-name."..shardname},{"entity-name."..name}},
-	order = "p-3",
-	ingredients = {{name,1}},
-	result = shardname,
-	result_count = 5,
-	energy_required = 24,
-	category = "constructing",
-	icons = {
-		{icon = "__Satisfactorio__/graphics/icons/"..shardname..".png", icon_size = 64},
-		{icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
-	},
-	hide_from_stats = true,
-	enabled = false
+makePowerSlug{
+	name = "purple-power-slug",
+	order = "d",
+	shards = 5,
+	craft_time = 24,
+	hand_craft_time = 12
 }
 
-data:extend({
-	powershard,
-	green,greendec,greenitem,greenrecipe1,greenrecipe2,
-	yellow,yellowdec,yellowitem,yellowrecipe1,yellowrecipe2,
-	purple,purpledec,purpleitem,purplerecipe1,purplerecipe2
-})
-
-data:extend({
+data:extend{
 	{
 		type = "autoplace-control",
 		name = "x-powerslug",
@@ -310,4 +123,4 @@ data:extend({
 		type = "noise-layer",
 		name = "x-powerslug"
 	}
-})
+}

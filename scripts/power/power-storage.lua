@@ -2,11 +2,11 @@
 -- opening a pipe's GUI adds it to the tracking list, closing it (provided no other player has it open) removes it
 local script_data = {}
 
-local battery = "accumulator"
+local battery = "power-storage"
 
 local function onGuiOpened(event)
 	if not (event.entity and event.entity.valid) then return end
-	if event.entity.name == "accumulator" then
+	if event.entity.name == battery then
 		if not script_data[event.entity.unit_number] then
 			script_data[event.entity.unit_number] = {
 				entity = event.entity,
@@ -51,7 +51,7 @@ local function onGuiOpened(event)
 			flow.style.top_margin = 4
 			flow.style.bottom_margin = 12
 			flow.style.horizontal_spacing = 12
-			local sprite = flow.add{
+			flow.add{
 				type = "sprite-button",
 				sprite = "recipe/coal-generator-steam",
 				style = "transparent_slot"
@@ -80,6 +80,7 @@ local function onGuiClosed(event)
 	if not (event.entity and event.entity.valid) then return end
 	if event.entity.name == battery and script_data[event.entity.unit_number] then
 		local player = game.players[event.player_index]
+		player.gui.relative['battery-flow'].destroy()
 		local struct = script_data[event.entity.unit_number]
 		struct.opened_by[player.index] = nil
 		if not next(struct.opened_by) then

@@ -1,61 +1,41 @@
-local empty_sprite = {
-	filename = "__core__/graphics/empty.png",
-	width = 1,
-	height = 1
-}
--- adjust vanilla Iron Chest
 local name = "storage-container"
-local basename = "iron-chest"
-local box = data.raw['container'][basename]
-box.icon = "__Satisfactorio__/graphics/icons/"..name..".png"
-box.icon_mipmaps = 0
-box.max_health = 1
-box.enable_inventory_bar = false
-box.inventory_size = 24
-box.collision_box = {{-1.2,-1.2},{1.2,1.2}}
-box.collision_mask = {}
-box.selection_box = {{-1.5,-1.5},{1.5,1.5}}
-box.selectable_in_game = false
-box.picture = empty_sprite
-box.minable.mining_time = 0.5
-box.placeable_by = {item=basename, count=1}
-box.next_upgrade = nil
-box.fast_replaceable_group = ""
-box.flags = {"not-on-map"}
+local sounds = copySoundsFrom(data.raw.container["iron-chest"])
+local box = {
+	type = "container",
+	name = name,
+	icon = graphics.."icons/"..name..".png",
+	icon_size = 64,
+	selection_box = {{-1.5,-1.5},{1.5,1.5}},
+	selectable_in_game = false,
+	collision_box = {{-1.2,-1.2},{1.2,1.2}},
+	collision_mask = {},
+	flags = {"not-on-map"},
+	open_sound = sounds.open_sound,
+	close_sound = sounds.close_sound,
+	max_health = 1,
+	picture = empty_graphic,
+	inventory_size = 24,
+	enable_inventory_bar = false,
+	placeable_by = {item=name,count=1} -- item places a placeholder entity
+}
 
--- but in order to allow rotation of the non-square box, we need a rotatable entity
--- apparently constant combinator is the item of choice for that, so...
+-- the box cannot be the full size of the entity or the loader-inserters get confused
+-- and besides, containers cannot be rotated...
 local fakebox = {
 	type = "constant-combinator",
 	name = name.."-placeholder",
-	localised_name = {"entity-name."..basename},
-	localised_description = {"entity-description."..basename},
+	localised_name = {"entity-name."..name},
+	localised_description = {"entity-description."..name},
+	icon = box.icon,
+	icon_size = box.icon_size,
+	selection_box = {{-1.5,-2.5},{1.5,2.5}},
+	collision_box = {{-1.2,-2.2},{1.2,2.2}},
 	activity_led_light_offsets = {{0,0},{0,0},{0,0},{0,0}},
-	activity_led_sprites = empty_sprite,
+	activity_led_sprites = empty_graphic,
 	circuit_wire_connection_points = data.raw['constant-combinator']['constant-combinator'].circuit_wire_connection_points,
 	item_slot_count = box.inventory_size,
-	sprites = {
-		north = {
-			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-n.png",
-			size = {96,160}
-		},
-		east = {
-			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-e.png",
-			size = {160,96}
-		},
-		south = {
-			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-s.png",
-			size = {96,160}
-		},
-		west = {
-			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-w.png",
-			size = {160,96}
-		}
-	},
+	sprites = makeRotatedSprite(name, 96, 160),
 	max_health = 1,
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
-	icon_size = 64,
-	collision_box = {{-1.2,-2.2},{1.2,2.2}},
 	open_sound = box.open_sound,
 	close_sound = box.close_sound,
 	flags = {
@@ -65,57 +45,28 @@ local fakebox = {
 	},
 	minable = {
 		mining_time = 0.5,
-		result = basename
-	},
-	selection_box = {{-1.5,-2.5},{1.5,2.5}},
-	selection_priority = 40
+		result = name
+	}
 }
 
-local boxitem = data.raw.item[basename]
-boxitem.icon = box.icon
-boxitem.icon_mipmaps = 0
-boxitem.stack_size = 50
-boxitem.place_result = fakebox.name
+local boxitem = {
+	type = "item",
+	name = name,
+	icon = graphics.."icons/"..name..".png",
+	icon_size = 64,
+	place_result = fakebox.name,
+	stack_size = 50,
+	subgroup = "storage",
+	order = "b["..name.."]"
+}
 
-local ingredients = {
-	{"iron-plate",10},
-	{"iron-stick",10}
-}
-local boxrecipe = {
-	name = basename,
-	type = "recipe",
-	ingredients = ingredients,
-	result = basename,
-	energy_required = 1,
-	category = "building",
-	allow_intermediates = false,
-	allow_as_intermediate = false,
-	hide_from_stats = true,
-	enabled = false
-}
-local _group = data.raw['item-subgroup'][boxitem.subgroup]
-local boxrecipe_undo = {
-	name = basename.."-undo",
-	localised_name = {"recipe-name.dismantle",{"entity-name."..basename}},
-	type = "recipe",
+local boxrecipe = makeBuildingRecipe{
+	name = name,
 	ingredients = {
-		{basename,1}
+		{"iron-plate",10},
+		{"iron-rod",10}
 	},
-	results = ingredients,
-	energy_required = 1,
-	category = "unbuilding",
-	subgroup = _group.group .. "-undo",
-	order = _group.order .. "-" .. boxitem.order,
-	allow_decomposition = false,
-	allow_intermediates = false,
-	allow_as_intermediate = false,
-	hide_from_stats = true,
-	icons = {
-		{icon = "__base__/graphics/icons/deconstruction-planner.png", icon_size = 64},
-		{icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64}
-	},
-	enabled = false
+	result = name
 }
 
-data.raw.recipe[basename] = boxrecipe
-data:extend({fakebox,boxrecipe_undo})
+data:extend{box, fakebox, boxitem, boxrecipe}

@@ -1,16 +1,12 @@
 -- tweak vanilla crash-site-spaceship
+-- these are hardcoded into crash-site lib code, so I can't just clone them...
 local ship = data.raw.container['crash-site-spaceship']
 ship.max_health = 1
 ship.inventory_size = 1
 ship.minable = {mining_time=60}
-ship.open_sound = {
-	filename = "__base__/sound/metallic-chest-open.ogg",
-	volume = 0.5
-}
-ship.close_sound = {
-	filename = "__base__/sound/metallic-chest-close.ogg",
-	volume = 0.5
-}
+local sounds = copySoundsFrom(data.raw.container["steel-chest"])
+ship.open_sound = sounds.open_sound
+ship.close_sound = sounds.close_sound
 
 -- alter crash site parts to also have 1 max HP (although they need to be set indestructible manually since Factorio doesn't trigger raise_built on them)
 for _,n in pairs({
@@ -54,10 +50,7 @@ local interface = {
 		output_flow_limit = "0W"
 	},
 	energy_usage = "50MW", -- default value, varies depending on the crash site
-	picture = {
-		filename = "__core__/graphics/empty.png",
-		size = {1,1}
-	},
+	picture = empty_graphic,
 	resistances = {
 		{type="fire",percent=100}
 	},
@@ -74,7 +67,7 @@ local interface = {
 }
 data:extend{interface}
 
-data:extend({
+data:extend{
 	{
 		type = "autoplace-control",
 		name = "x-crashsite",
@@ -86,4 +79,4 @@ data:extend({
 		type = "noise-layer",
 		name = "x-crashsite"
 	}
-})
+}

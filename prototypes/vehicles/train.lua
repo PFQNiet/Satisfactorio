@@ -1,4 +1,4 @@
--- tweak vanilla train! Extend the joints by one tile so the train is in units of 8 tiles
+-- tweak vanilla train!
 local train = data.raw.locomotive.locomotive
 train.max_health = 1
 train.max_power = "85MW"
@@ -41,48 +41,17 @@ local fuelcaticon = {
 	type = "sprite",
 	width = 32
 }
+data:extend{fuel, fuelcat, fuelcaticon}
 
-local ingredients = {
-	{"heavy-modular-frame",5},
-	{"motor",10},
-	{"steel-pipe",15},
-	{"computer",5},
-	{"map-marker",5}
-}
-local recipe = {
+local recipe = makeBuildingRecipe{
 	name = "locomotive",
-	type = "recipe",
-	ingredients = ingredients,
-	result = "locomotive",
-	energy_required = 1,
-	category = "building",
-	allow_intermediates = false,
-	allow_as_intermediate = false,
-	hide_from_stats = true,
-	enabled = false
+	ingredients = {
+		{"heavy-modular-frame",5},
+		{"motor",10},
+		{"steel-pipe",15},
+		{"computer",5},
+		{"map-marker",5}
+	},
+	result = "locomotive"
 }
 data.raw.recipe.locomotive = recipe
-local _group = data.raw['item-subgroup'][train.subgroup]
-local recipe_undo = {
-	name = "locomotive-undo",
-	localised_name = {"recipe-name.dismantle",{"entity-name.locomotive"}},
-	type = "recipe",
-	ingredients = {
-		{"locomotive",1}
-	},
-	results = ingredients,
-	energy_required = 1,
-	category = "unbuilding",
-	subgroup = _group.group .. "-undo",
-	order = _group.order .. "-" .. train.order,
-	allow_decomposition = false,
-	allow_intermediates = false,
-	allow_as_intermediate = false,
-	hide_from_stats = true,
-	icons = {
-		{icon = "__base__/graphics/icons/deconstruction-planner.png", icon_size = 64},
-		{icon = "__Satisfactorio__/graphics/icons/electric-locomotive.png", icon_size = 64}
-	},
-	enabled = false
-}
-data:extend({fuel, fuelcat, fuelcaticon, recipe_undo})

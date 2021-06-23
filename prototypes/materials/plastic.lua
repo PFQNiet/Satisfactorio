@@ -1,35 +1,31 @@
--- adjust vanilla plastic bar
 local name = "plastic"
-local basename = "plastic-bar"
-
-local plate = {
+local item = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
-	name = basename,
+	name = name,
 	order = "f[oil]-a["..name.."]",
 	stack_size = 200,
 	subgroup = "parts",
 	type = "item"
 }
 
-local ingredients = {
-	{type="fluid",name="crude-oil",amount=3}
-}
-local platerecipe = { -- in Refinery
-	name = basename,
+local recipe1 = {
+	name = name,
 	type = "recipe",
-	ingredients = ingredients,
+	ingredients = {
+		{type="fluid",name="crude-oil",amount=3}
+	},
 	results = {
-		{basename,2},
+		{name,2},
 		{type="fluid",name="heavy-oil",amount=1}
 	},
-	main_product = basename,
+	main_product = name,
 	energy_required = 6,
 	category = "refining",
-	order = plate.order.."-a",
+	order = item.order.."-a",
 	enabled = false
 }
-local residualrecipe = {
+local recipe2 = {
 	name = "residual-"..name,
 	localised_name = {"recipe-name.residual-"..name},
 	type = "recipe",
@@ -37,18 +33,16 @@ local residualrecipe = {
 		{"polymer-resin",6},
 		{type="fluid",name="water",amount=2}
 	},
-	results = {{basename,2}},
+	results = {{name,2}},
 	energy_required = 6,
 	category = "refining",
 	icons = {
 		{ icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64 },
 		{ icon = "__Satisfactorio__/graphics/icons/polymer-resin.png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
 	},
-	order = plate.order.."-b",
+	order = item.order.."-b",
 	allow_decomposition = false,
 	enabled = false
 }
 
-data.raw.item[basename] = plate
-data.raw.recipe[basename] = platerecipe
-data:extend{residualrecipe}
+data:extend{item,recipe1,recipe2}

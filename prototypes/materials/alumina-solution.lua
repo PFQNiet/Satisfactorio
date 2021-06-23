@@ -1,5 +1,4 @@
 local name = "alumina-solution"
-
 local fluid = {
 	type = "fluid",
 	name = name,
@@ -13,14 +12,13 @@ local fluid = {
 	flow_color = {222,222,222}
 }
 
-local ingredients = {
-	{"bauxite",12},
-	{type="fluid",name="water",amount=18}
-}
-local recipe = { -- in Refinery
+local recipe = {
 	name = name,
 	type = "recipe",
-	ingredients = ingredients,
+	ingredients = {
+		{"bauxite",12},
+		{type="fluid",name="water",amount=18}
+	},
 	results = {
 		{type="fluid",name=name,amount=12},
 		{"silica",5}
@@ -32,4 +30,4 @@ local recipe = { -- in Refinery
 	enabled = false
 }
 
-data:extend({fluid, recipe})
+data:extend{fluid,recipe}

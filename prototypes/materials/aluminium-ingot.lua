@@ -1,5 +1,5 @@
 local name = "aluminium-ingot"
-local ingot = {
+local item = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	name = name,
@@ -9,29 +9,13 @@ local ingot = {
 	type = "item"
 }
 
-local ingredients = {
-	{"aluminium-scrap",6},
-	{"silica",5}
-}
-local ingotrecipe1 = {
-	name = name.."-manual",
-	type = "recipe",
-	ingredients = ingredients,
-	result = name,
-	result_count = 4,
-	energy_required = 5/4,
-	category = "craft-bench",
-	icons = {
-		{ icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64 },
-		{ icon = "__Satisfactorio__/graphics/icons/silica.png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
-	},
-	hide_from_player_crafting = true,
-	enabled = false
-}
-local ingotrecipe2 = { -- in Foundry
+local recipe = {
 	name = name,
 	type = "recipe",
-	ingredients = ingredients,
+	ingredients = {
+		{"aluminium-scrap",6},
+		{"silica",5}
+	},
 	result = name,
 	result_count = 4,
 	energy_required = 4,
@@ -42,5 +26,6 @@ local ingotrecipe2 = { -- in Foundry
 	},
 	enabled = false
 }
+copyToHandcraft(recipe, 5)
 
-data:extend({ingot,ingotrecipe1,ingotrecipe2})
+data:extend{item,recipe}

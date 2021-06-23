@@ -1,5 +1,5 @@
 local name = "aluminium-scrap"
-local scrap = {
+local item = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	name = name,
@@ -9,14 +9,13 @@ local scrap = {
 	type = "item"
 }
 
-local ingredients = {
-	{type="fluid",name="alumina-solution",amount=4},
-	{"coal",2}
-}
-local scraprecipe = { -- in Refinery
+local recipe = {
 	name = name,
 	type = "recipe",
-	ingredients = ingredients,
+	ingredients = {
+		{type="fluid",name="alumina-solution",amount=4},
+		{"coal",2}
+	},
 	results = {
 		{name,6},
 		{type="fluid",name="water",amount=2}
@@ -27,4 +26,4 @@ local scraprecipe = { -- in Refinery
 	enabled = false
 }
 
-data:extend({scrap,scraprecipe})
+data:extend{item,recipe}

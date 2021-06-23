@@ -181,8 +181,11 @@ data.raw['tips-and-tricks-item']['splitters'] = nil
 data.raw['tips-and-tricks-item']['splitter-filters'] = nil
 data.raw['tips-and-tricks-item']['underground-belts'] = nil
 -- "steam power" isn't used
+data.raw['tips-and-tricks-item']['electric-network'] = nil
+data.raw['tips-and-tricks-item']['electric-pole-connections'] = nil
 data.raw['tips-and-tricks-item']['steam-power'] = nil
 data.raw['tips-and-tricks-item']['connect-switch'] = nil
+data.raw['tips-and-tricks-item']['low-power'].dependencies = nil
 data.raw['tips-and-tricks-item']['low-power'].simulation = nil
 data.raw['tips-and-tricks-item']['low-power'].image = "__Satisfactorio__/graphics/tips-and-tricks/power-trip.png"
 require("prototypes.tips-and-tricks.copy-entity-settings")

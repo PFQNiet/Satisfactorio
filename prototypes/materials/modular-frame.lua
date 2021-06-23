@@ -1,5 +1,5 @@
 local name = "modular-frame"
-local frame = {
+local item = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	name = name,
@@ -9,30 +9,19 @@ local frame = {
 	type = "item"
 }
 
-local ingredients = {
-	{"reinforced-iron-plate",3},
-	{"iron-stick",12}
-}
-local framerecipe1 = { -- by hand in Craft Bench
-	name = name.."-manual",
-	type = "recipe",
-	ingredients = ingredients,
-	result = name,
-	result_count = 2,
-	energy_required = 15/4,
-	category = "craft-bench",
-	hide_from_player_crafting = true,
-	enabled = false
-}
-local framerecipe2 = { -- in Assembler
+local recipe = {
 	name = name,
 	type = "recipe",
-	ingredients = ingredients,
+	ingredients = {
+		{"reinforced-iron-plate",3},
+		{"iron-rod",12}
+	},
 	result = name,
 	result_count = 2,
 	energy_required = 60,
 	category = "assembling",
 	enabled = false
 }
+copyToHandcraft(recipe, 15)
 
-data:extend({frame,framerecipe1,framerecipe2})
+data:extend{item,recipe}

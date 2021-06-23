@@ -160,12 +160,12 @@ local function onBuilt(event)
 end
 
 local techs = {
-	["hub-tier0-hub-upgrade-1"] = 8,
-	["hub-tier0-hub-upgrade-2"] = 9,
-	["hub-tier0-hub-upgrade-3"] = 10,
-	["hub-tier0-hub-upgrade-4"] = 11,
-	["hub-tier0-hub-upgrade-5"] = 12,
-	["hub-tier0-hub-upgrade-6"] = 13
+	["hub-tier0-hub-upgrade1"] = 8,
+	["hub-tier0-hub-upgrade2"] = 9,
+	["hub-tier0-hub-upgrade3"] = 10,
+	["hub-tier0-hub-upgrade4"] = 11,
+	["hub-tier0-hub-upgrade5"] = 12,
+	["hub-tier0-hub-upgrade6"] = 13
 }
 local function onResearch(event)
 	if techs[event.research.name] and script_data.step <= techs[event.research.name] then

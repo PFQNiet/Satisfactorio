@@ -28,4 +28,30 @@ for _,entity in pairs(maskutil.collect_prototypes_colliding_with_mask{"object-la
 	end
 end
 
-require("prototypes.build-gun")
+-- verify that any "building"-type recipes have their product set to "only-in-cursor"
+local function findItemByName(name)
+	for key in pairs(defines.prototypes.item) do
+		local test = data.raw[key][name]
+		if test then return test end
+	end
+end
+for _,recipe in pairs(data.raw.recipe) do
+	if recipe.category == "building" then
+		local product = findItemByName(recipe.result) -- building recipes always have a single result property
+		assert(product, "No product found for building recipe "..recipe.name)
+		local has_oic_flag = false
+		for _,flag in pairs(product.flags or {}) do
+			if flag == "only-in-cursor" then
+				has_oic_flag = true
+				break
+			end
+		end
+		if not has_oic_flag then
+			log("[WARN] Product "..product.name.." is missing the only-in-cursor flag")
+			if not product.flags then product.flags = {} end
+			table.insert(product.flags, "only-in-cursor")
+		end
+	end
+end
+
+require("prototypes.technology-final-fixes")

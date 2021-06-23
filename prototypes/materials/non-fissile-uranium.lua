@@ -1,5 +1,5 @@
 local name = "non-fissile-uranium"
-local ingot = {
+local item = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	name = name,
@@ -9,16 +9,15 @@ local ingot = {
 	type = "item"
 }
 
-local ingredients = {
-	{"uranium-waste",15},
-	{"silica",10},
-	{type="fluid",name="nitric-acid",amount=6},
-	{type="fluid",name="sulfuric-acid",amount=6}
-}
-local ingotrecipe = { -- in Blender
+local recipe = {
 	name = name,
 	type = "recipe",
-	ingredients = ingredients,
+	ingredients = {
+		{"uranium-waste",15},
+		{"silica",10},
+		{type="fluid",name="nitric-acid",amount=6},
+		{type="fluid",name="sulfuric-acid",amount=6}
+	},
 	results = {
 		{name,20},
 		{type="fluid",name="water",amount=6}
@@ -29,4 +28,4 @@ local ingotrecipe = { -- in Blender
 	enabled = false
 }
 
-data:extend({ingot,ingotrecipe})
+data:extend{item,recipe}

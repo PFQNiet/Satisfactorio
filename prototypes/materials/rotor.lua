@@ -1,5 +1,5 @@
 local name = "rotor"
-local rotor = {
+local item = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	name = name,
@@ -9,28 +9,18 @@ local rotor = {
 	type = "item"
 }
 
-local ingredients = {
-	{"iron-stick",5},
-	{"iron-gear-wheel",25}
-}
-local rotorrecipe1 = { -- by hand in Craft Bench
-	name = name.."-manual",
-	type = "recipe",
-	ingredients = ingredients,
-	result = name,
-	energy_required = 6/4,
-	category = "craft-bench",
-	hide_from_player_crafting = true,
-	enabled = false
-}
-local rotorrecipe2 = { -- in Assembler
+local recipe = {
 	name = name,
 	type = "recipe",
-	ingredients = ingredients,
+	ingredients = {
+		{"iron-rod",5},
+		{"screw",25}
+	},
 	result = name,
 	energy_required = 15,
 	category = "assembling",
 	enabled = false
 }
+copyToHandcraft(recipe, 6)
 
-data:extend({rotor,rotorrecipe1,rotorrecipe2})
+data:extend{item,recipe}

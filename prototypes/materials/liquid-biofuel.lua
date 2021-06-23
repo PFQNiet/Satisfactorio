@@ -1,5 +1,4 @@
 local name = "liquid-biofuel"
-
 local fluid = {
 	type = "fluid",
 	name = name,
@@ -14,14 +13,13 @@ local fluid = {
 	fuel_value = "750MJ"
 }
 
-local ingredients = {
-	{"solid-biofuel",6},
-	{type="fluid",name="water",amount=3}
-}
-local recipe = { -- in Refinery
+local recipe = {
 	name = name,
 	type = "recipe",
-	ingredients = ingredients,
+	ingredients = {
+		{"solid-biofuel",6},
+		{type="fluid",name="water",amount=3}
+	},
 	results = {{type="fluid",name="liquid-biofuel",amount=4}},
 	subgroup = "fluid-recipe",
 	energy_required = 4,
@@ -29,4 +27,4 @@ local recipe = { -- in Refinery
 	enabled = false
 }
 
-data:extend({fluid,recipe})
+data:extend{fluid,recipe}

@@ -1,6 +1,6 @@
 -- on equipping body items, populate their equipment grid accordingly
 local gear = "blade-runners"
-local equip = "exoskeleton-equipment"
+local equip = "blade-runners-equipment"
 
 local function onEquipBody(event)
 	local player = game.players[event.player_index]

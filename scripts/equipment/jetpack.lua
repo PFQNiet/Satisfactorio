@@ -42,7 +42,6 @@ local function onJump(event)
 			local struct = {
 				player = player,
 				car = car,
-				battery = car.grid.put{name="jetpack-equipment"},
 				shadow = rendering.draw_sprite{
 					sprite = shadow.."-"..car.direction,
 					surface = car.surface,
@@ -74,7 +73,6 @@ local function onJump(event)
 				momentum = {0,0}
 			}
 			script_data[player.index] = struct
-			struct.battery.energy = struct.battery.max_energy
 		end
 	end
 end
@@ -94,9 +92,6 @@ end
 local function onTick(event)
 	for pid,struct in pairs(script_data) do
 		struct.time = struct.time+1
-		local battery = struct.battery
-		battery.energy = math.max(0,battery.max_energy-struct.time*1000*1000)
-
 		local altitude = 5
 		if struct.time < 60 then
 			altitude = 5*math.sin(struct.time/60*math.pi/2)
@@ -131,7 +126,7 @@ local function onTick(event)
 		rendering.set_target(struct.shadow, struct.car, {altitude+1,altitude})
 		rendering.set_x_scale(struct.shadow, 1-altitude/40)
 		rendering.set_y_scale(struct.shadow, 1-altitude/40)
-		rendering.set_angle(struct.arc, battery.energy/battery.max_energy*math.pi*2)
+		rendering.set_angle(struct.arc, math.max(0,1-struct.time/360)*math.pi*2)
 		if acceleration[1] ~= 0 or acceleration[2] ~= 0 then
 			local angle = math.atan2(-acceleration[2], acceleration[1])
 			struct.car.orientation = math.fmod(2 + 0.25 - angle/(math.pi*2), 1)

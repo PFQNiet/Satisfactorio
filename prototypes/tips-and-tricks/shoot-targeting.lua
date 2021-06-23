@@ -13,7 +13,7 @@ tip.simulation = {
 		game.camera_alt_info = true
 		
 		step_1 = function()
-			biter = game.surfaces[1].create_entity{name = "big-biter", position = {10 + (math.random() * 2), -4 + (math.random() * 4)}}
+			biter = game.surfaces[1].create_entity{name = "fluffy-tailed-hog", position = {10 + (math.random() * 2), -4 + (math.random() * 4)}}
 			biter.speed = 0.05
 			biter.set_command{
 				type = defines.command.attack,

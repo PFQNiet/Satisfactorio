@@ -24,7 +24,7 @@ local recipe = {
 	name = name,
 	type = "recipe",
 	ingredients = {
-		{"iron-stick",10},
+		{"iron-rod",10},
 		{"reinforced-iron-plate",2},
 		{"copper-cable",15},
 		{"wire",50}
@@ -32,7 +32,7 @@ local recipe = {
 	result = name,
 	energy_required = 10/4,
 	category = "equipment",
-	hide_from_stats = true
+	enabled = true
 }
 
 local stun = {
@@ -82,4 +82,4 @@ local ammo = {
 	}
 }
 
-data:extend({gun,recipe,stun,ammo})
+data:extend{gun,recipe,stun,ammo}

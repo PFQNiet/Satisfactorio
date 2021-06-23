@@ -1,5 +1,5 @@
 local name = "cooling-system"
-local sink = {
+local item = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	name = name,
@@ -9,20 +9,19 @@ local sink = {
 	type = "item"
 }
 
-local ingredients = {
-	{"heat-sink",2},
-	{"rubber",2},
-	{type="fluid", name="water", amount=5},
-	{type="fluid", name="nitrogen-gas", amount=25}
-}
-local sinkrecipe = { -- in Blender
+local recipe = {
 	name = name,
 	type = "recipe",
-	ingredients = ingredients,
+	ingredients = {
+		{"heat-sink",2},
+		{"rubber",2},
+		{type="fluid", name="water", amount=5},
+		{type="fluid", name="nitrogen-gas", amount=25}
+	},
 	result = name,
 	energy_required = 10,
 	category = "blending",
 	enabled = false
 }
 
-data:extend({sink,sinkrecipe})
+data:extend{item,recipe}

@@ -80,7 +80,8 @@ data:extend{biter}
 -- spawner is a "turret" that self-destructs
 -- entity spawns three crabs on death
 -- repurpose the small worm turret for this
-local worm = data.raw.turret['small-worm-turret']
+local worm = table.deepcopy(data.raw.turret['small-worm-turret'])
+worm.name = "flying-crab-hatcher"
 local attack = worm.attack_parameters
 attack.type = "projectile"
 attack.ammo_type = {
@@ -120,3 +121,5 @@ for i,flag in pairs(worm.flags) do
 		break
 	end
 end
+
+data:extend{worm}

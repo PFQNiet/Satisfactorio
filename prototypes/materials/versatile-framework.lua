@@ -1,5 +1,5 @@
 local name = "versatile-framework"
-local plate = {
+local item = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	name = name,
@@ -9,19 +9,19 @@ local plate = {
 	type = "item"
 }
 
-local ingredients = {
-	{"modular-frame",1},
-	{"steel-plate",12}
-}
-local platerecipe = { -- in Assembler
+local recipe = {
 	name = name,
 	type = "recipe",
-	ingredients = ingredients,
+	ingredients = {
+		{"modular-frame",1},
+		{"steel-beam",12}
+	},
 	result = name,
 	result_count = 2,
 	energy_required = 24,
 	category = "assembling",
 	enabled = false
 }
+-- no handcrafting
 
-data:extend({plate,platerecipe})
+data:extend{item,recipe}

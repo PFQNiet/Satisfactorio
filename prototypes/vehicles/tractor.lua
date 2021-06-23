@@ -8,7 +8,7 @@ car.braking_power = "80MW"
 car.energy_per_hit_point = 1000
 car.max_health = 100
 car.burner.fuel_category = nil
-car.burner.fuel_categories = {"chemical","carbon","packaged-fuel","packaged-alt-fuel","battery","nuclear"}
+car.burner.fuel_categories = {"chemical","carbon","packaged-fuel","battery","nuclear"}
 car.burner.fuel_inventory_size = 1
 car.inventory_size = 25
 car.guns = {}
@@ -25,46 +25,14 @@ local caritem = {
 	type = "item-with-entity-data"
 }
 
-local ingredients = {
-	{"modular-frame",5},
-	{"map-marker",5},
-	{"rotor",10}
-}
-local carrecipe = {
+local carrecipe = makeBuildingRecipe{
 	name = name,
-	type = "recipe",
-	ingredients = ingredients,
-	result = name,
-	energy_required = 1,
-	category = "building",
-	allow_intermediates = false,
-	allow_as_intermediate = false,
-	hide_from_stats = true,
-	enabled = false
-}
-local _group = data.raw['item-subgroup'][caritem.subgroup]
-local carrecipe_undo = {
-	name = name.."-undo",
-	localised_name = {"recipe-name.dismantle",{"entity-name."..name}},
-	type = "recipe",
 	ingredients = {
-		{name,1}
+		{"modular-frame",5},
+		{"map-marker",5},
+		{"rotor",10}
 	},
-	results = ingredients,
-	energy_required = 1,
-	category = "unbuilding",
-	subgroup = _group.group .. "-undo",
-	order = _group.order .. "-" .. caritem.order,
-	allow_decomposition = false,
-	allow_intermediates = false,
-	allow_as_intermediate = false,
-	always_show_products = true,
-	hide_from_stats = true,
-	icons = {
-		{icon = "__base__/graphics/icons/deconstruction-planner.png", icon_size = 64},
-		{icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64}
-	},
-	enabled = false
+	result = name
 }
 
-data:extend({car,caritem,carrecipe,carrecipe_undo})
+data:extend{car,caritem,carrecipe}

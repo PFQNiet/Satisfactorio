@@ -11,4 +11,4 @@ local item = {
 	fuel_value = "630MJ"
 }
 -- exclusively via alt recipe
-data:extend({item})
+data:extend{item}

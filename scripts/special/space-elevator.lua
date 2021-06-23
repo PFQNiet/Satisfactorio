@@ -67,6 +67,7 @@ local function onBuilt(event)
 			inserter.destructible = false
 
 			script_data.elevator[entity.force.index] = entity
+			entity.rotatable = false
 			entity.active = false
 		end
 	end

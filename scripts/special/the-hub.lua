@@ -93,7 +93,7 @@ end
 
 local function buildStorageChest(hub)
 	-- only if HUB Upgrade 1 is done
-	if not hub.force.technologies['hub-tier0-hub-upgrade-1'].researched then
+	if not hub.force.technologies['hub-tier0-hub-upgrade1'].researched then
 		return
 	end
 	local box = hub.surface.create_entity{
@@ -118,7 +118,7 @@ end
 
 local function buildBiomassBurner1(hub)
 	-- only if HUB Upgrade 2 is done
-	if not hub.force.technologies['hub-tier0-hub-upgrade-2'].researched then
+	if not hub.force.technologies['hub-tier0-hub-upgrade2'].researched then
 		return
 	end
 	local burner = hub.surface.create_entity{
@@ -154,7 +154,7 @@ local function removeBiomassBurner1(hub, buffer) -- only if it exists
 end
 local function buildBiomassBurner2(hub)
 	-- only if HUB Upgrade 5 is done
-	if not hub.force.technologies['hub-tier0-hub-upgrade-5'].researched then
+	if not hub.force.technologies['hub-tier0-hub-upgrade5'].researched then
 		return
 	end
 	local burner = hub.surface.create_entity{
@@ -178,7 +178,7 @@ local function removeBiomassBurner2(hub, buffer) -- only if it exists
 end
 local function buildFreighter(hub)
 	-- only if HUB Upgrade 6 is done
-	if not hub.force.technologies['hub-tier0-hub-upgrade-6'].researched then
+	if not hub.force.technologies['hub-tier0-hub-upgrade6'].researched then
 		return
 	end
 	local silo = hub.surface.create_entity{
@@ -231,10 +231,10 @@ local function launchFreighter(hub, item)
 end
 
 local upgrades = {
-	["hub-tier0-hub-upgrade-1"] = buildStorageChest,
-	["hub-tier0-hub-upgrade-2"] = buildBiomassBurner1,
-	["hub-tier0-hub-upgrade-5"] = buildBiomassBurner2,
-	["hub-tier0-hub-upgrade-6"] = buildFreighter
+	["hub-tier0-hub-upgrade1"] = buildStorageChest,
+	["hub-tier0-hub-upgrade2"] = buildBiomassBurner1,
+	["hub-tier0-hub-upgrade5"] = buildBiomassBurner2,
+	["hub-tier0-hub-upgrade6"] = buildFreighter
 }
 local function completeMilestone(technology)
 	if string.starts_with(technology.name, "hub-tier") then
@@ -249,7 +249,7 @@ local function completeMilestone(technology)
 			local message = {"", {"message.milestone-reached",technology.name,technology.localised_name}}
 			-- use "real" technology effects for console message
 			for _,effect in pairs(technology.effects) do
-				if effect.type == "unlock-recipe" and (effect.recipe == "hub-tier1" or effect.recipe == "hub-tier2") then
+				if effect.type == "unlock-recipe" and effect.recipe:find("^hub%-tier%d+$") then
 					if effect.recipe == "hub-tier1" then
 						-- only register it once
 						table.insert(message, {"message.hub-new-tiers-available"})
@@ -297,32 +297,34 @@ local function updateMilestoneGUI(force)
 	if hub and hub.valid then
 		recipe = hub.get_recipe()
 		if recipe then
-			milestone = game.item_prototypes[recipe.products[1].name]
 			if #recipe.ingredients == 0 then
 				-- is a Tier marker
 				hub.set_recipe(nil)
 				milestone = {name="none"}
-			elseif force.technologies[milestone.name].researched then
-				-- milestone already completed, so reject it
-				local spill = hub.set_recipe(nil)
-				for name,count in pairs(spill) do
-					hub.surface.spill_item_stack(hub.position, {name = name, count = count}, true, force, false)
-				end
-				if milestone.name == recipe.name then
-					force.recipes[recipe.name].enabled = false
-					force.recipes[recipe.name.."-done"].enabled = true
-				end
-				force.print({"message.milestone-already-researched",milestone.name,milestone.localised_name})
-				milestone = {name="none"}
 			else
-				local inventory = hub.get_inventory(defines.inventory.assembling_machine_input)
-				submitted = inventory.get_contents()
-				local progress = {0,0}
-				for _,ingredient in ipairs(recipe.ingredients) do
-					if submitted[ingredient.name] then progress[1] = progress[1] + math.min(submitted[ingredient.name],ingredient.amount) end
-					progress[2] = progress[2] + ingredient.amount
+				milestone = game.item_prototypes[recipe.products[1].name]
+					if force.technologies[milestone.name].researched then
+					-- milestone already completed, so reject it
+					local spill = hub.set_recipe(nil)
+					for name,count in pairs(spill) do
+						hub.surface.spill_item_stack(hub.position, {name = name, count = count}, true, force, false)
+					end
+					if milestone.name == recipe.name then
+						force.recipes[recipe.name].enabled = false
+						force.recipes[recipe.name.."-done"].enabled = true
+					end
+					force.print({"message.milestone-already-researched",milestone.name,milestone.localised_name})
+					milestone = {name="none"}
+				else
+					local inventory = hub.get_inventory(defines.inventory.assembling_machine_input)
+					submitted = inventory.get_contents()
+					local progress = {0,0}
+					for _,ingredient in ipairs(recipe.ingredients) do
+						if submitted[ingredient.name] then progress[1] = progress[1] + math.min(submitted[ingredient.name],ingredient.amount) end
+						progress[2] = progress[2] + ingredient.amount
+					end
+					hub.crafting_progress = progress[1] / progress[2]
 				end
-				hub.crafting_progress = progress[1] / progress[2]
 			end
 		end
 	end

@@ -1,5 +1,5 @@
 local name = "encased-plutonium-cell"
-local ingot = {
+local item = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	name = name,
@@ -9,18 +9,18 @@ local ingot = {
 	type = "item"
 }
 
-local ingredients = {
-	{"plutonium-pellet",2},
-	{"concrete",4}
-}
-local ingotrecipe = { -- in Assembler
+local recipe = {
 	name = name,
 	type = "recipe",
-	ingredients = ingredients,
+	ingredients = {
+		{"plutonium-pellet",2},
+		{"concrete",4}
+	},
 	result = name,
 	energy_required = 12,
 	category = "assembling",
 	enabled = false
 }
+-- no handcrafting
 
-data:extend({ingot,ingotrecipe})
+data:extend{item,recipe}

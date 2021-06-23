@@ -1,35 +1,30 @@
--- repurpose vanilla uranium cell
 local name = "encased-uranium-cell"
-local basename = "uranium-fuel-cell"
-
-local ingot = {
+local item = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
-	name = basename,
-	order = "k[uranium]-a["..basename.."]",
+	name = name,
+	order = "k[uranium]-a["..name.."]",
 	stack_size = 200,
 	subgroup = "nuclear",
 	type = "item"
 }
 
-local ingredients = {
-	{"uranium-ore",10},
-	{"concrete",3},
-	{type="fluid",name="sulfuric-acid",amount=8}
-}
-local ingotrecipe = { -- in Blender
-	name = basename,
+local recipe = {
+	name = name,
 	type = "recipe",
-	ingredients = ingredients,
+	ingredients = {
+		{"uranium-ore",10},
+		{"concrete",3},
+		{type="fluid",name="sulfuric-acid",amount=8}
+	},
 	results = {
-		{basename,5},
+		{name,5},
 		{type="fluid",name="sulfuric-acid",amount=2}
 	},
-	main_product = basename,
+	main_product = name,
 	energy_required = 12,
 	category = "blending",
 	enabled = false
 }
 
-data.raw.item[basename] = ingot
-data.raw.recipe[basename] = ingotrecipe
+data:extend{item,recipe}

@@ -80,7 +80,7 @@ local recipes = {
 		result_count = 7,
 		energy_required = 16,
 		category = "assembling",
-		icons = {"limestone"}
+		icons = {"stone"}
 	},
 	{
 		name = "seismic-nobelisk",
@@ -126,7 +126,7 @@ local recipes = {
 		ingredients = {
 			{"iron-ingot",5}
 		},
-		result = "iron-gear-wheel",
+		result = "screw",
 		result_count = 20,
 		energy_required = 24,
 		category = "constructing",
@@ -148,7 +148,7 @@ local recipes = {
 		name = "bolted-iron-plate",
 		ingredients = {
 			{"iron-plate",18},
-			{"iron-gear-wheel",50}
+			{"screw",50}
 		},
 		result = "reinforced-iron-plate",
 		result_count = 3,
@@ -172,7 +172,7 @@ local recipes = {
 		name = "bolted-frame",
 		ingredients = {
 			{"reinforced-iron-plate",3},
-			{"iron-gear-wheel",56}
+			{"screw",56}
 		},
 		result = "modular-frame",
 		result_count = 2,
@@ -183,8 +183,8 @@ local recipes = {
 	{
 		name = "copper-rotor",
 		ingredients = {
-			{"copper-plate",6},
-			{"iron-gear-wheel",52}
+			{"copper-sheet",6},
+			{"screw",52}
 		},
 		result = "rotor",
 		result_count = 3,
@@ -197,7 +197,7 @@ local recipes = {
 		ingredients = {
 			{"steel-ingot",1}
 		},
-		result = "iron-stick",
+		result = "iron-rod",
 		result_count = 4,
 		energy_required = 5,
 		category = "constructing",
@@ -230,9 +230,9 @@ local recipes = {
 	{
 		name = "steel-screw",
 		ingredients = {
-			{"steel-plate",1}
+			{"steel-beam",1}
 		},
-		result = "iron-gear-wheel",
+		result = "screw",
 		result_count = 52,
 		energy_required = 12,
 		category = "constructing",
@@ -265,7 +265,7 @@ local recipes = {
 	{
 		name = "crystal-beacon",
 		ingredients = {
-			{"steel-plate",4},
+			{"steel-beam",4},
 			{"steel-pipe",16},
 			{"crystal-oscillator",1}
 		},
@@ -327,7 +327,7 @@ local recipes = {
 			{"copper-ingot",3},
 			{type="fluid",name="water",amount=3}
 		},
-		result = "copper-plate",
+		result = "copper-sheet",
 		result_count = 3,
 		energy_required = 8,
 		category = "refining",
@@ -398,7 +398,7 @@ local recipes = {
 		ingredients = {
 			{"stator",2},
 			{"wire",40},
-			{"advanced-circuit",1}
+			{"high-speed-connector",1}
 		},
 		result = "automated-wiring",
 		result_count = 4,
@@ -435,7 +435,7 @@ local recipes = {
 		name = "coated-iron-canister",
 		ingredients = {
 			{"iron-plate",2},
-			{"copper-plate",1}
+			{"copper-sheet",1}
 		},
 		result = "empty-canister",
 		result_count = 4,
@@ -474,7 +474,7 @@ local recipes = {
 			{"modular-frame",5},
 			{"encased-industrial-beam",3},
 			{"rubber",20},
-			{"iron-gear-wheel",104}
+			{"screw",104}
 		},
 		result = "heavy-modular-frame",
 		result_count = 1,
@@ -487,7 +487,7 @@ local recipes = {
 		ingredients = {
 			{"motor",1},
 			{"steel-pipe",4},
-			{"iron-stick",4},
+			{"iron-rod",4},
 			{"iron-plate",2}
 		},
 		result = "portable-miner",
@@ -498,7 +498,7 @@ local recipes = {
 	{
 		name = "caterium-computer",
 		ingredients = {
-			{"electronic-circuit",7},
+			{"circuit-board",7},
 			{"quickwire",28},
 			{"rubber",12}
 		},
@@ -511,7 +511,7 @@ local recipes = {
 	{
 		name = "crystal-computer",
 		ingredients = {
-			{"electronic-circuit",8},
+			{"circuit-board",8},
 			{"crystal-oscillator",3}
 		},
 		result = "computer",
@@ -550,7 +550,7 @@ local recipes = {
 			{"rubber",6},
 			{"petroleum-coke",9}
 		},
-		result = "electronic-circuit",
+		result = "circuit-board",
 		result_count = 1,
 		energy_required = 12,
 		category = "assembling",
@@ -587,7 +587,7 @@ local recipes = {
 		name = "coated-iron-plate",
 		ingredients = {
 			{"iron-ingot",10},
-			{"plastic-bar",2}
+			{"plastic",2}
 		},
 		result = "iron-plate",
 		result_count = 15,
@@ -599,7 +599,7 @@ local recipes = {
 		name = "steel-coated-plate",
 		ingredients = {
 			{"steel-ingot",2},
-			{"plastic-bar",2}
+			{"plastic",2}
 		},
 		result = "iron-plate",
 		result_count = 18,
@@ -613,7 +613,7 @@ local recipes = {
 			{"rubber",6},
 			{type="fluid",name="fuel",amount=6}
 		},
-		result = "plastic-bar",
+		result = "plastic",
 		result_count = 12,
 		energy_required = 12,
 		category = "refining",
@@ -648,7 +648,7 @@ local recipes = {
 	{
 		name = "recycled-rubber",
 		ingredients = {
-			{"plastic-bar",6},
+			{"plastic",6},
 			{type="fluid",name="fuel",amount=6}
 		},
 		result = "rubber",
@@ -662,7 +662,7 @@ local recipes = {
 		ingredients = {
 			{"reinforced-iron-plate",1},
 			{"rotor",1},
-			{"plastic-bar",3}
+			{"plastic",3}
 		},
 		result = "smart-plating",
 		result_count = 2,
@@ -686,7 +686,7 @@ local recipes = {
 		name = "flexible-framework",
 		ingredients = {
 			{"modular-frame",1},
-			{"steel-plate",6},
+			{"steel-beam",6},
 			{"rubber",8}
 		},
 		result = "versatile-framework",
@@ -710,10 +710,10 @@ local recipes = {
 	{
 		name = "caterium-circuit-board",
 		ingredients = {
-			{"plastic-bar",10},
+			{"plastic",10},
 			{"quickwire",30}
 		},
-		result = "electronic-circuit",
+		result = "circuit-board",
 		result_count = 7,
 		energy_required = 48,
 		category = "assembling",
@@ -724,9 +724,9 @@ local recipes = {
 		ingredients = {
 			{"quickwire",60},
 			{"silica",25},
-			{"electronic-circuit",2}
+			{"circuit-board",2}
 		},
-		result = "advanced-circuit",
+		result = "high-speed-connector",
 		result_count = 2,
 		energy_required = 40,
 		category = "manufacturing",
@@ -749,7 +749,7 @@ local recipes = {
 		ingredients = {
 			{"quartz-crystal",10},
 			{"rubber",7},
-			{"processing-unit",1}
+			{"ai-limiter",1}
 		},
 		result = "crystal-oscillator",
 		result_count = 1,
@@ -760,10 +760,10 @@ local recipes = {
 	{
 		name = "silicon-circuit-board",
 		ingredients = {
-			{"copper-plate",11},
+			{"copper-sheet",11},
 			{"silica",11}
 		},
-		result = "electronic-circuit",
+		result = "circuit-board",
 		result_count = 5,
 		energy_required = 24,
 		category = "assembling",
@@ -812,7 +812,7 @@ local recipes = {
 		ingredients = {
 			{"sulfur",6},
 			{"alclad-aluminium-sheet",7},
-			{"plastic-bar",8},
+			{"plastic",8},
 			{"wire",12}
 		},
 		result = "battery",
@@ -927,7 +927,7 @@ local recipes = {
 		name = "radio-control-system",
 		ingredients = {
 			{"crystal-oscillator",1},
-			{"electronic-circuit",10},
+			{"circuit-board",10},
 			{"aluminium-casing",60},
 			{"rubber",30}
 		},
@@ -958,7 +958,7 @@ local recipes = {
 		name = "radio-connection-unit",
 		ingredients = {
 			{"heat-sink",4},
-			{"advanced-circuit",2},
+			{"high-speed-connector",2},
 			{"quartz-crystal",12}
 		},
 		result = "radio-control-unit",
@@ -1024,7 +1024,7 @@ local recipes = {
 		name = "electromagnetic-connection-rod",
 		ingredients = {
 			{"stator",10},
-			{"advanced-circuit",5}
+			{"high-speed-connector",5}
 		},
 		result = "electromagnetic-control-rod",
 		result_count = 10,
@@ -1040,7 +1040,7 @@ local recipes = {
 			{"sulfur",5},
 			{"quickwire",15}
 		},
-		result = "uranium-fuel-cell",
+		result = "encased-uranium-cell",
 		result_count = 4,
 		energy_required = 12,
 		category = "manufacturing",
@@ -1049,12 +1049,12 @@ local recipes = {
 	{
 		name = "uranium-fuel-unit",
 		ingredients = {
-			{"uranium-fuel-cell",100},
+			{"encased-uranium-cell",100},
 			{"electromagnetic-control-rod",10},
 			{"crystal-oscillator",3},
 			{"map-marker",6}
 		},
-		result = "nuclear-fuel",
+		result = "uranium-fuel-rod",
 		result_count = 3,
 		energy_required = 300,
 		category = "manufacturing",
@@ -1087,7 +1087,7 @@ local recipes = {
 		main_product = "non-fissile-uranium",
 		energy_required = 12,
 		category = "blending",
-		icons = {"uranium"}
+		icons = {"uranium-ore"}
 	},
 	{
 		name = "plutonium-fuel-unit",
