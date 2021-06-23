@@ -1,13 +1,84 @@
-modpath = "__Satisfactorio__."
+modname = "__Satisfactorio__"
+modpath = modname.."."
+modfiles = modname.."/"
+constants = modfiles.."constants/"
+graphics = modfiles.."graphics/"
+prototypes = modfiles.."prototypes/"
+scripts = modfiles.."scripts/"
+
+empty_graphic = {
+	filename = graphics.."empty.png",
+	width = 32,
+	height = 32
+}
+function makeRotatedSprite(name, width, height, shift)
+	local graphic = {
+		north = {
+			filename = graphics.."placeholders/"..name.."-n.png",
+			size = {width,height}
+		},
+		east = {
+			filename = graphics.."placeholders/"..name.."-e.png",
+			size = {height,width}
+		},
+		south = {
+			filename = graphics.."placeholders/"..name.."-s.png",
+			size = {width,height}
+		},
+		west = {
+			filename = graphics.."placeholders/"..name.."-w.png",
+			size = {height,width}
+		}
+	}
+	if shift then
+		graphic.north.shift = {shift[1],shift[2]}
+		graphic.east.shift = {-shift[2],shift[1]}
+		graphic.south.shift = {-shift[1],-shift[2]}
+		graphic.west.shift = {shift[2],-shift[1]}
+	end
+	return graphic
+end
+
+basesounds = require("__base__/prototypes/entity/sounds")
+function copySoundsFrom(entity)
+	return {
+		open_sound = table.deepcopy(entity.open_sound),
+		close_sound = table.deepcopy(entity.close_sound),
+		working_sound = table.deepcopy(entity.working_sound)
+	}
+end
+
+function copyToHandcraft(recipe, hammers, is_equipment)
+	local category = is_equipment and "equipment" or "craft-bench"
+	local copy = table.deepcopy(recipe)
+	copy.name = copy.name.."-manual"
+	copy.energy_required = hammers/4
+	copy.hide_from_player_crafting = true
+	copy.category = category
+	data:extend{copy}
+end
+
+function makeBuildingRecipe(recipe)
+	recipe.type = "recipe"
+	recipe.energy_required = 1
+	recipe.category = "building"
+	recipe.allow_intermediates = false
+	recipe.allow_as_intermediate = false
+	recipe.hide_from_stats = true
+	recipe.enabled = false
+	return recipe
+end
+
 foundation_layer = nil
+train_platform_layer = nil
+
 data:extend({
 	{type="ammo-category",name="rebar"},
+	{type="ammo-category",name="rifle"},
 	{type="ammo-category",name="infinite"},
 	{type="ammo-category",name="solid-biofuel"}, -- for the Chainsaw
 	{type="fuel-category",name="carbon"}, -- coal, compacted coal, coke
-	{type="fuel-category",name="liquid-fuel"}, -- liquid biofuel, fuel, turbofuel
-	{type="fuel-category",name="packaged-fuel"}, -- packaged fuel
-	{type="fuel-category",name="packaged-alt-fuel"}, -- packaged turbofuel, packaged heavy oil residue, packaged oil
+	{type="fuel-category",name="packaged-fuel"}, -- packaged fuel, packaged turbofuel, packaged heavy oil residue, packaged oil
 	{type="fuel-category",name="battery"}, -- batteries
 	{type="resource-category",name="solid"},
 	{type="resource-category",name="water"},
@@ -33,6 +104,7 @@ data:extend({
 	{type="recipe-category",name="hub-progressing"},
 	{type="recipe-category",name="space-elevator"},
 	{type="recipe-category",name="mam"},
+	{type="recipe-category",name="awesome-sink"},
 	{type="recipe-category",name="awesome-shop"},
 	{type="recipe-category",name="coal-generator"},
 	{type="recipe-category",name="fuel-generator"},
@@ -102,74 +174,30 @@ for _,key in pairs({"logistics","production","intermediate-products","combat"}) 
 	igroup.icon_mipmaps = 1
 end
 table.insert(data.raw['god-controller'].default.crafting_categories, "building")
-table.insert(data.raw['god-controller'].default.crafting_categories, "unbuilding")
 table.insert(data.raw['god-controller'].default.mining_categories, "solid")
 data.raw['god-controller'].default.mining_speed = 2
 
 require("prototypes.fonts")
-require("prototypes.vanilla-cleanup")
 require("prototypes.character")
 require("prototypes.creatures")
 require("prototypes.resources")
 require("prototypes.resource-scanner")
 require("prototypes.materials")
+require("prototypes.constructors")
 require("prototypes.special")
 require("prototypes.power")
 require("prototypes.logistics")
 require("prototypes.organisation")
 require("prototypes.miners")
-require("prototypes.constructors")
 require("prototypes.vehicles")
 require("prototypes.weapons")
 require("prototypes.equipment")
 require("prototypes.radioactivity")
 require("prototypes.technology")
 require("prototypes.map-tweaks")
+require("prototypes.vanilla-cleanup")
 require("prototypes.tips-and-tricks")
-local find_logo = [[
-	local logo = game.surfaces.nauvis.find_entities_filtered{name="factorio-logo-11tiles",limit=1}[1]
-	game.camera_position = {logo.position.x, logo.position.y+9.75}
-	game.camera_zoom = 1
-	game.tick_paused = false
-	game.surfaces.nauvis.daytime = 0
-]]
-data.raw['utility-constants'].default.main_menu_simulations = {
-	refinery = {
-		checkboard = false,
-		save = "__Satisfactorio__/menu-simulations/satis-demo-refinery.zip",
-		length = 30 * 60,
-		init = find_logo,
-		update = [[]]
-	},
-	coal_power = {
-		checkboard = false,
-		save = "__Satisfactorio__/menu-simulations/satis-demo-coal-power.zip",
-		length = 30 * 60,
-		init = find_logo,
-		update = [[]]
-	},
-	self_driving = {
-		checkboard = false,
-		save = "__Satisfactorio__/menu-simulations/satis-demo-self-driving.zip",
-		length = 30 * 60,
-		init = find_logo,
-		update = [[]]
-	},
-	space_elevator = {
-		checkboard = false,
-		save = "__Satisfactorio__/menu-simulations/satis-demo-space-elevator.zip",
-		length = 30 * 60,
-		init = find_logo,
-		update = [[]]
-	},
-	drones = {
-		checkboard = false,
-		save = "__Satisfactorio__/menu-simulations/satis-demo-drones.zip",
-		length = 30 * 60,
-		init = find_logo,
-		update = [[]]
-	}
-}
+require("prototypes.menu-sims")
 
 require(modpath.."compatibility")
 
@@ -227,17 +255,6 @@ data:extend({
 		height = 40,
 		mipmap_count = 2,
 		name = "tooltip-category-packaged-fuel",
-		priority = "extra-high-no-scale",
-		scale = 0.5,
-		type = "sprite",
-		width = 40
-	},
-	{
-		filename = "__Satisfactorio__/graphics/icons/tooltip-category-packaged-fuel.png",
-		flags = {"gui-icon"},
-		height = 40,
-		mipmap_count = 2,
-		name = "tooltip-category-packaged-alt-fuel",
 		priority = "extra-high-no-scale",
 		scale = 0.5,
 		type = "sprite",

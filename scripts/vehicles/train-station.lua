@@ -16,6 +16,8 @@ local trainstop = "train-stop"
 local stop_pos = {2,-2.5}
 local storage_pos = {3.5,0}
 local tank_pos = {4.5,0}
+local walkable = "platform-walkable"
+local collision = "platform-collision"
 
 local script_data = {
 	stations = {},
@@ -184,14 +186,14 @@ local function onBuilt(event)
 		entity.rotatable = false
 
 		entity.surface.create_entity{
-			name = entity.name.."-walkable", -- left side in direction of travel is walkable
+			name = walkable, -- left side in direction of travel is walkable
 			position = math2d.position.add(entity.position, math2d.position.rotate_vector({-4,0}, entity.direction*45)),
 			direction = entity.direction,
 			force = entity.force,
 			raise_built = true
 		}
 		entity.surface.create_entity{
-			name = (entity.name == station or entity.name == empty) and entity.name.."-walkable" or entity.name.."-collision", -- right side is blocked by freight
+			name = (entity.name == station or entity.name == empty) and walkable or collision, -- right side is blocked by freight
 			position = math2d.position.add(entity.position, math2d.position.rotate_vector({4,0}, entity.direction*45)),
 			direction = entity.direction,
 			force = entity.force,
@@ -214,14 +216,14 @@ local function onRemoved(event)
 	if entity.name == station or entity.name == freight or entity.name == fluid or entity.name == empty then
 		local names
 		if entity.name == station then
-			names = {entity.name.."-walkable", trainstop}
+			names = {walkable, trainstop}
 		elseif entity.name == freight then
-			names = {entity.name.."-walkable", entity.name.."-collision", entity.name.."-box"}
+			names = {walkable, collision, entity.name.."-box"}
 			io.remove(entity, event)
 		elseif entity.name == fluid then
-			names = {entity.name.."-walkable", entity.name.."-collision", entity.name.."-tank", entity.name.."-pump"}
+			names = {walkable, collision, entity.name.."-tank"}
 		else
-			names = {entity.name.."-walkable"}
+			names = {walkable}
 		end
 
 		local blocks = entity.surface.find_entities_filtered{

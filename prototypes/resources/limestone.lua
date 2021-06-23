@@ -1,7 +1,6 @@
 -- tweak vanilla Stone (and rename)
-local name = "limestone"
-local basename = "stone"
-local ore = data.raw.resource[basename]
+local name = "stone"
+local ore = data.raw.resource[name]
 ore.icon = "__Satisfactorio__/graphics/icons/"..name..".png"
 ore.icon_mipmaps = 0
 ore.autoplace = nil
@@ -21,7 +20,7 @@ ore.selection_box = {{-1.5,-1.5},{1.5,1.5}}
 ore.stages.sheet.scale = 3
 ore.stages.sheet.hr_version.scale = 1.5
 
-local item = data.raw.item[basename]
+local item = data.raw.item[name]
 item.icon = ore.icon
 item.icon_mipmaps = 0
 item.stack_size = 100
@@ -29,5 +28,5 @@ item.pictures = nil
 item.subgroup = "mineral-resource"
 item.order = "c"
 
-local autoplace = data.raw['autoplace-control'][basename]
+local autoplace = data.raw['autoplace-control'][name]
 autoplace.order = "c"

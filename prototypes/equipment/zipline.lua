@@ -5,7 +5,7 @@ local item = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	infinite = true,
-	order = "s-b["..name.."]",
+	order = "c["..name.."]",
 	subgroup = "armor",
 	stack_size = 1
 }
@@ -59,7 +59,7 @@ local recipe = {
 	ingredients = {
 		{"xeno-zapper",1},
 		{"quickwire",30},
-		{"iron-stick",3},
+		{"iron-rod",3},
 		{"copper-cable",10}
 	},
 	result = name,

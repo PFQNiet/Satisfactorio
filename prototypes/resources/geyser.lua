@@ -39,6 +39,7 @@ data:extend(
 		minimum = 1,
 		normal = 60,
 		map_grid = false,
+		highlight = true,
 		resource_patch_search_radius = 10
 	},
 	{

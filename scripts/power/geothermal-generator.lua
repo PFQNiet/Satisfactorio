@@ -33,6 +33,7 @@ local function onRemoved(event)
 	local entity = event.entity
 	if not entity or not entity.valid then return end
 	if entity.name == gen then
+		script_data[entity.unit_number%60][entity.unit_number] = nil
 		powertrip.unregisterGenerator(entity)
 	end
 end

@@ -1,5 +1,5 @@
 local loot = {
-	["iron-gear-wheel"] = {
+	["screw"] = {
 		probability = 0.8,
 		amount = {40,80}
 	},
@@ -31,7 +31,7 @@ local loot = {
 		probability = 0.3,
 		amount = {15,30}
 	},
-	["electronic-circuit"] = {
+	["circuit-board"] = {
 		probability = 0.3,
 		amount = {25,50}
 	},
@@ -39,11 +39,11 @@ local loot = {
 		probability = 0.2,
 		amount = {10,20}
 	},
-	["processing-unit"] = { -- ai limiter
+	["ai-limiter"] = { -- ai limiter
 		probability = 0.15,
 		amount = {8,16}
 	},
-	["advanced-circuit"] = { -- high speed connector
+	["high-speed-connector"] = { -- high speed connector
 		probability = 0.1,
 		amount = {8,16}
 	},
@@ -74,20 +74,20 @@ local reqs = {
 	items = {
 		["motor"] = 80,
 		["rotor"] = 60,
-		["iron-gear-wheel"] = 50,
+		["screw"] = 50,
 		["encased-industrial-beam"] = 40,
 		["stator"] = 40,
 		["steel-pipe"] = 30,
-		["steel-plate"] = 30,
+		["steel-beam"] = 30,
 		["quickwire"] = 20,
 		["modular-frame"] = 20,
 		["crystal-oscillator"] = 20,
-		["electronic-circuit"] = 20,
+		["circuit-board"] = 20,
 		["heavy-modular-frame"] = 20,
 		["turbo-motor"] = 15,
-		["processing-unit"] = 15,
+		["ai-limiter"] = 15,
 		["rubber"] = 15,
-		["advanced-circuit"] = 15,
+		["high-speed-connector"] = 15,
 		["heat-sink"] = 15,
 		["computer"] = 15,
 		["black-powder"] = 10,

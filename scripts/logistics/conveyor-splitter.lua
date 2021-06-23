@@ -2,7 +2,7 @@ local io = require(modpath.."scripts.lualib.input-output")
 local getitems = require(modpath.."scripts.lualib.get-items-from")
 
 local splitter = "conveyor-splitter"
-local buffer = "conveyor-splitter-box"
+local buffer = "merger-splitter-box"
 
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity

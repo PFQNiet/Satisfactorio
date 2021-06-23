@@ -1,16 +1,16 @@
--- Hard Drive item used for research
-data:extend({
+data:extend{
+	-- Hard Drive item used for submission, and as a fake item on the individual tech's consumption (the real tech uses mam-hard-drive from technology.lua)
 	{
 		type = "tool",
 		name = "hard-drive",
 		subgroup = "special",
 		order = "z[hard-drive]",
 		stack_size = 100,
-		icon = "__Satisfactorio__/graphics/icons/hard-drive.png",
+		icon = graphics.."icons/hard-drive.png",
 		icon_size = 64,
 		infinite = true
 	}
-})
+}
 
 local recipes = require(modpath.."constants.alt-recipes")
 for i,r in pairs(recipes) do
@@ -19,8 +19,8 @@ for i,r in pairs(recipes) do
 	r.icons = {
 		{icon = product.icon, icon_size = 64}
 	}
-	for i,icon in pairs(icons) do
-		table.insert(r.icons, {icon = "__Satisfactorio__/graphics/icons/"..icon..".png", icon_size = 64, scale = 0.25, shift = {-8, 8-(i-1)*8}})
+	for n,icon in pairs(icons) do
+		table.insert(r.icons, {icon = graphics.."icons/"..icon..".png", icon_size = 64, scale = 0.25, shift = {-8, 8-(n-1)*8}})
 	end
 	r.type = "recipe"
 	r.localised_name = {"recipe-name."..r.name}
@@ -32,7 +32,8 @@ data:extend(recipes)
 
 local alts = require(modpath.."constants.alt-recipes-prereqs") -- dict [base name] => {prerequisites}
 for base,prereq in pairs(alts) do
-	table.insert(prereq,"mam-hard-drive")
+	-- table.insert(prereq,"mam-hard-drive")
+	if #prereq == 0 then prereq = {"hub-tier1-field-research"} end
 	local recipe = data.raw.recipe[base]
 	local product = recipe and (data.raw.item[recipe.main_product or recipe.result] or data.raw.capsule[recipe.result] or data.raw.fluid[recipe.main_product]) or nil
 	local order = "m-x-"..(product and data.raw['item-subgroup'][product.subgroup].order.."-"..product.order or "z")
@@ -40,6 +41,8 @@ for base,prereq in pairs(alts) do
 		{
 			type = "technology",
 			name = "alt-"..base,
+			localised_name = recipe and {"recipe-name."..recipe.name} or {"technology-name.alt-"..base},
+			localised_description = {"technology-description.hard-drive"},
 			order = order,
 			icons = {
 				{icon = "__Satisfactorio__/graphics/technology/mam/hard-drive.png", icon_size = 256},
@@ -57,8 +60,7 @@ for base,prereq in pairs(alts) do
 				recipe
 					and {type="unlock-recipe",recipe=base}
 					or {type="character-inventory-slots-bonus",modifier=6,use_icon_overlay_constant=false}
-			},
-			-- hidden = true -- avoid cluttering tech screen?
+			}
 		}
 	})
 end
@@ -67,3 +69,5 @@ table.insert(data.raw.technology['alt-turbofuel'].effects, {type="unlock-recipe"
 table.insert(data.raw.technology['alt-turbofuel'].effects, {type="unlock-recipe",recipe="unpack-turbofuel"})
 table.insert(data.raw.technology['alt-turbo-heavy-fuel'].effects, {type="unlock-recipe",recipe="packaged-turbofuel"})
 table.insert(data.raw.technology['alt-turbo-heavy-fuel'].effects, {type="unlock-recipe",recipe="unpack-turbofuel"})
+table.insert(data.raw.technology['alt-turbo-blend-fuel'].effects, {type="unlock-recipe",recipe="packaged-turbofuel"})
+table.insert(data.raw.technology['alt-turbo-blend-fuel'].effects, {type="unlock-recipe",recipe="unpack-turbofuel"})

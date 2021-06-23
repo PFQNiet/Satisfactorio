@@ -1,5 +1,5 @@
 local name = "uranium-waste"
-local ingot = {
+local item = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	name = name,
@@ -9,4 +9,4 @@ local ingot = {
 	type = "item"
 }
 
-data:extend({ingot})
+data:extend{item}

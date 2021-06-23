@@ -1,5 +1,5 @@
 local name = "plutonium-fuel-rod"
-local ingot = {
+local item = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	name = name,
@@ -11,20 +11,20 @@ local ingot = {
 	type = "item"
 }
 
-local ingredients = {
-	{"encased-plutonium-cell",30},
-	{"steel-plate",18},
-	{"electromagnetic-control-rod",6},
-	{"heat-sink",10}
-}
-local ingotrecipe = { -- in Manufacturer
+local recipe = {
 	name = name,
 	type = "recipe",
-	ingredients = ingredients,
+	ingredients = {
+		{"encased-plutonium-cell",30},
+		{"steel-beam",18},
+		{"electromagnetic-control-rod",6},
+		{"heat-sink",10}
+	},
 	result = name,
 	energy_required = 240,
 	category = "manufacturing",
 	enabled = false
 }
+-- no handcrafting
 
-data:extend({ingot,ingotrecipe})
+data:extend{item,recipe}

@@ -50,7 +50,7 @@ local function onRemoved(event)
 end
 
 local WASTE = {
-	["nuclear-fuel"] = {
+	["uranium-fuel-rod"] = {
 		name = "uranium-waste",
 		amount = 6 -- seconds per waste
 	},

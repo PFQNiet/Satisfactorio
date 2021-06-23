@@ -3,7 +3,7 @@ local register = require(modpath.."scripts.organisation.containers").register
 local io = require(modpath.."scripts.lualib.input-output")
 local getitems = require(modpath.."scripts.lualib.get-items-from")
 
-local box = "iron-chest"
+local box = "storage-container"
 local fakebox = "storage-container-placeholder"
 
 local function onBuilt(event)

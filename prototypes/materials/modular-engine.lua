@@ -1,5 +1,5 @@
 local name = "modular-engine"
-local plate = {
+local item = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	name = name,
@@ -9,19 +9,19 @@ local plate = {
 	type = "item"
 }
 
-local ingredients = {
-	{"motor",2},
-	{"rubber",15},
-	{"smart-plating",2}
-}
-local platerecipe = { -- in Manufacturer
+local recipe = {
 	name = name,
 	type = "recipe",
-	ingredients = ingredients,
+	ingredients = {
+		{"motor",2},
+		{"rubber",15},
+		{"smart-plating",2}
+	},
 	result = name,
 	energy_required = 60,
 	category = "manufacturing",
 	enabled = false
 }
+-- no handcrafting
 
-data:extend({plate,platerecipe})
+data:extend{item,recipe}

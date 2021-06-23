@@ -1,5 +1,5 @@
 local name = "rubber"
-local rubber = {
+local item = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	name = name,
@@ -12,7 +12,7 @@ local rubber = {
 local ingredients = {
 	{type="fluid",name="crude-oil",amount=3}
 }
-local rubberrecipe = { -- in Refinery
+local recipe1 = {
 	name = name,
 	type = "recipe",
 	ingredients = ingredients,
@@ -23,10 +23,10 @@ local rubberrecipe = { -- in Refinery
 	main_product = name,
 	energy_required = 6,
 	category = "refining",
-	order = rubber.order.."-a",
+	order = item.order.."-a",
 	enabled = false
 }
-local residualrecipe = {
+local recipe2 = {
 	name = "residual-"..name,
 	localised_name = {"recipe-name.residual-"..name},
 	type = "recipe",
@@ -41,9 +41,9 @@ local residualrecipe = {
 		{ icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64 },
 		{ icon = "__Satisfactorio__/graphics/icons/polymer-resin.png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
 	},
-	order = rubber.order.."-b",
+	order = item.order.."-b",
 	allow_decomposition = false,
 	enabled = false
 }
 
-data:extend({rubber,rubberrecipe,residualrecipe})
+data:extend{item,recipe1,recipe2}

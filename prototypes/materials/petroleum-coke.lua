@@ -11,17 +11,17 @@ local item = {
 	fuel_value = "180MJ"
 }
 
-local ingredients = {
-	{type="fluid",name="heavy-oil",amount=4}
-}
 local recipe = { -- in Refinery
 	name = name,
 	type = "recipe",
-	ingredients = ingredients,
+	ingredients = {
+		{type="fluid",name="heavy-oil",amount=4}
+	},
 	result = name,
 	result_count = 12,
 	energy_required = 6,
 	category = "refining",
 	enabled = false
 }
-data:extend({item, recipe})
+
+data:extend{item, recipe}

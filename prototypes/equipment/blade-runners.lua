@@ -1,91 +1,55 @@
 local name = "blade-runners"
-local item = {
-	type = "armor",
+local equipment = makeEquipment{
 	name = name,
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
-	icon_size = 64,
-	infinite = true,
-	order = "s-b["..name.."]",
 	subgroup = "armor",
-	stack_size = 1,
-	equipment_grid = name
-}
-local grid = {
-	type = "equipment-grid",
-	name = name,
-	locked = true,
-	width = 2,
-	height = 1,
-	equipment_categories = {name}
-}
-local category = {
-	type = "equipment-category",
-	name = name
-}
--- adjust Exoskeleton
-data.raw.recipe['exoskeleton-equipment'] = {
-	name = "exoskeleton-equipment",
-	type = "recipe",
+	order = "b",
+	type = "movement-bonus-equipment",
+	energy_source = {
+		type = "electric",
+		usage_priority = "secondary-input"
+	},
+	properties = {
+		energy_consumption = "1MW",
+		movement_bonus = 0.5
+	},
 	ingredients = {
 		{"quickwire",50},
 		{"modular-frame",3},
 		{"rotor",3}
 	},
-	result = name,
-	energy_required = 20/4,
-	category = "equipment",
-	enabled = false
+	craft_time = 20/4
 }
-local exoitem = data.raw.item['exoskeleton-equipment']
-exoitem.icon = "__Satisfactorio__/graphics/icons/"..name..".png"
-exoitem.icon_mipmaps = 0
-exoitem.stack_size = 1
-exoitem.flags = {"hidden"}
-local exo = data.raw['movement-bonus-equipment']['exoskeleton-equipment']
-exo.categories = {name}
-exo.movement_bonus = 0.5
-exo.shape = {
-	width = 1,
-	height = 1,
-	type = "full"
-}
-exo.sprite = {
-	filename = "__Satisfactorio__/graphics/icons/"..name..".png",
-	size = {64,64}
-}
-exo.energy_consumption = "1MW"
 
-data:extend{item, grid, category}
-
-data:extend{
-	{
-		type = "item",
-		name = name.."-power",
-		localised_name = {"entity-name.generator-buffer",{"item-name."..name}},
-		icon = "__Satisfactorio__/graphics/icons/battery.png",
-		icon_size = 64,
-		stack_size = 1,
-		flags = {"hidden"},
-		place_as_equipment_result = name.."-power"
+-- create a fake generator item to power the exoskeleton
+equipment.grid.width = 2
+local fakegenitem = {
+	type = "item",
+	name = name.."-power",
+	localised_name = {"entity-name.generator-buffer",{"item-name."..name}},
+	icon = graphics.."icons/battery.png",
+	icon_size = 64,
+	stack_size = 1,
+	flags = {"hidden"},
+	place_as_equipment_result = name.."-power"
+}
+local fakegen = {
+	type = "generator-equipment",
+	name = name.."-power",
+	localised_name = {"entity-name.generator-buffer",{"item-name."..name}},
+	sprite = {
+		filename = graphics.."icons/battery.png",
+		size = {64,64}
 	},
-	{
-		type = "generator-equipment",
-		name = name.."-power",
-		localised_name = {"entity-name.generator-buffer",{"item-name."..name}},
-		sprite = {
-			filename = "__Satisfactorio__/graphics/icons/battery.png",
-			size = {64,64}
-		},
-		categories = {name},
-		energy_source = {
-			type = "electric",
-			usage_priority = "primary-output"
-		},
-		power = "1MW",
-		shape = {
-			width = 1,
-			height = 1,
-			type = "full"
-		}
+	categories = {name},
+	energy_source = {
+		type = "electric",
+		usage_priority = "primary-output"
+	},
+	power = "1MW",
+	shape = {
+		width = 1,
+		height = 1,
+		type = "full"
 	}
 }
+data:extend{fakegenitem, fakegen}

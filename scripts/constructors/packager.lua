@@ -6,6 +6,7 @@ local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not entity or not entity.valid then return end
 	if entity.name == packager then
+		entity.rotatable = false
 		io.addInput(entity, {1,2})
 		io.addOutput(entity, {1,-2})
 	end

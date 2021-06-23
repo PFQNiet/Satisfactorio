@@ -3,7 +3,7 @@ local io = require(modpath.."scripts.lualib.input-output")
 local getitems = require(modpath.."scripts.lualib.get-items-from")
 
 local splitter = "smart-splitter"
-local buffer = "smart-splitter-box"
+local buffer = "merger-splitter-box"
 
 local script_data = require(modpath.."scripts.logistics.splitters").data
 

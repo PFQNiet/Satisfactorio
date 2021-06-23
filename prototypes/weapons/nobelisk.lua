@@ -116,7 +116,7 @@ local onground = {
 	selectable_in_game = false
 }
 
-local recipe1 = {
+local recipe = {
 	name = name,
 	type = "recipe",
 	ingredients = {
@@ -128,21 +128,9 @@ local recipe1 = {
 	category = "assembling",
 	enabled = false
 }
-local recipe2 = {
-	name = name.."-manual",
-	type = "recipe",
-	ingredients = {
-		{"black-powder",5},
-		{"steel-pipe",10}
-	},
-	result = name,
-	energy_required = 5/4,
-	category = "equipment",
-	hide_from_player_crafting = true,
-	enabled = false
-}
+copyToHandcraft(recipe, 5, true)
 
-data:extend{capsule,projectile,sticker,onground,recipe1,recipe2}
+data:extend{capsule,projectile,sticker,onground,recipe}
 
 name = "nobelisk-detonator"
 detonator = {
@@ -181,7 +169,7 @@ detonator = {
 		}
 	}
 }
-local recipe = {
+recipe = {
 	name = name,
 	type = "recipe",
 	ingredients = {

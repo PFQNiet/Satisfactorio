@@ -1,15 +1,10 @@
 local name = "map-marker"
-local empty_sprite = {
-	filename = "__core__/graphics/empty.png",
-	width = 1,
-	height = 1
-}
 
 local beacon = {
 	type = "constant-combinator",
 	name = name,
 	activity_led_light_offsets = {{0,0},{0,0},{0,0},{0,0}},
-	activity_led_sprites = empty_sprite,
+	activity_led_sprites = empty_graphic,
 	circuit_wire_connection_points = data.raw['constant-combinator']['constant-combinator'].circuit_wire_connection_points,
 	item_slot_count = 0,
 	sprites = {
@@ -24,14 +19,8 @@ local beacon = {
 		"placeable-player",
 		"player-creation"
 	},
-	open_sound = {
-		filename = "__base__/sound/machine-open.ogg",
-		volume = 0.5
-	},
-	close_sound = {
-		filename = "__base__/sound/machine-close.ogg",
-		volume = 0.5
-	},
+	open_sound = basesounds.machine_open,
+	close_sound = basesounds.machine_close,
 	minable = {
 		mining_time = 0.5,
 		result = name
@@ -40,46 +29,30 @@ local beacon = {
 }
 
 local beaconitem = {
+	type = "item",
+	name = name,
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
-	name = name,
-	order = "e["..name.."]",
 	place_result = name,
 	stack_size = 100,
 	subgroup = "logistics-observation",
-	type = "item"
+	order = "e["..name.."]"
 }
 
-local ingredients = {
-	{"iron-plate",3},
-	{"iron-stick",1},
-	{"wire",15},
-	{"copper-cable",2}
-}
-local beaconrecipe1 = { -- by hand in Equipment Workshop
-	name = name.."-manual",
-	type = "recipe",
-	ingredients = ingredients,
-	result = name,
-	energy_required = 1,
-	category = "equipment",
-	allow_intermediates = false,
-	allow_as_intermediate = false,
-	hide_from_stats = true,
-	hide_from_player_crafting = true,
-	enabled = false
-}
-local beaconrecipe2 = { -- in Manufaturer
+local beaconrecipe = { -- in Manufacturer
 	name = name,
 	type = "recipe",
-	ingredients = ingredients,
+	ingredients = {
+		{"iron-plate",3},
+		{"iron-rod",1},
+		{"wire",15},
+		{"copper-cable",2}
+	},
 	result = name,
 	energy_required = 8,
 	category = "manufacturing",
-	allow_intermediates = false,
-	allow_as_intermediate = false,
-	hide_from_stats = true,
 	enabled = false
 }
+copyToHandcraft(beaconrecipe, 2, true)
 
-data:extend({beacon,beaconitem,beaconrecipe1,beaconrecipe2})
+data:extend({beacon,beaconitem,beaconrecipe})

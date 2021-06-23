@@ -7,6 +7,10 @@ if mods[mod] then
 	-- tweak recipe of car keys as electronic-circuit is a mid-game item
 	-- original recipe is electronic-circuit(2), copper-plate(2), iron-stick(2)
 	local recipe = data.raw.recipe['car-key']
-	recipe.ingredients[1] = {"map-marker",1}
+	recipe.ingredients = {
+		{"map-marker",1},
+		{"copper-sheet",2},
+		{"iron-rod",2}
+	}
 	recipe.category = "equipment"
 end

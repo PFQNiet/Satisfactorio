@@ -17,16 +17,16 @@ local function isValidBelt(entity)
 end
 
 local belts = {
-	["transport-belt"] = true,
-	["fast-transport-belt"] = true,
-	["express-transport-belt"] = true,
-	["turbo-transport-belt"] = true,
-	["ultimate-transport-belt"] = true,
-	["underground-belt"] = true,
-	["fast-underground-belt"] = true,
-	["express-underground-belt"] = true,
-	["turbo-underground-belt"] = true,
-	["ultimate-underground-belt"] = true
+	["conveyor-belt-mk-1"] = true,
+	["conveyor-belt-mk-2"] = true,
+	["conveyor-belt-mk-3"] = true,
+	["conveyor-belt-mk-4"] = true,
+	["conveyor-belt-mk-5"] = true,
+	["conveyor-lift-mk-1"] = true,
+	["conveyor-lift-mk-2"] = true,
+	["conveyor-lift-mk-3"] = true,
+	["conveyor-lift-mk-4"] = true,
+	["conveyor-lift-mk-5"] = true
 }
 
 local function onBuilt(event)

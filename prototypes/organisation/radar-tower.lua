@@ -1,8 +1,9 @@
 -- tweak the Radar
 local name = "radar-tower"
-local basename = "radar"
-local radar = data.raw.radar[basename]
-radar.icon = "__Satisfactorio__/graphics/icons/"..name..".png"
+local radar = table.deepcopy(data.raw.radar.radar)
+radar.name = name
+radar.minable = {mining_time = 0.5, result = name}
+radar.icon = graphics.."icons/"..name..".png"
 radar.icon_mipmaps = 0
 radar.max_health = 1
 radar.energy_per_nearby_scan = "30MJ"
@@ -10,63 +11,35 @@ radar.max_distance_of_nearby_sector_revealed = 4
 radar.energy_per_sector = "100MJ"
 radar.max_distance_of_sector_revealed = 14
 radar.energy_source.buffer_capacity = "30MW"
-radar.energy_source.input_flow_limit = "30MW"
 radar.energy_usage = "30MW"
 radar.selection_box = {{-2.5,-2.5},{2.5,2.5}}
 radar.collision_box = {{-2.2,-2.2},{2.2,2.2}}
 radar.pictures = {
-	filename = "__Satisfactorio__/graphics/placeholders/"..name..".png",
+	filename = graphics.."placeholders/"..name..".png",
 	direction_count = 1,
 	size = {160,160}
 }
 
-local radaritem = data.raw.item[basename]
-radaritem.icon = radar.icon
-radaritem.icon_mipmaps = 0
-radaritem.stack_size = 50
-radaritem.subgroup = "logistics-observation"
+local radaritem = {
+	type = "item",
+	name = name,
+	icon = graphics.."icons/"..name..".png",
+	icon_size = 64,
+	place_result = name,
+	stack_size = 50,
+	subgroup = "logistics-observation",
+	order = "b["..name.."]"
+}
 
-local ingredients = {
-	{"heavy-modular-frame",30},
-	{"crystal-oscillator",30},
-	{"map-marker",20},
-	{"copper-cable",100}
-}
-local radarrecipe = {
-	name = basename,
-	type = "recipe",
-	ingredients = ingredients,
-	result = basename,
-	energy_required = 1,
-	category = "building",
-	allow_intermediates = false,
-	allow_as_intermediate = false,
-	hide_from_stats = true,
-	enabled = false
-}
-local _group = data.raw['item-subgroup'][radaritem.subgroup]
-local radarrecipe_undo = {
-	name = basename.."-undo",
-	localised_name = {"recipe-name.dismantle",{"entity-name."..basename}},
-	type = "recipe",
+local radarrecipe = makeBuildingRecipe{
+	name = name,
 	ingredients = {
-		{basename,1}
+		{"heavy-modular-frame",30},
+		{"crystal-oscillator",30},
+		{"map-marker",20},
+		{"copper-cable",100}
 	},
-	results = ingredients,
-	energy_required = 1,
-	category = "unbuilding",
-	subgroup = _group.group .. "-undo",
-	order = _group.order .. "-" .. radaritem.order,
-	allow_decomposition = false,
-	allow_intermediates = false,
-	allow_as_intermediate = false,
-	hide_from_stats = true,
-	icons = {
-		{icon = "__base__/graphics/icons/deconstruction-planner.png", icon_size = 64},
-		{icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64}
-	},
-	enabled = false
+	result = name
 }
 
-data.raw.recipe[basename] = radarrecipe
-data:extend({radarrecipe_undo})
+data:extend{radar, radaritem, radarrecipe}

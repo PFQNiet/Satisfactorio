@@ -16,11 +16,13 @@ if mods[mod] then
 		tech.enabled = false
 		tech.hidden = true
 		tech.prerequisites = {}
+		tech.effects = {}
 	end
 	local function hideItem(k)
 		local item = data.raw.item[k]
 		if not item.flags then item.flags = {} end
 		table.insert(item.flags,"hidden")
+		data.raw.recipe[k] = nil
 	end
 
 	-- add the factory buildings to "Base Building" milestone, however the recipes will restrict you to smaller buildings until later tiers
@@ -54,158 +56,54 @@ if mods[mod] then
 	-- recipe changes
 	local building = data.raw['storage-tank']['factory-1']
 	building.max_health = 1
-	local item = data.raw.item[building.name]
-	local recipe = data.raw.recipe['factory-1']
-	recipe.energy_required = 10
-	recipe.category = "building"
-	recipe.ingredients = {{"concrete",250},{"iron-plate",250}}
-	local _group = data.raw['item-subgroup'][item.subgroup]
-	local undo = {
-		type = "recipe",
-		name = item.name.."-undo",
-		localised_name = {"recipe-name.dismantle",{"entity-name."..item.name}},
-		localised_description = {"mod-compatibility.factorissimo2-cannot-dismantle-after-placing"},
-		ingredients = {{building.name,1}},
-		results = recipe.ingredients,
-		energy_required = 10,
-		category = "unbuilding",
-		subgroup = _group.group.."-undo",
-		order = _group.order.."-"..item.order,
-		allow_decomposition = false,
-		allow_intermediates = false,
-		allow_as_intermediate = false,
-		hide_from_stats = true,
-		icons = {
-			{icon = "__base__/graphics/icons/deconstruction-planner.png", icon_size = 64},
-			{icon = item.icon, icon_size = item.icon_size}
+	data.raw.recipe['factory-1'] = makeBuildingRecipe{
+		name = "factory-1",
+		ingredients = {
+			{"concrete",250},
+			{"iron-plate",200}
 		},
-		enabled = false
+		result = "factory-1"
 	}
-	data:extend{undo}
 
 	building = data.raw['storage-tank']['factory-2']
 	building.max_health = 1
-	item = data.raw.item[building.name]
-	recipe = data.raw.recipe['factory-2']
-	recipe.energy_required = 15
-	recipe.category = "building"
-	recipe.ingredients = {{"concrete",500},{"steel-plate",250}}
-	_group = data.raw['item-subgroup'][data.raw.item[item.name].subgroup]
-	undo = {
-		type = "recipe",
-		name = item.name.."-undo",
-		localised_name = {"recipe-name.dismantle",{"entity-name."..item.name}},
-		localised_description = {"mod-compatibility.factorissimo2-cannot-dismantle-after-placing"},
-		ingredients = {{item.name,1}},
-		results = recipe.ingredients,
-		energy_required = 15,
-		category = "unbuilding",
-		subgroup = _group.group.."-undo",
-		order = _group.order.."-"..item.order,
-		allow_decomposition = false,
-		allow_intermediates = false,
-		allow_as_intermediate = false,
-		hide_from_stats = true,
-		icons = {
-			{icon = "__base__/graphics/icons/deconstruction-planner.png", icon_size = 64},
-			{icon = item.icon, icon_size = item.icon_size}
+	data.raw.recipe['factory-2'] = makeBuildingRecipe{
+		name = "factory-2",
+		ingredients = {
+			{"concrete",500},
+			{"steel-beam",200}
 		},
-		enabled = false
+		result = "factory-2"
 	}
-	data:extend{undo}
 
 	building = data.raw['storage-tank']['factory-3']
 	building.max_health = 1
-	item = data.raw.item[building.name]
-	recipe = data.raw.recipe['factory-3']
-	recipe.energy_required = 20
-	recipe.category = "building"
-	recipe.ingredients = {{"concrete",1000},{"alclad-aluminium-sheet",500}}
-	_group = data.raw['item-subgroup'][data.raw.item[item.name].subgroup]
-	undo = {
-		type = "recipe",
-		name = item.name.."-undo",
-		localised_name = {"recipe-name.dismantle",{"entity-name."..item.name}},
-		localised_description = {"mod-compatibility.factorissimo2-cannot-dismantle-after-placing"},
-		ingredients = {{item.name,1}},
-		results = recipe.ingredients,
-		energy_required = 20,
-		category = "unbuilding",
-		subgroup = _group.group.."-undo",
-		order = _group.order.."-"..item.order,
-		allow_decomposition = false,
-		allow_intermediates = false,
-		allow_as_intermediate = false,
-		hide_from_stats = true,
-		icons = {
-			{icon = "__base__/graphics/icons/deconstruction-planner.png", icon_size = 64},
-			{icon = item.icon, icon_size = item.icon_size}
+	data.raw.recipe['factory-3'] = makeBuildingRecipe{
+		name = "factory-3",
+		ingredients = {
+			{"concrete",1000},
+			{"alclad-aluminium-sheet",400}
 		},
-		enabled = false
+		result = "factory-3"
 	}
-	data:extend{undo}
 
 	building = data.raw['storage-tank']['factory-input-pipe']
 	building.max_health = 1
 	building.fluid_box.base_area = 0.1
-	item = data.raw.item[building.name]
-	recipe = data.raw.recipe['factory-input-pipe']
-	recipe.energy_required = 2
-	recipe.category = "building"
-	recipe.ingredients = {{"copper-plate",2}}
-	_group = data.raw['item-subgroup'][data.raw.item[item.name].subgroup]
-	undo = {
-		type = "recipe",
-		name = item.name.."-undo",
-		localised_name = {"recipe-name.dismantle",{"entity-name."..item.name}},
-		ingredients = {{item.name,1}},
-		results = recipe.ingredients,
-		energy_required = 2,
-		category = "unbuilding",
-		subgroup = _group.group.."-undo",
-		order = _group.order.."-"..item.order,
-		allow_decomposition = false,
-		allow_intermediates = false,
-		allow_as_intermediate = false,
-		hide_from_stats = true,
-		icons = {
-			{icon = "__base__/graphics/icons/deconstruction-planner.png", icon_size = 64},
-			{icon = item.icon, icon_size = item.icon_size}
-		},
-		enabled = false
+	data.raw.recipe['factory-input-pipe'] = makeBuildingRecipe{
+		name = "factory-input-pipe",
+		ingredients = {{"copper-sheet",2}},
+		result = "factory-input-pipe"
 	}
-	data:extend{undo}
-	
+
 	building = data.raw['storage-tank']['factory-output-pipe']
 	building.max_health = 1
 	building.fluid_box.base_area = 0.1
-	item = data.raw.item[building.name]
-	recipe = data.raw.recipe['factory-output-pipe']
-	recipe.energy_required = 2
-	recipe.category = "building"
-	recipe.ingredients = {{"copper-plate",2}}
-	_group = data.raw['item-subgroup'][data.raw.item[item.name].subgroup]
-	undo = {
-		type = "recipe",
-		name = item.name.."-undo",
-		localised_name = {"recipe-name.dismantle",{"entity-name."..item.name}},
-		ingredients = {{item.name,1}},
-		results = recipe.ingredients,
-		energy_required = 2,
-		category = "unbuilding",
-		subgroup = _group.group.."-undo",
-		order = _group.order.."-"..item.order,
-		allow_decomposition = false,
-		allow_intermediates = false,
-		allow_as_intermediate = false,
-		hide_from_stats = true,
-		icons = {
-			{icon = "__base__/graphics/icons/deconstruction-planner.png", icon_size = 64},
-			{icon = item.icon, icon_size = item.icon_size}
-		},
-		enabled = false
+	data.raw.recipe['factory-output-pipe'] = makeBuildingRecipe{
+		name = "factory-output-pipe",
+		ingredients = {{"copper-sheet",2}},
+		result = "factory-output-pipe"
 	}
-	data:extend{undo}
 
 	-- hide circuit in/output and requester
 	hideItem("factory-circuit-input")

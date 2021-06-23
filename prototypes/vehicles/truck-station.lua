@@ -8,12 +8,8 @@
 -- The storage part can just find_empty_stack() and just transfer a stack from the storage to the car or vice-versa
 
 local name = "truck-station"
-local empty_sprite = {
-	filename = "__core__/graphics/empty.png",
-	width = 1,
-	height = 1
-}
 
+local sounds = copySoundsFrom(data.raw.container["steel-chest"])
 local base = {
 	type = "electric-energy-interface",
 	name = name,
@@ -25,24 +21,7 @@ local base = {
 		drain = "0W"
 	},
 	energy_usage = "20MW",
-	pictures = {
-		north = {
-			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-n.png",
-			size = {352,256}
-		},
-		east = {
-			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-e.png",
-			size = {256,352}
-		},
-		south = {
-			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-s.png",
-			size = {352,256}
-		},
-		west = {
-			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-w.png",
-			size = {256,352}
-		}
-	},
+	pictures = makeRotatedSprite(name, 352, 256),
 	radius_visualisation_specification = {
 		sprite = {
 			filename = "__Satisfactorio__/graphics/particles/"..name.."-zone.png",
@@ -63,76 +42,45 @@ local base = {
 		mining_time = 0.5,
 		result = name
 	},
-	open_sound = {
-		filename = "__base__/sound/metallic-chest-open.ogg",
-		volume = 0.5
-	},
-	close_sound = {
-		filename = "__base__/sound/metallic-chest-close.ogg",
-		volume = 0.5
-	},
-	selection_box = {{-5.5,-4},{5.5,4}},
-	selection_priority = 40
+	open_sound = sounds.open_sound,
+	close_sound = sounds.close_sound,
+	selection_box = {{-5.5,-4},{5.5,4}}
 }
 
 local storage = {
+	type = "container",
+	name = name.."-box",
+	localised_name = {"entity-name."..name},
+	selection_box = {{-3.5,-3.5},{3.5,3.5}},
+	selectable_in_game = false,
 	collision_box = {{-3.2,-3.2},{3.2,3.2}},
-	enable_inventory_bar = false,
-	flags = {
-		"not-on-map"
-	},
-	open_sound = {
-		filename = "__base__/sound/metallic-chest-open.ogg",
-		volume = 0.5
-	},
-	close_sound = {
-		filename = "__base__/sound/metallic-chest-close.ogg",
-		volume = 0.5
-	},
+	flags = {"not-on-map"},
+	open_sound = sounds.open_sound,
+	close_sound = sounds.close_sound,
 	icon = base.icon,
 	icon_size = base.icon_size,
 	inventory_size = 48,
-	max_health = 1,
-	minable = {
-		mining_time = 0.5,
-		result = name
-	},
-	name = name.."-box",
-	localised_name = {"entity-name."..name},
-	picture = empty_sprite,
-	placeable_by = {item=name,count=1},
-	selection_box = {{-3.5,-3.5},{3.5,3.5}},
-	selectable_in_game = false,
-	type = "container"
-}
-local fuelbox = {
-	collision_box = {{-0.2,-0.2},{0.2,0.2}},
 	enable_inventory_bar = false,
-	flags = {
-		"not-on-map"
-	},
-	open_sound = {
-		filename = "__base__/sound/wooden-chest-open.ogg",
-		volume = 0.5
-	},
-	close_sound = {
-		filename = "__base__/sound/wooden-chest-close.ogg",
-		volume = 0.5
-	},
+	max_health = 1,
+	picture = empty_graphic
+}
+
+sounds = copySoundsFrom(data.raw.container["wooden-chest"])
+local fuelbox = {
+	type = "container",
+	name = name.."-fuelbox",
+	selection_box = {{-0.5,-0.5},{0.5,0.5}},
+	selectable_in_game = false,
+	collision_box = {{-0.2,-0.2},{0.2,0.2}},
+	flags = {"not-on-map"},
+	open_sound = sounds.open_sound,
+	close_sound = sounds.close_sound,
 	icon = base.icon,
 	icon_size = base.icon_size,
 	inventory_size = 1,
+	enable_inventory_bar = false,
 	max_health = 1,
-	minable = {
-		mining_time = 0.5,
-		result = name
-	},
-	name = name.."-fuelbox",
-	picture = empty_sprite,
-	placeable_by = {item=name,count=1},
-	selection_box = {{-0.5,-0.5},{0.5,0.5}},
-	selectable_in_game = false,
-	type = "container"
+	picture = empty_graphic
 }
 
 local stationitem = {
@@ -146,45 +94,14 @@ local stationitem = {
 	type = "item"
 }
 
-local ingredients = {
-	{"modular-frame",15},
-	{"rotor",20},
-	{"copper-cable",50}
-}
-local stationrecipe = {
+local stationrecipe = makeBuildingRecipe{
 	name = name,
-	type = "recipe",
-	ingredients = ingredients,
-	result = name,
-	energy_required = 1,
-	category = "building",
-	allow_intermediates = false,
-	allow_as_intermediate = false,
-	hide_from_stats = true,
-	enabled = false
-}
-local _group = data.raw['item-subgroup'][stationitem.subgroup]
-local stationrecipe_undo = {
-	name = name.."-undo",
-	localised_name = {"recipe-name.dismantle",{"entity-name."..name}},
-	type = "recipe",
 	ingredients = {
-		{name,1}
+		{"modular-frame",15},
+		{"rotor",20},
+		{"copper-cable",50}
 	},
-	results = ingredients,
-	energy_required = 1,
-	category = "unbuilding",
-	subgroup = _group.group .. "-undo",
-	order = _group.order .. "-" .. stationitem.order,
-	allow_decomposition = false,
-	allow_intermediates = false,
-	allow_as_intermediate = false,
-	hide_from_stats = true,
-	icons = {
-		{icon = "__base__/graphics/icons/deconstruction-planner.png", icon_size = 64},
-		{icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64}
-	},
-	enabled = false
+	result = name
 }
 
-data:extend({base,storage,fuelbox,stationitem,stationrecipe,stationrecipe_undo})
+data:extend{base,storage,fuelbox,stationitem,stationrecipe}

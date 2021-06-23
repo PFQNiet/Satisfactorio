@@ -5,7 +5,7 @@ local item = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	infinite = true,
-	order = "s-e["..name.."]",
+	order = "e["..name.."]",
 	subgroup = "armor",
 	stack_size = 1
 }
@@ -50,48 +50,6 @@ local vehicle = {
 		"no-automated-item-removal",
 		"no-automated-item-insertion",
 		"hidden"
-	},
-	equipment_grid = name
-}
-local grid = {
-	type = "equipment-grid",
-	name = name,
-	locked = true,
-	width = 1,
-	height = 1,
-	equipment_categories = {name}
-}
-local category = {
-	type = "equipment-category",
-	name = name
-}
-local fakeitem = {
-	type = "item",
-	name = name.."-equipment",
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
-	icon_size = 64,
-	stack_size = 1,
-	flags = {"hidden"},
-	place_as_equipment_result = name.."-equipment"
-}
-local fakeequip = {
-	type = "battery-equipment",
-	name = name.."-equipment",
-	localised_name = {"item-name."..name},
-	sprite = {
-		filename = "__Satisfactorio__/graphics/icons/"..name..".png",
-		size = {64,64}
-	},
-	categories = {name},
-	energy_source = {
-		type = "electric",
-		usage_priority = "secondary-output",
-		buffer_capacity = "16MJ" -- flight range from nearest power pole
-	},
-	shape = {
-		width = 1,
-		height = 1,
-		type = "full"
 	}
 }
 local interface = {
@@ -139,7 +97,7 @@ local recipe = {
 	enabled = false
 }
 
-data:extend({item, vehicle, grid, category, fakeitem, fakeequip, interface, recipe})
+data:extend({item, vehicle, interface, recipe})
 
 local shadow = {
 	type = "sprite",

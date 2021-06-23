@@ -5,7 +5,7 @@ local item = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	infinite = true,
-	order = "s-d["..name.."]",
+	order = "d["..name.."]",
 	subgroup = "armor",
 	stack_size = 1
 }
@@ -51,55 +51,14 @@ local vehicle = {
 		"no-automated-item-removal",
 		"no-automated-item-insertion",
 		"hidden"
-	},
-	equipment_grid = name
-}
-local grid = {
-	type = "equipment-grid",
-	name = name,
-	locked = true,
-	width = 1,
-	height = 1,
-	equipment_categories = {name}
-}
-local category = {
-	type = "equipment-category",
-	name = name
-}
-local fakeitem = {
-	type = "item",
-	name = name.."-equipment",
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
-	icon_size = 64,
-	stack_size = 1,
-	flags = {"hidden"},
-	place_as_equipment_result = name.."-equipment"
-}
-local fakeequip = {
-	type = "battery-equipment",
-	name = name.."-equipment",
-	sprite = {
-		filename = "__Satisfactorio__/graphics/icons/"..name..".png",
-		size = {64,64}
-	},
-	categories = {name},
-	energy_source = {
-		type = "electric",
-		usage_priority = "secondary-output",
-		buffer_capacity = (6*60).."MJ" -- 1MJ/tick
-	},
-	shape = {
-		width = 1,
-		height = 1,
-		type = "full"
 	}
 }
 local recipe = {
 	name = name,
 	type = "recipe",
 	ingredients = {
-		{"plastic-bar",50},
-		{"electronic-circuit",15},
+		{"plastic",50},
+		{"circuit-board",15},
 		{"rubber",50},
 		{"copper-cable",25}
 	},
@@ -109,7 +68,7 @@ local recipe = {
 	enabled = false
 }
 
-data:extend({item, vehicle, grid, category, fakeitem, fakeequip, recipe})
+data:extend({item, vehicle, recipe})
 
 local shadow = {
 	type = "sprite",

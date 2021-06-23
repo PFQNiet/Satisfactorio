@@ -286,7 +286,7 @@ local function spawnNode(resource, surface, cx, cy)
 		-- plants may have a Lizard Doggo nearby
 		if math.random()<0.1 then
 			local entity = {
-				name = "small-biter",
+				name = "lizard-doggo",
 				position = {cx,cy},
 				force = "neutral",
 				raise_built = true
@@ -405,7 +405,7 @@ local function onChunkGenerated(event)
 				crash_site.createCrashSite(event.surface, node.position)
 			elseif node.name == "x-enemies" then
 				enemies.spawnGroup(event.surface, node.position, node.value, node.base_distance)
-			elseif node.name == "small-biter" then
+			elseif node.name == "lizard-doggo" then
 				local pos = surface.find_non_colliding_position(node.name, node.position, 6, 0.1, false)
 				if pos then
 					node.position = pos

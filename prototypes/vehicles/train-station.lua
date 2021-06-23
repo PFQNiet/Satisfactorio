@@ -6,22 +6,17 @@
 train_platform_layer = require("collision-mask-util").get_first_unused_layer()
 
 local name = "train-station"
-local empty_sprite = {
-	filename = "__core__/graphics/empty.png",
-	width = 1,
-	height = 1
-}
 
 local stop = data.raw.item['train-stop']
 stop.localised_name = {"entity-name."..name}
 stop.place_result = nil
+if not stop.flags then stop.flags = {} end
+table.insert(stop.flags, "hidden")
 stop = data.raw['train-stop']['train-stop']
-stop.minable = {
-	mining_time = 0.5,
-	result = name
-}
-stop.placeable_by = {{item=name,count=1}}
+stop.flags = {"placeable-neutral", "filter-directions"} -- not a "player-creation"
+stop.minable = nil
 stop.max_health = 1
+stop.selectable_in_game = false
 
 local base = {
 	type = "electric-energy-interface",
@@ -34,24 +29,7 @@ local base = {
 		output_flow_limit = "0W"
 	},
 	energy_usage = "50MW", -- initial value, which gets increased when pulling trains
-	pictures = {
-		north = {
-			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-n.png",
-			size = {448,224}
-		},
-		east = {
-			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-e.png",
-			size = {224,448}
-		},
-		south = {
-			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-s.png",
-			size = {448,224}
-		},
-		west = {
-			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-w.png",
-			size = {224,448}
-		}
-	},
+	pictures = makeRotatedSprite(name, 448, 224),
 	max_health = 1,
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
@@ -69,30 +47,7 @@ local base = {
 	remove_decoratives = "true",
 	open_sound = stop.open_sound,
 	close_sound = stop.close_sound,
-	selection_box = {{-7,-3.5},{7,3.5}},
-	selection_priority = 40
-}
-
-local collision = {
-	type = "constant-combinator",
-	name = name.."-walkable",
-	localised_name = {"entity-name."..name},
-	activity_led_light_offsets = {{0,0},{0,0},{0,0},{0,0}},
-	activity_led_sprites = empty_sprite,
-	circuit_wire_connection_points = data.raw['constant-combinator']['constant-combinator'].circuit_wire_connection_points,
-	item_slot_count = 0,
-	sprites = empty_sprite,
-	max_health = 1,
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
-	icon_size = 64,
-	collision_box = {{-2.7,-3.2},{2.7,3.2}},
-	collision_mask = {"object-layer", "floor-layer", "water-tile"},
-	flags = {
-		"placeable-off-grid"
-	},
-	minable = nil,
-	selection_box = {{-3,-3.5},{3,3.5}},
-	selection_priority = 30
+	selection_box = {{-7,-3.5},{7,3.5}}
 }
 
 local item = {
@@ -106,46 +61,15 @@ local item = {
 	type = "item"
 }
 
-local ingredients = {
-	{"heavy-modular-frame",4},
-	{"computer",8},
-	{"concrete",50},
-	{"copper-cable",25}
-}
-local recipe = {
+local recipe = makeBuildingRecipe{
 	name = name,
-	type = "recipe",
-	ingredients = ingredients,
-	result = name,
-	energy_required = 1,
-	category = "building",
-	allow_intermediates = false,
-	allow_as_intermediate = false,
-	hide_from_stats = true,
-	enabled = false
-}
-local _group = data.raw['item-subgroup'][item.subgroup]
-local recipe_undo = {
-	name = name.."-undo",
-	localised_name = {"recipe-name.dismantle",{"entity-name."..name}},
-	type = "recipe",
 	ingredients = {
-		{name,1}
+		{"heavy-modular-frame",4},
+		{"computer",8},
+		{"concrete",50},
+		{"copper-cable",25}
 	},
-	results = ingredients,
-	energy_required = 1,
-	category = "unbuilding",
-	subgroup = _group.group .. "-undo",
-	order = _group.order .. "-" .. item.order,
-	allow_decomposition = false,
-	allow_intermediates = false,
-	allow_as_intermediate = false,
-	hide_from_stats = true,
-	icons = {
-		{icon = "__base__/graphics/icons/deconstruction-planner.png", icon_size = 64},
-		{icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64}
-	},
-	enabled = false
+	result = name
 }
 
-data:extend({base,collision,item,recipe,recipe_undo})
+data:extend{base,item,recipe}

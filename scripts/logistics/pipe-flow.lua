@@ -5,11 +5,11 @@ local script_data = {}
 local tier1 = {flow = 300, distance = 20}
 local tier2 = {flow = 600, distance = 50}
 local entities = {
-	["pipe"] = tier1,
-	["pipe-to-ground"] = tier1,
+	["pipeline"] = tier1,
+	["underground-pipeline"] = tier1,
 	-- ["pump"] = tier1,
 	["pipeline-mk-2"] = tier2,
-	["pipeline-junction-cross-mk-2"] = tier2,
+	["underground-pipeline-mk-2"] = tier2,
 	-- ["pipeline-pump-mk-2"] = tier2
 }
 local entity_names = {}

@@ -16,26 +16,44 @@ local function canAfford(player, materials, inventory, buffer)
 	end
 	return affordable
 end
-local function getUndoRecipe(name)
+
+local cache = {}
+local function getBuildingRecipe(name)
+	if cache[name] then return cache[name] end
+
 	if not name then return nil end
-	local test = game.recipe_prototypes[name.."-undo"]
-	if test then return test end
-	-- try looking up the entity
-	local prototype = game.entity_prototypes[name]
-	if not prototype then return nil end
-	local place = prototype.items_to_place_this
-	if not place then return nil end
-	for _,item in pairs(place) do
-		test = game.recipe_prototypes[item.name.."-undo"]
-		if test then return test end
+	local item = game.item_prototypes[name]
+	if not item then
+		-- try looking up by entity
+		local entity = game.entity_prototypes[name]
+		if not entity then return nil end
+		local place = entity.items_to_place_this
+		if not place then return nil end
+		for _,i in pairs(place) do
+			if i.name == name then
+				item = i
+				break
+			end
+		end
+		if not item then return nil end
+	end
+	-- now search recipes for one that produces this (in the "building" category)
+	for _,recipe in pairs(game.recipe_prototypes) do
+		if recipe.category == "building" then
+			-- all "building" recicpes have a single product, that is the building
+			if recipe.products[1].name == item.name then
+				cache[name] = recipe
+				return recipe
+			end
+		end
 	end
 end
 
 local function refundEntity(player, entity)
 	-- if the entity has an undo recipe, refund the components instead
 	if not (player and player.cheat_mode) then
-		local undo = getUndoRecipe(entity.name)
-		local insert = undo and undo.products or {{name=entity.name,amount=1}}
+		local recipe = getBuildingRecipe(entity.name)
+		local insert = recipe and recipe.ingredients or {{name=entity.name,amount=1}}
 		for _,refund in pairs(insert) do
 			local spill = refund.amount
 			if player then spill = spill - player.insert{name=refund.name,count=refund.amount} end
@@ -81,12 +99,12 @@ local function updateGUI(player, buffer)
 	gui.visible = false
 
 	local name = (player.cursor_stack.valid_for_read and player.cursor_stack.name) or (player.cursor_ghost and player.cursor_ghost.name) or ""
-	local undo = getUndoRecipe(name)
-	if not undo then return end
+	local recipe = getBuildingRecipe(name)
+	if not recipe then return end
 	local inventory = player.get_main_inventory().get_contents()
 	if buffer then buffer = buffer.get_contents() else buffer = {} end
-	local cost = undo.products
-	
+	local cost = recipe.ingredients
+
 	local item = game.item_prototypes[name]
 	gui.caption = {"gui.build-gun-caption", name, item.localised_name}
 	local list = gui.content.materials
@@ -134,8 +152,8 @@ end
 
 local function onCraft(event)
 	-- if the item to craft has an undo recipe, cancel the craft and put the item in the cursor
-	local undo = getUndoRecipe(event.recipe.prototype.main_product.name)
-	if undo then
+	local recipe = getBuildingRecipe(event.recipe.prototype.main_product.name)
+	if recipe then
 		local player = game.players[event.player_index]
 		-- find the craft in the queue - it should really be the only one under Satisfactorio rules but to be safe...
 		local index = -1
@@ -151,7 +169,7 @@ local function onCraft(event)
 			player.cancel_crafting{index=index,count=event.queued_count}
 			player.clear_cursor()
 			local item = event.recipe.prototype.products[1].name
-			local affordable = canAfford(player, undo.products, player.get_main_inventory())
+			local affordable = canAfford(player, recipe.ingredients, player.get_main_inventory())
 			player.cursor_stack.set_stack{name=item, count=math.min(affordable,game.item_prototypes[item].stack_size)}
 			if player.opened_self then player.opened = nil end
 		end
@@ -169,9 +187,9 @@ local function onCursorChange(event)
 	local name = player.cursor_ghost.name
 	local redo = player.force.recipes[name]
 	if not (redo and redo.enabled) then return end
-	local undo = getUndoRecipe(name)
-	if not undo then return end
-	local affordable = canAfford(player, undo.products, player.get_main_inventory(), event.buffer)
+	local recipe = getBuildingRecipe(name)
+	if not recipe then return end
+	local affordable = canAfford(player, recipe.ingredients, player.get_main_inventory(), event.buffer)
 	if affordable < 1 then return end
 	player.clear_cursor()
 	player.cursor_stack.set_stack{name=name, count=math.min(affordable,game.item_prototypes[name].stack_size)}
@@ -183,15 +201,15 @@ local function onBuilt(event)
 	local entity = event.created_entity
 	local name = entity.name
 	-- if the item in the cursor is an undo-able building, check if the player has enough stuff (something else may have pulled items from the player's inventory)
-	local undo = getUndoRecipe(name)
-	if not undo then return end
+	local recipe = getBuildingRecipe(name)
+	if not recipe then return end
 
 	local inventory = player.get_main_inventory()
-	local afford = canAfford(player, undo.products, inventory)
+	local afford = canAfford(player, recipe.ingredients, inventory)
 	if player.cursor_stack.valid_for_read and player.cursor_stack.type == "rail-planner" then
 		afford = afford*6 + (script_data[player.index] or 0)
 	end
-	local source = undo.ingredients[1].name
+	local source = recipe.main_product.name
 	if afford < 1 then
 		-- this shouldn't happen, but may if another player or script changes the player's inventory (eg. drones...)
 		player.clear_cursor() -- cancel the build
@@ -218,7 +236,7 @@ local function onBuilt(event)
 		end
 		if pay then
 			-- items exist, now remove them
-			for _,product in pairs(undo.products) do
+			for _,product in pairs(recipe.ingredients) do
 				inventory.remove{name=product.name, count=product.amount}
 			end
 			afford = afford-1
@@ -238,8 +256,8 @@ local function onRemoved(event)
 	if event.buffer then
 		for item,count in pairs(event.buffer.get_contents()) do
 			-- if an undo recipe exists for this item, replace it with the undo results
-			local undo = game.recipe_prototypes[item.."-undo"]
-			if undo then
+			local recipe = getBuildingRecipe(item)
+			if recipe then
 				event.buffer.remove{name=item, count=count}
 				local proto = game.item_prototypes[item]
 				local pay = true
@@ -254,7 +272,7 @@ local function onRemoved(event)
 						count = 1 -- only refund one of the rails
 					end
 				end
-				for _,product in pairs(undo.products) do
+				for _,product in pairs(recipe.ingredients) do
 					if not cheater then
 						if pay then
 							-- undo recipes are always solids, and don't use probability stuff so fixed amounts

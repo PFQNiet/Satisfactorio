@@ -1,5 +1,5 @@
 local name = "thermal-propulsion-rocket"
-local plate = {
+local item = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	name = name,
@@ -9,21 +9,21 @@ local plate = {
 	type = "item"
 }
 
-local ingredients = {
-	{"modular-engine",5},
-	{"turbo-motor",2},
-	{"cooling-system",6},
-	{"fused-modular-frame",1}
-}
-local platerecipe = { -- in Manufacturer
+local recipe = {
 	name = name,
 	type = "recipe",
-	ingredients = ingredients,
+	ingredients = {
+		{"modular-engine",5},
+		{"turbo-motor",2},
+		{"cooling-system",6},
+		{"fused-modular-frame",1}
+	},
 	result = name,
 	result_count = 2,
 	energy_required = 120,
 	category = "manufacturing",
 	enabled = false
 }
+-- no handcrafting
 
-data:extend({plate,platerecipe})
+data:extend{item,recipe}

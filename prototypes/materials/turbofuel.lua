@@ -1,5 +1,4 @@
 local name = "turbofuel"
-
 local fluid = {
 	type = "fluid",
 	name = name,
@@ -13,4 +12,5 @@ local fluid = {
 	flow_color = {168,0,13},
 	fuel_value = "2GJ"
 }
-data:extend({fluid})
+-- exclusively via alt recipe
+data:extend{fluid}

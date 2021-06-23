@@ -35,8 +35,8 @@ local recipe = {
 	type = "recipe",
 	ingredients = {
 		{"reinforced-iron-plate",5},
-		{"iron-stick",25},
-		{"iron-gear-wheel",160},
+		{"iron-rod",25},
+		{"screw",160},
 		{"copper-cable",15}
 	},
 	result = name,

@@ -43,7 +43,6 @@ local function onJump(event)
 		local struct = {
 			player = player,
 			car = car,
-			battery = car.grid.put{name="hover-pack-equipment"},
 			interface = car.surface.create_entity{
 				name = interface,
 				position = car.position,
@@ -53,7 +52,8 @@ local function onJump(event)
 			line = rendering.draw_line{
 				color = {0,212,255,192},
 				width = 3,
-				dash_length = 0.25,
+				dash_length = 0.05,
+				gap_length = 0.1,
 				from = car,
 				from_offset = {0,-0.8},
 				to = car.position,
@@ -82,7 +82,6 @@ local function onJump(event)
 			momentum = {0,0}
 		}
 		script_data[player.index] = struct
-		struct.battery.energy = struct.battery.max_energy
 	end
 end
 
@@ -103,13 +102,10 @@ local function onTick(event)
 	for pid,struct in pairs(script_data) do
 		local powersource = findNearestPowerPole(struct.car.surface,struct.position)
 		if struct.exiting or (struct.start_tick < event.tick-2 and struct.interface.energy == 0) then powersource = nil end
-		local powerdistance = powersource and math2d.position.distance(struct.position, powersource.position) or math.huge
-		local battery = struct.battery
-		battery.energy = math.max(0,battery.max_energy-powerdistance*1000*1000)
+		-- local powerdistance = powersource and math2d.position.distance(struct.position, powersource.position) or math.huge
 		if powersource then
 			rendering.set_visible(struct.line, true)
-			rendering.set_gap_length(struct.line, 0.75*(1-battery.energy/battery.max_energy))
-			rendering.set_to(struct.line, powersource.position)
+			rendering.set_to(struct.line, math2d.position.add(powersource.position,{0,-2.5}))
 		else
 			rendering.set_visible(struct.line, false)
 		end

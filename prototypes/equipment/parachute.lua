@@ -5,7 +5,7 @@ local item = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	infinite = true,
-	order = "s-a["..name.."]",
+	order = "a["..name.."]",
 	subgroup = "armor",
 	stack_size = 50
 }

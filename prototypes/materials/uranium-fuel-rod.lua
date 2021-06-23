@@ -1,12 +1,9 @@
--- repurpose vanilla nuclear fuel
 local name = "uranium-fuel-rod"
-local basename = "nuclear-fuel"
-
-local ingot = {
+local item = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
-	name = basename,
-	order = "k[uranium]-b["..basename.."]",
+	name = name,
+	order = "k[uranium]-b["..name.."]",
 	stack_size = 50,
 	subgroup = "nuclear",
 	fuel_category = "nuclear",
@@ -14,20 +11,19 @@ local ingot = {
 	type = "item"
 }
 
-local ingredients = {
-	{"uranium-fuel-cell",50},
-	{"encased-industrial-beam",3},
-	{"electromagnetic-control-rod",5}
-}
-local ingotrecipe = { -- in Manufacturer
-	name = basename,
+local recipe = {
+	name = name,
 	type = "recipe",
-	ingredients = ingredients,
-	result = basename,
+	ingredients = {
+		{"encased-uranium-cell",50},
+		{"encased-industrial-beam",3},
+		{"electromagnetic-control-rod",5}
+	},
+	result = name,
 	energy_required = 150,
 	category = "manufacturing",
 	enabled = false
 }
+-- no handcrafting
 
-data.raw.item[basename] = ingot
-data.raw.recipe[basename] = ingotrecipe
+data:extend{item,recipe}

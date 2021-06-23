@@ -2,12 +2,12 @@
 local math2d = require("math2d")
 
 local spawndata = {
-	[1] = {["big-biter"] = 1},
-	[2] = {["big-spitter"] = 1},
-	[3] = {["behemoth-biter"] = 0.75, ["big-biter"] = 1.25},
-	[4] = {["behemoth-spitter"] = 0.75, ["big-spitter"] = 1.25},
-	[5] = {["behemoth-biter"] = 1, ["big-biter"] = 2},
-	[6] = {["behemoth-spitter"] = 1, ["big-spitter"] = 2}
+	[1] = {["fluffy-tailed-hog"] = 1},
+	[2] = {["spitter"] = 1},
+	[3] = {["alpha-hog"] = 0.75, ["fluffy-tailed-hog"] = 1.25},
+	[4] = {["alpha-spitter"] = 0.75, ["spitter"] = 1.25},
+	[5] = {["alpha-hog"] = 1, ["fluffy-tailed-hog"] = 2},
+	[6] = {["alpha-spitter"] = 1, ["spitter"] = 2}
 }
 
 local script_data = {}

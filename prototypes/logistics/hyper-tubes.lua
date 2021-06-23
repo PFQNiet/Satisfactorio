@@ -14,9 +14,9 @@ data:extend{
 	}
 }
 
-local basename = "pipe"
-local entity = table.deepcopy(data.raw.pipe[basename])
+local entity = table.deepcopy(data.raw.pipe.pipe)
 entity.name = name
+entity.minable.result = name
 entity.icon = "__Satisfactorio__/graphics/icons/"..name..".png"
 entity.icon_mipmaps = 0
 entity.max_health = 1
@@ -29,7 +29,6 @@ end
 -- no windows allowed!
 entity.pictures.straight_horizontal_window = entity.pictures.straight_horizontal
 entity.pictures.straight_vertical_window = entity.pictures.straight_vertical
-entity.minable.result = name
 entity.fluid_box.filter = name
 entity.fast_replaceable_group = "hyper-tube"
 
@@ -43,57 +42,24 @@ local item = {
 	order = "b[hypertube]-b["..name.."]",
 	place_result = name
 }
-local ingredients = {
-	{"copper-plate",1},
-	{"steel-pipe",1}
-}
-local recipe = {
-	type = "recipe",
+local recipe = makeBuildingRecipe{
 	name = name,
-	ingredients = ingredients,
-	result = name,
-	energy_required = 1,
-	category = "building",
-	allow_intermediates = false,
-	allow_as_intermediate = false,
-	hide_from_stats = true,
-	enabled = false
-}
-local _group = data.raw['item-subgroup'][item.subgroup]
-local undo = {
-	type = "recipe",
-	name = name.."-undo",
-	localised_name = {"recipe-name.dismantle",{"entity-name."..name}},
 	ingredients = {
-		{name,1}
+		{"copper-sheet",1},
+		{"steel-pipe",1}
 	},
-	results = ingredients,
-	energy_required = 1,
-	category = "unbuilding",
-	subgroup = _group.group .. "-undo",
-	order = _group.order .. "-" .. item.order,
-	allow_decomposition = false,
-	allow_intermediates = false,
-	allow_as_intermediate = false,
-	always_show_products = true,
-	hide_from_stats = true,
-	icons = {
-		{icon = "__base__/graphics/icons/deconstruction-planner.png", icon_size = 64},
-		{icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64}
-	},
-	enabled = false
+	result = name
 }
-data:extend{entity,item,recipe,undo}
+data:extend{entity,item,recipe}
 
 -- Underground
 name = "underground-hyper-tube"
-basename = "pipe-to-ground"
-local entity = table.deepcopy(data.raw['pipe-to-ground'][basename])
+entity = table.deepcopy(data.raw["pipe-to-ground"]["pipe-to-ground"])
 entity.name = name
+entity.minable.result = name
 entity.icon = "__Satisfactorio__/graphics/icons/"..name..".png"
 entity.icon_mipmaps = 0
 entity.max_health = 1
-entity.minable.result = name
 for _,pic in pairs(entity.pictures) do
 	pic.tint = {1,0.8,0}
 	if pic.hr_version then
@@ -104,7 +70,7 @@ entity.fluid_box.pipe_connections[2].max_underground_distance = 20
 entity.fluid_box.filter = "hyper-tube"
 entity.fast_replaceable_group = "hyper-tube"
 
-local item = {
+item = {
 	type = "item",
 	name = name,
 	icon = entity.icon,
@@ -114,80 +80,29 @@ local item = {
 	order = "b[hypertube]-c["..name.."]",
 	place_result = name
 }
-local ingredients = {
-	{"copper-plate",8},
-	{"steel-pipe",8}
-}
-local recipe = {
-	type = "recipe",
+recipe = makeBuildingRecipe{
 	name = name,
-	ingredients = ingredients,
-	result = name,
-	energy_required = 1,
-	category = "building",
-	allow_intermediates = false,
-	allow_as_intermediate = false,
-	hide_from_stats = true,
-	enabled = false
-}
-local _group = data.raw['item-subgroup'][item.subgroup]
-local undo = {
-	type = "recipe",
-	name = name.."-undo",
-	localised_name = {"recipe-name.dismantle",{"entity-name."..name}},
 	ingredients = {
-		{name,1}
+		{"copper-sheet",8},
+		{"steel-pipe",8}
 	},
-	results = ingredients,
-	energy_required = 1,
-	category = "unbuilding",
-	subgroup = _group.group .. "-undo",
-	order = _group.order .. "-" .. item.order,
-	allow_decomposition = false,
-	allow_intermediates = false,
-	allow_as_intermediate = false,
-	always_show_products = true,
-	hide_from_stats = true,
-	icons = {
-		{icon = "__base__/graphics/icons/deconstruction-planner.png", icon_size = 64},
-		{icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64}
-	},
-	enabled = false
+	result = name
 }
-data:extend{entity,item,recipe,undo}
+data:extend{entity,item,recipe}
 
 -- Entrance
 name = "hyper-tube-entrance"
-basename = "pump"
-local entity = table.deepcopy(data.raw.pump[basename])
+entity = table.deepcopy(data.raw.pump.pump)
 entity.name = name
+entity.minable.result = name
 entity.icon = "__Satisfactorio__/graphics/icons/"..name..".png"
 entity.icon_mipmaps = 0
 entity.max_health = 1
-entity.minable.result = name
 entity.energy_source.drain = "10MW"
 entity.energy_source.buffer_capacity = "10MW"
-entity.energy_source.input_flow_limit = "10MW"
 entity.energy_usage = "10MW"
 entity.glass_pictures = nil
-entity.animations = {
-	north = {
-		filename = "__Satisfactorio__/graphics/placeholders/"..name.."-n.png",
-		size = {32,32}
-	},
-	east = {
-		filename = "__Satisfactorio__/graphics/placeholders/"..name.."-e.png",
-		size = {32,32}
-	},
-	south = {
-		filename = "__Satisfactorio__/graphics/placeholders/"..name.."-s.png",
-		size = {32,32}
-	},
-	west = {
-		filename = "__Satisfactorio__/graphics/placeholders/"..name.."-w.png",
-		size = {32,32}
-	}
-}
+entity.animations = makeRotatedSprite(name, 32, 32)
 entity.fluid_animations = nil
 entity.pumping_speed = 0
 entity.fluid_wagon_connector_frame_count = 0
@@ -205,7 +120,7 @@ entity.collision_mask = {"item-layer", "object-layer", "water-tile"}
 entity.selection_box = {{-0.5,-0.5},{0.5,0.5}}
 entity.fast_replaceable_group = "hyper-tube"
 
-local item = {
+item = {
 	type = "item",
 	name = name,
 	icon = entity.icon,
@@ -215,48 +130,16 @@ local item = {
 	order = "b[hypertube]-a["..name.."]",
 	place_result = name
 }
-local ingredients = {
-	{"encased-industrial-beam",4},
-	{"rotor",4},
-	{"steel-pipe",10}
-}
-local recipe = {
-	type = "recipe",
+recipe = makeBuildingRecipe{
 	name = name,
-	ingredients = ingredients,
-	result = name,
-	energy_required = 1,
-	category = "building",
-	allow_intermediates = false,
-	allow_as_intermediate = false,
-	hide_from_stats = true,
-	enabled = false
-}
-local _group = data.raw['item-subgroup'][item.subgroup]
-local undo = {
-	type = "recipe",
-	name = name.."-undo",
-	localised_name = {"recipe-name.dismantle",{"entity-name."..name}},
 	ingredients = {
-		{name,1}
+		{"encased-industrial-beam",4},
+		{"rotor",4},
+		{"steel-pipe",10}
 	},
-	results = ingredients,
-	energy_required = 1,
-	category = "unbuilding",
-	subgroup = _group.group .. "-undo",
-	order = _group.order .. "-" .. item.order,
-	allow_decomposition = false,
-	allow_intermediates = false,
-	allow_as_intermediate = false,
-	always_show_products = true,
-	hide_from_stats = true,
-	icons = {
-		{icon = "__base__/graphics/icons/deconstruction-planner.png", icon_size = 64},
-		{icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64}
-	},
-	enabled = false
+	result = name
 }
-data:extend{entity,item,recipe,undo}
+data:extend{entity,item,recipe}
 
 local vehicle = {
 	-- a fake car for the player to enter the tube

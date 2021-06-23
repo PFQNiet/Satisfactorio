@@ -1,5 +1,4 @@
 local name = "fuel"
-
 local fluid = {
 	type = "fluid",
 	name = name,
@@ -46,4 +45,4 @@ local recipe2 = { -- Residual
 	enabled = false
 }
 
-data:extend({fluid,recipe1,recipe2})
+data:extend{fluid,recipe1,recipe2}

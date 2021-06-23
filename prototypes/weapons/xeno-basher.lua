@@ -32,7 +32,6 @@ local recipe = {
 	result = name,
 	energy_required = 20/4,
 	category = "equipment",
-	hide_from_stats = true,
 	enabled = false
 }
 
@@ -83,4 +82,4 @@ local ammo = {
 	}
 }
 
-data:extend({gun,recipe,stun,ammo})
+data:extend{gun,recipe,stun,ammo}

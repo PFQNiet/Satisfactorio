@@ -13,7 +13,7 @@ data:extend({
 	{
 		type = "recipe",
 		name = name.."-manual",
-		ingredients = {{"plastic-bar",2}},
+		ingredients = {{"plastic",2}},
 		result = name,
 		result_count = 4,
 		energy_required = 2/4,
@@ -27,7 +27,7 @@ data:extend({
 	{
 		type = "recipe",
 		name = name,
-		ingredients = {{"plastic-bar",2}},
+		ingredients = {{"plastic",2}},
 		result = name,
 		result_count = 4,
 		energy_required = 4,
@@ -121,20 +121,20 @@ data:extend({
 	-- crude oil
 	{
 		type = "item",
-		name = "packaged-crude-oil",
+		name = "packaged-oil",
 		icon = "__Satisfactorio__/graphics/icons/packaged-oil.png",
 		icon_size = 64,
 		subgroup = "packed-fluid",
 		order = "c[crude-oil]",
 		stack_size = 100,
-		fuel_category = "packaged-alt-fuel",
+		fuel_category = "packaged-fuel",
 		fuel_value = "320MJ",
 	},
 	{
 		type = "recipe",
-		name = "packaged-crude-oil",
+		name = "packaged-oil",
 		ingredients = {{"empty-canister",2}, {type="fluid",name="crude-oil",amount=2}},
-		result = "packaged-crude-oil",
+		result = "packaged-oil",
 		result_count = 2,
 		energy_required = 4,
 		category = "packaging",
@@ -152,7 +152,7 @@ data:extend({
 			{icon = "__Satisfactorio__/graphics/icons/crude-oil.png", icon_size = 64},
 			{icon = "__Satisfactorio__/graphics/icons/packaged-oil.png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
 		},
-		ingredients = {{"packaged-crude-oil",2}},
+		ingredients = {{"packaged-oil",2}},
 		results = {{"empty-canister",2}, {type="fluid",name="crude-oil",amount=2}},
 		main_product = "crude-oil",
 		energy_required = 2,
@@ -168,20 +168,20 @@ data:extend({
 	-- heavy oil residue
 	{
 		type = "item",
-		name = "packaged-heavy-oil",
+		name = "packaged-heavy-oil-residue",
 		icon = "__Satisfactorio__/graphics/icons/packaged-heavy-oil-residue.png",
 		icon_size = 64,
 		subgroup = "packed-fluid",
 		order = "d[heavy-oil]",
 		stack_size = 100,
-		fuel_category = "packaged-alt-fuel",
+		fuel_category = "packaged-fuel",
 		fuel_value = "400MJ",
 	},
 	{
 		type = "recipe",
-		name = "packaged-heavy-oil",
+		name = "packaged-heavy-oil-residue",
 		ingredients = {{"empty-canister",2}, {type="fluid",name="heavy-oil",amount=2}},
-		result = "packaged-heavy-oil",
+		result = "packaged-heavy-oil-residue",
 		result_count = 2,
 		energy_required = 4,
 		category = "packaging",
@@ -193,13 +193,13 @@ data:extend({
 	},
 	{
 		type = "recipe",
-		name = "unpack-heavy-oil",
+		name = "unpack-heavy-oil-residue",
 		localised_name = {"recipe-name.unpack",{"fluid-name.heavy-oil"}},
 		icons = {
 			{icon = "__Satisfactorio__/graphics/icons/heavy-oil-residue.png", icon_size = 64},
 			{icon = "__Satisfactorio__/graphics/icons/packaged-heavy-oil-residue.png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
 		},
-		ingredients = {{"packaged-heavy-oil",2}},
+		ingredients = {{"packaged-heavy-oil-residue",2}},
 		results = {{"empty-canister",2}, {type="fluid",name="heavy-oil",amount=2}},
 		main_product = "heavy-oil",
 		energy_required = 6,
@@ -405,7 +405,7 @@ data:extend({
 		subgroup = "packed-fluid",
 		order = "i[turbofuel]",
 		stack_size = 100,
-		fuel_category = "packaged-alt-fuel",
+		fuel_category = "packaged-fuel",
 		fuel_value = "2GJ",
 	},
 	{

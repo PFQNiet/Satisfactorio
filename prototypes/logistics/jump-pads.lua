@@ -3,6 +3,8 @@ local name = "jump-pad"
 local interface = {
 	type = "electric-energy-interface",
 	name = name,
+	open_sound = basesounds.machine_open,
+	close_sound = basesounds.machine_close,
 	energy_source = {
 		type = "electric",
 		buffer_capacity = "2MW",
@@ -11,31 +13,10 @@ local interface = {
 		drain = "0W"
 	},
 	energy_usage = "2MW",
-	pictures = {
-		north = {
-			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-n.png",
-			width = 96,
-			height = 96
-		},
-		east = {
-			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-e.png",
-			width = 96,
-			height = 96
-		},
-		south = {
-			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-s.png",
-			width = 96,
-			height = 96
-		},
-		west = {
-			filename = "__Satisfactorio__/graphics/placeholders/"..name.."-w.png",
-			width = 96,
-			height = 96
-		}
-	},
+	pictures = makeRotatedSprite(name, 96, 96),
 	render_layer = "floor",
 	max_health = 1,
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
 	collision_box = {{-1.2,-1.2},{1.2,1.2}},
 	collision_mask = {"object-layer","floor-layer","water-tile"},
@@ -82,7 +63,6 @@ local vehicle = {
 	collision_box = {{-1.2,-1.2},{1.2,1.2}},
 	collision_mask = {"object-layer","floor-layer","water-tile"},
 	selection_box = {{-1.5,-1.5},{1.5,1.5}},
-	selection_priority = 40,
 	selectable_in_game = false,
 	minable = {
 		mining_time = 0.5,
@@ -178,53 +158,23 @@ local item = {
 	order = "a[jumping]-a["..name.."]",
 	place_result = name
 }
-local ingredients = {
-	{"rotor",2},
-	{"iron-plate",15},
-	{"copper-cable",10}
-}
-local recipe = {
-	type = "recipe",
+local recipe = makeBuildingRecipe{
 	name = name,
-	ingredients = ingredients,
-	result = name,
-	energy_required = 1,
-	category = "building",
-	allow_intermediates = false,
-	allow_as_intermediate = false,
-	hide_from_stats = true,
-	enabled = false
-}
-local _group = data.raw['item-subgroup'][item.subgroup]
-local undo = {
-	type = "recipe",
-	name = name.."-undo",
-	localised_name = {"recipe-name.dismantle",{"entity-name."..name}},
 	ingredients = {
-		{name,1}
+		{"rotor",2},
+		{"iron-plate",15},
+		{"copper-cable",10}
 	},
-	results = ingredients,
-	energy_required = 1,
-	category = "unbuilding",
-	subgroup = _group.group .. "-undo",
-	order = _group.order .. "-" .. item.order,
-	allow_decomposition = false,
-	allow_intermediates = false,
-	allow_as_intermediate = false,
-	always_show_products = true,
-	hide_from_stats = true,
-	icons = {
-		{icon = "__base__/graphics/icons/deconstruction-planner.png", icon_size = 64},
-		{icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64}
-	},
-	enabled = false
+	result = name
 }
-data:extend{interface,vehicle,vehicle2,item,recipe,undo}
+data:extend{interface,vehicle,vehicle2,item,recipe}
 
 name = "u-jelly-landing-pad"
 interface = {
 	type = "electric-energy-interface",
 	name = name,
+	open_sound = basesounds.machine_open,
+	close_sound = basesounds.machine_close,
 	energy_source = {
 		type = "electric",
 		buffer_capacity = "5MW",
@@ -265,48 +215,16 @@ item = {
 	order = "a[jumping]-b["..name.."]",
 	place_result = name
 }
-ingredients = {
-	{"rotor",2},
-	{"copper-cable",20},
-	{"biomass",200}
-}
-local recipe = {
-	type = "recipe",
+recipe = makeBuildingRecipe{
 	name = name,
-	ingredients = ingredients,
-	result = name,
-	energy_required = 1,
-	category = "building",
-	allow_intermediates = false,
-	allow_as_intermediate = false,
-	hide_from_stats = true,
-	enabled = false
-}
-local _group = data.raw['item-subgroup'][item.subgroup]
-local undo = {
-	type = "recipe",
-	name = name.."-undo",
-	localised_name = {"recipe-name.dismantle",{"entity-name."..name}},
 	ingredients = {
-		{name,1}
+		{"rotor",2},
+		{"copper-cable",20},
+		{"biomass",200}
 	},
-	results = ingredients,
-	energy_required = 1,
-	category = "unbuilding",
-	subgroup = _group.group .. "-undo",
-	order = _group.order .. "-" .. item.order,
-	allow_decomposition = false,
-	allow_intermediates = false,
-	allow_as_intermediate = false,
-	always_show_products = true,
-	hide_from_stats = true,
-	icons = {
-		{icon = "__base__/graphics/icons/deconstruction-planner.png", icon_size = 64},
-		{icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64}
-	},
-	enabled = false
+	result = name
 }
-data:extend{interface,item,recipe,undo}
+data:extend{interface,item,recipe}
 
 data:extend{
 	{

@@ -190,48 +190,16 @@ local drone_item = {
 	place_result = name
 }
 
-local ingredients = {
-	{"motor",4},
-	{"alclad-aluminium-sheet",10},
-	{"radio-control-unit",1},
-	{"processing-unit",2},
-	{"portable-miner",1}
-}
-local carrecipe = {
+local carrecipe = makeBuildingRecipe{
 	name = name,
-	type = "recipe",
-	ingredients = ingredients,
-	result = name,
-	energy_required = 1,
-	category = "building",
-	allow_intermediates = false,
-	allow_as_intermediate = false,
-	hide_from_stats = true,
-	enabled = false
-}
-local _group = data.raw['item-subgroup'][drone_item.subgroup]
-local carrecipe_undo = {
-	name = name.."-undo",
-	localised_name = {"recipe-name.dismantle",{"entity-name."..name}},
-	type = "recipe",
 	ingredients = {
-		{name,1}
+		{"motor",4},
+		{"alclad-aluminium-sheet",10},
+		{"radio-control-unit",1},
+		{"ai-limiter",2},
+		{"portable-miner",1}
 	},
-	results = ingredients,
-	energy_required = 1,
-	category = "unbuilding",
-	subgroup = _group.group .. "-undo",
-	order = _group.order .. "-" .. drone_item.order,
-	allow_decomposition = false,
-	allow_intermediates = false,
-	allow_as_intermediate = false,
-	always_show_products = true,
-	hide_from_stats = true,
-	icons = {
-		{icon = "__base__/graphics/icons/deconstruction-planner.png", icon_size = 64},
-		{icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64}
-	},
-	enabled = false
+	result = name
 }
 
-data:extend({drone, leg, drone_item, speed_sticker, carrecipe, carrecipe_undo})
+data:extend{drone, leg, drone_item, speed_sticker, carrecipe}

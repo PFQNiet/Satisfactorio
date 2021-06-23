@@ -202,21 +202,6 @@ local function onTick(event)
 					for _,player in pairs(car.car.force.players) do
 						player.add_alert(car.car, defines.alert_type.train_out_of_fuel)
 					end
-				elseif car.car.riding_state.acceleration ~= defines.riding.acceleration.nothing and car.car.speed == 0 then
-					if not car.crash_check or car.crash_check < 2 then
-						car.crash_check = (car.crash_check or 0) + 1
-					else
-						-- car is trying to move but can't, despite having fuel, and has failed this check 3 times
-						-- TODO update/remove this, as the new "reverse and try again" mechanic overrides this
-						for _,player in pairs(car.car.force.players) do
-							player.add_custom_alert(car.car, {type="virtual",name="signal-vehicle-crashed"}, {"gui-alert-tooltip.vehicle-crashed",{"entity-name."..car.car.name}}, true)
-						end
-					end
-				else
-					if car.crash_check then car.crash_check = 0 end
-					for _,player in pairs(car.car.force.players) do
-						player.remove_alert{entity=car.car, icon={type="virtual",name="signal-vehicle-crashed"}}
-					end
 				end
 				car.fuel_check = event.tick + 300 -- alerts last 5 seconds so only bother checking every 5 seconds
 			end

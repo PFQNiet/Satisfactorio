@@ -1,30 +1,35 @@
 local name = "resource-well-extractor"
+local sounds = copySoundsFrom(data.raw["mining-drill"].pumpjack)
 local miner = {
+	type = "mining-drill",
+	name = name,
+	icon = graphics.."icons/"..name..".png",
+	icon_size = 64,
 	animations = {
 		filename = "__Satisfactorio__/graphics/placeholders/"..name..".png",
 		size = {96,96}
 	},
+	selection_box = {{-1.5,-1.5},{1.5,1.5}},
 	collision_box = {{-1.2,-1.2},{1.2,1.2}},
 	energy_source = {type = "void"},
-	energy_usage = "15MW",
-	working_sound = data.raw['mining-drill']['pumpjack'].working_sound,
+	energy_usage = "1W",
+	open_sound = sounds.open_sound,
+	close_sound = sounds.close_sound,
+	working_sound = sounds.working_sound,
 	flags = {
 		"placeable-player",
 		"player-creation"
 	},
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
-	icon_size = 64,
 	max_health = 1,
 	minable = {
 		mining_time = 0.5,
 		result = name
 	},
-	mining_speed = 1,
-	name = name,
+	mining_speed = 1, -- base 60/min
 	resource_categories = {"resource-node"},
 	resource_searching_radius = 0.49,
-	selection_box = {{-1.5,-1.5},{1.5,1.5}},
-	type = "mining-drill",
+	allowed_effects = {"speed","consumption"},
+	module_specification = {module_slots = 3},
 	vector_to_place_result = {0,0},
 	output_fluid_box = {
 		base_area = 0.1,
@@ -37,59 +42,28 @@ local miner = {
 				{-2,0}
 			}}
 		},
-		pipe_covers = data.raw['mining-drill']['pumpjack'].output_fluid_box.pipe_covers
+		pipe_covers = pipecoverspictures()
 	}
 }
 
 local mineritem = {
+	type = "item",
+	name = name,
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
-	name = name,
-	order = "g["..name.."]",
 	place_result = name,
 	stack_size = 50,
 	subgroup = "production-miner",
-	type = "item"
+	order = "g["..name.."]"
 }
 
-local ingredients = {
-	{"steel-plate",10},
-	{"plastic-bar",10}
-}
-local minerrecipe = {
+local minerrecipe = makeBuildingRecipe{
 	name = name,
-	type = "recipe",
-	ingredients = ingredients,
-	result = name,
-	energy_required = 1,
-	category = "building",
-	allow_intermediates = false,
-	allow_as_intermediate = false,
-	hide_from_stats = true,
-	enabled = false
-}
-local _group = data.raw['item-subgroup'][mineritem.subgroup]
-local minerrecipe_undo = {
-	name = name.."-undo",
-	localised_name = {"recipe-name.dismantle",{"entity-name."..name}},
-	type = "recipe",
 	ingredients = {
-		{name,1}
+		{"steel-beam",10},
+		{"plastic",10}
 	},
-	results = ingredients,
-	energy_required = 1,
-	category = "unbuilding",
-	subgroup = _group.group .. "-undo",
-	order = _group.order .. "-" .. mineritem.order,
-	allow_decomposition = false,
-	allow_intermediates = false,
-	allow_as_intermediate = false,
-	hide_from_stats = true,
-	icons = {
-		{icon = "__base__/graphics/icons/deconstruction-planner.png", icon_size = 64},
-		{icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64}
-	},
-	enabled = false
+	result = name
 }
 
-data:extend({miner,mineritem,minerrecipe,minerrecipe_undo})
+data:extend{miner,mineritem,minerrecipe}
