@@ -1,7 +1,11 @@
--- uses global.io to track structures based on unit_number > {belt, inserter1, inserter2, indicator}
+-- uses global.io to track structures
 local math2d = require("math2d")
 local string = require(modpath.."scripts.lualib.string")
-local script_data = {}
+local script_data = {
+	-- io struct: {target, belt, inserter_left, inserter_right, visual, active, suppressed}
+	structures = {}, -- table<base unit number, table<coordinate, io struct>>
+	belts = {} -- table<belt unit number, io struct> used for reverse lookup
+}
 
 local function addToBufferOrSpillStack(stack, entity, buffer)
 	if buffer then
@@ -156,6 +160,7 @@ local function addInput(entity, offset, target, direction)
 		only_in_alt_mode = true
 	}
 	script_data[entity.unit_number][offset.x..","..offset.y] = {
+		target = entity,
 		belt = belt,
 		inserter_left = inserter_left,
 		inserter_right = inserter_right,
@@ -331,6 +336,40 @@ return {
 	end,
 	on_load = function()
 		script_data = global.io or script_data
+	end,
+	on_configuration_changed = function()
+		local data = global.io
+		if not data then return end
+		if data.components then return end
+		-- move all structs from the base table into structures, and save references to their component parts
+		local newformat = {
+			structures = {},
+			belts = {}
+		}
+		for id,iolist in pairs(data) do
+			newformat.structures[id] = iolist
+			local source = nil
+			for _,struct in pairs(iolist) do
+				if not struct.belt.valid then
+					game.print("Invalid belt at [gps="..struct.inserter_left.position.x..","..struct.inserter_left.position.y.."]")
+				end
+				if not source then
+					-- find entities at this position and see if its unit number matches
+					for _,candidate in pairs(struct.belt.surface.find_entities_filtered{position=struct.belt.position}) do
+						if candidate.unit_number == id then
+							source = candidate
+							break
+						end
+					end
+					if not source then
+						game.print("Could not find entity source at [gps="..struct.belt.position.x..","..struct.belt.position.y.."]")
+					end
+				end
+				struct.target = source
+				if struct.belt.valid then newformat.belts[struct.belt.unit_number] = struct end
+			end
+		end
+		global.io = newformat
 	end,
 	events = {
 		[defines.events.on_built_entity] = onBuilt,
