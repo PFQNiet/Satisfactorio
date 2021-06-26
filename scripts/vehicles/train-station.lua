@@ -270,7 +270,7 @@ local function onBuilt(event)
 			if head1 and head2 then
 				return denyConstruction(entity, {"message.no-double-ended-stations"}, event)
 			end
-			if not (head1 or haad2) then
+			if not (head1 or head2) then
 				return denyConstruction(entity, {"message.cannot-infer-direction"}, event)
 			end
 
