@@ -4,6 +4,7 @@
 -- uses global.wells to track data
 -- note that resource entities do not have a unit_number, so script.register_on_entity_destroyed(entity) is used to get a UID for them
 
+local bev = require(modpath.."scripts.lualib.build-events")
 local string = require(modpath.."scripts.lualib.string")
 
 local pressuriser = "resource-well-pressuriser"
@@ -34,7 +35,7 @@ end
 
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
-	if not entity or not entity.valid then return end
+	if not (entity and entity.valid) then return end
 	if entity.name == pressuriser then
 		-- if the well hasn't been registered yet, spawn satellite nodes
 		local well = entity.surface.find_entities_filtered{position=entity.position, type="resource"}[1] -- can be assumed to exist since we built a miner on it
@@ -44,17 +45,21 @@ local function onBuilt(event)
 			local nodes = {}
 			local total_yield = 0
 			local settings = game.default_map_gen_settings.autoplace_controls[well.name] or {frequency=1,richness=1,size=1}
-			-- settings.size/6 = chance for node to appear in a given slot
-			-- settings.richness = scaling factor for total purity, default 12
-			for maxrange=16,100 do
+			local size = settings.size
+			if size == 0 then size = 1 end
+			local richness = settings.richness
+			if richness == 0 then richness = 1 end
+			-- settings.size = minimum radius of node
+			-- settings.richness = scaling factor for total purity, default 18
+			for maxrange=10+size*6,100 do
 				-- keep trying with bigger and bigger ranges until we get at least one satellite spawned
 				local offset = math.random()
-				local total_purity = 12*settings.richness
-				for i=0,11 do
-					local purity = math.random(1,4)
+				local total_purity = 18*richness
+				for i=1,48 do
+					local purity = math.random(0,4)
 					if purity > total_purity then purity = total_purity end
 					if purity == 3 then purity = 2 end
-					if math.random() < settings.size/6 then
+					if purity > 0 then
 						local r = math.random(9,maxrange)
 						local th = (offset+i*5/12)*math.pi*2
 						local dx = math.floor(r*math.cos(th))+0.5
@@ -77,8 +82,8 @@ local function onBuilt(event)
 							}
 							table.insert(nodes, node_id)
 						end
+						total_purity = total_purity - purity
 					end
-					total_purity = total_purity - purity
 					if total_purity <= 0 then break end
 				end
 				if #nodes > 0 then break end
@@ -112,7 +117,7 @@ end
 
 local function onRemoved(event)
 	local entity = event.entity
-	if not entity or not entity.valid then return end
+	if not (entity and entity.valid) then return end
 	if entity.name == pressuriser then
 		-- pressuriser removed: depressurise all satellite nodes
 		local nodes = getSatelliteNodesForPressuriser(entity)
@@ -147,24 +152,16 @@ local function onTick(event)
 	end
 end
 
-return {
+return bev.applyBuildEvents{
 	on_init = function()
 		global.wells = global.wells or script_data
 	end,
 	on_load = function()
 		script_data = global.wells or script_data
 	end,
+	on_build = onBuilt,
+	on_destroy = onRemoved,
 	events = {
-		[defines.events.on_built_entity] = onBuilt,
-		[defines.events.on_robot_built_entity] = onBuilt,
-		[defines.events.script_raised_built] = onBuilt,
-		[defines.events.script_raised_revive] = onBuilt,
-
-		[defines.events.on_player_mined_entity] = onRemoved,
-		[defines.events.on_robot_mined_entity] = onRemoved,
-		[defines.events.on_entity_died] = onRemoved,
-		[defines.events.script_raised_destroy] = onRemoved,
-
 		[defines.events.on_tick] = onTick
 	}
 }

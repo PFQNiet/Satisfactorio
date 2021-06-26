@@ -4,8 +4,8 @@ local io = require(modpath.."scripts.lualib.input-output")
 local bev = require(modpath.."scripts.lualib.build-events")
 local link = require(modpath.."scripts.lualib.linked-entity")
 
-local box = "industrial-storage-container"
-local fakebox = "industrial-storage-container-placeholder"
+local box = "infinity-storage-container"
+local fakebox = "infinity-storage-container-placeholder"
 
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
@@ -20,10 +20,8 @@ local function onBuilt(event)
 		}
 		link.register(entity, realbox)
 
-		io.addConnection(entity, {-1,2}, "input", realbox)
-		io.addConnection(entity, {1,2}, "input", realbox)
-		io.addConnection(entity, {-1,-2}, "output", realbox)
-		io.addConnection(entity, {1,-2}, "output", realbox)
+		io.addConnection(entity, {0,2}, "input", realbox)
+		io.addConnection(entity, {0,-2}, "output", realbox)
 		entity.rotatable = false
 		containers.register(entity, realbox)
 	end

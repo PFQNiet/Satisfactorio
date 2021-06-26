@@ -2,9 +2,10 @@
 -- uses global.drones.drones to map drones back to their port
 -- uses global.player_build_error_debounce to track force -> last error tick to de-duplicate placement errors
 local io = require(modpath.."scripts.lualib.input-output")
-local getitems = require(modpath.."scripts.lualib.get-items-from")
+local bev = require(modpath.."scripts.lualib.build-events")
 local fastTransfer = require(modpath.."scripts.organisation.containers").fastTransfer
-local refundEntity = require(modpath.."scripts.build-gun").refundEntity
+local refundEntity = require(modpath.."scripts.lualib.building-management").refundEntity
+local link = require(modpath.."scripts.lualib.linked-entity")
 local math2d = require("math2d")
 
 local base = "drone-port"
@@ -21,19 +22,31 @@ local script_data = {
 	ports = {},
 	drones = {}
 }
-for i=0,30-1 do script_data.ports[i] = {} end
+local buckets = 30
+for i=0,buckets-1 do script_data.ports[i] = {} end
+local function getBucket(tick)
+	return script_data.ports[tick%buckets]
+end
+local function registerStruct(struct)
+	script_data.ports[struct.base.unit_number%buckets][struct.base.unit_number] = struct
+end
+local function registerDrone(struct)
+	script_data.drones[struct.drone.unit_number] = struct
+end
 local function getStructById(id)
-	return script_data.ports[id%30][id]
+	return script_data.ports[id%buckets][id]
 end
 local function getStruct(floor)
 	return getStructById(floor.unit_number)
 end
 local function getStructFromDrone(drone)
-	local port = script_data.drones[drone.unit_number]
-	return port and getStructById(port)
+	return script_data.drones[drone.unit_number]
 end
 local function clearStruct(floor)
-	script_data.ports[floor.unit_number%30][floor.unit_number] = nil
+	script_data.ports[floor.unit_number%buckets][floor.unit_number] = nil
+end
+local function clearStructFromDrone(drone)
+	script_data.drones[drone.unit_number] = nil
 end
 
 local function rejectBuild(event, entity, reason)
@@ -66,7 +79,7 @@ end
 
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
-	if not entity or not entity.valid then return end
+	if not (entity and entity.valid) then return end
 	if entity.name == base then
 		-- add storage boxes
 		local store1 = entity.surface.create_entity{
@@ -87,12 +100,16 @@ local function onBuilt(event)
 			force = entity.force,
 			raise_built = true
 		}
-		io.addInput(entity, {-3.5,5.5}, fuel)
-		io.addInput(entity, {1.5,5.5}, store1)
-		io.addOutput(entity, {3.5,5.5}, store2, defines.direction.south)
+		link.register(entity, store1)
+		link.register(entity, store2)
+		link.register(entity, fuel)
+		io.addConnection(entity, {-3.5,5.5}, "input", fuel)
+		io.addConnection(entity, {1.5,5.5}, "input", store1)
+		io.addConnection(entity, {3.5,5.5}, "output", store2, defines.direction.south)
 		entity.rotatable = false
+
 		local name = game.backer_names[math.random(#game.backer_names)]
-		script_data.ports[entity.unit_number%30][entity.unit_number] = {
+		registerStruct{
 			name = name,
 			base = entity,
 			fuel = fuel,
@@ -123,63 +140,26 @@ local function onBuilt(event)
 		if #data.guests > 0 then
 			return rejectBuild(event, entity, {"message.drone-port-is-busy"})
 		end
+		link.register(port, entity)
 		entity.teleport(port.position)
 		data.drone = entity
 		entity.entity_label = data.name
 		table.insert(data.guests, entity)
 		data.state.status = "loading"
-		script_data.drones[entity.unit_number] = port.unit_number
+		registerDrone(data)
 	end
 end
 
 local function onRemoved(event)
 	local entity = event.entity
-	if not entity or not entity.valid then return end
-	if entity.name == base or entity.name == storage or entity.name == fuelbox then
-		local floor = entity.name == base and entity or entity.surface.find_entity(base, entity.position)
-		local data = getStruct(floor)
-
-		local import = data.import
-		local export = data.export
-		local fuel = data.fuel
-		local drone = data.drone
-		if entity.unit_number ~= import.unit_number then
-			getitems.storage(import, event and event.buffer or nil)
-			import.destroy()
-		end
-		if entity.unit_number ~= export.unit_number then
-			getitems.storage(export, event and event.buffer or nil)
-			export.destroy()
-		end
-		if entity.name ~= fuelbox then
-			getitems.storage(fuel, event and event.buffer or nil)
-			fuel.destroy()
-		end
-		if drone then
-			getitems.burner(drone, event and event.buffer or nil)
-			getitems.spider(drone, event and event.buffer or nil)
-			drone.destroy()
-			-- check if drone is in destination queue
-			local ddata = data.target and data.target.valid and getStruct(data.target)
-			if ddata then
-				for i,qd in pairs(ddata.guests) do
-					if drone == qd then
-						table.remove(ddata.guests,i)
-						break
-					end
-				end
-			end
-		end
-		io.remove(floor, event)
-		local tag = findPortTag(floor)
+	if not (entity and entity.valid) then return end
+	if entity.name == base then
+		local tag = findPortTag(entity)
 		if tag and tag.valid then
 			tag.destroy()
 		end
 
-		script_data.ports[floor.unit_number%30][floor.unit_number] = nil
-		if entity.name ~= base then
-			floor.destroy()
-		end
+		clearStruct(entity)
 	end
 	if entity.name == drone then
 		local data = getStructFromDrone(entity)
@@ -202,6 +182,7 @@ local function onRemoved(event)
 			end
 			data.state.status = "no-drone"
 			data.drone = nil
+			clearStructFromDrone(entity)
 		end
 	end
 end
@@ -658,7 +639,7 @@ local function transferInventory(source, target)
 	end
 end
 local function onTick(event)
-	for i,struct in pairs(script_data.ports[event.tick%30]) do
+	for _,struct in pairs(getBucket(event.tick)) do
 		local station = struct.base
 		local destination = struct.target
 		local fuel = struct.fuel
@@ -673,7 +654,6 @@ local function onTick(event)
 			end
 		end
 		if station.energy > 0 then
-			-- each station will "tick" once every 30 in-game ticks, ie. every half-second
 			if state.status == "no-drone" or state.status == "emergency-recall" then
 				-- do nothing
 			elseif state.status == "loading" then
@@ -965,7 +945,7 @@ local function onFastTransfer(event, half)
 	end
 end
 
-return {
+return bev.applyBuildEvents{
 	on_init = function()
 		global.drones = global.drones or script_data
 		global.debounce_error = global.player_build_error_debounce or debounce_error
@@ -974,17 +954,9 @@ return {
 		script_data = global.drones or script_data
 		debounce_error = global.player_build_error_debounce or debounce_error
 	end,
+	on_build = onBuilt,
+	on_destroy = onRemoved,
 	events = {
-		[defines.events.on_built_entity] = onBuilt,
-		[defines.events.on_robot_built_entity] = onBuilt,
-		[defines.events.script_raised_built] = onBuilt,
-		[defines.events.script_raised_revive] = onBuilt,
-
-		[defines.events.on_player_mined_entity] = onRemoved,
-		[defines.events.on_robot_mined_entity] = onRemoved,
-		[defines.events.on_entity_died] = onRemoved,
-		[defines.events.script_raised_destroy] = onRemoved,
-
 		[defines.events.on_gui_opened] = onGuiOpened,
 		[defines.events.on_gui_closed] = onGuiClosed,
 		[defines.events.on_gui_click] = onGuiClick,

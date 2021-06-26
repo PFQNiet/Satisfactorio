@@ -10,7 +10,32 @@ local spawndata = {
 	[6] = {["alpha-spitter"] = 1, ["spitter"] = 2}
 }
 
+---@class UnitTracker
+---@field id uint
+---@field spawn Position
+---@field entity LuaEntity
+
+---@type UnitTracker[][]
 local script_data = {}
+local buckets = 60
+for i=0,buckets-1 do script_data[i] = {} end
+local function getBucket(tick)
+	return script_data[tick%buckets]
+end
+local function registerStruct(id, struct)
+	script_data[id%buckets][id] = struct
+end
+local function unregisterStruct(id)
+	script_data[id%buckets][id] = nil
+end
+local function getStruct(id)
+	local struct = script_data[id%buckets][id]
+	if struct and not struct.entity.valid then
+		unregisterStruct(id)
+		return nil
+	end
+	return struct
+end
 
 local function _guardSpawn(struct)
 	struct.entity.set_command{
@@ -55,7 +80,7 @@ local function spawnGroup(surface,position,value,basedist)
 	end
 	value = math.min(6,math.max(1,math.floor(value*settings.size+0.5))) -- minimum setting always yields 1, maximum setting always yields 6
 	if realdist < saferange then
-		-- early spawns should be super easy since you only have the Xeno-Basher
+		-- early spawns should be super easy since you only have the Xeno-Zapper
 		value = 1
 		if realdist < saferange/2 and random()<0.5 then
 			-- *very* early spawns may even be undefended
@@ -77,14 +102,15 @@ local function spawnGroup(surface,position,value,basedist)
 					force = game.forces.enemy
 				}
 				local struct = {
+					id = entity.unit_number,
 					spawn = position,
 					entity = entity
 				}
-				script_data[entity.unit_number] = struct
+				registerStruct(entity.unit_number, struct)
 				_guardSpawn(struct)
 			else
 				surface.create_entity{
-					name = "small-worm-turret", -- flying crab spawner
+					name = "flying-crab-hatcher",
 					position = offset,
 					force = game.forces.enemy
 				}
@@ -95,9 +121,9 @@ local function spawnGroup(surface,position,value,basedist)
 		-- add some gas clouds
 		local name
 		if game.default_map_gen_settings.autoplace_controls['x-deposit'].size > 0 then
-			name = random() < 0.85 and "big-worm-turret" or "behemoth-worm-turret"
+			name = random() < 0.85 and "spore-flower" or "gas-emitter"
 		else
-			name = "big-worm-turret" -- don't allow Behemoth Worms (indestructible) if resource deposits are turned off - TODO make it a separate option
+			name = "spore-flower" -- don't allow Behemoth Worms (indestructible) if resource deposits are turned off - TODO make it a separate option
 		end
 		for i=1,4 do
 			-- find_non_colliding_position doesn't support the map gen box, which is needed for worm turrets to give ore nodes some space
@@ -129,21 +155,17 @@ local function spawnGroup(surface,position,value,basedist)
 		end
 	end
 end
+---@param event on_ai_command_completed
 local function onCommandCompleted(event)
-	local struct = script_data[event.unit_number]
+	local struct = getStruct(event.unit_number)
 	if struct then
-		if struct.entity.valid then
-			_guardSpawn(struct)
-		else
-			-- died perhaps, clean up the struct
-			script_data[event.unit_number] = nil
-		end
+		_guardSpawn(struct)
 	end
 end
 -- after attacking a player, check if we went too far from spawn and return there if so
 local function onDamaged(event)
 	if event.entity.type == "character" and event.cause and event.cause.valid and event.cause.type == "unit" then
-		local struct = script_data[event.cause.unit_number]
+		local struct = getStruct(event.cause.unit_number)
 		if struct then
 			local distance_from_home = math2d.position.distance(struct.entity.position, struct.spawn)
 			if distance_from_home > 50 then
@@ -152,24 +174,40 @@ local function onDamaged(event)
 		end
 	end
 end
+-- periodically check if unit has strayed too far (chasing the player) and go back to spawn if so
+local function onTick(event)
+	---@typelist number, UnitTracker
+	for _,struct in pairs(getBucket(event.tick)) do
+		if not struct.entity.valid then
+			unregisterStruct(struct.id)
+		else
+			local distance_from_home = math2d.position.distance(struct.entity.position, struct.spawn)
+			if distance_from_home > 50 then
+				_guardSpawn(struct)
+			end
+		end
+	end
+end
 local function onEntityDied(event)
-	if event.entity.valid and event.entity.unit_number and script_data[event.entity.unit_number] then
-		script_data[event.entity.unit_number] = nil
+	if event.entity.valid and event.entity.unit_number then
+		unregisterStruct(event.entity.unit_number)
 	end
 end
 
 return {
 	spawnGroup = spawnGroup,
-
-	on_init = function()
-		global.unit_tracking = global.unit_tracking or script_data
-	end,
-	on_load = function()
-		script_data = global.unit_tracking or script_data
-	end,
-	events = {
-		[defines.events.on_entity_died] = onEntityDied,
-		[defines.events.on_entity_damaged] = onDamaged,
-		[defines.events.on_ai_command_completed] = onCommandCompleted
+	lib = {
+		on_init = function()
+			global.unit_tracking = global.unit_tracking or script_data
+		end,
+		on_load = function()
+			script_data = global.unit_tracking or script_data
+		end,
+		events = {
+			[defines.events.on_tick] = onTick,
+			[defines.events.on_entity_died] = onEntityDied,
+			[defines.events.on_entity_damaged] = onDamaged,
+			[defines.events.on_ai_command_completed] = onCommandCompleted
+		}
 	}
 }

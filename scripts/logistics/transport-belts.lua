@@ -1,7 +1,8 @@
 -- uses global.player_build_error_debounce to track force -> last error tick to de-duplicate placement errors
 local debounce_error = {}
 
-local refundEntity = require(modpath.."scripts.build-gun").refundEntity
+local bev = require(modpath.."scripts.lualib.build-events")
+local refundEntity = require(modpath.."scripts.lualib.building-management").refundEntity
 
 -- prevent placement of transport belts if it would lead to a belt having more than one input
 local function isValidBelt(entity)
@@ -46,7 +47,6 @@ local function onBuilt(event)
 				}
 				debounce_error[player.force.index] = event.tick + 60
 			end
-			return
 		end
 	end
 end
@@ -72,19 +72,15 @@ local function onRotated(event)
 	end
 end
 
-return {
+return bev.applyBuildEvents{
 	on_init = function()
 		global.debounce_error = global.player_build_error_debounce or debounce_error
 	end,
 	on_load = function()
 		debounce_error = global.player_build_error_debounce or debounce_error
 	end,
+	on_build = onBuilt,
 	events = {
-		[defines.events.on_built_entity] = onBuilt,
-		[defines.events.on_robot_built_entity] = onBuilt,
-		[defines.events.script_raised_built] = onBuilt,
-		[defines.events.script_raised_revive] = onBuilt,
-
 		[defines.events.on_player_rotated_entity] = onRotated
 	}
 }

@@ -1,5 +1,5 @@
 -- uses global.battery_flow to track rolling average flow
--- opening a pipe's GUI adds it to the tracking list, closing it (provided no other player has it open) removes it
+-- opening a battery's GUI adds it to the tracking list, closing it (provided no other player has it open) removes it
 local script_data = {}
 
 local battery = "power-storage"

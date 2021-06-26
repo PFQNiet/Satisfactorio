@@ -1,12 +1,12 @@
 -- remove starting lake - expression is basically clamp(real_map, -math.huge, starting_lakes) so this replaces it with just real_map
 data.raw['noise-expression']['0_17-lakes-elevation'].expression = data.raw['noise-expression']['0_17-lakes-elevation'].expression.arguments[1]
 -- remove enemy base autoplacement (they will be spawned manually around places of interest)
-data.raw['unit-spawner']['biter-spawner'].autoplace = nil
-data.raw['unit-spawner']['spitter-spawner'].autoplace = nil
-data.raw['turret']['small-worm-turret'].autoplace = nil
-data.raw['turret']['medium-worm-turret'].autoplace = nil
-data.raw['turret']['big-worm-turret'].autoplace = nil
-data.raw['turret']['behemoth-worm-turret'].autoplace = nil
+for _,spawner in pairs(data.raw["unit-spawner"]) do
+	spawner.autoplace = nil
+end
+for _,turret in pairs(data.raw["turret"]) do
+	turret.autoplace = nil
+end
 -- disable enemy settings by default
 local settings = data.raw['map-settings']['map-settings']
 settings.enemy_evolution.enabled = false

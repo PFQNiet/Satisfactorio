@@ -1,6 +1,7 @@
 -- a splitter that allows setting a single filter on each output
 local io = require(modpath.."scripts.lualib.input-output")
-local getitems = require(modpath.."scripts.lualib.get-items-from")
+local bev = require(modpath.."scripts.lualib.build-events")
+local link = require(modpath.."scripts.lualib.linked-entity")
 
 local splitter = "smart-splitter"
 local buffer = "merger-splitter-box"
@@ -19,50 +20,65 @@ end
 
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
-	if not entity or not entity.valid then return end
+	if not (entity and entity.valid) then return end
+
 	if entity.name == splitter then
+		local box = entity.surface.create_entity{
+			name = buffer,
+			position = entity.position,
+			force = entity.force,
+			raise_built = true
+		}
+		link.register(entity, box)
+
 		local struct = {
 			base = entity,
 			filters = {
 				left = nil,
 				forward = "any",
 				right = nil
-			}
+			},
+			connections = {
+				left = {},
+				forward = {},
+				right = {}
+			},
+			buffer = box
 		}
-		local buffer = entity.surface.create_entity{
-			name = buffer,
-			position = entity.position,
-			force = entity.force,
-			raise_built = true
-		}
-		struct.buffer = buffer
 
 		local control = entity.get_or_create_control_behavior()
 		control.set_signal(2, {signal={type="virtual",name="signal-any"},count=1})
 		control.enabled = false
 		
-		local belt, inserter1, inserter2, graphic = io.addInput(entity, {0,1}, buffer)
+		local conn = io.addConnection(entity, {0,1}, "input", box)
 		-- connect inserters to buffer and only enable if item count = 0
-		inserter1.connect_neighbour({wire = defines.wire_type.red, target_entity = buffer})
-		inserter1.get_or_create_control_behavior().circuit_condition = {condition={first_signal={type="virtual",name="signal-everything"},comparator="=",constant=0}}
-		inserter2.connect_neighbour({wire = defines.wire_type.red, target_entity = buffer})
-		inserter2.get_or_create_control_behavior().circuit_condition = {condition={first_signal={type="virtual",name="signal-everything"},comparator="=",constant=0}}
+		for _,inserter in pairs{conn.inserter_left, conn.inserter_right} do
+			inserter.connect_neighbour{
+				wire = defines.wire_type.red,
+				target_entity = box
+			}
+			inserter.get_or_create_control_behavior().circuit_condition = {
+				condition = {
+					first_signal = {
+						type="virtual", name="signal-everything"
+					},
+					comparator = "=",
+					constant = 0
+				}
+			}
+		end
 
-		-- connect inserters to base and enable when it gets a virtual signal
-		belt, inserter1, inserter2, graphic = io.addOutput(entity, {0,-1}, buffer)
-		inserter1.inserter_filter_mode = "whitelist"
-		inserter2.inserter_filter_mode = "whitelist"
-		struct.forward = {inserter1, inserter2}
-
-		belt, inserter1, inserter2, graphic = io.addOutput(entity, {-1,0}, buffer, defines.direction.west)
-		inserter1.inserter_filter_mode = "whitelist"
-		inserter2.inserter_filter_mode = "whitelist"
-		struct.left = {inserter1, inserter2}
-
-		belt, inserter1, inserter2, graphic = io.addOutput(entity, {1,0}, buffer, defines.direction.east)
-		inserter1.inserter_filter_mode = "whitelist"
-		inserter2.inserter_filter_mode = "whitelist"
-		struct.right = {inserter1, inserter2}
+		local outputs = {
+			{side="forward",position={0,-1}, direction=defines.direction.north},
+			{side="right", position={1,0}, direction=defines.direction.east},
+			{side="left", position={-1,0}, direction=defines.direction.west}
+		}
+		for _,pos in pairs(outputs) do
+			local conn = io.addConnection(entity, pos.position, "output", box, pos.direction)
+			conn.inserter_left.inserter_filter_mode = "whitelist"
+			conn.inserter_right.inserter_filter_mode = "whitelist"
+			struct.connections[pos.side] = conn
+		end
 
 		entity.rotatable = false
 		script_data.splitters[entity.unit_number] = struct
@@ -71,22 +87,15 @@ end
 
 local function onRemoved(event)
 	local entity = event.entity
-	if not entity or not entity.valid then return end
+	if not (entity and entity.valid) then return end
+
 	if entity.name == splitter then
-		local box = entity.surface.find_entity(buffer, entity.position)
-		if box and box.valid then
-			getitems.storage(box, event.buffer)
-			io.remove(entity, event)
-			box.destroy()
-			script_data.splitters[entity.unit_number] = nil
-			-- find any players that had this GUI open and close it
-			for pid,struct in pairs(script_data.gui) do
-				if struct.base == entity then
-					closeGui(game.players[pid])
-				end
+		script_data.splitters[entity.unit_number] = nil
+		-- find any players that had this GUI open and close it
+		for pid,struct in pairs(script_data.gui) do
+			if struct.base == entity then
+				closeGui(game.players[pid])
 			end
-		else
-			game.print("Could not find the buffer")
 		end
 	end
 end
@@ -99,14 +108,12 @@ local others = {
 local function testFilter(filter, item, struct, look)
 	-- "overflow" is treated as "any-undefined" here
 	if type(filter) == "table" then
-		local any = false
 		for _,f in pairs(filter) do
 			if testFilter(f, item, struct, look) then
-				any = true
-				break
+				return true
 			end
 		end
-		return any
+		return false
 	elseif filter == "any" then
 		return true
 	elseif filter == "any-undefined" or filter == "overflow" then
@@ -148,7 +155,7 @@ local function checkOverflow(look, valid, struct)
 		if active then
 			-- check inserters to see if they are holding stuff
 			-- if one of them isn't, then the lane isn't overflowed
-			if not struct[dir][1].held_stack.valid_for_read or not struct[dir][2].held_stack.valid_for_read then
+			if not struct.connections[dir].inserter_left.held_stack.valid_for_read or not struct.connections[dir].inserter_right.held_stack.valid_for_read then
 				return false
 			end
 		end
@@ -181,11 +188,11 @@ local function onTick(event)
 			local candidates = {}
 			for _,dir in pairs(valid) do
 				-- final pass: get inserters that aren't already holding something
-				if struct[dir][1].active and not struct[dir][1].held_stack.valid_for_read then
-					table.insert(candidates, struct[dir][1].held_stack)
+				if struct.connections[dir].inserter_left.active and not struct.connections[dir].inserter_left.held_stack.valid_for_read then
+					table.insert(candidates, struct.connections[dir].inserter_left.held_stack)
 				end
-				if struct[dir][2].active and not struct[dir][2].held_stack.valid_for_read then
-					table.insert(candidates, struct[dir][2].held_stack)
+				if struct.connections[dir].inserter_right.active and not struct.connections[dir].inserter_right.held_stack.valid_for_read then
+					table.insert(candidates, struct.connections[dir].inserter_right.held_stack)
 				end
 			end
 			if #candidates > 0 then
@@ -437,7 +444,9 @@ local function onMove(event)
 	end
 end
 
-return {
+return bev.applyBuildEvents{
+	on_build = onBuilt,
+	on_destroy = onRemoved,
 	on_nth_tick = {
 		[4] = onTick
 	},
@@ -447,16 +456,6 @@ return {
 		[defines.events.on_gui_click] = onGuiClick,
 		[defines.events.on_gui_selection_state_changed] = onGuiSelected,
 		[defines.events.on_gui_elem_changed] = onGuiElemChanged,
-
-		[defines.events.on_built_entity] = onBuilt,
-		[defines.events.on_robot_built_entity] = onBuilt,
-		[defines.events.script_raised_built] = onBuilt,
-		[defines.events.script_raised_revive] = onBuilt,
-
-		[defines.events.on_player_mined_entity] = onRemoved,
-		[defines.events.on_robot_mined_entity] = onRemoved,
-		[defines.events.on_entity_died] = onRemoved,
-		[defines.events.script_raised_destroy] = onRemoved,
 
 		[defines.events.on_entity_settings_pasted] = onPaste,
 

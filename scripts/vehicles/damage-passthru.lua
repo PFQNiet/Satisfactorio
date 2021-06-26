@@ -1,4 +1,5 @@
 -- when a vehicle takes damage, pass it on to the player
+---@param event on_entity_damaged
 local function onDamaged(event)
 	if event.entity.type == "car" or event.entity.type == "spider-vehicle" then
 		local damage = event.original_damage_amount

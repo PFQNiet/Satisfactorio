@@ -28,8 +28,6 @@ local miner = {
 	mining_speed = 1, -- base 60/min
 	resource_categories = {"resource-node"},
 	resource_searching_radius = 0.49,
-	allowed_effects = {"speed","consumption"},
-	module_specification = {module_slots = 3},
 	vector_to_place_result = {0,0},
 	output_fluid_box = {
 		base_area = 0.1,

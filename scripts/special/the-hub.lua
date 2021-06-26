@@ -4,23 +4,28 @@
 local util = require("util")
 local math2d = require("math2d")
 local string = require(modpath.."scripts.lualib.string")
-local getitems = require(modpath.."scripts.lualib.get-items-from")
+local bev = require(modpath.."scripts.lualib.build-events")
+local link = require(modpath.."scripts.lualib.linked-entity")
 
 local base = "the-hub"
 local terminal = "the-hub-terminal"
 local bench = "craft-bench"
-local storage = "wooden-chest"
+local storage = "personal-storage-box"
 local biomassburner = "biomass-burner-hub"
-local powerpole = "small-electric-pole"
+local powerpole = "power-pole-mk-1"
 local freighter = "ficsit-freighter"
 
+---@class global.hub
+---@field terminal table<uint, LuaEntity>
+---@field milestone_selected table<uint, string> Player index => which Milestone the GUI was last updated for
+---@field cooldown table<uint, uint> Force index => Tick at which the Freighter returns
 local script_data = {
 	terminal = {},
 	milestone_selected = {},
-	cooldown = {},
-	floor_updated = true
+	cooldown = {}
 }
 
+---@param entity LuaEntity
 local function ejectColliders(entity)
 	local colliders = entity.surface.find_entities_filtered{
 		area = entity.bounding_box,
@@ -31,13 +36,26 @@ local function ejectColliders(entity)
 	end
 end
 
+--- Asserts that the terminal is valid before returning it
+---@param force LuaForce
+---@return LuaEntity|nil
 local function findHubForForce(force)
-	return script_data.terminal[force.index]
+	local term = script_data.terminal[force.index]
+	if term and not term.valid then
+		script_data.terminal[force.index] = nil
+		return nil
+	end
+	return term
 end
 
-local function position(offset,entity) -- entity's position and direction are used
+--- Establish a target position
+---@param offset Position Assuming entity is facing North
+---@param entity LuaEntity Its position and direction are factored in
+---@return Position
+local function position(offset,entity)
 	return math2d.position.add(entity.position, math2d.position.rotate_vector(offset, entity.direction*45))
 end
+
 local spawn_pos = {1,0}
 local bench_pos = {2.5,0}
 local bench_rotation = 2 -- 90deg
@@ -47,187 +65,153 @@ local burner_2_pos = {-4,-2}
 local powerpole_pos = {-5,0}
 local freighter_pos = {6,0}
 
-local function removeFloor(hub)
-	local dec = hub.surface.find_entity(base,hub.position)
-	if not dec or not dec.valid then return end
-	dec.destroy()
-	-- remove terminal entity from global list
-	script_data.terminal[hub.force.index] = nil
-end
-local function buildTerminal(hub)
-	local terminal = hub.surface.create_entity{
+local function buildTerminal(floor)
+	local term = floor.surface.create_entity{
 		name = terminal,
-		position = hub.position,
-		direction = hub.direction,
-		force = hub.force,
+		position = floor.position,
+		direction = floor.direction,
+		force = floor.force,
 		raise_built = true
 	}
-	terminal.active = false -- "crafting" is faked :D
-	script_data.terminal[terminal.force.index] = terminal
-	hub.force.set_spawn_position(position(spawn_pos,hub), hub.surface)
-	return terminal
+	term.active = false -- "crafting" is faked :D
+	term.force.set_spawn_position(position(spawn_pos,term), term.surface)
+	link.register(term, floor)
+	script_data.terminal[term.force.index] = term
+	return term
 end
 
-local function buildCraftBench(hub)
-	local craft = hub.surface.create_entity{
+local function buildCraftBench(term)
+	local craft = term.surface.create_entity{
 		name = bench,
-		position = position(bench_pos,hub),
-		direction = (hub.direction+bench_rotation)%8,
-		force = hub.force,
+		position = position(bench_pos,term),
+		direction = (term.direction+bench_rotation)%8,
+		force = term.force,
 		raise_built = true
 	}
 	craft.minable = false
+	link.register(term, craft)
 	return craft
 end
-local function removeCraftBench(hub, buffer)
-	local craft = hub.surface.find_entity(bench,position(bench_pos,hub))
-	if not craft or not craft.valid then
-		game.print("Couldn't find the craft bench")
-		return
-	end
-	if buffer then
-		getitems.assembler(craft, buffer)
-	end
-	craft.destroy()
-end
 
-local function buildStorageChest(hub)
+local function buildStorageChest(term)
 	-- only if HUB Upgrade 1 is done
-	if not hub.force.technologies['hub-tier0-hub-upgrade1'].researched then
+	if not term.force.technologies['hub-tier0-hub-upgrade1'].researched then
 		return
 	end
-	local box = hub.surface.create_entity{
+	local box = term.surface.create_entity{
 		name = storage,
-		position = position(storage_pos,hub),
-		force = hub.force,
+		position = position(storage_pos,term),
+		force = term.force,
 		raise_built = true
 	}
 	box.minable = false
 	ejectColliders(box)
+	link.register(term, box)
 	return box
 end
-local function removeStorageChest(hub, buffer) -- only if it exists
-	local box = hub.surface.find_entity(storage,position(storage_pos,hub))
-	if box and box.valid then
-		if buffer then
-			getitems.storage(box, buffer)
-		end
-		box.destroy()
-	end
-end
 
-local function buildBiomassBurner1(hub)
+local function buildBiomassBurner1(term)
 	-- only if HUB Upgrade 2 is done
-	if not hub.force.technologies['hub-tier0-hub-upgrade2'].researched then
+	if not term.force.technologies['hub-tier0-hub-upgrade2'].researched then
 		return
 	end
-	local burner = hub.surface.create_entity{
+	local burner = term.surface.create_entity{
 		name = biomassburner,
-		position = position(burner_1_pos,hub),
-		force = hub.force,
+		position = position(burner_1_pos,term),
+		force = term.force,
 		raise_built = true
 	}
 	burner.minable = false
-	local pole = hub.surface.create_entity{
+	local pole = term.surface.create_entity{
 		name = powerpole,
-		position = position(powerpole_pos,hub),
-		force = hub.force,
+		position = position(powerpole_pos,term),
+		force = term.force,
 		raise_built = true
 	}
 	pole.minable = false
 	ejectColliders(burner)
 	ejectColliders(pole)
+	link.register(term, burner)
+	link.register(term, pole)
 	return burner, pole
 end
-local function removeBiomassBurner1(hub, buffer) -- only if it exists
-	local burner = hub.surface.find_entity(biomassburner,position(burner_1_pos,hub))
-	if burner and burner.valid then
-		if buffer then
-			getitems.burner(burner, buffer)
-		end
-		burner.destroy{raise_destroy=true}
-	end
-	local pole = hub.surface.find_entity(powerpole,position(powerpole_pos,hub))
-	if pole and pole.valid then
-		pole.destroy()
-	end
-end
-local function buildBiomassBurner2(hub)
+local function buildBiomassBurner2(term)
 	-- only if HUB Upgrade 5 is done
-	if not hub.force.technologies['hub-tier0-hub-upgrade5'].researched then
+	if not term.force.technologies['hub-tier0-hub-upgrade5'].researched then
 		return
 	end
-	local burner = hub.surface.create_entity{
+	local burner = term.surface.create_entity{
 		name = biomassburner,
-		position = position(burner_2_pos,hub),
-		force = hub.force,
+		position = position(burner_2_pos,term),
+		force = term.force,
 		raise_built = true
 	}
 	burner.minable = false
 	ejectColliders(burner)
+	link.register(term, burner)
 	return burner
 end
-local function removeBiomassBurner2(hub, buffer) -- only if it exists
-	local burner = hub.surface.find_entity(biomassburner,position(burner_2_pos,hub))
-	if burner and burner.valid then
-		if buffer then
-			getitems.burner(burner, buffer)
-		end
-		burner.destroy{raise_destroy=true}
-	end
-end
-local function buildFreighter(hub)
+
+local function buildFreighter(term)
 	-- only if HUB Upgrade 6 is done
-	if not hub.force.technologies['hub-tier0-hub-upgrade6'].researched then
+	if not term.force.technologies['hub-tier0-hub-upgrade6'].researched then
 		return
 	end
-	local silo = hub.surface.create_entity{
+	local silo = term.surface.create_entity{
 		name = freighter,
-		position = position(freighter_pos,hub),
-		force = hub.force,
+		position = position(freighter_pos,term),
+		force = term.force,
 		raise_built = true
 	}
 	silo.operable = false
-	silo.minable = false
 	silo.auto_launch = true
 
-	local inserter = hub.surface.create_entity{
+	local inserter = term.surface.create_entity{
 		name = "loader-inserter",
 		position = silo.position,
-		force = hub.force,
+		force = term.force,
 		raise_built = true
 	}
 	inserter.drop_position = silo.position
 	inserter.operable = false
-	inserter.minable = false
-	inserter.destructible = false
 
 	ejectColliders(silo)
+	link.register(term, silo)
+	link.register(term, inserter)
 end
-local function removeFreighter(hub, buffer)
-	local silo = hub.surface.find_entity(freighter,position(freighter_pos,hub))
-	if silo and silo.valid then
-		silo.destroy()
-	end
-	local inserter = hub.surface.find_entity("loader-inserter",position(freighter_pos,hub))
-	if inserter and inserter.valid then
-		inserter.destroy()
-	end
-end
-local function launchFreighter(hub, item)
-	if not hub then return end
-	local silo = hub.surface.find_entity(freighter,position(freighter_pos,hub))
+
+local function launchFreighter(term, item)
+	if not term then return end
+	local silo = term.surface.find_entity(freighter,position(freighter_pos,term))
 	if not (silo and silo.valid) then
-		game.print("Could not find Freighter")
+		term.force.print("Could not find Freighter")
 		return
 	end
-	local inserter = hub.surface.find_entity("loader-inserter",position(freighter_pos,hub))
+	local inserter = term.surface.find_entity("loader-inserter",position(freighter_pos,term))
 	if not (inserter and inserter.valid) then
-		game.print("Could not find Freighter Loader")
+		term.force.print("Could not find Freighter Loader")
 		return
 	end
 	inserter.held_stack.set_stack({name=item, count=1})
 	silo.rocket_parts = 1
+end
+
+--- "building" recipes have only one item product and that item is only-in-cursor
+---@param recipe LuaRecipePrototype
+local function isRecipeABuilding(recipe)
+	local products = recipe.products
+	-- assert there is only one product
+	if #products ~= 1 then return end
+	local product = products[1]
+	if product.type ~= "item" then return end
+	local item = game.item_prototypes[product.name]
+	-- if it is only-in-cursor then it's a building
+	return item.has_flag("only-in-cursor")
+end
+--- "material" recipes are any recipe in the "intermediate-products" or "space-elevator" groups
+---@param recipe LuaRecipePrototype
+local function isRecipeAMaterial(recipe)
+	return recipe.group.name == "intermediate-products" or recipe.group.name == "space-elevator"
 end
 
 local upgrades = {
@@ -237,58 +221,56 @@ local upgrades = {
 	["hub-tier0-hub-upgrade6"] = buildFreighter
 }
 local function completeMilestone(technology)
-	if string.starts_with(technology.name, "hub-tier") then
-		if upgrades[technology.name] then
-			local hub = findHubForForce(technology.force)
-			if hub and hub.valid then
-				upgrades[technology.name](hub)
-			end
+	if upgrades[technology.name] then
+		local hub = findHubForForce(technology.force)
+		if hub and hub.valid then
+			upgrades[technology.name](hub)
 		end
+	end
 
-		if game.tick > 5 then
-			local message = {"", {"message.milestone-reached",technology.name,technology.localised_name}}
-			-- use "real" technology effects for console message
-			for _,effect in pairs(technology.effects) do
-				if effect.type == "unlock-recipe" and effect.recipe:find("^hub%-tier%d+$") then
-					if effect.recipe == "hub-tier1" then
-						-- only register it once
-						table.insert(message, {"message.hub-new-tiers-available"})
-					end
-				elseif effect.type == "unlock-recipe" then
-					-- if it has an associated "undo" recipe, it's a Building, otherwise it's an Equipment
-					local subtype = "equipment"
-					if technology.force.recipes[effect.recipe.."-undo"] then subtype = "building" end
-					if technology.force.recipes[effect.recipe].products[1].type == "fluid" or not game.item_prototypes[technology.force.recipes[effect.recipe].products[1].name].place_result then subtype = "material" end
-					if technology.force.recipes[effect.recipe].category == "resource-scanner" then subtype = "resource" end
-					table.insert(message, {"message.milestone-effect-unlock-"..subtype, effect.recipe, game.recipe_prototypes[effect.recipe].localised_name})
-				elseif effect.type == "character-inventory-slots-bonus" then
-					table.insert(message, {"message.milestone-effect-inventory-bonus",effect.modifier})
-				elseif effect.type == "nothing" then
-					table.insert(message, {"message.milestone-effect-other",effect.effect_description})
-				else
-					table.insert(message, {"message.milestone-effect-unknown",effect.type,effect.modifier or 0})
+	if game.tick > 5 then
+		local message = {"", {"message.milestone-reached",technology.name,technology.localised_name}}
+		-- use "real" technology effects for console message
+		for _,effect in pairs(technology.effects) do
+			if effect.type == "unlock-recipe" and effect.recipe:find("^hub%-tier%d+$") then
+				if effect.recipe == "hub-tier1" then
+					-- only register it once
+					table.insert(message, {"message.hub-new-tiers-available"})
 				end
+			elseif effect.type == "unlock-recipe" then
+				local recipe = game.recipe_prototypes[effect.recipe]
+				local subtype
+				if recipe.category == "resource-scanner" then
+					subtype = "resource"
+				elseif isRecipeABuilding(recipe) then
+					subtype = "building"
+				elseif isRecipeAMaterial(recipe) then
+					subtype = "material"
+				else
+					subtype = "equipment"
+				end
+				table.insert(message, {"message.milestone-effect-unlock-"..subtype, effect.recipe, recipe.localised_name})
+			elseif effect.type == "character-inventory-slots-bonus" then
+				table.insert(message, {"message.milestone-effect-inventory-bonus",effect.modifier})
+			elseif effect.type == "nothing" then
+				table.insert(message, {"message.milestone-effect-other",effect.effect_description})
+			else
+				table.insert(message, {"message.milestone-effect-unknown",effect.type,effect.modifier or 0})
 			end
-			technology.force.print(message)
 		end
+		technology.force.print(message)
+	end
 
-		-- launch freighter if needed
-		local time = technology.research_unit_energy
-		if time > 30*60 then
-			launchFreighter(findHubForForce(technology.force), technology.research_unit_ingredients[1].name)
-			script_data.cooldown[technology.force.index] = game.tick + time
-		end
+	-- launch freighter if needed
+	local time = technology.research_unit_energy
+	if time > 30*60 then
+		launchFreighter(findHubForForce(technology.force), technology.research_unit_ingredients[1].name)
+		script_data.cooldown[technology.force.index] = game.tick + time
 	end
 end
 
+---@param force LuaForce
 local function updateMilestoneGUI(force)
-	if not force then
-		for _,force in pairs(game.forces) do
-			updateMilestoneGUI(force)
-		end
-		return
-	end
-
 	local hub = findHubForForce(force)
 	local milestone = {name="none"}
 	local recipe
@@ -313,7 +295,12 @@ local function updateMilestoneGUI(force)
 						force.recipes[recipe.name].enabled = false
 						force.recipes[recipe.name.."-done"].enabled = true
 					end
-					force.print({"message.milestone-already-researched",milestone.name,milestone.localised_name})
+					-- print warning message to any player(s) that has the hub open
+					for _,player in pairs(force.players) do
+						if player.opened == hub then
+							player.print({"message.milestone-already-researched",milestone.name,milestone.localised_name})
+						end
+					end
 					milestone = {name="none"}
 				else
 					local inventory = hub.get_inventory(defines.inventory.assembling_machine_input)
@@ -503,8 +490,8 @@ local function submitMilestone(force,player)
 			count = count - player.insert{name=name,count=count}
 		end
 		if count > 0 then
-			(player or hub).surface.spill_item_stack(
-				(player or hub).position,
+			hub.surface.spill_item_stack(
+				hub.position,
 				{name = name, count = count},
 				true, force, false
 			)
@@ -517,12 +504,12 @@ local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not entity or not entity.valid then return end
 	if entity.name == base then
-		buildTerminal(entity)
-		buildCraftBench(entity)
-		buildStorageChest(entity)
-		buildBiomassBurner1(entity)
-		buildBiomassBurner2(entity)
-		buildFreighter(entity)
+		local term = buildTerminal(entity)
+		buildCraftBench(term)
+		buildStorageChest(term)
+		buildBiomassBurner1(term)
+		buildBiomassBurner2(term)
+		buildFreighter(term)
 
 		-- if this is the first time building, then complete the "build the HUB" tech
 		local force = entity.force
@@ -534,25 +521,16 @@ local function onBuilt(event)
 	end
 end
 
-local function onRemoved(event)
-	local entity = event.entity
-	if not entity or not entity.valid then return end
-	if entity.name == terminal then
-		removeCraftBench(entity, event and event.buffer or nil)
-		removeStorageChest(entity, event and event.buffer or nil)
-		removeBiomassBurner1(entity, event and event.buffer or nil)
-		removeBiomassBurner2(entity, event and event.buffer or nil)
-		removeFreighter(entity, event and event.buffer or nil)
-		removeFloor(entity)
+local function on10thTick()
+	for _,force in pairs(game.forces) do
+		updateMilestoneGUI(force)
 	end
 end
-
-local function onTick(event)
-	updateMilestoneGUI()
-end
+---@param event on_research_finished
 local function onResearch(event)
-	-- can just pass all researches to the HUB library, since that already checks if it's a HUB tech.
-	completeMilestone(event.research)
+	if string.starts_with(event.research.name, "hub-tier") then
+		completeMilestone(event.research)
+	end
 end
 local function onGuiOpened(event)
 	if event.entity and event.entity.name == terminal and event.entity.get_recipe() == nil then
@@ -573,38 +551,18 @@ local function onGuiClick(event)
 	end
 end
 
-return {
+return bev.applyBuildEvents{
 	on_init = function()
 		global.hub = global.hub or script_data
 	end,
 	on_load = function()
 		script_data = global.hub or script_data
 	end,
-	on_configuration_changed = function()
-		if global.hub and not global.hub.floor_updated then
-			for _,terminal in pairs(global.hub.terminal) do
-				local floor = terminal.surface.find_entity(base, terminal.position)
-				if floor and floor.valid then
-					floor.direction = terminal.direction
-				end
-			end
-			global.hub.floor_updated = true
-		end
-	end,
 	on_nth_tick = {
-		[6] = onTick
+		[10] = on10thTick
 	},
+	on_build = onBuilt,
 	events = {
-		[defines.events.on_built_entity] = onBuilt,
-		[defines.events.on_robot_built_entity] = onBuilt,
-		[defines.events.script_raised_built] = onBuilt,
-		[defines.events.script_raised_revive] = onBuilt,
-		
-		[defines.events.on_player_mined_entity] = onRemoved,
-		[defines.events.on_robot_mined_entity] = onRemoved,
-		[defines.events.on_entity_died] = onRemoved,
-		[defines.events.script_raised_destroy] = onRemoved,
-		
 		[defines.events.on_research_finished] = onResearch,
 		[defines.events.on_gui_opened] = onGuiOpened,
 		[defines.events.on_gui_click] = onGuiClick

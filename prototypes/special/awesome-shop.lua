@@ -21,6 +21,10 @@ for item,spec in pairs(prices) do
 	local recipe = {
 		name = "awesome-shop-"..item,
 		type = "recipe",
+		icons = {
+			{icon = graphics.."icons/"..item..".png", icon_size = 64},
+			{icon = graphics.."icons/coupon.png", icon_size = 64, scale = 0.25, shift = {-8,8}}
+		},
 		ingredients = {{"coin",cost}},
 		result = item,
 		result_count = count,

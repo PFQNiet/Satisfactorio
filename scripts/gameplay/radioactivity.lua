@@ -1,19 +1,34 @@
--- scan generated chunks once per minute for any radioactive entities
--- this includes entities directly (and item-on-ground of radioactive types) but also the inventories of buildings, the transport lines of belts, inserter held items...
--- also include character/vehicle inventories, although these should be updated when the character/vehicle crosses chunk lines as well to keep things reasonably updated
--- ^ then again maybe this doesn't need to be updated too often - if you drop radioactive items, they're still right there at your feet!
--- the player takes damage if the chunk they are in is polluted, proportional to pollution but capped to 20dps
+-- scan generated chunks once per minute for any radioactive containers
+-- the player takes damage if the chunk they are in is polluted, or they are standing near radioactive items, proportional to pollution but capped to 20dps
 -- the hazmat suit protects the player from radiation damage, provided the player has filters (similar to the Gas Mask)
--- uses global.radioactivity.chunks to store chunks in a surface-Y-X array
--- uses global.radioactivity.buckets to spread chunks out over the course of a minute rather than trying to do them all at once
--- uses global.radioactivity.count to count the total number of chunks being tracked
 
+local bev = require(modpath.."scripts.lualib.build-events")
+
+---@class RadioactiveChunkData
+---@field id uint Identifier given to this chunk
+---@field x int
+---@field y int
+---@field surface LuaSurface,
+---@field area BoundingBox
+---@field radioactivity number
+---@field entities LuaEntity[] Radiation emitters
+---@field containers LuaEntity[] Containers built on this chunk
+---@field behemoths LuaEntity[] Behemoth Worms ("gas emitters") may be weakened by exposure to radiation
+
+---@class global.radioactivity
+---@field enabled boolean
+---@field chunks RadioactiveChunkData[] Surface.Y.X => chunk
+---@field buckets RadioactiveChunkData[] Grouped based on index
+---@field count uint
 local script_data = {
 	enabled = true,
 	chunks = {},
 	buckets = {},
 	count = 0
 }
+
+-- each chunk will be visited every 30 seconds
+local bucket_count = 1800
 
 local bucket_metatable = {
 	__index = function(tab, key)
@@ -26,53 +41,40 @@ local bucket_metatable = {
 	end
 }
 
--- using a 10-bit number for 1024 buckets
-local function bitrev10(n)
-	local rshift = bit32.rshift
-	local bor = bit32.bor
-	local band = bit32.band
-	local lshift = bit32.lshift
-
-	n = bor(rshift(band(n,0xFF00),8), lshift(band(n,0x00FF),8))
-	n = bor(rshift(band(n,0xF0F0),4), lshift(band(n,0x0F0F),4))
-	n = bor(rshift(band(n,0xCCCC),2), lshift(band(n,0x3333),2))
-	n = bor(rshift(band(n,0xAAAA),1), lshift(band(n,0x5555),1))
-	-- that flips a 16-bit number, so shift the result right by 6 bits to make it 10-bit again
-	return rshift(n,6)
-end
-
-local function getOrCreateChunk(surfid, chunkpos)
-	local obj = script_data.chunks
+---@param surface LuaSurface
+---@param chunkpos ChunkPosition
+---@return RadioactiveChunkData
+local function getOrCreateChunk(surface, chunkpos)
 	local x = chunkpos.x or chunkpos[1]
 	local y = chunkpos.y or chunkpos[2]
-	if not obj[surfid] then obj[surfid] = {} end
-	obj = obj[surfid]
-	if not obj[y] then obj[y] = {} end
-	obj = obj[y]
-	if not obj[x] then obj[x] = {
-		x = x,
-		y = y,
-		surface = game.surfaces[surfid],
-		area = {{x*32,y*32},{(x+1)*32,(y+1)*32}},
-		radioactivity = 0,
-		entities = {},
-		containers = {},
-		behemoths = {}
-	} end
-	return obj[x]
+	local ref = surface.index.."."..y.."."..x
+	if not script_data.chunks[ref] then
+		local id = script_data.count + 1
+		script_data.count = id
+		script_data.chunks[ref] = {
+			id = id,
+			x = x,
+			y = y,
+			surface = surface,
+			area = {{x*32,y*32},{(x+1)*32,(y+1)*32}},
+			radioactivity = 0,
+			entities = {},
+			containers = {},
+			behemoths = {}
+		}
+		table.insert(script_data.buckets[id % bucket_count], script_data.chunks[ref])
+	end
+	return script_data.chunks[ref]
+end
+local function getBucket(tick)
+	return script_data.buckets[tick % bucket_count]
 end
 
+---@param event on_chunk_generated
 local function onChunkGenerated(event)
 	local surface = event.surface
 	local pos = event.position
-	local entry = getOrCreateChunk(surface.index, pos)
-	-- convert count to Grey number and reverse bits to get index into buckets
-	-- this optimally spreads chunks out among the buckets, although honestly... 1024 buckets is gonna get filled with chunks fast so I dunno why I bothered LMAO
-	local count = (script_data.count or 0) % 1024
-	local grey = bit32.bxor(count, bit32.rshift(count, 1))
-	local bucketindex = bitrev10(grey)
-	table.insert(script_data.buckets[bucketindex], entry)
-	script_data.count = count+1
+	getOrCreateChunk(surface, pos)
 end
 
 local function addRadiationForResource(entity)
@@ -110,7 +112,7 @@ local function addRadiationForItemStack(stack)
 		["plutonium-fuel-rod"] = 120,
 		["plutonium-waste"] = 20
 	}
-	
+
 	if not radioactive_items[stack.name] then return 0 end
 	return radioactive_items[stack.name] * stack.count
 end
@@ -152,7 +154,7 @@ local function addRadiationForTransportBelt(entity)
 	local max = entity.get_max_transport_line_index()
 	local rad = 0
 	for i=1,max do
-		-- transport lines are similar enough to inventories for this (ie. they have get_item_count(item) available)
+		-- transport lines are similar enough to inventories for this (ie. they have get_contents() available)
 		rad = rad + addRadiationForInventory(entity.get_transport_line(i))
 	end
 	return rad
@@ -192,7 +194,7 @@ end
 
 local function onResolutionChanged(event)
 	local player = game.players[event.player_index]
-	local gui = player.gui.screen.radiation
+	local gui = player.gui.screen['radiation']
 	if gui then
 		gui.location = {(player.display_resolution.width-250*player.display_scale)/2, 160*player.display_scale}
 	end
@@ -205,17 +207,19 @@ local function updateChunk(entry)
 	local x2 = area[2][1]
 	local y1 = area[1][2]
 	local y2 = area[2][2]
-	local entities = entry.containers
+
+	local containers = entry.containers
 	local radiation = 0
-	for i=#entities,1,-1 do
-		local entity = entities[i]
+	for i=#containers,1,-1 do
+		local entity = containers[i]
 		if not entity.valid then
-			table.remove(entities,i)
+			table.remove(containers,i)
 		else
 			radiation = radiation + addRadiationForContainer(entity)
 		end
 	end
 	radiation = math.ceil(radiation/100)
+
 	-- for many chunks, radiation won't change much, so skip update if radiation is the same as last time
 	if radiation ~= entry.radioactivity then
 		entry.radioactivity = radiation
@@ -241,14 +245,15 @@ local function updateChunk(entry)
 			radiation = bit32.rshift(radiation, 1)
 		end
 	end
+
 	local pollution = surface.get_pollution({x1+1,y1+1})
 	if pollution > 1 then
-		entities = entry.behemoths
-		local damage = pollution
-		for i=#entities,1,-1 do
-			local entity = entities[i]
+		local worms = entry.behemoths
+		local damage = pollution * 2
+		for i=#worms,1,-1 do
+			local entity = worms[i]
 			if not entity.valid then
-				table.remove(entities,i)
+				table.remove(worms,i)
 			else
 				entity.destructible = true
 				entity.damage(math.min(entity.health-1, damage), game.forces.neutral, "radiation")
@@ -257,10 +262,13 @@ local function updateChunk(entry)
 		end
 	end
 end
+
+---@param player LuaPlayer
+---@param radiation number
 local function updateGui(player, radiation)
-	local gui = player.gui.screen.radiation
-	if not gui then
-		gui = player.gui.screen.add{
+	local screen = player.gui.screen
+	if not screen['radiation'] then
+		local gui = player.gui.screen.add{
 			type = "frame",
 			name = "radiation",
 			direction = "vertical",
@@ -288,6 +296,7 @@ local function updateGui(player, radiation)
 		}
 		gui.visible = false
 	end
+	local gui = screen['radiation']
 	if radiation < 1 then
 		if gui.visible then
 			gui.visible = false
@@ -300,7 +309,9 @@ local function updateGui(player, radiation)
 		gui.content.bar.value = math.min(radiation/145,1)
 	end
 end
-local function updatePlayerCharacter(player, damage)
+---@param player LuaPlayer
+---@param do_damage boolean
+local function updatePlayerCharacter(player, do_damage)
 	if player.character then
 		-- radiation damage is based on pollution of the current chunk
 		local radiation = player.character.surface.get_pollution(player.character.position)
@@ -308,7 +319,7 @@ local function updatePlayerCharacter(player, damage)
 		local pos = player.position
 		local cx = pos.x
 		local cy = pos.y
-		local proximity = 8
+		local proximity = 12
 		local entities = player.surface.find_entities_filtered{
 			position = player.position,
 			radius = proximity,
@@ -316,17 +327,17 @@ local function updatePlayerCharacter(player, damage)
 		}
 
 		for _,entity in pairs(entities) do
-			local pos = entity.position
-			local x = pos.x
-			local y = pos.y
+			local pos2 = entity.position
+			local x = pos2.x
+			local y = pos2.y
 			local dx = x-cx
 			local dy = y-cy
 			local distance2 = dx*dx + dy*dy
 			radiation = radiation + radioactivity_functions[entity.type](entity) / (distance2/(proximity*proximity)*90 + 10) -- falls off with square of distance
 		end
-		
+
 		-- radiation = radiation + addRadiationForCharacter(player.character)/10 -- note that background radiation is /100, so this is 10x stronger
-		if damage then
+		if do_damage then
 			if radiation >= 1 then
 				local rad = radiation
 				-- anything above 2k is capped
@@ -347,12 +358,11 @@ end
 local function onTick(event)
 	if not script_data.enabled then return end
 	local tick = event.tick
-	local bucket = tick % 1024
-	for _,entry in pairs(script_data.buckets[bucket]) do
+	for _,entry in pairs(getBucket(tick)) do
 		updateChunk(entry)
 	end
 
-	if tick%15 == 0 then
+	if tick%10 == 0 then
 		for _,player in pairs(game.players) do
 			updatePlayerCharacter(player, tick%60 == 0)
 		end
@@ -362,7 +372,7 @@ end
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not entity or not entity.valid then return end
-	local chunk = getOrCreateChunk(entity.surface.index, {math.floor(entity.position.x/32), math.floor(entity.position.x/32)})
+	local chunk = getOrCreateChunk(entity.surface, {math.floor(entity.position.x/32), math.floor(entity.position.x/32)})
 	if entity.name == "behemoth-worm-turret" then
 		table.insert(chunk.behemoths, entity)
 		return
@@ -378,7 +388,7 @@ local function onBuilt(event)
 	table.insert(chunk.containers, entity)
 end
 
-return {
+return bev.applyBuildEvents{
 	on_init = function()
 		if not global.radioactivity then
 			setmetatable(script_data.buckets, bucket_metatable)
@@ -390,78 +400,6 @@ return {
 	on_load = function()
 		script_data = global.radioactivity or script_data
 		setmetatable(script_data.buckets, bucket_metatable)
-	end,
-	on_configuration_changed = function()
-		local data = global.radioactivity
-		if not data then return end
-		if script.level.is_simulation then
-			data.enabled = false
-			return
-		end
-		if data.enabled == nil then
-			data.enabled = game.map_settings.pollution.enabled
-		end
-		if data.chunks[1] and data.chunks[1][0] and data.chunks[1][0][0] and not data.chunks[1][0][0].containers then
-			-- find existing containers, but not splitter/merger fake boxes, and list them
-			for surface,chunks in pairs(data.chunks) do
-				for y,row in pairs(chunks) do
-					for x,chunk in pairs(row) do
-						local area = chunk.area
-						local x1 = area[1][1]
-						local y1 = area[1][2]
-						local x2 = area[2][1]
-						local y2 = area[2][2]
-						chunk.containers = {}
-						local entities = game.surfaces[surface].find_entities_filtered{
-							area = area,
-							type = "container"
-						}
-						for _,entity in pairs(entities) do
-							if entity.name ~= "conveyor-merger-box"
-							and entity.name ~= "conveyor-splitter-box"
-							and entity.name ~= "smart-splitter-box"
-							and entity.name ~= "programmable-splitter-box" then
-								local pos = entity.position
-								local x = pos.x
-								local y = pos.y
-								-- ensure entity's position is in fact within the bounding box, since find_entities_filtered will find entities even if they just overlap the area slightly
-								if x >= x1 and x < x2 and y >= y1 and y < y2 then
-									table.insert(chunk.containers, entity)
-								end
-							end
-						end
-					end
-				end
-			end
-		end
-		if data.chunks[1] and data.chunks[1][0] and data.chunks[1][0][0] and not data.chunks[1][0][0].behemoths then
-			-- find existing Behemoth Worms and list them
-			for surface,chunks in pairs(data.chunks) do
-				for y,row in pairs(chunks) do
-					for x,chunk in pairs(row) do
-						local area = chunk.area
-						local x1 = area[1][1]
-						local y1 = area[1][2]
-						local x2 = area[2][1]
-						local y2 = area[2][2]
-						chunk.behemoths = {}
-						local entities = game.surfaces[surface].find_entities_filtered{
-							area = area,
-							name = "behemoth-worm-turret"
-						}
-						for _,entity in pairs(entities) do
-							local pos = entity.position
-							local x = pos.x
-							local y = pos.y
-							-- ensure entity's position is in fact within the bounding box, since find_entities_filtered will find entities even if they just overlap the area slightly
-							if x >= x1 and x < x2 and y >= y1 and y < y2 then
-								table.insert(chunk.behemoths, entity)
-							end
-						end
-					end
-				end
-			end
-		end
 	end,
 	add_commands = function()
 		if not commands.commands['toggle-radiation'] then
@@ -481,15 +419,11 @@ return {
 			end)
 		end
 	end,
+	on_build = onBuilt,
+	-- removing entities will invalidate them, which will be detected when the chunk is scanned
 	events = {
 		[defines.events.on_chunk_generated] = onChunkGenerated,
 		[defines.events.on_tick] = onTick,
-
-		[defines.events.on_built_entity] = onBuilt,
-		[defines.events.on_robot_built_entity] = onBuilt,
-		[defines.events.script_raised_built] = onBuilt,
-		[defines.events.script_raised_revive] = onBuilt,
-		-- removing entities will invalidate them, which will be detected when the chunk is scanned
 
 		[defines.events.on_player_display_resolution_changed] = onResolutionChanged,
 		[defines.events.on_player_display_scale_changed] = onResolutionChanged

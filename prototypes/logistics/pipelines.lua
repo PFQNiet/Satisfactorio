@@ -15,6 +15,7 @@ local function makePipe(params)
 
 	local pipe = table.deepcopy(data.raw.pipe.pipe)
 	pipe.name = name
+	if params.type then pipe.type = params.type end
 	pipe.minable.result = name
 	pipe.icon = graphics.."icons/"..name..".png"
 	pipe.icon_size = 64
@@ -49,7 +50,7 @@ local function makePipe(params)
 		icon_size = 64,
 		stack_size = 50,
 		subgroup = "pipe-distribution",
-		order = "a["..pipe.type.."]-"..order.."["..name.."]"
+		order = "a[pipe]-"..order.."["..name.."]"
 	}
 
 	local piperecipe = makeBuildingRecipe{
@@ -59,6 +60,11 @@ local function makePipe(params)
 	}
 
 	data:extend{pipe,pipeitem,piperecipe}
+	return {
+		pipe = pipe,
+		item = pipeitem,
+		recipe = piperecipe
+	}
 end
 
 makePipe{
@@ -114,7 +120,7 @@ local function makeUndergroundPipe(params)
 		icon_size = 64,
 		stack_size = 50,
 		subgroup = "pipe-distribution",
-		order = "b["..pipe.type.."]-"..order.."["..name.."]"
+		order = "b[pipe-to-ground]-"..order.."["..name.."]"
 	}
 
 	local piperecipe = makeBuildingRecipe{
@@ -185,7 +191,7 @@ local function makePump(params)
 		icon_size = 64,
 		stack_size = 50,
 		subgroup = "pipe-distribution",
-		order = "c["..pump.type.."]-"..order.."["..name.."]"
+		order = "c[pump]-"..order.."["..name.."]"
 	}
 
 	local pumprecipe = makeBuildingRecipe{
@@ -219,3 +225,19 @@ makePump{
 		{"plastic",8}
 	}
 }
+
+-- Infinity version
+local infinity = makePipe{
+	name = "infinity-pipeline",
+	type = "infinity-pipe",
+	fluid_box_height = pipe_height_2,
+	order = "c",
+	tint = {1,0.5,1},
+	ingredients = {{"copper-sheet",2},{"plastic",1}}
+}
+infinity.pipe.icons = {
+	{icon = graphics.."icons/pipeline.png", icon_size = 64},
+	{icon = "__core__/graphics/icons/mip/infinity.png", icon_size = 32, icon_mipmaps = 2, scale = 0.5, shift = {-8,8}, tint = {255,128,255}}
+}
+infinity.item.flags = {"hidden"}
+infinity.item.icons = infinity.pipe.icons

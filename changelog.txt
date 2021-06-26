@@ -350,4 +350,4 @@ Date: ????
   Changes:
     - Total overhaul of the code!!!
     - The only way to go fast, is to go well.
-    - Astonishingly, still compatible with earlier saves. Migrations are epic.
+    - Added Infinity Storage Container and Infinity Pipeline, which are automatically unlocked in Sandbox mode

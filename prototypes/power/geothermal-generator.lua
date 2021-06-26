@@ -43,6 +43,9 @@ local interface = {
 		filename = graphics.."placeholders/"..name..".png",
 		size = {288,288}
 	},
+	flags = {
+		"not-rotatable"
+	},
 	max_health = 1,
 	minable = {
 		mining_time = 0.5,

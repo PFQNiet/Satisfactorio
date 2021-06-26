@@ -30,7 +30,8 @@ local base = {
 	remove_decoratives = "true",
 	open_sound = basesounds.machine_open,
 	close_sound = basesounds.machine_close,
-	selection_box = {{-7,-3.5},{7,3.5}}
+	selection_box = {{-7,-3.5},{7,3.5}},
+	selection_priority = 49
 }
 
 local walkable = {

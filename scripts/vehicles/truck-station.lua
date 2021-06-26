@@ -1,7 +1,8 @@
 -- uses global.trucks.stations to list all truck stations
 local io = require(modpath.."scripts.lualib.input-output")
-local getitems = require(modpath.."scripts.lualib.get-items-from")
+local bev = require(modpath.."scripts.lualib.build-events")
 local fastTransfer = require(modpath.."scripts.organisation.containers").fastTransfer
+local link = require(modpath.."scripts.lualib.linked-entity")
 local math2d = require("math2d")
 
 local base = "truck-station"
@@ -38,11 +39,11 @@ local function onBuilt(event)
 			force = entity.force,
 			raise_built = true
 		}
-		io.addInput(entity, {-4,3.5}, fuel)
-		io.addInput(entity, {0,3.5}, store)
-		io.addOutput(entity, {2,3.5}, store, defines.direction.south)
-		-- default to Input mode
-		io.toggle(entity, {2,3.5}, false)
+		link.register(entity, fuel)
+		link.register(entity, store)
+		io.addConnection(entity, {-4,3.5}, "input", fuel)
+		io.addConnection(entity, {0,3.5}, "input", store)
+		io.addConnection(entity, {2,3.5}, "output", store, defines.direction.south)
 		entity.rotatable = false
 		script_data.stations[entity.unit_number%30][entity.unit_number] = {
 			base = entity,
@@ -56,26 +57,8 @@ end
 local function onRemoved(event)
 	local entity = event.entity
 	if not entity or not entity.valid then return end
-	if entity.name == base or entity.name == storage or entity.name == fuelbox then
-		local floor = entity.name == base and entity or entity.surface.find_entity(base, entity.position)
-		local data = getStruct(floor)
-
-		local store = data.cargo
-		local fuel = data.fuel
-		if entity.name ~= storage then
-			getitems.storage(store, event and event.buffer or nil)
-			store.destroy()
-		end
-		if entity.name ~= fuelbox then
-			getitems.storage(fuel, event and event.buffer or nil)
-			fuel.destroy()
-		end
-		io.remove(floor, event)
-
-		script_data.stations[floor.unit_number%30][floor.unit_number] = nil
-		if entity.name ~= base then
-			floor.destroy()
-		end
+	if entity.name == base then
+		script_data.stations[entity.unit_number%30][entity.unit_number] = nil
 	end
 end
 
@@ -190,8 +173,6 @@ local function onGuiSwitch(event)
 			local data = getStruct(floor)
 			local unload = event.element.switch_state == "right"
 			data.mode = unload and "output" or "input"
-			io.toggle(floor,{0,3.5},not unload)
-			io.toggle(floor,{2,3.5},unload)
 		end
 	end
 end
@@ -268,8 +249,7 @@ local function onTick(event)
 			end
 			station.active = done
 			-- disable IO if a vehicle is present, enable it if not
-			io.toggle(station,{0,3.5},not done)
-			io.toggle(station,{2,3.5},not done)
+			io.toggle(station,not done)
 		end
 	end
 end
@@ -296,24 +276,16 @@ local function onFastTransfer(event, half)
 	end
 end
 
-return {
+return bev.applyBuildEvents{
 	on_init = function()
 		global.trucks = global.trucks or script_data
 	end,
 	on_load = function()
 		script_data = global.trucks or script_data
 	end,
+	on_build = onBuilt,
+	on_destroy = onRemoved,
 	events = {
-		[defines.events.on_built_entity] = onBuilt,
-		[defines.events.on_robot_built_entity] = onBuilt,
-		[defines.events.script_raised_built] = onBuilt,
-		[defines.events.script_raised_revive] = onBuilt,
-
-		[defines.events.on_player_mined_entity] = onRemoved,
-		[defines.events.on_robot_mined_entity] = onRemoved,
-		[defines.events.on_entity_died] = onRemoved,
-		[defines.events.script_raised_destroy] = onRemoved,
-
 		[defines.events.on_gui_opened] = onGuiOpened,
 		[defines.events.on_gui_closed] = onGuiClosed,
 		[defines.events.on_gui_switch_state_changed] = onGuiSwitch,

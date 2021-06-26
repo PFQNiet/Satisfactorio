@@ -3,11 +3,15 @@
 -- generators on the network are disabled, and a GUI allows re-enabling them
 
 -- uses global.power_trip.accumulators to track the hidden accumulators
+-- uses global.power_trip.pointers to point component entities to their hidden accumulators
 -- uses global.power_trip.last_outage to track per-force when the last power outage was, to de-duplicate FX
+local bev = require(modpath.."scripts.lualib.build-events")
+local link = require(modpath.."scripts.lualib.linked-entity")
 
 local table_size = table_size
 local script_data = {
 	accumulators = {},
+	pointers = {},
 	last_outage = {}
 }
 
@@ -20,9 +24,7 @@ local function registerGenerator(burner, generator, accumulator_name)
 		raise_built = true
 	}
 	accumulator.energy = 1
-	accumulator.minable = false
-	accumulator.operable = false
-	accumulator.destructible = false
+	link.register(generator, accumulator)
 
 	local struct = {
 		burner = burner,
@@ -31,26 +33,29 @@ local function registerGenerator(burner, generator, accumulator_name)
 		active = true
 	}
 	-- store the struct under the index of the accumulator, and record the burner and generator as pointers to it
-	if burner then script_data.accumulators[burner.unit_number] = accumulator.unit_number end
-	script_data.accumulators[generator.unit_number] = accumulator.unit_number
+	if burner then script_data.pointers[burner.unit_number] = accumulator.unit_number end
+	script_data.pointers[generator.unit_number] = accumulator.unit_number
 	script_data.accumulators[accumulator.unit_number] = struct
 end
 local function findRegistration(entity)
-	if table_size(script_data.accumulators) == 0 then return nil end
-	-- look up a struct based on any of its components
-	local lookup = script_data.accumulators[entity.unit_number]
-	if type(lookup) == "number" then
-		-- pointer to the accumulator
-		lookup = script_data.accumulators[lookup]
+	local lookup = entity.unit_number
+	if script_data.pointers[lookup] then
+		lookup = script_data.pointers[lookup]
 	end
-	return lookup
+	return script_data.accumulators[lookup]
 end
 local function unregisterGenerator(entity)
 	local struct = findRegistration(entity)
-	if struct.burner then script_data.accumulators[struct.burner.unit_number] = nil end
-	script_data.accumulators[struct.generator.unit_number] = nil
+	if not struct then return end
+	if struct.burner then script_data.pointers[struct.burner.unit_number] = nil end
+	script_data.pointers[struct.generator.unit_number] = nil
 	script_data.accumulators[struct.accumulator.unit_number] = nil
-	struct.accumulator.destroy()
+end
+
+local function onRemoved(event)
+	local entity = event.entity
+	if not (entity and entity.valid) then return end
+	unregisterGenerator(entity)
 end
 
 local function createFusebox(player)
@@ -100,32 +105,31 @@ local function toggle(entry, enabled)
 	entry.generator.active = enabled
 	entry.active = enabled
 end
-local function onTick(event)
+local function on60thTick(event)
 	for _,entry in pairs(script_data.accumulators) do
-		if type(entry) == "table" then -- skip numeric pointers
-			if entry.generator.active and entry.accumulator.energy > 0 and entry.accumulator.energy < entry.accumulator.electric_buffer_size*0.999 then
-				-- don't count running out of fuel as a power trip
-				if entry.burner and entry.burner.burner and entry.burner.burner.remaining_burning_fuel == 0 then
-					-- just ran out of fuel
-				else
-					-- power failure!
-					toggle(entry,false)
-					local force = entry.accumulator.force
-					if not script_data.last_outage[force.index] then script_data.last_outage[force.index] = -5000 end
-					if script_data.last_outage[force.index]+60 < event.tick then
-						-- only play sound at most once a second
-						force.play_sound{path="power-failure"}
-					end
-					if script_data.last_outage[force.index]+3600 < event.tick then
-						-- only show console message at most once a minute
-						force.print({"message.power-failure"})
-					end
-					script_data.last_outage[force.index] = event.tick
-					-- see if any player on this entity's force has this generator opened
-					for _,player in pairs(force.players) do
-						if player.opened and (player.opened == entry.burner or player.opened == entry.generator) then
-							createFusebox(player)
-						end
+		if entry.generator.active and entry.accumulator.energy > 0 and entry.accumulator.energy < entry.accumulator.electric_buffer_size*0.999 then
+			-- don't count running out of fuel as a power trip
+			if entry.burner and entry.burner.burner and entry.burner.burner.remaining_burning_fuel == 0 then
+				-- just ran out of fuel
+			else
+				-- power failure!
+				toggle(entry,false)
+				-- this will cause a chain-reaction as other generators will have insufficient energy too
+				local force = entry.accumulator.force
+				if not script_data.last_outage[force.index] then script_data.last_outage[force.index] = -5000 end
+				if script_data.last_outage[force.index]+60 < event.tick then
+					-- only play sound at most once a second
+					force.play_sound{path="power-failure"}
+				end
+				if script_data.last_outage[force.index]+3600 < event.tick then
+					-- only show console message at most once a minute
+					force.print({"message.power-failure"})
+				end
+				script_data.last_outage[force.index] = event.tick
+				-- see if any player on this entity's force has this generator opened
+				for _,player in pairs(force.players) do
+					if player.opened and (player.opened == entry.burner or player.opened == entry.generator) then
+						createFusebox(player)
 					end
 				end
 			end
@@ -175,20 +179,23 @@ end
 
 return {
 	registerGenerator = registerGenerator,
-	unregisterGenerator = unregisterGenerator,
+	-- unregisterGenerator = unregisterGenerator,
 
-	on_init = function()
-		global.power_trip = global.power_trip or script_data
-	end,
-	on_load = function()
-		script_data = global.power_trip or script_data
-	end,
-	on_nth_tick = {
-		[60] = onTick
-	},
-	events = {
-		[defines.events.on_gui_opened] = onGuiOpened,
-		[defines.events.on_gui_closed] = onGuiClosed,
-		[defines.events.on_gui_click] = onGuiClick
+	lib = bev.applyBuildEvents{
+		on_init = function()
+			global.power_trip = global.power_trip or script_data
+		end,
+		on_load = function()
+			script_data = global.power_trip or script_data
+		end,
+		on_nth_tick = {
+			[60] = on60thTick
+		},
+		on_destroy = onRemoved,
+		events = {
+			[defines.events.on_gui_opened] = onGuiOpened,
+			[defines.events.on_gui_closed] = onGuiClosed,
+			[defines.events.on_gui_click] = onGuiClick
+		}
 	}
 }

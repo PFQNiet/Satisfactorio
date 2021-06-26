@@ -26,6 +26,7 @@ local function gainPoints(force, points)
 end
 
 local io = require(modpath.."scripts.lualib.input-output")
+local bev = require(modpath.."scripts.lualib.build-events")
 
 local base = "awesome-sink"
 
@@ -40,9 +41,9 @@ end
 
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
-	if not entity or not entity.valid then return end
+	if not (entity and entity.valid) then return end
 	if entity.name == base then
-		io.addInput(entity, {-0.5,3})
+		io.addConnection(entity, {-0.5,3}, "input")
 		entity.rotatable = false
 		script_data.sinks[entity.unit_number] = entity
 	end
@@ -50,9 +51,8 @@ end
 
 local function onRemoved(event)
 	local entity = event.entity
-	if not entity or not entity.valid then return end
+	if not (entity and entity.valid) then return end
 	if entity.name == base then
-		io.remove(entity, event)
 		processSink(entity)
 		script_data.sinks[entity.unit_number] = nil
 	end
@@ -166,7 +166,7 @@ local function onGuiOpened(event)
 				name = "count",
 				caption = util.format_number(pointsToNext(coupons[1]) - coupons[3])
 			}
-			
+
 			local bottom = inner.add{
 				type = "flow",
 				name = "bottom"
@@ -221,31 +221,12 @@ local function onGuiClosed(event)
 	end
 end
 
-return {
+return bev.applyBuildEvents{
 	on_init = function()
 		global.awesome = global.awesome or script_data
 	end,
 	on_load = function()
 		script_data = global.awesome or script_data
-	end,
-	on_configuration_changed = function()
-		local data = global.awesome
-		if not data then return end
-		local _,test = next(data.sinks)
-		if not test then return end
-		if test.valid then return end
-		-- there is a sink entry and it is invalid, rebuild the sink map
-		data.sinks = {}
-		for _,surface in pairs(game.surfaces) do
-			for _,sink in pairs(surface.find_entities_filtered{name=base}) do
-				data.sinks[sink.unit_number] = sink
-			end
-		end
-		-- also clean up GUIs
-		for _,player in pairs(game.players) do
-			local gui = player.gui.relative['awesome-sink']
-			if gui then gui.destroy() end
-		end
 	end,
 	on_nth_tick = {
 		[300] = function()
@@ -258,17 +239,9 @@ return {
 			updateAllPlayerGuis()
 		end
 	},
+	on_build = onBuilt,
+	on_destroy = onRemoved,
 	events = {
-		[defines.events.on_built_entity] = onBuilt,
-		[defines.events.on_robot_built_entity] = onBuilt,
-		[defines.events.script_raised_built] = onBuilt,
-		[defines.events.script_raised_revive] = onBuilt,
-
-		[defines.events.on_player_mined_entity] = onRemoved,
-		[defines.events.on_robot_mined_entity] = onRemoved,
-		[defines.events.on_entity_died] = onRemoved,
-		[defines.events.script_raised_destroy] = onRemoved,
-
 		[defines.events.on_gui_opened] = onGuiOpened,
 		[defines.events.on_gui_closed] = onGuiClosed,
 		[defines.events.on_gui_click] = onGuiClick

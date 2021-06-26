@@ -1,8 +1,10 @@
+local bev = require(modpath.."scripts.lualib.build-events")
+
 local tower = "lookout-tower"
 
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
-	if not entity or not entity.valid then return end
+	if not (entity and entity.valid) then return end
 	if entity.name == tower then
 		entity.operable = false
 	end
@@ -20,13 +22,9 @@ local function onVehicle(event)
 	end
 end
 
-return {
+return bev.applyBuildEvents{
+	on_build = onBuilt,
 	events = {
-		[defines.events.on_built_entity] = onBuilt,
-		[defines.events.on_robot_built_entity] = onBuilt,
-		[defines.events.script_raised_built] = onBuilt,
-		[defines.events.script_raised_revive] = onBuilt,
-
 		[defines.events.on_player_driving_changed_state] = onVehicle
 	}
 }

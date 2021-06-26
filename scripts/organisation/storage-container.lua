@@ -1,14 +1,15 @@
-local register = require(modpath.."scripts.organisation.containers").register
+local containers = require(modpath.."scripts.organisation.containers")
 
 local io = require(modpath.."scripts.lualib.input-output")
-local getitems = require(modpath.."scripts.lualib.get-items-from")
+local bev = require(modpath.."scripts.lualib.build-events")
+local link = require(modpath.."scripts.lualib.linked-entity")
 
 local box = "storage-container"
 local fakebox = "storage-container-placeholder"
 
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
-	if not entity or not entity.valid then return end
+	if not (entity and entity.valid) then return end
 	if entity.name == fakebox then
 		-- add the "real" box
 		local realbox = entity.surface.create_entity{
@@ -17,27 +18,12 @@ local function onBuilt(event)
 			force = entity.force,
 			raise_built = true
 		}
-		io.addInput(entity, {0,2}, realbox)
-		io.addOutput(entity, {0,-2}, realbox)
-		entity.rotatable = false
-		register(entity, realbox)
-	end
-end
+		link.register(entity, realbox)
 
-local function onRemoved(event)
-	local entity = event.entity
-	if not entity or not entity.valid then return end
-	if entity.name == fakebox or entity.name == box then
-		local fake = entity.name == fakebox and entity or entity.surface.find_entity(fakebox, entity.position)
-		local real = entity.name == box and entity or entity.surface.find_entity(box, entity.position)
-		io.remove(fake, event)
-		if entity ~= fake then
-			fake.destroy()
-		end
-		if entity ~= real then
-			getitems.storage(real, event and event.buffer or nil)
-			real.destroy()
-		end
+		io.addConnection(entity, {0,2}, "input", realbox)
+		io.addConnection(entity, {0,-2}, "output", realbox)
+		entity.rotatable = false
+		containers.register(entity, realbox)
 	end
 end
 
@@ -47,18 +33,9 @@ local function onGuiOpened(event)
 	end
 end
 
-return {
+return bev.applyBuildEvents{
+	on_build = onBuilt,
 	events = {
-		[defines.events.on_built_entity] = onBuilt,
-		[defines.events.on_robot_built_entity] = onBuilt,
-		[defines.events.script_raised_built] = onBuilt,
-		[defines.events.script_raised_revive] = onBuilt,
-
-		[defines.events.on_player_mined_entity] = onRemoved,
-		[defines.events.on_robot_mined_entity] = onRemoved,
-		[defines.events.on_entity_died] = onRemoved,
-		[defines.events.script_raised_destroy] = onRemoved,
-
 		[defines.events.on_gui_opened] = onGuiOpened
 	}
 }

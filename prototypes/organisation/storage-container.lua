@@ -70,3 +70,36 @@ local boxrecipe = makeBuildingRecipe{
 }
 
 data:extend{box, fakebox, boxitem, boxrecipe}
+
+-- Infinity version
+box = table.deepcopy(box)
+box.name = "infinity-"..box.name
+box.type = "infinity-container"
+box.erase_contents_when_mined = true
+box.icons = {
+	{icon = box.icon, icon_size = box.icon_size},
+	{icon = "__core__/graphics/icons/mip/infinity.png", icon_size = 32, icon_mipmaps = 2, scale = 0.5, shift = {-8,8}, tint = {255,128,255}}
+}
+
+fakebox = table.deepcopy(fakebox)
+fakebox.name = "infinity-"..fakebox.name
+for _,sprite in pairs(fakebox.sprites) do
+	sprite.tint = {255,128,255}
+end
+fakebox.minable.result = "infinity-"..fakebox.minable.result
+fakebox.icons = box.icons
+fakebox.localised_name = {"entity-name."..box.name}
+fakebox.localised_description = {"entity-description."..box.name}
+
+boxitem = table.deepcopy(boxitem)
+boxitem.name = "infinity-"..boxitem.name
+boxitem.place_result = "infinity-"..boxitem.place_result
+boxitem.order = "c["..boxitem.name.."]"
+boxitem.flags = {"hidden"}
+boxitem.icons = box.icons
+
+boxrecipe = table.deepcopy(boxrecipe)
+boxrecipe.name = "infinity-"..boxrecipe.name
+boxrecipe.result = "infinity-"..boxrecipe.result
+
+data:extend{box, fakebox, boxitem, boxrecipe}

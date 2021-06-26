@@ -1,7 +1,4 @@
-local mod_gui = require("mod-gui")
-local util = require("util")
-local version = 1
-
+---@param event on_player_created
 local on_player_created = function(event)
 	local player = game.players[event.player_index]
 	local character = player.character
@@ -14,8 +11,11 @@ local on_player_created = function(event)
 	player.force.research_all_technologies()
 	player.cheat_mode = true
 	player.surface.always_day = true
-	player.print({"msg-introduction"})
 
+	player.force.recipes['infinity-storage-container'].enabled = true
+	player.force.recipes['infinity-pipeline'].enabled = true
+
+	player.print({"msg-introduction"})
 end
 
 return {

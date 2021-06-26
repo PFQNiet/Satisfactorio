@@ -13,7 +13,7 @@ stop.place_result = nil
 if not stop.flags then stop.flags = {} end
 table.insert(stop.flags, "hidden")
 stop = data.raw['train-stop']['train-stop']
-stop.flags = {"placeable-neutral", "filter-directions"} -- not a "player-creation"
+-- stop.flags = {"placeable-neutral", "filter-directions"} -- not a "player-creation"
 stop.minable = nil
 stop.max_health = 1
 stop.selectable_in_game = false
@@ -47,7 +47,8 @@ local base = {
 	remove_decoratives = "true",
 	open_sound = stop.open_sound,
 	close_sound = stop.close_sound,
-	selection_box = {{-7,-3.5},{7,3.5}}
+	selection_box = {{-7,-3.5},{7,3.5}},
+	selection_priority = 49
 }
 
 local item = {

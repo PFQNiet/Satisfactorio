@@ -2,6 +2,8 @@
 -- this auto-drives the car along the path of the hyper tube until it reaches an exit, ie. an entity with only one connection
 -- uses global.hyper_tube to track player -> movement data
 -- uses global.player_build_error_debounce to track force -> last error tick to de-duplicate placement errors
+local bev = require(modpath.."scripts.lualib.build-events")
+local link = require(modpath.."scripts.lualib.linked-entity")
 
 local tube = "hyper-tube"
 local underground = "underground-hyper-tube"
@@ -10,12 +12,6 @@ local car = entrance.."-car"
 
 local script_data = {}
 local debounce_error = {}
-
-local refundEntity = require(modpath.."scripts.build-gun").refundEntity
-
-local function isHyperTube(entity)
-	return entity.name == tube or entity.name == underground or entity.name == entrance
-end
 
 local function getUndergroundPipeExit(entrance)
 	if entrance.name ~= underground then return nil end
@@ -29,26 +25,15 @@ local function getUndergroundPipeExit(entrance)
 end
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
-	if not entity or not entity.valid then return end
+	if not (entity and entity.valid) then return end
 	if entity.name == entrance then
-		-- known valid due to return statement above
-		entity.surface.create_entity{
+		local launcher = entity.surface.create_entity{
 			name = car,
 			position = entity.position,
 			force = entity.force,
 			raise_built = true
 		}
-	end
-end
-local function onRemoved(event)
-	local entity = event.entity
-	if not entity or not entity.valid then return end
-	if entity.name == entrance then
-		-- remove the vehicle
-		local box = entity.surface.find_entity(car, entity.position)
-		if box and box.valid then
-			box.destroy()
-		end
+		link.register(entity, launcher)
 	end
 end
 
@@ -91,12 +76,14 @@ local function onVehicle(event)
 					entity.direction = enter.direction
 					entity.operable = false
 					-- create another car for this entrance
-					enter.surface.create_entity{
+					link.unregister(enter, entity)
+					local newcar = enter.surface.create_entity{
 						name = car,
 						position = enter.position,
 						force = enter.force,
 						raise_built = true
 					}
+					link.register(enter, newcar)
 				end
 			end
 		elseif travel[player.index] then
@@ -202,7 +189,7 @@ local function onTick(event)
 	end
 end
 
-return {
+return bev.applyBuildEvents{
 	on_init = function()
 		global.hyper_tube = global.hyper_tube or script_data
 		global.debounce_error = global.player_build_error_debounce or debounce_error
@@ -211,17 +198,8 @@ return {
 		script_data = global.hyper_tube or script_data
 		debounce_error = global.player_build_error_debounce or debounce_error
 	end,
+	on_build = onBuilt,
 	events = {
-		[defines.events.on_built_entity] = onBuilt,
-		[defines.events.on_robot_built_entity] = onBuilt,
-		[defines.events.script_raised_built] = onBuilt,
-		[defines.events.script_raised_revive] = onBuilt,
-
-		[defines.events.on_player_mined_entity] = onRemoved,
-		[defines.events.on_robot_mined_entity] = onRemoved,
-		[defines.events.on_entity_died] = onRemoved,
-		[defines.events.script_raised_destroy] = onRemoved,
-
 		[defines.events.on_player_driving_changed_state] = onVehicle,
 		[defines.events.on_tick] = onTick
 	}

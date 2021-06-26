@@ -2,7 +2,8 @@
 -- uses global.splitters.splitters to track structures {base, buffer, filters, {left1, left2}, {middle1, middle2}, {right1, right2}}
 -- GUI uses global.splitters.gui to track player > opened programmable splitter
 local io = require(modpath.."scripts.lualib.input-output")
-local getitems = require(modpath.."scripts.lualib.get-items-from")
+local bev = require(modpath.."scripts.lualib.build-events")
+local link = require(modpath.."scripts.lualib.linked-entity")
 
 local splitter = "programmable-splitter"
 local buffer = "merger-splitter-box"
@@ -24,50 +25,65 @@ end
 
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
-	if not entity or not entity.valid then return end
+	if not (entity and entity.valid) then return end
+
 	if entity.name == splitter then
+		local box = entity.surface.create_entity{
+			name = buffer,
+			position = entity.position,
+			force = entity.force,
+			raise_built = true
+		}
+		link.register(entity, box)
+
 		local struct = {
 			base = entity,
 			filters = {
 				left = {},
 				forward = {"any"},
 				right = {}
-			}
+			},
+			connections = {
+				left = {},
+				forward = {},
+				right = {}
+			},
+			buffer = box
 		}
-		local buffer = entity.surface.create_entity{
-			name = buffer,
-			position = entity.position,
-			force = entity.force,
-			raise_built = true
-		}
-		struct.buffer = buffer
 
 		local control = entity.get_or_create_control_behavior()
 		control.set_signal(signalIndex("forward",1), {signal={type="virtual",name="signal-any"},count=1})
 		control.enabled = false
-		
-		local belt, inserter1, inserter2, graphic = io.addInput(entity, {0,1}, buffer)
+
+		local conn = io.addConnection(entity, {0,1}, "input", box)
 		-- connect inserters to buffer and only enable if item count = 0
-		inserter1.connect_neighbour({wire = defines.wire_type.red, target_entity = buffer})
-		inserter1.get_or_create_control_behavior().circuit_condition = {condition={first_signal={type="virtual",name="signal-everything"},comparator="=",constant=0}}
-		inserter2.connect_neighbour({wire = defines.wire_type.red, target_entity = buffer})
-		inserter2.get_or_create_control_behavior().circuit_condition = {condition={first_signal={type="virtual",name="signal-everything"},comparator="=",constant=0}}
+		for _,inserter in pairs{conn.inserter_left, conn.inserter_right} do
+			inserter.connect_neighbour{
+				wire = defines.wire_type.red,
+				target_entity = box
+			}
+			inserter.get_or_create_control_behavior().circuit_condition = {
+				condition = {
+					first_signal = {
+						type="virtual", name="signal-everything"
+					},
+					comparator = "=",
+					constant = 0
+				}
+			}
+		end
 
-		-- connect inserters to base and enable when it gets a virtual signal
-		belt, inserter1, inserter2, graphic = io.addOutput(entity, {0,-1}, buffer)
-		inserter1.inserter_filter_mode = "whitelist"
-		inserter2.inserter_filter_mode = "whitelist"
-		struct.forward = {inserter1, inserter2}
-
-		belt, inserter1, inserter2, graphic = io.addOutput(entity, {-1,0}, buffer, defines.direction.west)
-		inserter1.inserter_filter_mode = "whitelist"
-		inserter2.inserter_filter_mode = "whitelist"
-		struct.left = {inserter1, inserter2}
-
-		belt, inserter1, inserter2, graphic = io.addOutput(entity, {1,0}, buffer, defines.direction.east)
-		inserter1.inserter_filter_mode = "whitelist"
-		inserter2.inserter_filter_mode = "whitelist"
-		struct.right = {inserter1, inserter2}
+		local outputs = {
+			{side="forward",position={0,-1}, direction=defines.direction.north},
+			{side="right", position={1,0}, direction=defines.direction.east},
+			{side="left", position={-1,0}, direction=defines.direction.west}
+		}
+		for _,pos in pairs(outputs) do
+			local conn = io.addConnection(entity, pos.position, "output", box, pos.direction)
+			conn.inserter_left.inserter_filter_mode = "whitelist"
+			conn.inserter_right.inserter_filter_mode = "whitelist"
+			struct.connections[pos.side] = conn
+		end
 
 		entity.rotatable = false
 		script_data.splitters[entity.unit_number] = struct
@@ -76,22 +92,15 @@ end
 
 local function onRemoved(event)
 	local entity = event.entity
-	if not entity or not entity.valid then return end
+	if not (entity and entity.valid) then return end
+
 	if entity.name == splitter then
-		local box = entity.surface.find_entity(buffer, entity.position)
-		if box and box.valid then
-			getitems.storage(box, event.buffer)
-			io.remove(entity, event)
-			box.destroy()
-			script_data.splitters[entity.unit_number] = nil
-			-- find any players that had this GUI open and close it
-			for pid,struct in pairs(script_data.gui) do
-				if struct.base == entity then
-					closeGui(game.players[pid])
-				end
+		script_data.splitters[entity.unit_number] = nil
+		-- find any players that had this GUI open and close it
+		for pid,struct in pairs(script_data.gui) do
+			if struct.base == entity then
+				closeGui(game.players[pid])
 			end
-		else
-			game.print("Could not find the buffer")
 		end
 	end
 end
@@ -103,7 +112,7 @@ local function updateSplitter(struct, gui)
 	for _,dir in pairs({"left","forward","right"}) do
 		local filters = gui["filter-"..dir].filters
 		struct.filters[dir] = {}
-		for i,flow in pairs(filters.children) do
+		for _,flow in pairs(filters.children) do
 			local index = flow.children[1].selected_index
 			local item = flow.children[2].elem_value
 			table.insert(struct.filters[dir], ({
@@ -188,11 +197,10 @@ local function onPaste(event)
 				end
 			end
 		end
-		local base = struct.base
 		local players = game.players
-		for pid,struct in pairs(script_data.gui) do
-			if struct.base == base then
-				fullGuiUpdate(struct, players[pid].gui.screen['programmable-splitter'].columns)
+		for pid,other in pairs(script_data.gui) do
+			if other.base == struct.base then
+				fullGuiUpdate(other, players[pid].gui.screen['programmable-splitter'].columns)
 			end
 		end
 	end
@@ -352,15 +360,14 @@ local function onGuiSelected(event)
 		local itemsel = event.element.parent.children[2]
 		itemsel.visible = index == 5
 		-- mirror this change to other players with this entity open
-		local base = struct.base
 		local dir = ({
 			["programmable-splitter-left-selection"] = "left",
 			["programmable-splitter-forward-selection"] = "forward",
 			["programmable-splitter-right-selection"] = "right"
 		})[event.element.name]
 		local filterid = event.element.parent.name
-		for pid,struct in pairs(gui_splitter) do
-			if event.player_index ~= pid and struct.base == base then
+		for pid,other in pairs(gui_splitter) do
+			if event.player_index ~= pid and other.base == struct.base then
 				local flow = players[pid].gui.screen['programmable-splitter'].columns["filter-"..dir].filters[filterid]
 				flow.children[1].selected_index = index
 				flow.children[2].visible = index == 5
@@ -379,15 +386,14 @@ local function onGuiElemChanged(event)
 		local struct = gui_splitter[event.player_index]
 		updateSplitter(struct, players[event.player_index].gui.screen['programmable-splitter'].columns)
 		-- mirror this change to other players with this entity open
-		local base = struct.base
 		local dir = ({
 			["programmable-splitter-left-item"] = "left",
 			["programmable-splitter-forward-item"] = "forward",
 			["programmable-splitter-right-item"] = "right"
 		})[event.element.name]
 		local filterid = event.element.parent.name
-		for pid,struct in pairs(gui_splitter) do
-			if event.player_index ~= pid and struct.base == base then
+		for pid,other in pairs(gui_splitter) do
+			if event.player_index ~= pid and other.base == struct.base then
 				local flow = players[pid].gui.screen['programmable-splitter'].columns["filter-"..dir].filters[filterid]
 				flow.children[2].elem_value = event.element.elem_value
 			end
@@ -406,23 +412,15 @@ local function onMove(event)
 	end
 end
 
-return {
+return bev.applyBuildEvents{
+	on_build = onBuilt,
+	on_destroy = onRemoved,
 	events = {
 		[defines.events.on_gui_opened] = onGuiOpened,
 		[defines.events.on_gui_closed] = onGuiClosed,
 		[defines.events.on_gui_click] = onGuiClick,
 		[defines.events.on_gui_selection_state_changed] = onGuiSelected,
 		[defines.events.on_gui_elem_changed] = onGuiElemChanged,
-
-		[defines.events.on_built_entity] = onBuilt,
-		[defines.events.on_robot_built_entity] = onBuilt,
-		[defines.events.script_raised_built] = onBuilt,
-		[defines.events.script_raised_revive] = onBuilt,
-
-		[defines.events.on_player_mined_entity] = onRemoved,
-		[defines.events.on_robot_mined_entity] = onRemoved,
-		[defines.events.on_entity_died] = onRemoved,
-		[defines.events.script_raised_destroy] = onRemoved,
 
 		[defines.events.on_entity_settings_pasted] = onPaste,
 

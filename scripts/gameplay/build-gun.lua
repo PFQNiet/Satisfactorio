@@ -2,6 +2,8 @@
 -- this effectively reduces the cost of rails to 1/6
 local script_data = {} -- dictionary of player index to number of free rails granted
 
+local bm = require(modpath.."scripts.lualib.building-management")
+
 local function canAfford(player, materials, inventory, buffer)
 	if player.cheat_mode then return 100 end
 	local contents = inventory.get_contents()
@@ -15,58 +17,6 @@ local function canAfford(player, materials, inventory, buffer)
 		affordable = math.min(affordable, math.floor(got / product.amount))
 	end
 	return affordable
-end
-
-local cache = {}
-local function getBuildingRecipe(name)
-	if cache[name] then return cache[name] end
-
-	if not name then return nil end
-	local item = game.item_prototypes[name]
-	if not item then
-		-- try looking up by entity
-		local entity = game.entity_prototypes[name]
-		if not entity then return nil end
-		local place = entity.items_to_place_this
-		if not place then return nil end
-		for _,i in pairs(place) do
-			if i.name == name then
-				item = i
-				break
-			end
-		end
-		if not item then return nil end
-	end
-	-- now search recipes for one that produces this (in the "building" category)
-	for _,recipe in pairs(game.recipe_prototypes) do
-		if recipe.category == "building" then
-			-- all "building" recicpes have a single product, that is the building
-			if recipe.products[1].name == item.name then
-				cache[name] = recipe
-				return recipe
-			end
-		end
-	end
-end
-
-local function refundEntity(player, entity)
-	-- if the entity has an undo recipe, refund the components instead
-	if not (player and player.cheat_mode) then
-		local recipe = getBuildingRecipe(entity.name)
-		local insert = recipe and recipe.ingredients or {{name=entity.name,amount=1}}
-		for _,refund in pairs(insert) do
-			local spill = refund.amount
-			if player then spill = spill - player.insert{name=refund.name,count=refund.amount} end
-			if spill > 0 then
-				(player or entity).surface.spill_item_stack(
-					(player or entity).position,
-					{name = refund.name, count = spill},
-					true, player and player.force or nil, false
-				)
-			end
-		end
-	end
-	entity.destroy{raise_destroy=true} -- allow IO to snap loader belts back
 end
 
 local function updateGUI(player, buffer)
@@ -99,7 +49,7 @@ local function updateGUI(player, buffer)
 	gui.visible = false
 
 	local name = (player.cursor_stack.valid_for_read and player.cursor_stack.name) or (player.cursor_ghost and player.cursor_ghost.name) or ""
-	local recipe = getBuildingRecipe(name)
+	local recipe = bm.getBuildingRecipe(name)
 	if not recipe then return end
 	local inventory = player.get_main_inventory().get_contents()
 	if buffer then buffer = buffer.get_contents() else buffer = {} end
@@ -152,7 +102,7 @@ end
 
 local function onCraft(event)
 	-- if the item to craft has an undo recipe, cancel the craft and put the item in the cursor
-	local recipe = getBuildingRecipe(event.recipe.prototype.main_product.name)
+	local recipe = bm.getBuildingRecipe(event.recipe.prototype.main_product.name)
 	if recipe then
 		local player = game.players[event.player_index]
 		-- find the craft in the queue - it should really be the only one under Satisfactorio rules but to be safe...
@@ -175,6 +125,18 @@ local function onCraft(event)
 		end
 	end
 end
+---@param event on_player_crafted_item
+local function onCheatCraft(event)
+	local recipe = bm.getBuildingRecipe(event.recipe.prototype.main_product.name)
+	if recipe then
+		local player = game.players[event.player_index]
+		player.clear_cursor()
+		event.item_stack.clear()
+		local item = event.recipe.prototype.products[1].name
+		player.cursor_stack.set_stack{name=item, count=game.item_prototypes[item].stack_size}
+		if player.opened_self then player.opened = nil end
+	end
+end
 local function onCursorChange(event)
 	-- also called on main inventory change
 	-- also called from onRemoved to update affordability and re-put a real entity if you mined stuff to afford what you're holding, so event.buffer may exist
@@ -187,7 +149,7 @@ local function onCursorChange(event)
 	local name = player.cursor_ghost.name
 	local redo = player.force.recipes[name]
 	if not (redo and redo.enabled) then return end
-	local recipe = getBuildingRecipe(name)
+	local recipe = bm.getBuildingRecipe(name)
 	if not recipe then return end
 	local affordable = canAfford(player, recipe.ingredients, player.get_main_inventory(), event.buffer)
 	if affordable < 1 then return end
@@ -201,7 +163,7 @@ local function onBuilt(event)
 	local entity = event.created_entity
 	local name = entity.name
 	-- if the item in the cursor is an undo-able building, check if the player has enough stuff (something else may have pulled items from the player's inventory)
-	local recipe = getBuildingRecipe(name)
+	local recipe = bm.getBuildingRecipe(name)
 	if not recipe then return end
 
 	local inventory = player.get_main_inventory()
@@ -255,8 +217,8 @@ local function onRemoved(event)
 	local cheater = player and player.cheat_mode
 	if event.buffer then
 		for item,count in pairs(event.buffer.get_contents()) do
-			-- if an undo recipe exists for this item, replace it with the undo results
-			local recipe = getBuildingRecipe(item)
+			-- if a building recipe exists for this item, replace it with the ingredients
+			local recipe = bm.getBuildingRecipe(item)
 			if recipe then
 				event.buffer.remove{name=item, count=count}
 				local proto = game.item_prototypes[item]
@@ -272,12 +234,10 @@ local function onRemoved(event)
 						count = 1 -- only refund one of the rails
 					end
 				end
-				for _,product in pairs(recipe.ingredients) do
-					if not cheater then
-						if pay then
-							-- undo recipes are always solids, and don't use probability stuff so fixed amounts
-							event.buffer.insert{name=product.name, count=product.amount*count}
-						end
+				if pay and not cheater then
+					for _,product in pairs(recipe.ingredients) do
+						-- building recipes are always solids
+						event.buffer.insert{name=product.name, count=product.amount*count}
 					end
 				end
 			end
@@ -293,18 +253,15 @@ return {
 	on_load = function()
 		script_data = global.rail_freebies or script_data
 	end,
-	on_configuration_changed = function()
-		if not global.rail_freebies then global.rail_freebies = script_data end
-	end,
 	events = {
 		[defines.events.on_pre_player_crafted_item] = onCraft,
+		[defines.events.on_player_crafted_item] = onCheatCraft,
 		[defines.events.on_player_cursor_stack_changed] = onCursorChange,
 		[defines.events.on_player_main_inventory_changed] = onCursorChange,
-		
-		[defines.events.on_built_entity] = onBuilt,
+
+		[defines.events.on_built_entity] = onBuilt, -- manual player build ONLY
 
 		[defines.events.on_player_mined_entity] = onRemoved,
 		[defines.events.on_robot_mined_entity] = onRemoved
-	},
-	refundEntity = refundEntity
+	}
 }

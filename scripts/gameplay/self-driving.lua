@@ -1,5 +1,5 @@
+local bev = require(modpath.."scripts.lualib.build-events")
 local math2d = require("math2d")
-local table_size = table_size
 local script_data = {}
 
 -- uses global.cars to store all data
@@ -486,21 +486,17 @@ local function onPlayerDied(event)
 	if gui then gui.destroy() end
 end
 
-return {
+return bev.applyBuildEvents{
 	on_init = function()
 		global.cars = global.cars or script_data
 	end,
 	on_load = function()
 		script_data = global.cars or script_data
 	end,
+	on_destroy = onRemoved,
 	events = {
 		[defines.events.on_tick] = onTick,
 		[defines.events.on_player_driving_changed_state] = onDriving,
-		
-		[defines.events.on_player_mined_entity] = onRemoved,
-		[defines.events.on_robot_mined_entity] = onRemoved,
-		[defines.events.on_entity_died] = onRemoved,
-		[defines.events.script_raised_destroy] = onRemoved,
 
 		[defines.events.on_gui_click] = onGuiClick,
 		[defines.events.on_gui_selection_state_changed] = onGuiSelection,

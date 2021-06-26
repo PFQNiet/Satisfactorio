@@ -1,7 +1,9 @@
 -- uses global.beacons.opened as Player index -> opened beacon GUI
-local item_name = "map-marker"
+local bev = require(modpath.."scripts.lualib.build-events")
 
-local beacons = require(modpath.."scripts.organisation.beacon").data
+local script_data = {}
+
+local item_name = "map-marker"
 
 local function findBeaconTag(beacon)
 	return beacon.force.find_chart_tags(beacon.surface, {{beacon.position.x-0.1,beacon.position.y-0.1},{beacon.position.x+0.1,beacon.position.y+0.1}})[1]
@@ -63,12 +65,12 @@ local function openBeaconGUI(beacon, player)
 	}
 	player.opened = gui
 	gui.force_auto_center()
-	beacons.opened[player.index] = beacon
+	script_data[player.index] = beacon
 end
 local function closeBeaconGUI(player)
 	local gui = player.gui.screen['beacon-naming']
 	if gui then gui.destroy() end
-	beacons.opened[player.index] = nil
+	script_data[player.index] = nil
 	player.opened = nil
 end
 local function onGuiOpened(event)
@@ -90,18 +92,22 @@ local function onGuiClick(event)
 	if not (event.element and event.element.valid) then return end
 	local player = game.players[event.player_index]
 	if event.element.name == "beacon-naming-confirm" then
-		local beacon = beacons.opened[player.index] -- can be assumed to exist, otherwise how did we get here?
-		local gui = player.gui.screen['beacon-naming']['beacon-naming-inner']['beacon-naming-table']
-		saveBeacon(beacon, gui)
+		local beacon = script_data[player.index]
+		if beacon and beacon.valid then
+			local gui = player.gui.screen['beacon-naming']['beacon-naming-inner']['beacon-naming-table']
+			saveBeacon(beacon, gui)
+		end
 		closeBeaconGUI(player)
 	end
 end
+
+---@param event on_built_entity|on_robot_built_entity|script_raised_built|script_raised_revive
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not entity or not entity.valid then return end
 	if entity.name == item_name then
 		entity.force.add_chart_tag(entity.surface, {position=entity.position,icon={type="item",name="map-marker"}})
-		if event.type == defines.events.on_built_entity then
+		if event.name == defines.events.on_built_entity then
 			local player = game.players[event.player_index]
 			player.clear_cursor()
 			openBeaconGUI(entity, player)
@@ -117,7 +123,7 @@ local function onRemoved(event)
 			tag.destroy()
 		end
 		-- if a player had this beacon's GUI open, close it
-		for pid,beacon in pairs(beacons.opened) do
+		for pid,beacon in pairs(script_data) do
 			if beacon == entity then
 				closeBeaconGUI(game.players[pid])
 			end
@@ -128,30 +134,28 @@ end
 local function onMove(event)
 	-- if the player moves and has a beacon open, check that the beacon can still be reached
 	local player = game.players[event.player_index]
-	local open = beacons.opened[player.index]
+	local open = script_data[player.index]
 	if open and not player.can_reach_entity(open) then
 		closeBeaconGUI(player)
 	end
 end
 
-return {
+return bev.applyBuildEvents{
+	on_init = function()
+		global.beacons = global.beacons or script_data
+	end,
+	on_load = function()
+		script_data = global.beacons or script_data
+	end,
+	on_build = onBuilt,
+	on_destroy = onRemoved,
 	events = {
-		[defines.events.on_built_entity] = onBuilt,
-		[defines.events.on_robot_built_entity] = onBuilt,
-		[defines.events.script_raised_built] = onBuilt,
-		[defines.events.script_raised_revive] = onBuilt,
-
-		[defines.events.on_player_mined_entity] = onRemoved,
-		[defines.events.on_robot_mined_entity] = onRemoved,
-		[defines.events.on_entity_died] = onRemoved,
-		[defines.events.script_raised_destroy] = onRemoved,
-
 		[defines.events.on_gui_opened] = onGuiOpened,
 		[defines.events.on_gui_click] = onGuiClick,
 		[defines.events.on_gui_closed] = function(event)
 			if event.gui_type == defines.gui_type.custom and event.element and event.element.valid and event.element.name == "beacon-naming" then
 				local player = game.players[event.player_index]
-				local beacon = beacons.opened[player.index]
+				local beacon = script_data[player.index]
 				if beacon then
 					local gui = player.gui.screen['beacon-naming']['beacon-naming-inner']['beacon-naming-table']
 					saveBeacon(beacon, gui)

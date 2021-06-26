@@ -56,8 +56,8 @@ for item,reward in pairs(paytable) do
 			type = "recipe",
 			name = "sink-"..item,
 			icons = {
-				{icon = graphics.."icons/"..item..".png", icon_size = 64},
-				{icon = graphics.."icons/coupon.png", icon_size = 64, scale = 0.25, shift = {-8,8}}
+				{icon = coupon.icon, icon_size = 64},
+				{icon = graphics.."icons/"..item..".png", icon_size = 64, scale = 0.25, shift = {-8,8}}
 			},
 			ingredients = {{item,1}},
 			results = {{type="fluid",name="awesome-points",amount=reward}},

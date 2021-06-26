@@ -1,5 +1,6 @@
 -- uses global.crash_site.sites to track requirements for unlocking the spaceship
 -- uses global.crash_site.opened to track last opened crash site GUI
+local link = require(modpath.."scripts.lualib.linked-entity")
 
 local data = require(modpath.."constants.crash-sites")
 local loot_table = data.loot
@@ -84,6 +85,7 @@ local function createCrashSite(surface, position)
 		}
 		eei.power_usage = reqs.power*1000*1000/60
 		eei.electric_buffer_size = eei.power_usage
+		link.register(ship, eei)
 	end
 	-- register ship's requirements
 	script_data.sites[ship.unit_number] = {
@@ -296,37 +298,25 @@ local function alternativeHardDrives()
 	end
 end
 
-local function onRemoved(event)
-	local entity = event.entity
-	if not entity or not entity.valid then return end
-	if entity.name == spaceship then
-		local eei = entity.surface.find_entity(spaceship.."-power", entity.position)
-		if eei and eei.valid then eei.destroy() end
-	end
-end
-
 return {
 	createCrashSite = createCrashSite,
 
-	on_init = function()
-		global.crash_site = global.crash_site or script_data
-		-- if crash sites are disabled, enable the awesome-shop-hard-drive recipe
-		alternativeHardDrives()
-	end,
-	on_load = function()
-		script_data = global.crash_site or script_data
-	end,
-	events = {
-		[defines.events.on_gui_opened] = onGuiOpened,
-		[defines.events.on_gui_closed] = onGuiClosed,
-		[defines.events.on_gui_click] = onGuiClick,
+	lib = {
+		on_init = function()
+			global.crash_site = global.crash_site or script_data
+			-- if crash sites are disabled, enable the awesome-shop-hard-drive recipe
+			alternativeHardDrives()
+		end,
+		on_load = function()
+			script_data = global.crash_site or script_data
+		end,
+		events = {
+			[defines.events.on_gui_opened] = onGuiOpened,
+			[defines.events.on_gui_closed] = onGuiClosed,
+			[defines.events.on_gui_click] = onGuiClick,
 
-		[defines.events.on_player_mined_entity] = onRemoved,
-		[defines.events.on_robot_mined_entity] = onRemoved,
-		[defines.events.on_entity_died] = onRemoved,
-		[defines.events.script_raised_destroy] = onRemoved,
-
-		[defines.events.on_player_changed_position] = onMove,
-		[defines.events.on_force_created] = alternativeHardDrives
+			[defines.events.on_player_changed_position] = onMove,
+			[defines.events.on_force_created] = alternativeHardDrives
+		}
 	}
 }

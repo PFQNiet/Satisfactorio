@@ -1,16 +1,10 @@
-local io = require(modpath.."scripts.lualib.input-output")
 local bev = require(modpath.."scripts.lualib.build-events")
-
-local smelter = "foundry"
 
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not (entity and entity.valid) then return end
-
-	if entity.name == smelter then
-		io.addConnection(entity, {-1,1.5}, "input")
-		io.addConnection(entity, {1,1.5}, "input")
-		io.addConnection(entity, {1,-1.5}, "output")
+	if entity.health == 1 then -- all entities made / modded by Satisfactorio will have 1 HP
+		entity.destructible = false
 	end
 end
 

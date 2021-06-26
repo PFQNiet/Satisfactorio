@@ -1,5 +1,5 @@
 local tech_tree_cache = nil
--- Technology effects don't include -manual, -undo or awesome-shop- recipes, to avoid polluting the technology GUI
+-- Technology effects don't include -manual or awesome-shop- recipes, to avoid polluting the technology GUI
 -- Instead they are unlocked here.
 local function onResearch(event)
 	local technology = event.research
@@ -7,15 +7,14 @@ local function onResearch(event)
 	local frecipes = force.recipes
 	for _,effect in pairs(technology.effects) do
 		if effect.type == "unlock-recipe" then
-			-- build gun: don't enable these any more
-			-- if frecipes[effect.recipe.."-undo"] then
-				-- frecipes[effect.recipe.."-undo"].enabled = true
-			-- end
-			if frecipes[effect.recipe.."-manual"] then
-				frecipes[effect.recipe.."-manual"].enabled = true
+			local recipe = game.recipe_prototypes[effect.recipe]
+			if frecipes[recipe.name.."-manual"] then
+				frecipes[recipe.name.."-manual"].enabled = true
 			end
-			if frecipes["awesome-shop-"..effect.recipe] then
-				frecipes["awesome-shop-"..effect.recipe].enabled = true
+			for _,product in pairs(recipe.products) do
+				if frecipes["awesome-shop-"..product.name] then
+					frecipes["awesome-shop-"..product.name].enabled = true
+				end
 			end
 		end
 	end
@@ -53,7 +52,7 @@ local function onResearch(event)
 		frecipes[technology.name].enabled = false
 		frecipes[technology.name.."-done"].enabled = true
 	end
-	
+
 	if technology.name == "space-elevator-phase4" and not game.finished and event.tick > 5 then
 		game.set_game_state{
 			game_finished = true,
@@ -73,15 +72,6 @@ local function onTechEffectsReset(event)
 end
 
 return {
-	on_configuration_changed = function()
-		for _,force in pairs(game.forces) do
-			if force.technologies['mam-quartz-quartz-crystals'].researched then
-				if not force.technologies['mam-quartz-factory-lighting'].researched then
-					force.recipes['mam-quartz-factory-lighting'].enabled = true
-				end
-			end
-		end
-	end,
 	events = {
 		[defines.events.on_research_finished] = onResearch,
 		[defines.events.on_technology_effects_reset] = onTechEffectsReset

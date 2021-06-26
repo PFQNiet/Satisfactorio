@@ -1,10 +1,11 @@
 -- uses global.space_elevator.elevator as table of Force index -> elevator
 -- uses global.space-elevator.phase as table of Player index -> phase shown in GUI - if different to current selection then GUI needs refresh, otherwise just update counts
 -- uses global.player_build_error_debounce to track force -> last error tick to de-duplicate placement errors
-local util = require("util")
 local string = require(modpath.."scripts.lualib.string")
 local io = require(modpath.."scripts.lualib.input-output")
-local refundEntity = require(modpath.."scripts.build-gun").refundEntity
+local bev = require(modpath.."scripts.lualib.build-events")
+local refundEntity = require(modpath.."scripts.lualib.building-management").refundEntity
+local link = require(modpath.."scripts.lualib.linked-entity")
 
 local elevator = "space-elevator"
 
@@ -20,7 +21,7 @@ end
 
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
-	if not entity or not entity.valid then return end
+	if not (entity and entity.valid) then return end
 	if entity.name == elevator then
 		if findElevatorForForce(entity.force) then
 			local player = entity.last_user
@@ -38,12 +39,14 @@ local function onBuilt(event)
 			return
 		else
 			-- position hack to avoid it trying to drop stuff in the rocket silo
-			io.addInput(entity, {-10,13}, {position={entity.position.x-8,entity.position.y}})
-			io.addInput(entity, {-8,13}, {position={entity.position.x-8,entity.position.y}})
-			io.addInput(entity, {-6,13}, {position={entity.position.x-8,entity.position.y}})
-			io.addInput(entity, {-10,-13}, {position={entity.position.x-8,entity.position.y}}, defines.direction.south)
-			io.addInput(entity, {-8,-13}, {position={entity.position.x-8,entity.position.y}}, defines.direction.south)
-			io.addInput(entity, {-6,-13}, {position={entity.position.x-8,entity.position.y}}, defines.direction.south)
+			local target_hack = {position={entity.position.x-8,entity.position.y}}
+			io.addConnection(entity, {-10,13}, "input", target_hack)
+			io.addConnection(entity, {-8,13}, "input", target_hack)
+			io.addConnection(entity, {-6,13}, "input", target_hack)
+			io.addConnection(entity, {-10,-13}, "input", target_hack, defines.direction.south)
+			io.addConnection(entity, {-8,-13}, "input", target_hack, defines.direction.south)
+			io.addConnection(entity, {-6,-13}, "input", target_hack, defines.direction.south)
+
 			local silo = entity.surface.create_entity{
 				name = elevator.."-silo",
 				position = entity.position,
@@ -51,9 +54,8 @@ local function onBuilt(event)
 				raise_built = true
 			}
 			silo.operable = false
-			silo.minable = false
-			silo.destructible = false
 			silo.auto_launch = true
+			link.register(entity, silo)
 
 			local inserter = silo.surface.create_entity{
 				name = "loader-inserter",
@@ -63,10 +65,13 @@ local function onBuilt(event)
 			}
 			inserter.drop_position = silo.position
 			inserter.operable = false
-			inserter.minable = false
-			inserter.destructible = false
+			link.register(entity, inserter)
 
-			script_data.elevator[entity.force.index] = entity
+			script_data.elevator[entity.force.index] = {
+				elevator = entity,
+				silo = silo,
+				inserter = inserter
+			}
 			entity.rotatable = false
 			entity.active = false
 		end
@@ -75,60 +80,30 @@ end
 
 local function onRemoved(event)
 	local entity = event.entity
-	if not entity or not entity.valid then return end
+	if not (entity and entity.valid) then return end
 	if entity.name == elevator then
-		io.remove(entity, event)
-		local silo = entity.surface.find_entity(elevator.."-silo", entity.position)
-		if not silo then
-			game.print("Could not find Space Elevator silo")
-		else
-			silo.destroy()
-		end
-		local inserter = entity.surface.find_entity("loader-inserter", entity.position)
-		if not silo then
-			game.print("Could not find Space Elevator inserter")
-		else
-			inserter.destroy()
-			silo.destroy()
-		end
 		script_data.elevator[entity.force.index] = nil
 	end
 end
 
-local function launchFreighter(hub, item)
-	if not hub then return end
-	local silo = hub.surface.find_entity(elevator.."-silo",hub.position)
-	if not (silo and silo.valid) then
-		game.print("Could not find Freighter")
-		return
-	end
-	local inserter = hub.surface.find_entity("loader-inserter",hub.position)
-	if not (inserter and inserter.valid) then
-		game.print("Could not find Freighter Loader")
-		return
-	end
-	inserter.held_stack.set_stack({name=item, count=1})
-	silo.rocket_parts = 1
+local function launchFreighter(struct, item)
+	if not struct then return end
+	struct.inserter.held_stack.set_stack{name=item, count=1}
+	struct.silo.rocket_parts = 1
 end
 
 local function completeElevator(technology)
-	if string.starts_with(technology.name, "space-elevator") then
-		if game.tick > 5 then
-			local message = {"message.space-elevator-complete",technology.name,technology.localised_name}
-			technology.force.print({"",message,{"message.hub-new-tiers-available"}})
-		end
-		launchFreighter(findElevatorForForce(technology.force), technology.research_unit_ingredients[1].name)
+	if game.tick > 5 then
+		local message = {"message.space-elevator-complete",technology.name,technology.localised_name}
+		technology.force.print({"",message,{"message.hub-new-tiers-available"}})
 	end
+	launchFreighter(findElevatorForForce(technology.force), technology.research_unit_ingredients[1].name)
 end
+---@param force LuaForce
 local function updateElevatorGUI(force)
-	if not force then
-		for _,force in pairs(game.forces) do
-			updateElevatorGUI(force)
-		end
-		return
-	end
-
-	local hub = findElevatorForForce(force)
+	local struct = findElevatorForForce(force)
+	if not struct then return end
+	local hub = struct.elevator
 	local phase = {name="none"}
 	local recipe
 	local submitted
@@ -219,7 +194,7 @@ local function updateElevatorGUI(force)
 	end
 end
 local function submitElevator(force, player)
-	local hub = findElevatorForForce(force)
+	local hub = findElevatorForForce(force).elevator
 	if not hub or not hub.valid then return end
 	local recipe = hub.get_recipe()
 	if not recipe then return end
@@ -254,12 +229,16 @@ local function submitElevator(force, player)
 	hub.set_recipe(nil)
 end
 
-local function onTick(event)
-	updateElevatorGUI()
+local function on10thTick()
+	for _,force in pairs(game.forces) do
+		updateElevatorGUI(force)
+	end
 end
+---@param event on_research_finished
 local function onResearch(event)
-	-- can just pass all researches to the function, since that already checks if it's an elevator tech.
-	completeElevator(event.research)
+	if string.starts_with(event.research.name, "space-elevator-") then
+		completeElevator(event.research)
+	end
 end
 local function onGuiOpened(event)
 	if event.entity and event.entity.name == elevator then
@@ -284,7 +263,7 @@ local function onGuiClick(event)
 	end
 end
 
-return {
+return bev.applyBuildEvents{
 	on_init = function()
 		global.space_elevator = global.space_elevator or script_data
 		global.debounce_error = global.player_build_error_debounce or debounce_error
@@ -294,19 +273,11 @@ return {
 		debounce_error = global.player_build_error_debounce or debounce_error
 	end,
 	on_nth_tick = {
-		[6] = onTick
+		[10] = on10thTick,
 	},
+	on_build = onBuilt,
+	on_destroy = onRemoved,
 	events = {
-		[defines.events.on_built_entity] = onBuilt,
-		[defines.events.on_robot_built_entity] = onBuilt,
-		[defines.events.script_raised_built] = onBuilt,
-		[defines.events.script_raised_revive] = onBuilt,
-
-		[defines.events.on_player_mined_entity] = onRemoved,
-		[defines.events.on_robot_mined_entity] = onRemoved,
-		[defines.events.on_entity_died] = onRemoved,
-		[defines.events.script_raised_destroy] = onRemoved,
-
 		[defines.events.on_research_finished] = onResearch,
 		[defines.events.on_gui_opened] = onGuiOpened,
 		[defines.events.on_gui_click] = onGuiClick

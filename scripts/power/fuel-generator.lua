@@ -1,96 +1,83 @@
 -- it is a storage tank with attached electric energy interface
 -- periodically removes fluid from the tank to recharge the electricity buffer
 -- uses global['fuel-generators'] to list all gens
-local math2d = require("math2d")
 local powertrip = require(modpath.."scripts.lualib.power-trip")
+local bev = require(modpath.."scripts.lualib.build-events")
+local link = require(modpath.."scripts.lualib.linked-entity")
 
 local storage = "fuel-generator"
 local buffer = storage.."-eei"
 local accumulator = storage.."-buffer"
-local energy = "energy"
+local power = 150
 
 local script_data = {}
-for i=0,60-1 do script_data[i] = {} end
+local buckets = 60
+for i=0,buckets-1 do script_data[i] = {} end
+local function getBucket(tick)
+	return script_data[tick%buckets]
+end
+local function getStruct(entity)
+	return script_data[entity.unit_number%buckets][entity.unit_number]
+end
+local function createStruct(entity)
+	local pow = entity.surface.create_entity{
+		name = buffer,
+		position = entity.position,
+		force = entity.force,
+		raise_built = true
+	}
+	local struct = {
+		generator = entity,
+		interface = pow
+	}
+	link.register(entity, pow)
+
+	powertrip.registerGenerator(entity, pow, accumulator)
+	script_data[entity.unit_number%buckets][entity.unit_number] = struct
+end
+local function deleteStruct(entity)
+	script_data[entity.unit_number%buckets][entity.unit_number] = nil
+end
 
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not entity or not entity.valid then return end
 	if entity.name == storage then
-		-- add EEI
-		local eei = entity.surface.create_entity{
-			name = buffer,
-			position = entity.position,
-			force = entity.force,
-			raise_built = true
-		}
-		entity.rotatable = false
-		eei.rotatable = false
-		powertrip.registerGenerator(entity, eei, accumulator)
-		script_data[entity.unit_number%60][entity.unit_number] = entity
+		createStruct(entity)
 	end
 end
 
 local function onRemoved(event)
 	local entity = event.entity
 	if not entity or not entity.valid then return end
-	if entity.name == storage or entity.name == buffer then
-		-- find components
-		local store = entity.name == storage and entity or entity.surface.find_entity(storage, entity.position)
-		local gen = entity.name == buffer and entity or entity.surface.find_entity(buffer, entity.position)
-		script_data[store.unit_number%60][store.unit_number] = nil
-		powertrip.unregisterGenerator(store)
-		if entity.name ~= storage then
-			store.destroy()
-		end
-		if entity.name ~= buffer then
-			gen.destroy()
-		end
+	if entity.name == storage then
+		deleteStruct(entity)
 	end
 end
 
 local function onTick(event)
-	for i,storage in pairs(script_data[event.tick%60]) do
-		-- each station will "tick" once every 60 in-game ticks, ie. every second
-		-- if the machine is crafting then output power, and don't if not
-		-- power production is 150MW
-		local eei = storage.surface.find_entity(buffer, storage.position)
+	for _,struct in pairs(getBucket(event.tick)) do
+		local eei = struct.interface
 		if eei.active then
-			if storage.is_crafting() then
-				eei.power_production = (150*1000*1000+1)/60 -- 150MW, +1 for the buffer
+			if struct.generator.is_crafting() then
+				eei.power_production = (power*1000*1000+1)/60 -- +1 for the buffer
 			else
 				eei.power_production = 0
 			end
 		end
 	end
 end
-local function onGuiOpened(event)
-	local player = game.players[event.player_index]
-	if event.entity and event.entity.valid and event.entity.name == buffer then
-		-- opening the EEI instead opens the tank
-		player.opened = event.entity.surface.find_entity(storage, event.entity.position)
-	end
-	-- TODO add Flush button to the tank
-end
 
-return {
+return bev.applyBuildEvents{
 	on_init = function()
 		global.fuel_generators = global.fuel_generators or script_data
 	end,
 	on_load = function()
 		script_data = global.fuel_generators or script_data
 	end,
+	on_build = onBuilt,
+	on_destroy = onRemoved,
 	events = {
-		[defines.events.on_built_entity] = onBuilt,
-		[defines.events.on_robot_built_entity] = onBuilt,
-		[defines.events.script_raised_built] = onBuilt,
-		[defines.events.script_raised_revive] = onBuilt,
-
-		[defines.events.on_player_mined_entity] = onRemoved,
-		[defines.events.on_robot_mined_entity] = onRemoved,
-		[defines.events.on_entity_died] = onRemoved,
-		[defines.events.script_raised_destroy] = onRemoved,
-
-		[defines.events.on_tick] = onTick,
-		[defines.events.on_gui_opened] = onGuiOpened
+		[defines.events.on_tick] = onTick
 	}
 }

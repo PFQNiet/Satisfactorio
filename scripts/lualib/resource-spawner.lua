@@ -23,22 +23,42 @@
 ]]
 local crash_site = require(modpath.."scripts.lualib.crash-sites")
 local enemies = require(modpath.."scripts.lualib.enemy-spawning")
-local resources = require(modpath..'scripts.lualib.resources')
-local string = require(modpath..'scripts.lualib.string')
+local string = require(modpath.."scripts.lualib.string")
 
+---@class PositionAndSurface : Position
+---@field surface LuaSurface
+
+---@class ResourceSpawner
+---@field type string
+---@field r number
+---@field border number
+---@field k uint Number of attempts before a node is considered closed
+---@field value uint8 Relative value of the resource, for enemy strength modification
+---@field size uint[] Min/Max size of the resource cluster
+---@field gridsize number Size of the squares of the grid
+---@field grid Position[] Surface.gridY.gridX => position of node in that cell
+---@field nodes PositionAndSurface[] List of active nodes
+---@field sleep PositionAndSurface[] List of nodes that are asleep due to being on chunks that aren't generated yet
+
+---@class global.resources
+---@field resources table<string, ResourceSpawner> Type => Spawner
+---@field node_count uint Total number of active nodes
+---@field queued table<string, table> Queued entities waiting for their chunk to be generated
 local script_data = {
+	resources = {},
+	node_count = 0,
 	queued = {}
 }
 
 local function registerResource(name, radius, min, max, value)
-	if resources.resources()[name] then return end
+	if script_data.resources[name] then return end
 	local settings = game.default_map_gen_settings.autoplace_controls[name] or {frequency=1,richness=1,size=1}
 	if settings.size == 0 then return end
 
 	-- settings are supposed to be in the range 1/6 to 6
 	-- frequency affects the radius at which things spawn
 	-- example: to make things 6x more common, divide the radius by sqrt(6)
-	if name == "x-plant" or name == "x-deposit" then
+	if name == "x-plant" or name == "x-deposit" or name == "geyser" then
 		-- plants and deposits use the inverse for... some reason
 		radius = radius * math.sqrt(settings.frequency)
 		-- "size" should also affect "richness" - although richness isn't used for deposits
@@ -54,7 +74,7 @@ local function registerResource(name, radius, min, max, value)
 	local buffer = 8 * math.sqrt(settings.size) -- setting size too small may result in just single nodes as there's nowhere to spawn others!
 	if name == "geyser" then buffer = buffer * 2 end
 
-	resources.add_node(name, {
+	script_data.resources[name] = {
 		type = name,
 		r = radius,
 		border = buffer,
@@ -65,37 +85,38 @@ local function registerResource(name, radius, min, max, value)
 		grid = {},
 		nodes = {},
 		sleep = {}
-	})
+	}
 end
 local function registerSurface(surface)
-	for _,struct in pairs(resources.resources()) do
-		struct.nodes[surface.index] = {{0,0}}
-		struct.sleep[surface.index] = {}
-		struct.grid[surface.index] = {[0]={[0]={0,0}}}
-		resources.add_count(1)
+	for _,struct in pairs(script_data.resources) do
+		table.insert(struct.nodes, {0,0,surface=surface})
+		struct.grid[surface.index..".0.0"] = {0,0}
+		script_data.node_count = script_data.node_count + 1
 	end
 end
 
 local function queueEntity(entity, surface, chunkpos)
-	if not script_data.queued[surface.index] then script_data.queued[surface.index] = {} end
-	if not script_data.queued[surface.index][chunkpos.y] then script_data.queued[surface.index][chunkpos.y] = {} end
-	if not script_data.queued[surface.index][chunkpos.y][chunkpos.x] then script_data.queued[surface.index][chunkpos.y][chunkpos.x] = {} end
-	table.insert(script_data.queued[surface.index][chunkpos.y][chunkpos.x], entity)
+	local ref = surface.index.."."..chunkpos.y.."."..chunkpos.x
+	if not script_data.queued[ref] then script_data.queued[ref] = {} end
+	table.insert(script_data.queued[ref], entity)
 end
 local function getQueuedEntities(surface, chunkpos)
-	return script_data.queued[surface.index]
-		and script_data.queued[surface.index][chunkpos.y]
-		and script_data.queued[surface.index][chunkpos.y][chunkpos.x]
-		or nil
+	local ref = surface.index.."."..chunkpos.y.."."..chunkpos.x
+	return script_data.queued[ref]
 end
 local function clearQueuedEntities(surface, chunkpos)
-	-- only called if it has been processed, therefore indices must exist already
-	script_data.queued[surface.index][chunkpos.y][chunkpos.x] = nil
+	local ref = surface.index.."."..chunkpos.y.."."..chunkpos.x
+	script_data.queued[ref] = nil
 end
 
+---@param resource ResourceSpawner
+---@param surface LuaSurface
+---@param cx number
+---@param cy number
 local function spawnNode(resource, surface, cx, cy)
-	-- scatter a cluster of nodes, of total purity value between the bounds defined on the resource data, within a radius of 4-8 using a mini-poisson distribution
+	-- scatter a cluster of nodes, of total purity value between the bounds defined on the resource data, within a radius of 4-8
 	local purity = math.random(resource.size[1], resource.size[2])
+	---@type Position[]
 	local points = {}
 	local neutral_force = game.forces.neutral
 	-- just generate local points within radius 4-8 and check against all others - it's so small that the "grid" method doesn't do anything for us.
@@ -315,35 +336,68 @@ local function spawnNode(resource, surface, cx, cy)
 	end
 end
 
+--- Register a node at this location, and spawn something there
+---@param resource ResourceSpawner
+---@param surface LuaSurface
+---@param x number
+---@param y number
 local function addNode(resource, surface, x, y)
 	local gx = math.floor(x/resource.gridsize);
 	local gy = math.floor(y/resource.gridsize);
-	if not resource.grid[surface.index][gy] then resource.grid[surface.index][gy] = {} end
-	resource.grid[surface.index][gy][gx] = {x,y}
-	table.insert(resource.nodes[surface.index], {x,y})
-	resources.add_count(1)
+	local ref = surface.index.."."..gy.."."..gx
+	resource.grid[ref] = {x,y}
+	table.insert(resource.nodes, {x,y,surface=surface})
+	script_data.node_count = script_data.node_count + 1
 	spawnNode(resource, surface, x, y)
 end
+
+---@param name string
+---@param surface LuaSurface
+---@param position Position
+local function getNodes(name, surface, position)
+	local data = script_data.resources[name]
+	if not data then return {} end
+
+	local nodes = {}
+	local grid = data.grid
+	-- find nearest grid squares having nodes
+	local origin = {math.floor(position.x/data.gridsize), math.floor(position.y/data.gridsize)}
+	for dx=-2,2 do
+		for dy=-2,2 do
+			local gx = origin[1] + dx
+			local gy = origin[2] + dy
+			-- ignore origin node as it is fake
+			if gx ~= 0 or gy ~= 0 then
+				table.insert(nodes, grid[surface.index.."."..gy.."."..gx])
+			end
+		end
+	end
+	return nodes
+end
+
+--- scan the grid cells near the target (x,y) position to see if another resource node is too close
+--- this is going to be checking ALL other resources to ensure there's enough space to spawn a cluster, but different node types are allowed much closer together
+---@param mytype string
+---@param surface LuaSurface
+---@param x number
+---@param y number
 local function existsNear(mytype, surface, x, y)
-	-- scan the grid cells near the target (x,y) position to see if another resource node is too close
-	-- this is going to be checking ALL other resources to ensure there's enough space to spawn a cluster, but different node types are allowed much closer together
-	for type,resource in pairs(resources.resources()) do
+	for type,resource in pairs(script_data.resources) do
 		local gx = math.floor(x/resource.gridsize);
 		local gy = math.floor(y/resource.gridsize);
 		local r = type == mytype and resource.r or (resource.border*2+2)
-		local grid = resource.grid[surface.index]
+		local surf = surface.index
+		local grid = resource.grid
 		for dy=-2,2 do
-			local row = grid[gy+dy]
-			if row then
-				for dx=-2,2 do
-					local node = row[gx+dx]
-					if node then
-						-- check if it's too close
-						local mx = node[1]-x;
-						local my = node[2]-y;
-						if mx*mx+my*my < r*r then
-							return true
-						end
+			for dx=-2,2 do
+				local cell = surf.."."..(gy+dy).."."..(gx+dx)
+				local node = grid[cell]
+				if node then
+					-- check if it's too close
+					local mx = node[1]-x;
+					local my = node[2]-y;
+					if mx*mx+my*my < r*r then
+						return true
 					end
 				end
 			end
@@ -351,51 +405,50 @@ local function existsNear(mytype, surface, x, y)
 	end
 	return false
 end
+
 local function scanForResources()
 	-- pick a random number and iterate the groups again until that many have passed
-	local rand = math.random(1,resources.node_count())
-	local resource_list = resources.resources()
-	for _,surface in pairs(game.surfaces) do
-		for name,data in pairs(resource_list) do
-			if not data.nodes[surface.index] then break end
-
-			if rand <= #data.nodes[surface.index] then
-				-- found it!
-				local node = data.nodes[surface.index][rand]
-				-- but if the node is outside the generated surface, put it to sleep
-				if not surface.is_chunk_generated{x=math.floor(node[1]/32), y=math.floor(node[2]/32)} then
-					table.insert(data.sleep[surface.index], node)
-					table.remove(data.nodes[surface.index], rand)
-					resources.add_count(-1)
-				else
-					for _=1,data.k do
-						-- pick a random point between r and 2r distance away
-						local theta = math.random()*math.pi*2
-						-- local range = data.r * math.sqrt(math.random()*3 + 1)
-						local range = data.r * (math.random() + 1)
-						local test = {node[1]+math.cos(theta)*range, node[2]+math.sin(theta)*range}
-						if not existsNear(name, surface, test[1], test[2]) then
-							-- it's free real estate!
-							addNode(data, surface, test[1], test[2])
-							break
-						end
-						if _ == data.k then
-							-- give up on this node, it is now closed
-							table.remove(data.nodes[surface.index],rand)
-							resources.add_count(-1)
-						end
+	local rand = math.random(1,script_data.node_count)
+	local resource_list = script_data.resources
+	for name, data in pairs(resource_list) do
+		if rand > #data.nodes then
+			rand = rand - #data.nodes
+		else
+			-- found it!
+			local node = data.nodes[rand]
+			local surface = node.surface
+			-- but if the node is outside the generated surface, put it to sleep
+			if not surface.is_chunk_generated{x=math.floor(node[1]/32), y=math.floor(node[2]/32)} then
+				table.insert(data.sleep, node)
+				table.remove(data.nodes, rand)
+				script_data.node_count = script_data.node_count - 1
+			else
+				for _=1,data.k do
+					-- pick a random point between r and 2r distance away
+					local theta = math.random()*math.pi*2
+					-- local range = data.r * math.sqrt(math.random()*3 + 1)
+					local range = data.r * (math.random() + 1)
+					local test = {node[1]+math.cos(theta)*range, node[2]+math.sin(theta)*range}
+					if not existsNear(name, surface, test[1], test[2]) then
+						-- it's free real estate!
+						addNode(data, surface, test[1], test[2])
+						break
+					end
+					if _ == data.k then
+						-- give up on this node, it is now closed
+						table.remove(data.nodes, rand)
+						script_data.node_count = script_data.node_count - 1
 					end
 				end
-				return
-			else
-				rand = rand - #data.nodes[surface.index]
 			end
+			return
 		end
 	end
 end
 
+-- check if this chunk has queued nodes on it and spawn them if so
+---@param event on_chunk_generated
 local function onChunkGenerated(event)
-	-- check if this chunk has queued nodes on it and spawn them if so
 	local pos = event.position
 	local surface = event.surface
 	local queued = getQueuedEntities(surface, pos)
@@ -427,19 +480,18 @@ local function onChunkGenerated(event)
 	bbox[1] = {bbox[1].x or bbox[1][1], bbox[1].y or bbox[1][2]}
 	bbox[2] = {bbox[2].x or bbox[2][1], bbox[2].y or bbox[2][2]}
 	local awaken = 0
-	for _,data in pairs(resources.resources()) do
-		for surfid,nodes in pairs(data.sleep) do
-			for k,v in pairs(nodes) do
-				if v[1] >= bbox[1][1] and v[1] <= bbox[2][1] and v[2] >= bbox[1][2] and v[2] <= bbox[2][2] then
-					table.remove(data.sleep[surfid],k)
-					table.insert(data.nodes[surfid],v)
-					awaken = awaken + 1
-				end
+	for _,data in pairs(script_data.resources) do
+		for i=#data.sleep,1,-1 do
+			local node = data.sleep[i]
+			if node[1] >= bbox[1][1] and node[1] <= bbox[2][1] and node[2] >= bbox[1][2] and node[2] <= bbox[2][2] then
+				table.remove(data.sleep, i)
+				table.insert(data.nodes, node)
+				awaken = awaken + 1
 			end
 		end
 	end
 	if awaken > 0 then
-		resources.add_count(awaken)
+		script_data.node_count = script_data.node_count + awaken
 	end
 end
 
@@ -456,16 +508,16 @@ local function onInit()
 	registerResource("raw-quartz", 600, 1, 6, 3)
 	registerResource("bauxite", 800, 2, 6, 5)
 	registerResource("uranium-ore", 1000, 2, 2, 6)
-	registerResource("geyser", 550, 2, 6, 4)
 
 	registerResource("water-well", 500, 1, 1, 1)
 	registerResource("crude-oil-well", 700, 1, 1, 3)
 	registerResource("nitrogen-gas-well", 900, 1, 1, 6)
-
+	
 	registerResource("x-plant", 100, 1, 3, 0)
 	registerResource("x-deposit", 60, 1, 10, 0) -- "value" is unused
 	registerResource("x-powerslug", 80, 1, 10, 0) -- "value" is dynamic 1-5 based on slug type
 	registerResource("x-crashsite", 190, 1, 1, 5)
+	registerResource("geyser", 550, 2, 6, 4)
 
 	registerSurface(game.surfaces.nauvis)
 end
@@ -478,7 +530,7 @@ local function onResolutionChanged(event)
 	end
 end
 local function onTick(event)
-	local count = resources.node_count()
+	local count = script_data.node_count
 	-- run more often the more open nodes there are
 	if count > 30 or (count > 20 and event.tick%4 == 0) or (count > 10 and event.tick%6 == 0) or (count > 5 and event.tick%8 == 0) or (count > 0 and event.tick%10 == 0) then
 		scanForResources()
@@ -498,7 +550,7 @@ local function onTick(event)
 		end
 	elseif event.tick == 3 then
 		-- process all nodes
-		while resources.node_count() > 2 do
+		while script_data.node_count > 2 do
 			scanForResources()
 		end
 	end
@@ -553,16 +605,19 @@ local function onTick(event)
 end
 
 return {
-	on_init = onInit,
-	on_load = function()
-		script_data = global.resource_spawner or script_data
-	end,
+	getNodes = getNodes,
+	lib = {
+		on_init = onInit,
+		on_load = function()
+			script_data = global.resource_spawner or script_data
+		end,
 
-	events = {
-		[defines.events.on_tick] = onTick,
-		[defines.events.on_chunk_generated] = onChunkGenerated,
+		events = {
+			[defines.events.on_tick] = onTick,
+			[defines.events.on_chunk_generated] = onChunkGenerated,
 
-		[defines.events.on_player_display_resolution_changed] = onResolutionChanged,
-		[defines.events.on_player_display_scale_changed] = onResolutionChanged
+			[defines.events.on_player_display_resolution_changed] = onResolutionChanged,
+			[defines.events.on_player_display_scale_changed] = onResolutionChanged
+		}
 	}
 }

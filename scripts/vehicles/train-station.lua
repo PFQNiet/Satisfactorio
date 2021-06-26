@@ -3,9 +3,10 @@
 -- uses global.player_build_error_debounce to track force -> last error tick to de-duplicate placement errors
 -- uses global.train.accounted to track train IDs that have already been counted by a station in the last cycle
 local io = require(modpath.."scripts.lualib.input-output")
-local getitems = require(modpath.."scripts.lualib.get-items-from")
+local bev = require(modpath.."scripts.lualib.build-events")
 local fastTransfer = require(modpath.."scripts.organisation.containers").fastTransfer
-local refundEntity = require(modpath.."scripts.build-gun").refundEntity
+local refundEntity = require(modpath.."scripts.lualib.building-management").refundEntity
+local link = require(modpath.."scripts.lualib.linked-entity")
 local math2d = require("math2d")
 
 local station = "train-station"
@@ -56,7 +57,7 @@ end
 
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
-	if not entity or not entity.valid then return end
+	if not (entity and entity.valid) then return end
 	if entity.name == station or entity.name == freight or entity.name == fluid or entity.name == empty then
 		-- check if it collides with something
 		local colliders = entity.surface.find_entities_filtered{
@@ -101,6 +102,7 @@ local function onBuilt(event)
 				force = entity.force,
 				raise_built = true
 			}
+			link.register(entity, stop)
 			stop.rotatable = false
 
 			script_data.stations[entity.unit_number%45][entity.unit_number] = {
@@ -127,22 +129,22 @@ local function onBuilt(event)
 					force = entity.force,
 					raise_built = true
 				}
-				io.addOutput(entity, {6.5,-2}, store, defines.direction.east)
-				io.addInput(entity, {6.5,-1}, store, defines.direction.west)
-				io.addInput(entity, {6.5,1}, store, defines.direction.west)
-				io.addOutput(entity, {6.5,2}, store, defines.direction.east)
-				-- default to Input mode
-				io.toggle(entity, {6.5,-2}, false)
-				io.toggle(entity, {6.5,2}, false)
+				link.register(entity, store)
+				io.addConnection(entity, {6.5,-2}, "output", store, defines.direction.east)
+				io.addConnection(entity, {6.5,-1}, "input", store, defines.direction.west)
+				io.addConnection(entity, {6.5,1}, "input", store, defines.direction.west)
+				io.addConnection(entity, {6.5,2}, "output", store, defines.direction.east)
 			end
 			if entity.name == fluid then
-				entity.surface.create_entity{
+				local tank = entity.surface.create_entity{
 					name = entity.name.."-tank",
 					position = math2d.position.add(entity.position, math2d.position.rotate_vector(tank_pos, entity.direction*45)),
 					direction = entity.direction,
 					force = entity.force,
 					raise_built = true
-				}.rotatable = false
+				}
+				tank.rotatable = false
+				link.register(entity, tank)
 				rendering.draw_sprite{
 					sprite = "utility.fluid_indication_arrow",
 					orientation = ((entity.direction+defines.direction.east)%8)/8,
@@ -185,58 +187,27 @@ local function onBuilt(event)
 		end
 		entity.rotatable = false
 
-		entity.surface.create_entity{
+		link.register(entity, entity.surface.create_entity{
 			name = walkable, -- left side in direction of travel is walkable
 			position = math2d.position.add(entity.position, math2d.position.rotate_vector({-4,0}, entity.direction*45)),
 			direction = entity.direction,
 			force = entity.force,
 			raise_built = true
-		}
-		entity.surface.create_entity{
+		})
+		link.register(entity, entity.surface.create_entity{
 			name = (entity.name == station or entity.name == empty) and walkable or collision, -- right side is blocked by freight
 			position = math2d.position.add(entity.position, math2d.position.rotate_vector({4,0}, entity.direction*45)),
 			direction = entity.direction,
 			force = entity.force,
 			raise_built = true
-		}
+		})
 	end
 end
 
 local function onRemoved(event)
 	local entity = event.entity
-	if not entity or not entity.valid then return end
-	if entity.name == trainstop or entity.name == freight.."-box" or entity.name == fluid.."-tank" or entity.name == fluid.."-pump" then
-		local floor = entity.surface.find_entities_filtered{
-			name = {station, freight, fluid, empty},
-			position = entity.position
-		}[1]
-		floor.destroy({raise_destroy=true})
-		return
-	end
+	if not (entity and entity.valid) then return end
 	if entity.name == station or entity.name == freight or entity.name == fluid or entity.name == empty then
-		local names
-		if entity.name == station then
-			names = {walkable, trainstop}
-		elseif entity.name == freight then
-			names = {walkable, collision, entity.name.."-box"}
-			io.remove(entity, event)
-		elseif entity.name == fluid then
-			names = {walkable, collision, entity.name.."-tank"}
-		else
-			names = {walkable}
-		end
-
-		local blocks = entity.surface.find_entities_filtered{
-			name = names,
-			area = entity.bounding_box
-		}
-		for _,block in pairs(blocks) do
-			if block.type == "container" then
-				getitems.storage(block, event and event.buffer or nil)
-			end
-			block.destroy()
-		end
-
 		if entity.name == station then
 			script_data.stations[entity.unit_number%45][entity.unit_number] = nil
 		else
@@ -306,10 +277,6 @@ local function onGuiSwitch(event)
 		if player.opened.name == freight.."-box" then
 			local floor = player.opened.surface.find_entity(freight, player.opened.position)
 			local unload = event.element.switch_state == "right"
-			io.toggle(floor,{6.5,-2},unload)
-			io.toggle(floor,{6.5,-1},not unload)
-			io.toggle(floor,{6.5,1},not unload)
-			io.toggle(floor,{6.5,2},unload)
 			local struct = script_data.platforms[floor.unit_number]
 			struct.mode = unload and "output" or "input"
 		end
@@ -331,14 +298,14 @@ end
 
 local function onTick(event)
 	if event.tick%45 == 0 then script_data.accounted = {} end
-	for i,struct in pairs(script_data.stations[event.tick%45]) do
+	for _,struct in pairs(script_data.stations[event.tick%45]) do
 		local station = struct.station
 		local stop = struct.stop
 		if station.energy > 0 then
 			-- each station will "tick" once 45 ticks
 			local trains = stop.get_train_stop_trains()
 			local power = 50 -- MW
-			for i,train in pairs(trains) do
+			for _,train in pairs(trains) do
 				-- ensure trains are only accounted for by one station
 				-- this is reset every round
 				if not script_data.accounted[train.id] then
@@ -353,12 +320,10 @@ local function onTick(event)
 							burner.remaining_burning_fuel = 85*1000*1000
 						end
 					end
-					-- it's okay to just set max power here, as the following second will rapidly drain the station's energy and cause a blackout if power usage is too high
-					-- if there are two power grids trying to account for this train, then this block won't be reached if the first is blacked out, so it's all good!
 				end
 			end
 			station.power_usage = power*1000*1000/60 -- set power usage for the next second based on power consumed in the last second
-			station.electric_buffer_size = math.max(station.electric_buffer_size, station.power_usage)
+			station.electric_buffer_size = station.power_usage
 
 			-- one transfer every 45 ticks = 24 seconds for a 32-stack freight car
 			local train = stop.get_stopped_train()
@@ -395,10 +360,7 @@ local function onTick(event)
 							end
 						end
 					end
-					io.toggle(platform,{6.5,-2},not (train and wagon))
-					io.toggle(platform,{6.5,-1},not (train and wagon))
-					io.toggle(platform,{6.5,1},not (train and wagon))
-					io.toggle(platform,{6.5,2},not (train and wagon))
+					io.toggle(platform,not (train and wagon))
 					platform.active = not not (train and wagon)
 				elseif platform.name == fluid and platform.energy > 0 then
 					local wagon = station.surface.find_entity("fluid-wagon", position)
@@ -444,7 +406,7 @@ local function onFastTransfer(event, half)
 	fastTransfer(player, realbox, half)
 end
 
-return {
+return bev.applyBuildEvents{
 	on_init = function()
 		global.trains = global.trains or script_data
 		debounce_error = global.player_build_error_debounce or debounce_error
@@ -453,17 +415,9 @@ return {
 		script_data = global.trains or script_data
 		debounce_error = global.player_build_error_debounce or debounce_error
 	end,
+	on_build = onBuilt,
+	on_destroy = onRemoved,
 	events = {
-		[defines.events.on_built_entity] = onBuilt,
-		[defines.events.on_robot_built_entity] = onBuilt,
-		[defines.events.script_raised_built] = onBuilt,
-		[defines.events.script_raised_revive] = onBuilt,
-
-		[defines.events.on_player_mined_entity] = onRemoved,
-		[defines.events.on_robot_mined_entity] = onRemoved,
-		[defines.events.on_entity_died] = onRemoved,
-		[defines.events.script_raised_destroy] = onRemoved,
-
 		[defines.events.on_gui_opened] = onGuiOpened,
 		[defines.events.on_gui_closed] = onGuiClosed,
 		[defines.events.on_gui_switch_state_changed] = onGuiSwitch,

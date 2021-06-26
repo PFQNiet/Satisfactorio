@@ -54,38 +54,32 @@ if mods[mod] then
 	removeTech("factory-requester-chest")
 
 	-- recipe changes
-	local building = data.raw['storage-tank']['factory-1']
-	building.max_health = 1
-	data.raw.recipe['factory-1'] = makeBuildingRecipe{
-		name = "factory-1",
-		ingredients = {
-			{"concrete",250},
-			{"iron-plate",200}
+	local costs = {
+		{
+			{"concrete", 250},
+			{"iron-plate", 200}
 		},
-		result = "factory-1"
-	}
-
-	building = data.raw['storage-tank']['factory-2']
-	building.max_health = 1
-	data.raw.recipe['factory-2'] = makeBuildingRecipe{
-		name = "factory-2",
-		ingredients = {
-			{"concrete",500},
-			{"steel-beam",200}
+		{
+			{"concrete", 500},
+			{"steel-beam", 200}
 		},
-		result = "factory-2"
+		{
+			{"concrete", 1000},
+			{"alclad-aluminium-sheet", 400}
+		}
 	}
-
-	building = data.raw['storage-tank']['factory-3']
-	building.max_health = 1
-	data.raw.recipe['factory-3'] = makeBuildingRecipe{
-		name = "factory-3",
-		ingredients = {
-			{"concrete",1000},
-			{"alclad-aluminium-sheet",400}
-		},
-		result = "factory-3"
-	}
+	for i, ingredients in pairs(costs) do
+		local building = data.raw['storage-tank']['factory-'..i]
+		building.max_health = 1
+		local item = data.raw.item['factory-'..i]
+		if not item.flags then item.flags = {} end
+		table.insert(item.flags, "only-in-cursor")
+		data.raw.recipe['factory-'..i] = makeBuildingRecipe{
+			name = "factory-"..i,
+			ingredients = ingredients,
+			result = "factory-"..i
+		}
+	end
 
 	building = data.raw['storage-tank']['factory-input-pipe']
 	building.max_health = 1

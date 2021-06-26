@@ -1,222 +1,207 @@
 -- uses global.io to track structures
+local bev = require(modpath.."scripts.lualib.build-events")
 local math2d = require("math2d")
-local string = require(modpath.."scripts.lualib.string")
 local script_data = {
 	-- io struct: {target, belt, inserter_left, inserter_right, visual, active, suppressed}
 	structures = {}, -- table<base unit number, table<coordinate, io struct>>
 	belts = {} -- table<belt unit number, io struct> used for reverse lookup
 }
 
-local function addToBufferOrSpillStack(stack, entity, buffer)
+local inserter_name = "loader-inserter"
+local belt_tiers = {
+	-- map belt/underground names to tiers
+	["conveyor-belt-mk-1"] = 1,
+	["conveyor-lift-mk-1"] = 1,
+	["conveyor-belt-mk-2"] = 2,
+	["conveyor-lift-mk-2"] = 2,
+	["conveyor-belt-mk-3"] = 3,
+	["conveyor-lift-mk-3"] = 3,
+	["conveyor-belt-mk-4"] = 4,
+	["conveyor-lift-mk-4"] = 4,
+	["conveyor-belt-mk-5"] = 5,
+	["conveyor-lift-mk-5"] = 5
+}
+local loader_belts = {
+	-- map tier to loader belt name
+	[0] = "loader-conveyor",
+	[1] = "loader-conveyor-belt-mk-1",
+	[2] = "loader-conveyor-belt-mk-2",
+	[3] = "loader-conveyor-belt-mk-3",
+	[4] = "loader-conveyor-belt-mk-4",
+	[5] = "loader-conveyor-belt-mk-5"
+}
+local function isLoaderBelt(belt)
+	for _,name in pairs(loader_belts) do
+		if name == belt.name then return true end
+	end
+	return false
+end
+
+local function getStructsForEntity(entity)
+	return script_data.structures[entity.unit_number]
+end
+local function addStructForEntity(entity, struct)
+	local obj = getStructsForEntity(entity)
+	if not obj then
+		obj = {
+			active = true,
+			connections = {}
+		}
+		script_data.structures[entity.unit_number] = obj
+	end
+	table.insert(obj.connections, struct)
+end
+local function deleteStructsForEntity(entity)
+	script_data.structures[entity.unit_number] = nil
+end
+
+local function getStructForBelt(belt)
+	return script_data.belts[belt.unit_number]
+end
+local function setStructForBelt(belt, struct)
+	script_data.belts[belt.unit_number] = struct
+end
+local function deleteStructForBelt(belt)
+	setStructForBelt(belt, nil)
+end
+
+local function addToBufferOrSpillStack(stack, buffer, entity)
 	if buffer then
 		buffer.insert(stack)
 	else
 		entity.surface.spill_item_stack(entity.position, stack, true, entity.force, false)
 	end
 end
-local function addToBufferOrSpillTransportBelt(belt, buffer)
+local function getItemsFromTransportBelt(belt, buffer)
 	-- belts are awkward XD But this will prevent accidentally replenishing items on belts, eg. ammo, and since it's only called on entity mining, it's probably fine
 	for i=1,belt.get_max_transport_line_index() do
 		local line = belt.get_transport_line(i)
 		if #line > 0 then
 			for j=1,#line do
-				addToBufferOrSpillStack(line[j], belt, buffer)
+				addToBufferOrSpillStack(line[j], buffer, belt)
 			end
 		end
 		line.clear()
 	end
 end
+local function getItemsFromInserter(inserter, buffer)
+	if not inserter.held_stack.valid_for_read then return end
+	addToBufferOrSpillStack(inserter.held_stack, buffer, inserter)
+	inserter.held_stack.clear()
+end
 
-local function findStructureFromBelt(belt)
-	-- grab the "train platform" layer, which is the only collision layer on train stations
-	local station_layer
-	for k,_ in pairs(game.entity_prototypes['train-station'].collision_mask) do
-		station_layer = k
-	end
-	local candidates = belt.surface.find_entities_filtered{
-		position = belt.position,
-		collision_mask = {"object-layer", station_layer}
-	}
-	for _,entity in pairs(candidates) do
-		if script_data[entity.unit_number] then
-			for _,struct in pairs(script_data[entity.unit_number]) do
-				if struct.belt == belt then
-					return struct
-				end
-			end
-			break -- there should be only one entity with IO at this position!
-		end
-	end
-	-- it should always exist - not existing is an error state
-end
-local function replaceBelt(entity, type, buffer)
-	local struct = findStructureFromBelt(entity)
-	if type == "loader-conveyor" then
+local function replaceBelt(belt, tier, buffer)
+	-- don't bother if the belt is already the correct type
+	if belt.name == loader_belts[tier] then return end
+
+	local struct = getStructForBelt(belt)
+	if tier == 0 then
 		-- spill the old belt's contents as well as anything in the inserters' hands
-		addToBufferOrSpillTransportBelt(entity, buffer)
-		local left = struct.inserter_left.held_stack
-		if left and left.valid_for_read then
-			addToBufferOrSpillStack(left, entity, buffer)
-			left.clear()
-		end
-		local right = struct.inserter_left.held_stack
-		if right and right.valid_for_read then
-			addToBufferOrSpillStack(right, entity, buffer)
-			right.clear()
-		end
-	
-		struct.belt = entity.surface.create_entity{
-			name = type,
-			position = entity.position,
-			direction = entity.direction,
-			force = entity.force,
-			raise_built = true,
-			fast_replace = true,
-			spill = false
-		}
-	else
-		struct.belt = entity.surface.create_entity{
-			name = type,
-			position = entity.position,
-			direction = entity.direction,
-			force = entity.force,
-			raise_built = true,
-			fast_replace = true,
-			spill = false
-		}
+		getItemsFromTransportBelt(struct.belt, buffer)
+		getItemsFromInserter(struct.inserter_left, buffer)
+		getItemsFromInserter(struct.inserter_right, buffer)
 	end
-	struct.active = type ~= "loader-conveyor"
-	struct.inserter_left.active = struct.active and not struct.suppressed
-	struct.inserter_right.active = struct.active and not struct.suppressed
-end
-local function snapBelt(belt,direction)
-	-- check if a neighbour exists in the given direction, quick-replace me if so and return either the existing or newly replaced belt
-	-- can assume just one neighbour since these are managed entities
-	local neighbour = belt.belt_neighbours[direction][1]
-	if not neighbour then return belt end
-	if string.starts_with(neighbour.name,"loader-") then return belt end
-	if #neighbour.belt_neighbours.inputs > 1 then return belt end -- disallow side-loading
-	local myname = neighbour.name:gsub("underground","transport")
-	return belt.surface.create_entity{
-		name = "loader-"..myname,
+	deleteStructForBelt(belt)
+	struct.belt = belt.surface.create_entity{
+		name = loader_belts[tier],
 		position = belt.position,
 		direction = belt.direction,
 		force = belt.force,
+		raise_built = true,
+		fast_replace = true,
+		spill = false
+	}
+	setStructForBelt(struct.belt, struct)
+	struct.active = tier > 0
+	struct.inserter_left.active = struct.active and not struct.suppressed
+	struct.inserter_right.active = struct.active and not struct.suppressed
+end
+
+local function snapNeighbouringLoaderBelts(belt, tier, buffer)
+	for _,side in pairs{"inputs","outputs"} do
+		-- Due to the "no naked merging" rule, there should only be 0 or 1 neighbours, so we can assume that to be true
+		local neighbour = belt.belt_neighbours[side][1]
+		if neighbour and isLoaderBelt(neighbour) then
+			replaceBelt(neighbour, tier, buffer)
+		end
+	end
+end
+
+local function snapToExistingBelt(belt, direction)
+	-- check if a neighbour exists in the given direction, quick-replace the belt if so and return either the existing or newly replaced belt
+	-- can assume just one neighbour since only one edge of the belt is exposed to the player
+	local neighbour = belt.belt_neighbours[direction][1]
+	if not neighbour then return belt end
+	if isLoaderBelt(neighbour) then return belt end -- don't allow adjacent loader belts (daisy-chaining)
+	if #neighbour.belt_neighbours.inputs > 1 then return belt end -- disallow side-loading
+
+	local tier = belt_tiers[neighbour.name]
+	if not tier then return belt end -- not a known snappable belt, should probably inform the player of this
+	return belt.surface.create_entity{
+		name = loader_belts[tier],
+		position = belt.position,
+		direction = belt.direction,
+		force = belt.force,
+		raise_built = true,
 		fast_replace = true,
 		spill = false
 	}
 end
 
-local function addInput(entity, offset, target, direction)
-	if not script_data[entity.unit_number] then script_data[entity.unit_number] = {} end
+local function addConnection(entity, offset, mode, target, direction)
+	assert(mode == "input" or mode == "output", "Invalid mode "..mode..", expected 'input' or 'output'")
 
+	-- offset is given based on building facing north, so rotate it according to the entity's actual rotation
 	offset = math2d.position.rotate_vector(offset, entity.direction/8*360)
 	local position = math2d.position.add(entity.position, offset)
-	direction = direction or defines.direction.north
-	local belt = entity.surface.create_entity{
-		name = "loader-conveyor",
-		position = position,
-		direction = (entity.direction + direction) % 8,
-		force = entity.force,
-		raise_built = true
-	}
-	belt = snapBelt(belt,"inputs")
-	local isactive = belt.name ~= "loader-conveyor"
-	local inserter_left = entity.surface.create_entity{
-		name = "loader-inserter",
-		position = entity.position,
-		direction = (entity.direction + direction) % 8,
-		force = entity.force,
-		raise_built = true
-	}
-	inserter_left.pickup_position = math2d.position.add(position, math2d.position.rotate_vector({-0.25,-0.45},((entity.direction+direction)%8)/8*360))
-	inserter_left.drop_position = (target or entity).position
-	inserter_left.inserter_filter_mode = "blacklist" -- allow all items by default, specific uses may override this
-	inserter_left.operable = false
-	inserter_left.minable = false
-	inserter_left.destructible = false
-	inserter_left.active = isactive
-	local inserter_right = entity.surface.create_entity{
-		name = "loader-inserter",
-		position = entity.position,
-		direction = (entity.direction + direction) % 8,
-		force = entity.force,
-		raise_built = true
-	}
-	inserter_right.pickup_position = math2d.position.add(position, math2d.position.rotate_vector({0.25,-0.45},((entity.direction+direction)%8)/8*360))
-	inserter_right.drop_position = (target or entity).position
-	inserter_right.inserter_filter_mode = "blacklist" -- allow all items by default, specific uses may override this
-	inserter_right.operable = false
-	inserter_right.minable = false
-	inserter_right.destructible = false
-	inserter_right.active = isactive
-	local visual = rendering.draw_sprite{
-		sprite = "utility.indication_line",
-		orientation = ((entity.direction + direction) % 8)/8,
-		render_layer = "arrow",
-		target = entity,
-		target_offset = {offset.x, offset.y},
-		surface = entity.surface,
-		only_in_alt_mode = true
-	}
-	script_data[entity.unit_number][offset.x..","..offset.y] = {
-		target = entity,
-		belt = belt,
-		inserter_left = inserter_left,
-		inserter_right = inserter_right,
-		active = isactive,
-		suppressed = false,
-		visual = visual
-	}
-	return belt, inserter_left, inserter_right, visual
-end
 
-local function addOutput(entity, offset, target, direction)
-	if not script_data[entity.unit_number] then script_data[entity.unit_number] = {} end
+	-- by default all inputs and outputs go north, but may be rotated
+	direction = (entity.direction + (direction or defines.direction.north)) % 8
 
-	offset = math2d.position.rotate_vector(offset, entity.direction/8*360)
-	local position = math2d.position.add(entity.position, offset)
-	direction = direction or defines.direction.north
+	-- create inactive belt first, then snap based on existing neighbours
 	local belt = entity.surface.create_entity{
-		name = "loader-conveyor",
+		name = loader_belts[0],
 		position = position,
-		direction = (entity.direction+direction)%8,
+		direction = direction,
 		force = entity.force,
 		raise_built = true
 	}
-	belt = snapBelt(belt,"outputs")
-	local isactive = belt.name ~= "loader-conveyor"
+	belt = snapToExistingBelt(belt, mode.."s")
+	-- if it did in fact snap, set this to be active
+	local isactive = belt.name ~= loader_belts[0]
+
+	local target_position = (target or entity).position
+	local belt_left_position = math2d.position.add(position, math2d.position.rotate_vector({-0.25,0},direction/8*360))
+	local belt_right_position = math2d.position.add(position, math2d.position.rotate_vector({0.25,0},direction/8*360))
+
 	local inserter_left = entity.surface.create_entity{
-		name = "loader-inserter",
+		name = inserter_name,
 		position = entity.position,
-		direction = (entity.direction+direction)%8,
+		direction = direction,
 		force = entity.force,
 		raise_built = true
 	}
-	inserter_left.pickup_position = (target or entity).position
-	inserter_left.drop_position = math2d.position.add(position, math2d.position.rotate_vector({-0.25,0.45},((entity.direction+direction)%8)/8*360))
+	inserter_left.pickup_position = mode == "input" and belt_left_position or target_position
+	inserter_left.drop_position = mode == "input" and target_position or belt_left_position
 	inserter_left.inserter_filter_mode = "blacklist" -- allow all items by default, specific uses may override this
-	inserter_left.operable = false
-	inserter_left.minable = false
-	inserter_left.destructible = false
 	inserter_left.active = isactive
+
 	local inserter_right = entity.surface.create_entity{
-		name = "loader-inserter",
+		name = inserter_name,
 		position = entity.position,
-		direction = (entity.direction+direction)%8,
+		direction = direction,
 		force = entity.force,
 		raise_built = true
 	}
-	inserter_right.pickup_position = (target or entity).position
-	inserter_right.drop_position = math2d.position.add(position, math2d.position.rotate_vector({0.25,0.45},((entity.direction+direction)%8)/8*360))
+	inserter_right.pickup_position = mode == "input" and belt_right_position or target_position
+	inserter_right.drop_position = mode == "input" and target_position or belt_right_position
 	inserter_right.inserter_filter_mode = "blacklist" -- allow all items by default, specific uses may override this
-	inserter_right.operable = false
-	inserter_right.minable = false
-	inserter_right.destructible = false
 	inserter_right.active = isactive
+
+	local sprite = mode == "input" and "indication_line" or "indication_arrow"
 	local visual = rendering.draw_sprite{
-		sprite = "utility.indication_arrow",
-		orientation = ((entity.direction+direction)%8)/8,
+		sprite = "utility."..sprite,
+		orientation = direction/8,
 		render_layer = "arrow",
 		target = entity,
 		target_offset = {offset.x, offset.y},
@@ -224,164 +209,96 @@ local function addOutput(entity, offset, target, direction)
 		only_in_alt_mode = true
 	}
 
-	script_data[entity.unit_number][offset.x..","..offset.y] = {
+	-- pack it all up nice
+	local struct = {
+		target = entity,
 		belt = belt,
 		inserter_left = inserter_left,
 		inserter_right = inserter_right,
 		active = isactive,
-		suppressed = false,
 		visual = visual
 	}
-	return belt, inserter_left, inserter_right, visual
+	addStructForEntity(entity, struct)
+	setStructForBelt(belt, struct)
+	return struct
 end
 
-local function remove(entity, event)
-	local structs = script_data[entity.unit_number]
+-- clean up all entities involved in the entity's IO, putting any items into the provided buffer (or spilling them)
+local function destroyConnections(entity, buffer)
+	local structs = getStructsForEntity(entity)
 	if not structs then return end
-	for _,struct in pairs(structs) do
-		-- any items held in the inserters or remaining on the belt are added to event.buffer, if it exists, or spilled if not
-		local belt = struct.belt
-		addToBufferOrSpillTransportBelt(belt, event.buffer or nil)
-		belt.destroy()
+	for _,struct in pairs(structs.connections) do
+		getItemsFromTransportBelt(struct.belt, buffer)
+		deleteStructForBelt(struct.belt)
+		struct.belt.destroy()
 
-		local inserter = struct.inserter_left
-		if inserter.held_stack and inserter.held_stack.valid_for_read then
-			addToBufferOrSpillStack(inserter.held_stack, entity, event.buffer or nil)
-		end
-		inserter.destroy()
+		getItemsFromInserter(struct.inserter_left, buffer)
+		struct.inserter_left.destroy()
 
-		inserter = struct.inserter_right
-		if inserter.held_stack and inserter.held_stack.valid_for_read then
-			addToBufferOrSpillStack(inserter.held_stack, entity, event.buffer or nil)
-		end
-		inserter.destroy()
+		getItemsFromInserter(struct.inserter_right, buffer)
+		struct.inserter_right.destroy()
 
 		-- visualisation is linked to the main entity so it gets destroyed automatically
 	end
-	script_data[entity.unit_number] = nil
+	deleteStructsForEntity(entity)
 end
 
-local function toggle(entity, offset, enable)
-	offset = math2d.position.rotate_vector(offset, entity.direction/8*360)
-	-- assume it exists - it not existing is an error condition
-	local struct = script_data[entity.unit_number][offset.x..","..offset.y]
-	struct.suppressed = not enable
-	struct.inserter_left.active = enable and struct.active
-	struct.inserter_right.active = enable and struct.active
+local function toggleConnections(entity, enable)
+	local structs = getStructsForEntity(entity)
+	assert(structs, "Call to toggle on "..entity.name.." at "..entity.position.x..","..entity.position.y.." failed: no registration")
+	if enable == nil then enable = not structs.active end
+	structs.active = enable
+	for _,struct in pairs(structs.connections) do
+		-- both the structure as a whole and this individual connection must be active
+		struct.inserter_left.active = structs.active and struct.active
+		struct.inserter_right.active = structs.active and struct.active
+	end
 end
-local function isEnabled(entity, offset)
-	offset = math2d.position.rotate_vector(offset, entity.direction/8*360)
-	-- assume it exists - it not existing is an error condition
-	local struct = script_data[entity.unit_number][offset.x..","..offset.y]
-	return not struct.suppressed
+local function isEnabled(entity)
+	local structs = getStructsForEntity(entity)
+	assert(structs, "Call to isEnabled on "..entity.name.." at "..entity.position.x..","..entity.position.y.." failed: no registration")
+	return structs.active
 end
 
-local function onBuilt(event)
+local function onBuiltOrRotated(event)
+	-- building and rotating both have the same effects!
 	local entity = event.created_entity or event.entity
-	if not entity or not entity.valid then return end
-	if entity.type ~= "transport-belt" and entity.type ~= "underground-belt" then return end
-	if entity.name == "loader-conveyor" then return end
-	local myname = entity.name:gsub("underground","transport")
-	for side,belts in pairs(entity.belt_neighbours) do
-		for _,belt in pairs(belts) do
-			if string.starts_with(belt.name,"loader-") then
-				if belt.name ~= "loader-"..myname then
-					replaceBelt(belt, "loader-"..myname)
-				end
-			end
-		end
-	end
+	if not (entity and entity.valid) then return end
+	local tier = belt_tiers[entity.name]
+	if not tier then return end -- not a known belt type
+	snapNeighbouringLoaderBelts(entity, tier)
 end
-local function onRotated(event)
-	local entity = event.entity
-	if not entity or not entity.valid then return end
-	if entity.type ~= "transport-belt" and entity.type ~= "underground-belt" then return end
-	local myname = entity.name:gsub("underground","transport")
-	-- rotation may create new links, but won't affect old links
-	-- at worst, it disconnects them if the belts are now facing each other - in which case they become each others' output, I think! (check this)
-	for side,belts in pairs(entity.belt_neighbours) do
-		for _,belt in pairs(belts) do
-			if string.starts_with(belt.name,"loader-") then
-				if belt.name ~= "loader-"..myname then
-					replaceBelt(belt, "loader-"..myname)
-				end
-			end
-		end
-	end
-end
+
 local function onRemoved(event)
 	local entity = event.entity
-	if not entity or not entity.valid then return end
-	if entity.type ~= "transport-belt" and entity.type ~= "underground-belt" then return end
-	-- disconnect neighbouring loaders
-	for side,belts in pairs(entity.belt_neighbours) do
-		for _,belt in pairs(belts) do
-			if string.starts_with(belt.name,"loader-") then
-				if belt.name ~= "loader-conveyor" then
-					replaceBelt(belt, "loader-conveyor", event.buffer or nil)
-				end
-			end
-		end
+	if not (entity and entity.valid) then return end
+
+	-- if the entity had any IO connections, those will be cleaned up
+	destroyConnections(entity, event.buffer)
+
+	local tier = belt_tiers[entity.name]
+	if tier then
+		-- disconnect neighbouring loaders
+		snapNeighbouringLoaderBelts(entity, 0, event.buffer)
+		return
 	end
 end
 
 return {
-	addInput = addInput,
-	addOutput = addOutput,
-	toggle = toggle,
+	addConnection = addConnection,
+	toggle = toggleConnections,
 	isEnabled = isEnabled,
-	remove = remove,
-	on_init = function()
-		global.io = global.io or script_data
-	end,
-	on_load = function()
-		script_data = global.io or script_data
-	end,
-	on_configuration_changed = function()
-		local data = global.io
-		if not data then return end
-		if data.components then return end
-		-- move all structs from the base table into structures, and save references to their component parts
-		local newformat = {
-			structures = {},
-			belts = {}
+	lib = bev.applyBuildEvents{
+		on_init = function()
+			global.io = global.io or script_data
+		end,
+		on_load = function()
+			script_data = global.io or script_data
+		end,
+		on_build = onBuiltOrRotated,
+		on_destroy = onRemoved,
+		events = {
+			[defines.events.on_player_rotated_entity] = onBuiltOrRotated
 		}
-		for id,iolist in pairs(data) do
-			newformat.structures[id] = iolist
-			local source = nil
-			for _,struct in pairs(iolist) do
-				if not struct.belt.valid then
-					game.print("Invalid belt at [gps="..struct.inserter_left.position.x..","..struct.inserter_left.position.y.."]")
-				end
-				if not source then
-					-- find entities at this position and see if its unit number matches
-					for _,candidate in pairs(struct.belt.surface.find_entities_filtered{position=struct.belt.position}) do
-						if candidate.unit_number == id then
-							source = candidate
-							break
-						end
-					end
-					if not source then
-						game.print("Could not find entity source at [gps="..struct.belt.position.x..","..struct.belt.position.y.."]")
-					end
-				end
-				struct.target = source
-				if struct.belt.valid then newformat.belts[struct.belt.unit_number] = struct end
-			end
-		end
-		global.io = newformat
-	end,
-	events = {
-		[defines.events.on_built_entity] = onBuilt,
-		[defines.events.on_robot_built_entity] = onBuilt,
-		[defines.events.script_raised_built] = onBuilt,
-		[defines.events.script_raised_revive] = onBuilt,
-
-		[defines.events.on_player_mined_entity] = onRemoved,
-		[defines.events.on_robot_mined_entity] = onRemoved,
-		[defines.events.on_entity_died] = onRemoved,
-		[defines.events.script_raised_destroy] = onRemoved,
-
-		[defines.events.on_player_rotated_entity] = onRotated
 	}
 }

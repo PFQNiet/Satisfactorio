@@ -119,8 +119,8 @@ local function onVehicle(event)
 		end
 	end
 end
-local function onTick(event)
-	local launch = 	script_data.launch
+local function onTick()
+	local launch = script_data.launch
 	for pid,data in pairs(launch) do
 		data.time = data.time + 1
 		local position = data.time / 120
@@ -167,7 +167,7 @@ local function onTick(event)
 						end
 					else
 						pad_rebounce[data.player.index] = nil
-						-- if we landed on jelly then we're good, otherwise take some fall damage (that'll just regen anyway so whatever lol XD)
+						-- if we landed on jelly then we're good, otherwise take some fall damage
 						local jelly = surface.find_entity(landing, character.position)
 						if not jelly or jelly.energy == 0 then
 							-- last thing to check is a parachute - using one will nullify fall damage

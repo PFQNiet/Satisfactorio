@@ -1,14 +1,29 @@
--- uses global.hard_drive.research to record which alt recipes have been selected as rewards
-local util = require("util")
+-- uses global.mam.lab to save a reference to the global lab for the force
+-- uses global.mam.hard_drive to record which alt recipes have been selected as rewards
 local string = require(modpath.."scripts.lualib.string")
-local omnilab = require(modpath.."scripts.lualib.omnilab")
 
 local mam = "mam"
+local lab = "omnilab"
 
 local script_data = {
-	research = {}
+	lab = {},
+	hard_drive = {}
 }
 
+local function getOmnilab(force)
+	local omnilab = script_data.lab[force.index]
+	if not (omnilab and omnilab.valid) then
+		omnilab = game.surfaces.nauvis.create_entity{
+			name = lab,
+			position = {0,0},
+			force = force,
+			raise_built = true
+		}
+		omnilab.operable = false
+		script_data.lab[force.index] = omnilab
+	end
+	return omnilab
+end
 local function prepareHardDriveTech(force)
 	-- check hard drive techs that have been unlocked but not completed...
 	local valid = {}
@@ -35,18 +50,18 @@ local function prepareHardDriveTech(force)
 			if #valid == 0 then break end
 		end
 	end
-	script_data.research[force.index] = {
+	script_data.hard_drive[force.index] = {
 		done = false,
 		options = selected
 	}
 end
 local function completeHardDriveTech(force)
-	if script_data.research[force.index] then
-		script_data.research[force.index].done = true
+	if script_data.hard_drive[force.index] then
+		script_data.hard_drive[force.index].done = true
 	end
 end
 local function clearHardDriveTech(force)
-	script_data.research[force.index] = nil
+	script_data.hard_drive[force.index] = nil
 	force.recipes["mam-hard-drive"].enabled = true
 	force.recipes["mam-hard-drive-done"].enabled = false
 end
@@ -68,42 +83,54 @@ local function selectHardDriveReward(force,tech)
 	clearHardDriveTech(force)
 end
 
-local function onBuilt(event)
-	local entity = event.created_entity or event.entity
-	if not entity or not entity.valid then return end
-	if entity.name == mam then
-		entity.active = false
-		-- also build the Omnilab (which will check if this is the first time the MAM is being placed)
-		omnilab.setupOmnilab(entity.force)
-	end
+--- "building" recipes have only one item product and that item is only-in-cursor
+---@param recipe LuaRecipePrototype
+local function isRecipeABuilding(recipe)
+	local products = recipe.products
+	-- assert there is only one product
+	if #products ~= 1 then return end
+	local product = products[1]
+	if product.type ~= "item" then return end
+	local item = game.item_prototypes[product.name]
+	-- if it is only-in-cursor then it's a building
+	return item.has_flag("only-in-cursor")
+end
+--- "material" recipes are any recipe in the "intermediate-products" or "space-elevator" groups
+---@param recipe LuaRecipePrototype
+local function isRecipeAMaterial(recipe)
+	return recipe.group.name == "intermediate-products" or recipe.group.name == "space-elevator"
 end
 
 local function completeMam(technology)
-	if string.starts_with(technology.name, "mam") then
-		if game.tick > 5 then
-			local message = {"", {"message.mam-research-complete",technology.name,technology.localised_name}}
-			-- use technology effects for console message
-			for _,effect in pairs(technology.effects) do
-				if effect.type == "unlock-recipe" then
-					-- if it has an associated "undo" recipe, it's a Building, otherwise it's an Equipment
-					local subtype = "equipment"
-					if technology.force.recipes[effect.recipe.."-undo"] then subtype = "building" end
-					if technology.force.recipes[effect.recipe].products[1].type == "fluid" or not game.item_prototypes[technology.force.recipes[effect.recipe].products[1].name].place_result then subtype = "material" end
-					if technology.force.recipes[effect.recipe].category == "resource-scanner" then subtype = "resource" end
-					table.insert(message, {"message.milestone-effect-unlock-"..subtype, effect.recipe, game.recipe_prototypes[effect.recipe].localised_name})
-				elseif effect.type == "character-inventory-slots-bonus" then
-					table.insert(message, {"message.milestone-effect-inventory-bonus",effect.modifier})
-				elseif effect.type == "nothing" then
-					table.insert(message, {"message.milestone-effect-other",effect.effect_description})
+	if game.tick > 5 then
+		local message = {"", {"message.mam-research-complete",technology.name,technology.localised_name}}
+		-- use technology effects for console message
+		for _,effect in pairs(technology.effects) do
+			if effect.type == "unlock-recipe" then
+				local recipe = game.recipe_prototypes[effect.recipe]
+				local subtype
+				if recipe.category == "resource-scanner" then
+					subtype = "resource"
+				elseif isRecipeABuilding(recipe) then
+					subtype = "building"
+				elseif isRecipeAMaterial(recipe) then
+					subtype = "material"
 				else
-					table.insert(message, {"message.milestone-effect-unknown",effect.type,effect.modifier or 0})
+					subtype = "equipment"
 				end
+				table.insert(message, {"message.milestone-effect-unlock-"..subtype, effect.recipe, recipe.localised_name})
+			elseif effect.type == "character-inventory-slots-bonus" then
+				table.insert(message, {"message.milestone-effect-inventory-bonus",effect.modifier})
+			elseif effect.type == "nothing" then
+				table.insert(message, {"message.milestone-effect-other",effect.effect_description})
+			else
+				table.insert(message, {"message.milestone-effect-unknown",effect.type,effect.modifier or 0})
 			end
-			technology.force.print(message)
 		end
-		if technology.name == "mam-hard-drive" then
-			completeHardDriveTech(technology.force)
-		end
+		technology.force.print(message)
+	end
+	if technology.name == "mam-hard-drive" then
+		completeHardDriveTech(technology.force)
 	end
 end
 local function manageMamGUI(player)
@@ -118,7 +145,7 @@ local function manageMamGUI(player)
 	if not (entity and entity.valid and entity.name == mam) then return end
 	local gui = player.gui.relative
 	local flow = gui['mam']
-	
+
 	-- check its recipe and inventory
 	local recipe = entity.get_recipe()
 	if recipe then
@@ -207,7 +234,7 @@ local function submitMam(event)
 		}
 	end
 	-- place appropriate item in the Omnilab and start the research process
-	local lab = omnilab.getOmnilab(force)
+	local lab = getOmnilab(force)
 	lab.insert{name=research,count=1}
 	force.research_queue = {research}
 	force.print({"message.mam-research-started",research,game.technology_prototypes[research].localised_name})
@@ -233,9 +260,11 @@ local function submitMam(event)
 	end
 end
 
+---@param event on_research_finished
 local function onResearch(event)
-	-- can just pass all researches to the function, since that already checks if it's a mam tech.
-	completeMam(event.research)
+	if string.starts_with(event.research.name, "mam-") then
+		completeMam(event.research)
+	end
 end
 
 local function onGuiOpened(event)
@@ -255,7 +284,7 @@ local function onGuiOpened(event)
 		manageMamGUI(player)
 	end
 	
-	local struct = script_data.research[player.force.index]
+	local struct = script_data.hard_drive[player.force.index]
 	if not struct or not struct.done then return end
 
 	if #struct.options == 0 then
@@ -424,20 +453,15 @@ end
 
 return {
 	on_init = function()
-		global.hard_drive = global.hard_drive or script_data
+		global.mam = global.mam or script_data
 	end,
 	on_load = function()
-		script_data = global.hard_drive or script_data
+		script_data = global.mam or script_data
 	end,
 	on_nth_tick = {
-		[6] = function(event) manageMamGUI() end
+		[10] = function() manageMamGUI() end
 	},
 	events = {
-		[defines.events.on_built_entity] = onBuilt,
-		[defines.events.on_robot_built_entity] = onBuilt,
-		[defines.events.script_raised_built] = onBuilt,
-		[defines.events.script_raised_revive] = onBuilt,
-
 		[defines.events.on_research_finished] = onResearch,
 
 		[defines.events.on_gui_opened] = onGuiOpened,

@@ -1,3 +1,4 @@
+local bev = require(modpath.."scripts.lualib.build-events")
 local math2d = require("math2d")
 
 local foundation = "foundation"
@@ -5,7 +6,7 @@ local tile = "stone-path"
 
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
-	if not entity or not entity.valid then return end
+	if not (entity and entity.valid) then return end
 	if entity.name == foundation then
 		-- look for foundations to snap to
 		for _,dir in pairs({defines.direction.north, defines.direction.east, defines.direction.south, defines.direction.west}) do
@@ -51,14 +52,14 @@ end
 
 local function onRemoved(event)
 	local entity = event.entity
-	if not entity or not entity.valid then return end
+	if not (entity and entity.valid) then return end
 	if entity.name == foundation then
 		-- remove the tiles and restore their hidden_tile
 		local tiles = {}
 		for dx=-1.5,1.5,1 do
 			for dy=-1.5,1.5,1 do
-				local tile = entity.surface.get_hidden_tile({entity.position.x+dx,entity.position.y+dy})
-				table.insert(tiles,{name=tile,position={entity.position.x+dx,entity.position.y+dy}})
+				local original_tile = entity.surface.get_hidden_tile({entity.position.x+dx,entity.position.y+dy})
+				table.insert(tiles,{name=original_tile,position={entity.position.x+dx,entity.position.y+dy}})
 			end
 		end
 		entity.surface.set_tiles(tiles, true, false, false, true)
@@ -66,9 +67,9 @@ local function onRemoved(event)
 		for _,other in pairs(others) do
 			-- this should only happen if an entity has moved here, eg. character or enemy
 			-- if the entity collides with the tile it's on, then it probably drowned
-			local tile = other.surface.get_tile(other.position)
+			local new_tile = other.surface.get_tile(other.position)
 			for layer,_ in pairs(game.entity_prototypes[other.name].collision_mask) do
-				if tile.collides_with(layer) then
+				if new_tile.collides_with(layer) then
 					-- found a collision!
 					other.die()
 					break
@@ -93,7 +94,7 @@ local function onSelectedArea(event)
 			end
 		end
 		if blocked > 0 then
-			player.print({"message.foundation-blocked",blocked})
+			player.print{"message.foundation-blocked",blocked}
 		end
 	end
 end
@@ -117,18 +118,10 @@ local function onUndoDeconstruct(event)
 	end
 end
 
-return {
+return bev.applyBuildEvents{
+	on_build = onBuilt,
+	on_destroy = onRemoved,
 	events = {
-		[defines.events.on_built_entity] = onBuilt,
-		[defines.events.on_robot_built_entity] = onBuilt,
-		[defines.events.script_raised_built] = onBuilt,
-		[defines.events.script_raised_revive] = onBuilt,
-
-		[defines.events.on_player_mined_entity] = onRemoved,
-		[defines.events.on_robot_mined_entity] = onRemoved,
-		[defines.events.on_entity_died] = onRemoved,
-		[defines.events.script_raised_destroy] = onRemoved,
-
 		[defines.events.on_player_selected_area] = onSelectedArea,
 		[defines.events.on_player_alt_selected_area] = onDeselectedArea,
 		[defines.events.on_marked_for_deconstruction] = onDeconstruct,

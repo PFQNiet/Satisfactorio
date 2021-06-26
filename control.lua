@@ -1,18 +1,19 @@
 modpath = "__Satisfactorio__."
-local handler = require("event_handler")
 
-if script.level.is_simulation and script.mod_name ~= "level" then
+-- ensure system only loads once - it may try to load twice in Menu Sims or the Sandbox scenario
+if remote.interfaces['SatisfactorioLoaded'] then
 	return
 end
+remote.add_interface('SatisfactorioLoaded',{})
+
+local handler = require("event_handler")
 
 -- Add deepcopy for migrations
 local util = require('util')
 table.deepcopy = util.table.deepcopy
 
 handler.add_lib(require(modpath.."scripts.freeplay"))
-handler.add_lib(require(modpath.."scripts.build-gun")) -- must be early in the event handlers so it can "cancel" build events
-handler.add_lib(require(modpath.."scripts.lualib.recipe-browser")) -- should be early in event handlers so it can handle insta-swapped entities
-handler.add_lib(require(modpath.."scripts.indestructible"))
+handler.add_libraries(require(modpath.."scripts.gameplay")) -- must be early in the event handlers
 handler.add_libraries(require(modpath.."scripts.creatures"))
 handler.add_libraries(require(modpath.."scripts.constructors"))
 handler.add_libraries(require(modpath.."scripts.equipment"))
@@ -23,21 +24,13 @@ handler.add_libraries(require(modpath.."scripts.organisation"))
 handler.add_libraries(require(modpath.."scripts.power"))
 handler.add_libraries(require(modpath.."scripts.vehicles"))
 handler.add_libraries(require(modpath.."scripts.weapons"))
-handler.add_lib(require(modpath.."scripts.lualib.input-output"))
-handler.add_lib(require(modpath.."scripts.lualib.radioactivity"))
-handler.add_lib(require(modpath.."scripts.lualib.resources"))
-handler.add_lib(require(modpath.."scripts.lualib.resource-spawner"))
-handler.add_lib(require(modpath.."scripts.lualib.resource-scanner"))
-handler.add_lib(require(modpath.."scripts.lualib.character-healing"))
-handler.add_lib(require(modpath.."scripts.lualib.corpse-scanner"))
-handler.add_lib(require(modpath.."scripts.lualib.power-trip"))
-handler.add_lib(require(modpath.."scripts.lualib.crash-sites"))
-handler.add_lib(require(modpath.."scripts.lualib.enemy-spawning"))
-handler.add_lib(require(modpath.."scripts.lualib.self-driving"))
-handler.add_lib(require(modpath.."scripts.lualib.omnilab"))
-handler.add_lib(require(modpath.."scripts.tech-extras"))
-handler.add_lib(require(modpath.."scripts.inventory-sort-and-trash"))
-handler.add_lib(require(modpath.."scripts.map-tweaks"))
+handler.add_lib(require(modpath.."scripts.lualib.input-output").lib)
+handler.add_lib(require(modpath.."scripts.lualib.linked-entity").lib)
+handler.add_lib(require(modpath.."scripts.lualib.pings").lib)
+handler.add_lib(require(modpath.."scripts.lualib.resource-spawner").lib)
+handler.add_lib(require(modpath.."scripts.lualib.power-trip").lib)
+handler.add_lib(require(modpath.."scripts.lualib.enemy-spawning").lib)
+handler.add_lib(require(modpath.."scripts.lualib.crash-sites").lib)
 
 handler.add_lib({
 	add_commands = function()

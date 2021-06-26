@@ -1,74 +1,84 @@
 -- uses global.geogens to track generators for power cycling
 local powertrip = require(modpath.."scripts.lualib.power-trip")
+local bev = require(modpath.."scripts.lualib.build-events")
+local link = require(modpath.."scripts.lualib.linked-entity")
 
 local miner = "geothermal-generator"
 local gen = miner.."-eei"
 local accumulator = miner.."-buffer"
+local basepower = 100 -- average power generation in MW for an Impure geyser (100% yield)
 
 local script_data = {}
-for i=0,60-1 do script_data[i] = {} end
+local buckets = 60
+for i=0,buckets-1 do script_data[i] = {} end
+local function getBucket(tick)
+	return script_data[tick%buckets]
+end
+local function getStruct(entity)
+	return script_data[entity.unit_number%buckets][entity.unit_number]
+end
+local function createStruct(entity)
+	local node = entity.surface.find_entity("geyser", entity.position)
+	-- replace miner with generator
+	local pow = entity.surface.create_entity{
+		name = gen,
+		position = entity.position,
+		force = entity.force,
+		raise_built = true
+	}
+	local purity = node.amount / 60
+	local struct = {
+		interface = pow,
+		power = {basepower*purity*0.5, basepower*purity*1.5},
+		time_offset = math.random(0,2*60*60) -- shift time by up to 2 minutes
+	}
+	entity.destroy()
+	pow.electric_buffer_size = (struct.power[2] * 1000 * 1000 + 1) / 60
+
+	powertrip.registerGenerator(nil, pow, accumulator)
+	script_data[pow.unit_number%buckets][pow.unit_number] = struct
+end
+local function deleteStruct(entity)
+	script_data[entity.unit_number%buckets][entity.unit_number] = nil
+end
 
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
-	if not entity or not entity.valid then return end
+	if not (entity and entity.valid) then return end
 	if entity.name == miner then
-		local node = entity.surface.find_entity("geyser", entity.position)
-		-- spawn a generator
-		local gen = entity.surface.create_entity{
-			name = gen,
-			position = entity.position,
-			force = entity.force,
-			raise_built = true
-		}
-		gen.rotatable = false
-		gen.electric_buffer_size = (node.amount/120*300*1000*1000+1)/60
-		entity.destroy()
-		powertrip.registerGenerator(nil, gen, accumulator)
-
-		script_data[gen.unit_number%60][gen.unit_number] = {node=node, generator=gen}
+		createStruct(entity)
 	end
 end
 
 local function onRemoved(event)
 	local entity = event.entity
-	if not entity or not entity.valid then return end
+	if not (entity and entity.valid) then return end
 	if entity.name == gen then
-		script_data[entity.unit_number%60][entity.unit_number] = nil
-		powertrip.unregisterGenerator(entity)
+		deleteStruct(entity)
 	end
 end
 
 local function onTick(event)
-	for i,entry in pairs(script_data[event.tick%60]) do
-		-- each station will "tick" once every 60 in-game ticks, ie. every second
-		-- power consumption ranges based on the resource node, in a sine wave. Node amount 120 = 100-300 MW
-		-- entry.node, entry.generator
-		local min = entry.node.amount/120*100
-		local max = entry.node.amount/120*300
-		local t = (event.tick + entry.generator.unit_number * 133) / (60 * 60) * math.pi
+	for _,struct in pairs(getBucket(event.tick)) do
+		-- power consumption ranges based on the resource node, in a sine wave, over a minute-long cycle
+		local min = struct.power[1]
+		local max = struct.power[2]
+		local t = (event.tick + struct.time_offset) / (60 * 60) * math.pi
 		local pow = (min + max) / 2 + (max - min) / 2 * math.sin(t)
-		entry.generator.power_production = (pow * 1000 * 1000 + 1) / 60 -- MW to joules-per-tick, plus one for the buffer
+		struct.interface.power_production = (pow * 1000 * 1000 + 1) / 60 -- MW to joules-per-tick, plus one for the buffer
 	end
 end
 
-return {
+return bev.applyBuildEvents{
 	on_init = function()
 		global.geogens = global.geogens or script_data
 	end,
 	on_load = function()
 		script_data = global.geogens or script_data
 	end,
+	on_build = onBuilt,
+	on_destroy = onRemoved,
 	events = {
-		[defines.events.on_built_entity] = onBuilt,
-		[defines.events.on_robot_built_entity] = onBuilt,
-		[defines.events.script_raised_built] = onBuilt,
-		[defines.events.script_raised_revive] = onBuilt,
-
-		[defines.events.on_player_mined_entity] = onRemoved,
-		[defines.events.on_robot_mined_entity] = onRemoved,
-		[defines.events.on_entity_died] = onRemoved,
-		[defines.events.script_raised_destroy] = onRemoved,
-
 		[defines.events.on_tick] = onTick
 	}
 }
