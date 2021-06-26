@@ -11,20 +11,21 @@ local function getBuildingRecipe(name)
 		local place = entity.items_to_place_this
 		if not place then return nil end
 		for _,i in pairs(place) do
-			if i.name == name then
-				item = i
-				break
+			local attempt = getBuildingRecipe(i.name)
+			if attempt then
+				cache[name] = attempt
+				return attempt
 			end
 		end
-		if not item then return nil end
-	end
-	-- now search recipes for one that produces this (in the "building" category)
-	for _,recipe in pairs(game.recipe_prototypes) do
-		if recipe.category == "building" then
-			-- all "building" recicpes have a single product, that is the building
-			if recipe.products[1].name == item.name then
-				cache[name] = recipe
-				return recipe
+	else
+		-- now search recipes for one that produces this (in the "building" category)
+		for _,recipe in pairs(game.recipe_prototypes) do
+			if recipe.category == "building" then
+				-- all "building" recicpes have a single product, that is the building
+				if recipe.products[1].name == item.name then
+					cache[name] = recipe
+					return recipe
+				end
 			end
 		end
 	end
