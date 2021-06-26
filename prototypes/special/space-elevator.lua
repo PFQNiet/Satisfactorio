@@ -12,6 +12,7 @@ local elevator = makeAssemblingMachine{
 		{"wire",1500}
 	}
 }
+elevator.machine.collision_box[1][1] = elevator.machine.collision_box[1][1]-0.01 -- make it not square so it can be rotated
 elevator.machine.draw_entity_info_icon_background = false
 elevator.machine.return_ingredients_on_change = false
 elevator.machine.minable.mining_time = 5
@@ -43,3 +44,4 @@ local siloitem = {
 ]]
 
 -- data:extend({silo,siloitem})
+--2658861361
