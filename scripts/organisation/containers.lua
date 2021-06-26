@@ -11,7 +11,10 @@ local function getRegistration(entity)
 	return entity and entity.valid and entity.unit_number and script_data[entity.unit_number%60][entity.unit_number]
 end
 
--- fast-transfer items to or from the target entity, returns whether items were actually moved
+--- fast-transfer items to or from the target entity, returns whether items were actually moved
+---@param player LuaPlayer
+---@param target LuaEntity
+---@param half boolean
 local function fastTransfer(player, target, half)
 	if not player.can_reach_entity(target) then
 		player.surface.create_entity{
@@ -123,21 +126,23 @@ local function onFastTransfer(event, half)
 end
 
 return {
-	on_init = function()
-		global.containers = global.containers or script_data
-	end,
-	on_load = function()
-		script_data = global.containers or script_data
-	end,
-	on_configuration_changed = function()
-		if not global.containers then global.containers = script_data end
-	end,
-	events = {
-		[defines.events.on_tick] = onTick,
-		["fast-entity-transfer-hook"] = function(event) onFastTransfer(event, false) end,
-		["fast-entity-split-hook"] = function(event) onFastTransfer(event, true) end
-	},
-
 	register = register,
-	fastTransfer = fastTransfer
+	fastTransfer = fastTransfer,
+	
+	lib = {
+		on_init = function()
+			global.containers = global.containers or script_data
+		end,
+		on_load = function()
+			script_data = global.containers or script_data
+		end,
+		on_configuration_changed = function()
+			if not global.containers then global.containers = script_data end
+		end,
+		events = {
+			[defines.events.on_tick] = onTick,
+			["fast-entity-transfer-hook"] = function(event) onFastTransfer(event, false) end,
+			["fast-entity-split-hook"] = function(event) onFastTransfer(event, true) end
+		}
+	}
 }

@@ -1,5 +1,6 @@
 assert(train_platform_layer ~= nil, "Train station must be defined before freight platform, as it uses its collision mask")
 
+local sounds = copySoundsFrom(data.raw.container["steel-chest"])
 local name = "freight-platform"
 local base = {
 	type = "electric-energy-interface",
@@ -28,8 +29,8 @@ local base = {
 		result = name
 	},
 	remove_decoratives = "true",
-	open_sound = basesounds.machine_open,
-	close_sound = basesounds.machine_close,
+	open_sound = sounds.open_sound,
+	close_sound = sounds.close_sound,
 	selection_box = {{-7,-3.5},{7,3.5}},
 	selection_priority = 49
 }
@@ -66,7 +67,6 @@ local collision = {
 	selectable_in_game = false
 }
 
-local sounds = copySoundsFrom(data.raw.container["steel-chest"])
 local storage = {
 	type = "container",
 	name = name.."-box",
