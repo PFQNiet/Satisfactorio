@@ -29,19 +29,3 @@ silo.minable = nil
 silo.selectable_in_game = false
 silo.flags = {}
 data:extend{silo}
-
---[[ suspect this is unused
-local siloitem = {
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
-	icon_size = 64,
-	name = silo.name,
-	flags = {"hidden"},
-	order = "e["..silo.name.."]",
-	subgroup = "special",
-	stack_size = 1,
-	type = "item"
-}
-]]
-
--- data:extend({silo,siloitem})
---2658861361

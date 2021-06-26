@@ -1,3 +1,5 @@
+-- menu sim map seed: 2658861361
+
 local find_logo = [[
 	local logo = game.surfaces.nauvis.find_entities_filtered{name="factorio-logo-11tiles",limit=1}[1]
 	game.camera_position = {logo.position.x, logo.position.y+9.75}
@@ -37,6 +39,13 @@ data.raw['utility-constants'].default.main_menu_simulations = {
 	drones = {
 		checkboard = false,
 		save = "__Satisfactorio__/menu-simulations/satis-demo-drones.zip",
+		length = 30 * 60,
+		init = find_logo,
+		update = [[]]
+	},
+	smart_splitter = {
+		checkboard = false,
+		save = "__Satisfactorio__/menu-simulations/satis-demo-smart-splitters.zip",
 		length = 30 * 60,
 		init = find_logo,
 		update = [[]]
