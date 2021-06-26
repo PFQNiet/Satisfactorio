@@ -79,7 +79,6 @@ end
 
 local function onVehicle(event)
 	local player = game.players[event.player_index]
-	local entity = event.entity
 	if not player.driving then
 		-- check if player is being yeeted and put them back in if so
 		local yeet = script_data[player.index]
@@ -89,8 +88,8 @@ local function onVehicle(event)
 	end
 end
 
-local function onTick(event)
-	for pid,struct in pairs(script_data) do
+local function onTick()
+	for _,struct in pairs(script_data) do
 		struct.time = struct.time+1
 		local altitude = 5
 		if struct.time < 60 then

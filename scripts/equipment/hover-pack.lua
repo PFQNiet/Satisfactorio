@@ -52,8 +52,8 @@ local function onJump(event)
 			line = rendering.draw_line{
 				color = {0,212,255,192},
 				width = 3,
-				dash_length = 0.05,
-				gap_length = 0.1,
+				dash_length = 0.2,
+				gap_length = 0.05,
 				from = car,
 				from_offset = {0,-0.8},
 				to = car.position,
@@ -132,8 +132,8 @@ local function onTick(event)
 			acceleration[2] = acceleration[2]/sqrt2
 		end
 
-		struct.momentum[1] = struct.momentum[1] * 0.8 + acceleration[1] * 0.06
-		struct.momentum[2] = struct.momentum[2] * 0.8 + acceleration[2] * 0.06
+		struct.momentum[1] = struct.momentum[1] * 0.85 + acceleration[1] * 0.06
+		struct.momentum[2] = struct.momentum[2] * 0.85 + acceleration[2] * 0.06
 		struct.position = {
 			struct.position[1] + struct.momentum[1],
 			struct.position[2] + struct.momentum[2]
