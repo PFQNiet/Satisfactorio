@@ -20,6 +20,7 @@ local function makePipe(params)
 	pipe.icon = graphics.."icons/"..name..".png"
 	pipe.icon_size = 64
 	pipe.icon_mipmaps = 0
+	pipe.collision_mask = {"object-layer","train-layer"} -- allow construction on water
 	local box = pipe.fluid_box
 	box.height = height
 	box.base_area = 0.01/box.height
