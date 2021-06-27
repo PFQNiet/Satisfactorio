@@ -87,6 +87,14 @@ local function onVehicle(event)
 		end
 	end
 end
+local function onDied(event)
+	local player = game.players[event.player_index]
+	local yeet = script_data[player.index]
+	if yeet then
+		yeet.car.destroy()
+		script_data[player.index] = nil
+	end
+end
 
 local function onTick()
 	for _,struct in pairs(script_data) do
@@ -171,6 +179,7 @@ return {
 	end,
 	events = {
 		[defines.events.on_player_driving_changed_state] = onVehicle,
+		[defines.events.on_player_died] = onDied,
 		[defines.events.on_tick] = onTick,
 		["jump"] = onJump
 	}

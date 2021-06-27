@@ -19,12 +19,15 @@ local function onDamaged(event)
 				ticks_to_wait = 1
 			}
 		end
-		local passenger = event.entity.get_passenger()
-		if passenger and not passenger.is_player() then
-			if event.cause then
-				passenger.damage(damage, event.force, event.damage_type.name, event.cause)
-			else
-				passenger.damage(damage, event.force, event.damage_type.name)
+		-- damaging the player may destroy the vehicle if it's a jetpack or similar
+		if event.entity.valid then
+			local passenger = event.entity.get_passenger()
+			if passenger and not passenger.is_player() then
+				if event.cause then
+					passenger.damage(damage, event.force, event.damage_type.name, event.cause)
+				else
+					passenger.damage(damage, event.force, event.damage_type.name)
+				end
 			end
 		end
 	end

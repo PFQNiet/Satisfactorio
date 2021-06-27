@@ -164,6 +164,7 @@ local function onCommandCompleted(event)
 end
 -- after attacking a player, check if we went too far from spawn and return there if so
 local function onDamaged(event)
+	if not (event.entity and event.entity.valid) then return end
 	if event.entity.type == "character" and event.cause and event.cause.valid and event.cause.type == "unit" then
 		local struct = getStruct(event.cause.unit_number)
 		if struct then

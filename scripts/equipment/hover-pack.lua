@@ -93,8 +93,18 @@ local function onVehicle(event)
 		if not player.driving and data then
 			-- put the player back in the car, and request descent
 			data.car.set_driver(player)
+			data.interface.active = false
 			data.exiting = true
 		end
+	end
+end
+local function onDied(event)
+	local player = game.players[event.player_index]
+	local yeet = script_data[player.index]
+	if yeet then
+		yeet.car.destroy()
+		yeet.interface.destroy()
+		script_data[player.index] = nil
 	end
 end
 
@@ -209,6 +219,7 @@ return {
 	end,
 	events = {
 		[defines.events.on_player_driving_changed_state] = onVehicle,
+		[defines.events.on_player_died] = onDied,
 		[defines.events.on_tick] = onTick,
 		["jump"] = onJump
 	}
