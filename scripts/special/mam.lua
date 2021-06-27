@@ -1,5 +1,6 @@
 -- uses global.mam.lab to save a reference to the global lab for the force
 -- uses global.mam.hard_drive to record which alt recipes have been selected as rewards
+local bev = require(modpath.."scripts.lualib.build-events")
 local string = require(modpath.."scripts.lualib.string")
 
 local mam = "mam"
@@ -451,7 +452,15 @@ local function onGuiClick(event)
 	end
 end
 
-return {
+local function onBuilt(event)
+	local entity = event.created_entity or event.entity
+	if not (entity and entity.valid) then return end
+	if entity.name == mam then
+		entity.active = false
+	end
+end
+
+return bev.applyBuildEvents{
 	on_init = function()
 		global.mam = global.mam or script_data
 	end,
@@ -461,6 +470,7 @@ return {
 	on_nth_tick = {
 		[10] = function() manageMamGUI() end
 	},
+	on_build = onBuilt,
 	events = {
 		[defines.events.on_research_finished] = onResearch,
 
