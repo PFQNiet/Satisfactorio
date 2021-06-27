@@ -55,7 +55,7 @@ local function addTech(name, icon, category, subgroup, order, time, prerequisite
 			}},
 			stack_size = 1,
 			durability = 1,
-			flags = {"hidden"}
+			flags = {"hidden","only-in-cursor"}
 		},
 		recipe = {
 			type = "recipe",
