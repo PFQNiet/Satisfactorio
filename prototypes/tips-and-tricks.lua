@@ -1,3 +1,51 @@
+-- TODO Make real tips-and-tricks
+-- For now, just wipe all the Vanilla ones and say "hey you're supposed to know how Factorio works if you're playing overhaul mods"
+-- ... in nicer words, of course.
+
+-- At least we can have a nice little build to show!
+data:extend{
+	{
+		type = "tips-and-tricks-item",
+		name = "hello-there",
+		order = "0[placeholder]",
+		starting_status = "unlocked",
+		simulation = {
+			save = "__Satisfactorio__/prototypes/tips-and-tricks/satis-tiptrick-intro.zip",
+			init = [[
+				game.camera_position = {0,0}
+				game.camera_zoom = 1
+				game.camera_alt_info = true
+				game.tick_paused = false
+
+				-- delete the placeholder tile boundary
+				for _,tile in pairs(game.surfaces[1].find_entities_filtered{type="tile-ghost"}) do
+					tile.destroy()
+				end
+			]]
+		}
+	}
+}
+
+local vanilla_tiptrick_categories = {
+	"belts", "copy-paste", "drag-building", "electric-network", "fast-replace",
+	"game-interaction", "ghost-building", "inserters", "logistic-network", "trains"
+}
+local vanilla_tiptrick_items = {
+	"active-provider-chest", "belt-lanes", "buffer-chest", "bulk-crafting", "burner-inserter-refueling", "circuit-network", "clear-cursor",
+	"connect-switch", "construction-robots", "copy-entity-settings", "copy-paste", "copy-paste-filters", "copy-paste-requester-chest",
+	"copy-paste-spidertron", "copy-paste-trains", "drag-building", "drag-building-poles", "drag-building-underground-belts", "e-confirm",
+	"electric-network", "electric-pole-connections", "entity-transfers", "fast-belt-bending", "fast-obstacle-traversing", "fast-replace",
+	"fast-replace-belt-splitter", "fast-replace-belt-underground", "fast-replace-direction", "gate-over-rail", "ghost-building",
+	"ghost-rail-planner", "inserters", "insertion-limits", "introduction", "limit-chests", "logistic-network", "long-handed-inserters",
+	"low-power", "move-between-labs", "passive-provider-chest", "personal-logistics", "pipette", "pump-connection", "rail-building",
+	"rail-signals-advanced", "rail-signals-basic", "requester-chest", "rotating-assemblers", "shoot-targeting", "show-info",
+	"splitter-filters", "splitters", "stack-transfers", "steam-power", "storage-chest", "train-stop-same-name", "train-stops",
+	"trains", "transport-belts", "underground-belts", "z-dropping"
+}
+for _,name in pairs(vanilla_tiptrick_categories) do data.raw['tips-and-tricks-item-category'][name] = nil end
+for _,name in pairs(vanilla_tiptrick_items) do data.raw['tips-and-tricks-item'][name] = nil end
+
+--[==[ This is all old stuff that needs to be revamped/rewritten/put out of its misery
 tiptrickutils = [[
 	-- require("math2d")
 	math2d = {position={
@@ -193,6 +241,7 @@ data.raw['tips-and-tricks-item']['copy-paste-filters'] = nil -- Possibly repurpo
 data.raw['tips-and-tricks-item']['copy-paste-requester-chest'] = nil
 data.raw['tips-and-tricks-item']['copy-paste-spidertron'] = nil
 require("prototypes.tips-and-tricks.drag-building")
+data.raw['tips-and-tricks-item']['fast-obstacle-traversing'] = nil
 -- remove "train" section, I can't be bothered making it work with electric trains XD
 data.raw['tips-and-tricks-item-category']['trains'] = nil
 data.raw['tips-and-tricks-item']['trains'] = nil
@@ -223,3 +272,79 @@ data.raw['tips-and-tricks-item']['fast-replace-belt-underground'] = nil
 require("prototypes.tips-and-tricks.ghost-building")
 data.raw['tips-and-tricks-item']['rotating-assemblers'] = nil
 data.raw['tips-and-tricks-item']['circuit-network'] = nil
+
+
+--[=[
+- introduction (5 minutes)
+- game-interaction
+-- show-info (dependency: introduction)
+-- e-confirm (5 times not using E)
+-- clear-cursor
+-- pipette (built 120 entities without using Q)
+-- stack-transfers (manually transfer 20 times without using stack transfer)
+-- entity-transfters (30 minutes after stack-transfers)
+-- z-dropping (30 minutes after entity-transfers)
+-- shoot-targeting (135 minutes into the game)
+-- bulk-crafting (hand-craft single items)
+- inserters
+-- inserters (unlocked inserter)
+-- burner-inserter-refueling (build 3 burner inserters)
+-- long-handed-inserters (research automation)
+-- move-between-labs (build 3 labs)
+-- insertion-limits (build 5 inserters)
+-- limit-chests (build containers and inserters)
+- belts
+-- transport-belts (unlock transport belt)
+-- belt-lanes (build 30 belts)
+-- splitters (research logistics)
+-- splitter-filters (build 10 splitters)
+-- underground-belts (research logistics)
+- electric-network
+-- electric-network (unlock steam engine and boiler + 15 minutes, or build steam engine, boiler or offshore pump)
+-- steam-power (dependency: electric-network)
+-- low-power (low power 3x)
+-- electric-pole-connections (4 hours elapsed, then build 15 more electric poles)
+-- connect-switch (build power-switch)
+- copy-paste
+-- copy-entity-settings (set recipe in 3 consecutive buildings without pasting)
+-- copy-paste-trains (build 3 locomotives)
+-- copy-paste-filters (build 3 filter inserters)
+-- copy-paste-requester-chest (build 10 requesters and set 20 requests)
+-- copy-paste-spidertron (build 2 spidertrons)
+- drag-building
+-- drag-building (build 60 entities without dragging 10)
+-- drag-building-poles (build 15 power poles without dragging 3)
+-- drag-building-underground-belts (build 30 underground belts wihtout dragging 3)
+-- fast-belt-bending (drag 200 belts without bending)
+-- fast-obstacle-traversing (drag 200 belts and 20 undergrounds without traversing)
+- trains
+-- trains (research railway)
+-- rail-building (build 1 rail)
+-- train-stops (build 1 train stop or research automated rail transportation and build 30 rails)
+-- rail-signals-basic (build 1 rail signal or research rail signals and buid 2 trains)
+-- rail-signals-advanced (build 30 rail signals or 1 chain signal)
+-- gate-over-rail (build 60 rails, 50 walls and research gates)
+-- pump-connection (build fluid wagon)
+-- train-stop-same-name (build 4 train stops)
+- logistic-network
+-- logistic-network (research construction or logistic bots)
+-- personal-logistics (research logistic bots)
+-- construction-robots (research construction bots)
+-- passive-provider-chest (dependency: logistic-network)
+-- storage-chest (dependency: logistic-network)
+-- requester-chest (dependency: logistic-network)
+-- active-provider-chest (dependency: logistic-network)
+-- buffer-chest (dependency: logistic-network)
+- ghost-building
+-- ghost-building (research construction bots)
+-- ghost-rail-planner (build roboport or personal roboport, build 100 rails)
+-- copy-paste (2 hours after unlocking ghost-building)
+- fast-replace
+-- fast-replace (build 10 steel furnaces, AM2 or AM3)
+-- fast-replace-direction (build 50 belts)
+-- fast-replace-belt-splitter (build 20 splitters without fast-replacing)
+-- fast-replace-belt-underground (build 20 underground belts)
+- rotating-assemblers (set recipe using fluid)
+- circuit-network (research circuit network + 30 minutes)
+]=]
+]==]

@@ -23,6 +23,7 @@ local hubterminal = {
 	name = name.."-terminal",
 	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
+	subgroup = "special",
 	max_health = 1,
 	minable = {
 		mining_time = 5,
