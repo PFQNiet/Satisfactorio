@@ -54,11 +54,31 @@ function tipTrickSetup(params)
 		game.tick_paused = false
 	]]
 	if player then
+		local pos = player.position or {0,0}
 		init = init..[[
 			player = game.create_test_player{name="Niet"}
-			player.teleport{]]..player.position[1]..","..player.position[2]..[[}
-			player.character.direction = ]]..player.direction..[[
+			player.teleport{]]..(pos.x or pos[1])..","..(pos.y or pos[2])..[[}
+			player.character.direction = ]]..(player.direction or defines.direction.north)..[[
 			game.camera_player = player
+
+			---@param target LuaEntity|Position
+			---@return boolean True if we've arrived
+			function runTowards(target)
+				local pos1 = player.character.position
+				local pos2 = target.position or target
+				local dx = pos2.x - pos1.x
+				local dy = pos1.y - pos2.y -- swap Y positions because geometry has +Y go up but game has +Y go down
+				local distance2 = dx*dx + dy*dy
+				if distance2 < 1 then
+					player.character.walking_state = {walking=false, direction=player.character.direction}
+					return true
+				end
+				local angle = math.atan2(dy,dx)
+				-- convert angle to direction
+				local direction = math.floor((1.25 - angle/math.pi/2) * 8 + 0.5) % 8
+				player.character.walking_state = {walking=true, direction=direction}
+				return false
+			end
 		]]
 		if player.use_cursor then
 			init = init..[[
