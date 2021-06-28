@@ -196,75 +196,44 @@ local function onInteract(event)
 			end
 		end
 		local entity = player.selected
-		local tris = {}
 		local range = script_data.pads[entity.unit_number]
 		local vector = vectors[entity.direction]
 		local max_z = 80-range
-		local prev = {0,0,0.25}
 		local o = {vector[2],vector[1]}
-		for i=1,58 do
-			local position = i/60
+		local vertices = {}
+		for i=0,59 do
+			local position = math.min(58,i)/60 -- final loop uses a degenerate triangle to widen in preparation for the arrowhead
 			local x = vector[1] * position * range
 			local y = vector[2] * position * range
 			local z = max_z/4*math.sin(position*math.pi) -- Z axis (representation)
 			y = y-z
 			-- "width" of the arrow is based on the position along the arc
 			local w = math.sin(position*math.pi)/4+0.25
-			table.insert(tris,rendering.draw_polygon{
-				color = {0.75,0.75,0,0.75},
-				vertices = {
-					{target={prev[1]+o[1]*prev[3],prev[2]+o[2]*prev[3]}},
-					{target={x+o[1]*w,y+o[2]*w}},
-					{target={x-o[1]*w,y-o[2]*w}}
-				},
-				target = entity,
-				surface = entity.surface,
-				time_to_live = 5*60,
-				players = {player}
-			})
-			table.insert(tris,rendering.draw_polygon{
-				color = {0.75,0.75,0,0.75},
-				vertices = {
-					{target={prev[1]+o[1]*prev[3],prev[2]+o[2]*prev[3]}},
-					{target={x-o[1]*w,y-o[2]*w}},
-					{target={prev[1]-o[1]*prev[3],prev[2]-o[2]*prev[3]}}
-				},
-				target = entity,
-				surface = entity.surface,
-				time_to_live = 5*60,
-				players = {player}
-			})
-			prev = {x,y,w}
+			if i == 59 then w = 1.5 end -- prepare for arrowhead
+			table.insert(vertices, {target={x+o[1]*w, y+o[2]*w}})
+			table.insert(vertices, {target={x-o[1]*w, y-o[2]*w}})
 		end
-		-- arrow head
-		local position = 58/60
-		local x = vector[1] * position * range
-		local y = vector[2] * position * range
-		local z = max_z/4*math.sin(position*math.pi) -- Z axis (representation)
-		y = y-z
-		local w = 1.5
-		table.insert(tris,rendering.draw_polygon{
-			color = {0.75,0.75,0,0.75},
-			vertices = {
-				{target={x+o[1]*w,y+o[2]*w}},
-				{target={vector[1]*range,vector[2]*range}},
-				{target={x-o[1]*w,y-o[2]*w}}
+		table.insert(vertices, {target={vector[1]*range, vector[2]*range}})
+		local vis = {
+			rendering.draw_polygon{
+				color = {0.75,0.75,0,0.75},
+				vertices = vertices,
+				target = entity,
+				surface = entity.surface,
+				time_to_live = 5*60,
+				players = {player}
 			},
-			target = entity,
-			surface = entity.surface,
-			time_to_live = 5*60,
-			players = {player}
-		})
-		table.insert(tris,rendering.draw_sprite{
-			sprite = "jump-pad-landing",
-			target = entity,
-			target_offset = {vector[1]*range,vector[2]*range},
-			surface = entity.surface,
-			time_to_live = 5*60,
-			players = {player}
-		})
+			rendering.draw_sprite{
+				sprite = "jump-pad-landing",
+				target = entity,
+				target_offset = {vector[1]*range,vector[2]*range},
+				surface = entity.surface,
+				time_to_live = 5*60,
+				players = {player}
+			}
+		}
 		
-		visualisation[player.index] = tris
+		visualisation[player.index] = vis
 	end
 end
 local function onRangeDown(event)
