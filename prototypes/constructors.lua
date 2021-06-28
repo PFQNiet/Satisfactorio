@@ -1,29 +1,37 @@
+---@class makeAssemblingMachine_params
+---@field name string
+---@field type string
+---@field size int[]
+---@field category string
+---@field energy int
+---@field allow_power_shards boolean
+---@field sounds table
+---@field subgroup string
+---@field order string
+---@field ingredients Ingredient[]
+---@field available_from_start boolean
+---@field pipe_connections table
+
+---@class makeAssemblingMachine_return
+---@field machine table
+---@field item table
+---@field recipe table
+
+---@param params makeAssemblingMachine_params
+---@return makeAssemblingMachine_return
 function makeAssemblingMachine(params)
-	---@type string
 	local name = params.name
-	---@type string
 	local type = params.type or "assembling-machine"
-	---@type int
 	local width = params.size[1]
-	---@type int
 	local height = params.size[2]
-	---@type string
 	local category = params.category
-	---@type int
 	local energy = params.energy
-	---@type boolean
 	local shards = params.allow_power_shards
-	---@type table
 	local sounds = params.sounds or {}
-	---@type string
 	local subgroup = params.subgroup
-	---@type string
 	local order = params.order
-	---@type table
 	local ingredients = params.ingredients
-	---@type boolean
 	local enabled = params.available_from_start
-	---@type table
 	local pipes = params.pipe_connections
 
 	local machine = {

@@ -59,7 +59,10 @@ local function onRemoved(event)
 	end
 end
 
-local POWER = {
+-- power consumed by the accelerator itself, should be the lowest power used by any recipe
+local base_power = 250
+-- power consumed by recipes
+local power_data = {
 	["instant-plutonium-cell"] = {250, 500},
 	["nuclear-pasta"] = {500, 1500},
 	["plutonium-pellet"] = {250, 750}
@@ -72,8 +75,8 @@ local function onTick(event)
 		else
 			local recipe = struct.accelerator.get_recipe().name
 			local scale = 1 + struct.accelerator.speed_bonus*2
-			local range = POWER[recipe] or {500,1500}
-			local pow = (range[1] + (range[2] - range[1]) * struct.accelerator.crafting_progress) * scale
+			local range = power_data[recipe] or {500,1500}
+			local pow = (range[1] + (range[2] - range[1]) * struct.accelerator.crafting_progress) * scale - base_power
 			struct.interface.power_usage = pow * 1000 * 1000 / 60 -- megawatts => joules/tick
 			struct.interface.electric_buffer_size = struct.interface.power_usage
 		end

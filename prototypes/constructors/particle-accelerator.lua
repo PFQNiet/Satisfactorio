@@ -5,7 +5,7 @@ local accelerator = makeAssemblingMachine{
 	pipe_connections = {
 		input = {{-4,999}}
 	},
-	-- energy is set dynamically by an EEI
+	energy = 250, -- minimum value used by any recipe
 	allow_power_shards = true,
 	sounds = copySoundsFrom(data.raw.lab.lab),
 	subgroup = "production-manufacturer",
@@ -47,8 +47,8 @@ local interface = {
 		mining_time = 0.5,
 		result = accelerator.machine.name
 	},
-	open_sound = accelerator.open_sound,
-	close_sound = accelerator.close_sound,
+	open_sound = accelerator.machine.open_sound,
+	close_sound = accelerator.machine.close_sound,
 	placeable_by = {item=accelerator.machine.name,count=1}
 }
 data:extend{interface}
