@@ -1,31 +1,5 @@
 -- TODO Make real tips-and-tricks
 -- For now, just wipe all the Vanilla ones and say "hey you're supposed to know how Factorio works if you're playing overhaul mods"
--- ... in nicer words, of course.
-
--- At least we can have a nice little build to show!
-data:extend{
-	{
-		type = "tips-and-tricks-item",
-		name = "hello-there",
-		order = "0[placeholder]",
-		starting_status = "unlocked",
-		simulation = {
-			save = "__Satisfactorio__/prototypes/tips-and-tricks/satis-tiptrick-intro.zip",
-			init = [[
-				game.camera_position = {0,0}
-				game.camera_zoom = 1
-				game.camera_alt_info = true
-				game.tick_paused = false
-
-				-- delete the placeholder tile boundary
-				for _,tile in pairs(game.surfaces[1].find_entities_filtered{type="tile-ghost"}) do
-					tile.destroy()
-				end
-			]]
-		}
-	}
-}
-
 local vanilla_tiptrick_categories = {
 	"belts", "copy-paste", "drag-building", "electric-network", "fast-replace",
 	"game-interaction", "ghost-building", "inserters", "logistic-network", "trains"
@@ -44,6 +18,101 @@ local vanilla_tiptrick_items = {
 }
 for _,name in pairs(vanilla_tiptrick_categories) do data.raw['tips-and-tricks-item-category'][name] = nil end
 for _,name in pairs(vanilla_tiptrick_items) do data.raw['tips-and-tricks-item'][name] = nil end
+
+-- tips + tricks take place in the area {{-16,-9},{16,9}}
+
+---@class TipTrickAnimationStep
+---@field setup string
+---@field update string
+---@field proceed string
+
+---@class TipTrickPlayerData
+---@field position Position
+---@field direction defines.direction
+---@field use_cursor boolean
+
+---@class TipTrickSetup_params
+---@field zoom number
+---@field altmode boolean
+---@field player TipTrickPlayerData|nil
+---@field setup string|nil
+---@field sequence TipTrickAnimationStep[]|nil
+
+-- center the camera, set zoom, turn Alt mode on/off and unpause the game
+---@param params TipTrickSetup_params
+function tipTrickSetup(params)
+	local zoom = params.zoom or 1
+	local altmode = params.altmode
+	local player = params.player
+	local setup = params.setup or ""
+	local steps = params.sequence
+
+	local init = [[
+		game.camera_position = {0,0}
+		game.camera_zoom = ]]..zoom..[[
+		game.camera_alt_info = ]]..(altmode and "true" or "false")..[[
+		game.tick_paused = false
+	]]
+	if player then
+		init = init..[[
+			player = game.create_test_player{name="Niet"}
+			player.teleport{]]..player.position[1]..","..player.position[2]..[[}
+			player.character.direction = ]]..player.direction..[[
+			game.camera_player = player
+		]]
+		if player.use_cursor then
+			init = init..[[
+				game.camera_player_cursor_position = player.position
+			]]
+		end
+	end
+	if setup then init = init..setup end
+	if steps then
+		for i=1,#steps do
+			local step = steps[i]
+			init = init..[[
+				function step_]]..i..[[()
+					]]..step.setup..[[
+					script.on_nth_tick(1, function()
+						]]..step.update..[[
+						if ]]..step.proceed..[[ then
+							step_]]..(i+1)..[[()
+						end
+					end)
+				end
+			]]
+		end
+		init = init..[[
+			function step_]]..(#steps+1)..[[()
+				step_1()
+			end
+			step_1()
+		]]
+	end
+	return init
+end
+
+-- At least we can have a nice little build to show!
+data:extend{
+	{
+		type = "tips-and-tricks-item",
+		name = "introduction",
+		order = "a[introduction]",
+		starting_status = "unlocked",
+		simulation = {
+			save = "__Satisfactorio__/prototypes/tips-and-tricks/satis-tiptrick-intro.zip",
+			init = tipTrickSetup{
+				setup = [[
+					-- delete the placeholder tile boundary
+					for _,tile in pairs(game.surfaces[1].find_entities_filtered{type="tile-ghost"}) do
+						tile.destroy()
+					end
+				]]
+			}
+		}
+	},
+	require(modpath.."prototypes.tips-and-tricks.melee-combat")
+}
 
 --[==[ This is all old stuff that needs to be revamped/rewritten/put out of its misery
 tiptrickutils = [[
