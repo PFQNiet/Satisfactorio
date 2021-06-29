@@ -176,6 +176,7 @@ end
 table.insert(data.raw['god-controller'].default.crafting_categories, "building")
 table.insert(data.raw['god-controller'].default.mining_categories, "solid")
 data.raw['god-controller'].default.mining_speed = 2
+data.raw['god-controller'].default.inventory_size = 18
 
 require("prototypes.fonts")
 require("prototypes.character")
