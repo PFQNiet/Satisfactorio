@@ -203,6 +203,8 @@ end
 data:extend{
 	require(modpath.."prototypes.tips-and-tricks.introduction"),
 	require(modpath.."prototypes.tips-and-tricks.melee-combat"),
+	require(modpath.."prototypes.tips-and-tricks.build-gun"),
+	require(modpath.."prototypes.tips-and-tricks.power-trip"),
 	require(modpath.."prototypes.tips-and-tricks.smart-fast-transfer")
 }
 
