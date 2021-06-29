@@ -80,7 +80,6 @@ local function onGuiClosed(event)
 	if not (event.entity and event.entity.valid) then return end
 	if event.entity.name == battery and script_data[event.entity.unit_number] then
 		local player = game.players[event.player_index]
-		player.gui.relative['battery-flow'].destroy()
 		local struct = script_data[event.entity.unit_number]
 		struct.opened_by[player.index] = nil
 		if not next(struct.opened_by) then

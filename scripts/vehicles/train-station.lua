@@ -435,48 +435,143 @@ local function onGuiOpened(event)
 		local unloading = struct.mode == "output"
 		-- create additional GUI for switching input/output mode (re-use truck station GUI)
 		local gui = player.gui.relative
-		if not gui['truck-station-gui'] then
+		if not gui['train-platform-gui'] then
 			local frame = gui.add{
 				type = "frame",
-				name = "truck-station-gui",
+				name = "train-platform-gui",
 				anchor = {
 					gui = entity.name == freight.."-box" and defines.relative_gui_type.container_gui or defines.relative_gui_type.storage_tank_gui,
-					position = defines.relative_gui_position.right
+					position = defines.relative_gui_position.right,
+					names = {freight.."-box", fluid.."-tank"}
 				},
 				direction = "vertical",
-				caption = {"gui.truck-station-gui-title"},
+				caption = {"gui.train-platform-gui-title"},
 				style = "inset_frame_container_frame"
 			}
 			frame.style.horizontally_stretchable = false
-			frame.style.use_header_filler = false
-			frame.add{
-				type = "switch",
-				name = "truck-station-mode-toggle",
-				switch_state = unloading and "right" or "left",
-				left_label_caption = {"gui.truck-station-mode-load"},
-				right_label_caption = {"gui.truck-station-mode-unload"}
+			local inner = frame.add{
+				type = "frame",
+				name = "content",
+				style = "inside_shallow_frame_with_padding",
+				direction = "vertical"
+			}
+			inner.style.horizontally_stretchable = true
+
+			local cols = inner.add{
+				type = "flow",
+				name = "mode-select",
+				direction = "horizontal"
+			}
+			local col = cols.add{
+				type = "flow",
+				name = "load",
+				direction = "vertical"
+			}
+			col.style.horizontal_align = "center"
+			local button = col.add{
+				type = "sprite-button",
+				name = "train-platform-mode-load",
+				sprite = "utility/import",
+				style = "slot_sized_button"..(unloading and "" or "_pressed")
+			}
+			button.style.size = 80
+			button.style.padding = 8
+			col.add{
+				type = "label",
+				name = "label",
+				caption = {"gui.train-platform-mode-load"},
+				style = unloading and "label" or "caption_label"
+			}
+
+			col = cols.add{
+				type = "flow",
+				name = "unload",
+				direction = "vertical"
+			}
+			col.style.horizontal_align = "center"
+			button = col.add{
+				type = "sprite-button",
+				name = "train-platform-mode-unload",
+				sprite = "utility/export",
+				style = "slot_sized_button"..(unloading and "_pressed" or "")
+			}
+			button.style.size = 80
+			button.style.padding = 8
+			col.add{
+				type = "label",
+				name = "label",
+				caption = {"gui.train-platform-mode-unload"},
+				style = unloading and "caption_label" or "label"
+			}
+
+			inner.add{
+				type = "empty-widget",
+				style = "vertical_lines_slots_filler"
 			}
 		else
-			gui['truck-station-gui'].visible = true
+			-- anchor may need reassigning because it could be container or storage tank
+			gui['train-platform-gui'].anchor = {
+				gui = entity.name == freight.."-box" and defines.relative_gui_type.container_gui or defines.relative_gui_type.storage_tank_gui,
+				position = defines.relative_gui_position.right,
+				names = {freight.."-box", fluid.."-tank"}
+			}
+			local cols = gui['train-platform-gui'].content['mode-select']
+			local button = cols.load['train-platform-mode-load']
+			button.style = unloading and "slot_sized_button" or "slot_sized_button_pressed"
+			button.style.size = 80
+			button.style.padding = 8
+			cols.load.label.style = unloading and "label" or "caption_label"
+
+			button = cols.unload['train-platform-mode-unload']
+			button.style = unloading and "slot_sized_button_pressed" or "slot_sized_button"
+			button.style.size = 80
+			button.style.padding = 8
+			cols.unload.label.style = unloading and "caption_label" or "label"
 		end
-		gui['truck-station-gui']['truck-station-mode-toggle'].switch_state = unloading and "right" or "left"
 	end
 end
-local function onGuiSwitch(event)
-	if event.element.valid and event.element.name == "truck-station-mode-toggle" then
-		local player = game.players[event.player_index]
-		if player.opened.name == freight.."-box" or player.opened.name == fluid.."-tank" then
-			local struct = getPlatformByStorage(player.opened)
-			local unload = event.element.switch_state == "right"
-			struct.mode = unload and "output" or "input"
+local function onGuiClick(event)
+	if not event.element.valid then return end
+	if event.element.name ~= "train-platform-mode-load" and event.element.name ~= "train-platform-mode-unload" then return end
+
+	local player = game.players[event.player_index]
+	local data = getPlatformByStorage(player.opened)
+	if event.element.name == "train-platform-mode-load" then
+		data.mode = "input"
+		for _,p in pairs(game.players) do
+			if p.opened == player.opened then
+				local cols = p.gui.relative['train-platform-gui'].content['mode-select']
+				local button = cols.load['train-platform-mode-load']
+				button.style = "slot_sized_button_pressed"
+				button.style.size = 80
+				button.style.padding = 8
+				cols.load.label.style = "caption_label"
+
+				button = cols.unload['train-platform-mode-unload']
+				button.style = "slot_sized_button"
+				button.style.size = 80
+				button.style.padding = 8
+				cols.unload.label.style = "label"
+			end
 		end
-	end
-end
-local function onGuiClosed(event)
-	if event.gui_type == defines.gui_type.entity and (event.entity.name == freight.."-box" or event.entity.name == fluid.."-tank") then
-		local player = game.players[event.player_index]
-		local gui = player.gui.relative['truck-station-gui']
-		if gui then gui.destroy() end
+	else
+		data.mode = "output"
+		for _,p in pairs(game.players) do
+			if p.opened == player.opened then
+				local cols = p.gui.relative['train-platform-gui'].content['mode-select']
+				local button = cols.load['train-platform-mode-load']
+				button.style = "slot_sized_button"
+				button.style.size = 80
+				button.style.padding = 8
+				cols.load.label.style = "label"
+
+				button = cols.unload['train-platform-mode-unload']
+				button.style = "slot_sized_button_pressed"
+				button.style.size = 80
+				button.style.padding = 8
+				cols.unload.label.style = "caption_label"
+			end
+		end
 	end
 end
 
@@ -603,8 +698,7 @@ return bev.applyBuildEvents{
 	on_destroy = onRemoved,
 	events = {
 		[defines.events.on_gui_opened] = onGuiOpened,
-		[defines.events.on_gui_closed] = onGuiClosed,
-		[defines.events.on_gui_switch_state_changed] = onGuiSwitch,
+		[defines.events.on_gui_click] = onGuiClick,
 
 		[defines.events.on_tick] = onTick,
 

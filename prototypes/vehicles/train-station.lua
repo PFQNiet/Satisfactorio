@@ -14,6 +14,7 @@ if not stop.flags then stop.flags = {} end
 table.insert(stop.flags, "hidden")
 stop = data.raw['train-stop']['train-stop']
 -- stop.flags = {"placeable-neutral", "filter-directions"} -- not a "player-creation"
+stop.collision_mask = {}
 stop.minable = nil
 stop.max_health = 1
 stop.selectable_in_game = false

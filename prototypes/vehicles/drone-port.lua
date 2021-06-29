@@ -67,6 +67,7 @@ local fuelbox = {
 	selection_box = {{-0.5,-0.5},{0.5,0.5}},
 	selectable_in_game = false,
 	collision_box = {{-0.2,-0.2},{0.2,0.2}},
+	collision_mask = {},
 	flags = {"not-on-map"},
 	open_sound = sounds.open_sound,
 	close_sound = sounds.close_sound,

@@ -58,18 +58,21 @@ local function onRemoved(event)
 	end
 end
 
+local function updatePlayerGui(player)
+	if player.opened and player.opened_gui_type == defines.gui_type.entity and player.opened.valid and player.opened.name == base then
+		-- GUI can be assumed to exist
+		local gui = player.gui.relative['awesome-sink'].content
+		local table = gui.table
+		local coupons = script_data.coupons[player.force.index] or {0,0,0,0}
+		table.tickets.count.caption = util.format_number(coupons[2])
+		table.gain.count.caption = util.format_number(coupons[4])
+		table.tonext.count.caption = util.format_number(pointsToNext(coupons[1]) - coupons[3])
+		gui.bottom['awesome-sink-print'].enabled = coupons[2] > 0
+	end
+end
 local function updateAllPlayerGuis()
 	for _,player in pairs(game.players) do
-		if player.opened and player.opened_gui_type == defines.gui_type.entity and player.opened.valid and player.opened.name == base then
-			-- GUI can be assumed to exist
-			local gui = player.gui.relative['awesome-sink'].content
-			local table = gui.table
-			local coupons = script_data.coupons[player.force.index] or {0,0,0,0}
-			table.tickets.count.caption = util.format_number(coupons[2])
-			table.gain.count.caption = util.format_number(coupons[4])
-			table.tonext.count.caption = util.format_number(pointsToNext(coupons[1]) - coupons[3])
-			gui.bottom['awesome-sink-print'].enabled = coupons[2] > 0
-		end
+		updatePlayerGui(player)
 	end
 end
 
@@ -185,6 +188,8 @@ local function onGuiOpened(event)
 				type = "empty-widget",
 				style = "vertical_lines_slots_filler"
 			}
+		else
+			updatePlayerGui(player)
 		end
 	end
 end
@@ -211,13 +216,6 @@ local function onGuiClick(event)
 			script_data.coupons[force_idx][2] = script_data.coupons[force_idx][2] - print
 			updateAllPlayerGuis()
 		end
-	end
-end
-local function onGuiClosed(event)
-	if event.gui_type == defines.gui_type.entity and event.entity.valid and event.entity.name == base then
-		local player = game.players[event.player_index]
-		local gui = player.gui.relative['awesome-sink']
-		if gui then gui.destroy() end
 	end
 end
 

@@ -263,7 +263,8 @@ local function onGuiOpened(event)
 					name = "drone-port-tabs",
 					anchor = {
 						gui = event.entity.name == base and defines.relative_gui_type.electric_energy_interface_gui or defines.relative_gui_type.container_gui,
-						position = defines.relative_gui_position.top
+						position = defines.relative_gui_position.top,
+						names = {base, storage, fuelbox}
 					},
 					style = "tabbed_pane_with_no_side_padding_and_tabs_hidden"
 				}
@@ -295,6 +296,13 @@ local function onGuiOpened(event)
 					},
 					tabs.add{type="empty-widget"}
 				)
+			else
+				-- anchor may need updating due to it potentially applying to multiple entity types
+				gui['drone-port-tabs'].anchor = {
+					gui = event.entity.name == base and defines.relative_gui_type.electric_energy_interface_gui or defines.relative_gui_type.container_gui,
+					position = defines.relative_gui_position.top,
+					names = {base, storage, fuelbox}
+				}
 			end
 			local tab = 1
 			if event.entity.name == storage then
@@ -305,127 +313,150 @@ local function onGuiOpened(event)
 			gui['drone-port-tabs'].selected_tab_index = tab
 			checkRangeForTabs(player, gui['drone-port-tabs'], data.base, data.fuel, data.export, data.import)
 
-			if event.entity.name == base and not gui['drone-port-stats'] then
+			if event.entity.name == base then
 				table.insert(data.gui, player.index)
-				local frame = gui.add{
-					type = "frame",
-					name = "drone-port-stats",
-					anchor = {
-						gui = defines.relative_gui_type.electric_energy_interface_gui,
-						position = defines.relative_gui_position.bottom,
-						name = base
-					},
-					direction = "vertical",
-					style = "inner_frame_in_outer_frame"
-				}
-				frame.style.use_header_filler = false
-				local title_flow = frame.add{type = "flow", name = "title_flow"}
-				local name_flow = title_flow.add{type = "flow", name = "name_flow"}
-				name_flow.add{type = "label", caption = data.name, style = "frame_title"}
-				name_flow.add{type = "sprite-button", style = "frame_action_button", sprite = "utility/rename_icon_small_white", name = "drone-port-rename-button"}
-				local rename_flow = title_flow.add{type = "flow", name = "rename_flow", visible = false}
-				rename_flow.add{type = "textfield", text = data.name, lose_focus_on_confirm = true, name = "drone-port-rename-input"}
-				rename_flow.add{
-					type = "sprite-button",
-					name = "drone-port-rename-confirm",
-					style = "tool_button_green",
-					tooltip = {"gui.confirm"},
-					sprite = "utility/check_mark_white"
-				}
-				rename_flow.add{
-					type = "sprite-button",
-					name = "drone-port-rename-cancel",
-					style = "tool_button_red",
-					tooltip = {"gui.dear-wube-cancel-means-cancel-not-back-thank-you-very-much"},
-					sprite = "utility/close_black"
-				}
-				
-				local inner = frame.add{
-					type = "frame",
-					name = "content",
-					style = "inside_shallow_frame_with_padding",
-					direction = "vertical"
-				}
-				local status_flow = inner.add{type = "flow", style = "status_flow", name = "status_flow"}
-				status_flow.style.vertical_align = "center"
-				status_flow.style.bottom_margin = 12
-				status_flow.add{
-					type = "sprite",
-					style = "status_image",
-					name = "icon"
-				}
-				status_flow.add{
-					type = "label",
-					name = "status"
-				}
-				updateStatusGui(data, player.index)
+				local destination = (data.queued_target and data.queued_target ~= "DEQUEUE" and data.queued_target.valid and getStruct(data.queued_target))
+					or (data.target and data.target.valid and getStruct(data.target))
+					or nil
+				if not gui['drone-port-stats'] then
+					local frame = gui.add{
+						type = "frame",
+						name = "drone-port-stats",
+						anchor = {
+							gui = defines.relative_gui_type.electric_energy_interface_gui,
+							position = defines.relative_gui_position.bottom,
+							name = base
+						},
+						direction = "vertical",
+						style = "inner_frame_in_outer_frame"
+					}
+					frame.style.use_header_filler = false
+					local title_flow = frame.add{type = "flow", name = "title_flow"}
+					local name_flow = title_flow.add{type = "flow", name = "name_flow"}
+					name_flow.add{type = "label", caption = data.name, style = "frame_title"}
+					name_flow.add{type = "sprite-button", style = "frame_action_button", sprite = "utility/rename_icon_small_white", name = "drone-port-rename-button"}
+					local rename_flow = title_flow.add{type = "flow", name = "rename_flow", visible = false}
+					rename_flow.add{type = "textfield", text = data.name, lose_focus_on_confirm = true, name = "drone-port-rename-input"}
+					rename_flow.add{
+						type = "sprite-button",
+						name = "drone-port-rename-confirm",
+						style = "tool_button_green",
+						tooltip = {"gui.confirm"},
+						sprite = "utility/check_mark_white"
+					}
+					rename_flow.add{
+						type = "sprite-button",
+						name = "drone-port-rename-cancel",
+						style = "tool_button_red",
+						tooltip = {"gui.dear-wube-cancel-means-cancel-not-back-thank-you-very-much"},
+						sprite = "utility/close_black"
+					}
+					
+					local inner = frame.add{
+						type = "frame",
+						name = "content",
+						style = "inside_shallow_frame_with_padding",
+						direction = "vertical"
+					}
+					local status_flow = inner.add{type = "flow", style = "status_flow", name = "status_flow"}
+					status_flow.style.vertical_align = "center"
+					status_flow.style.bottom_margin = 12
+					status_flow.add{
+						type = "sprite",
+						style = "status_image",
+						name = "icon"
+					}
+					status_flow.add{
+						type = "label",
+						name = "status"
+					}
 
-				local destination_flow = inner.add{type = "flow", name = "destination_flow"}
-				destination_flow.add{
-					type = "label",
-					style = "caption_label",
-					caption = {"gui.drone-destination"}
-				}
-				destination_flow.style.vertical_align = "center"
-				local destination = (data.queued_target and data.queued_target ~= "DEQUEUE" and data.queued_target.valid and getStruct(data.queued_target)) or (data.target and data.target.valid and getStruct(data.target)) or nil
-				destination_flow.add{
-					type = "label",
-					name = "destination_name",
-					caption = destination and destination.name or {"gui.drone-destination-not-set"}
-				}.style.maximal_width = 300
-				destination_flow.add{
-					type = "sprite-button",
-					name = "drone-port-open-destination-search",
-					style = "tool_button",
-					sprite = "utility/change_recipe",
-					tooltip = {"gui.drone-destination-select"}
-				}
-				if player.force.technologies['mam-quartz-frequency-mapping'].researched then
+					local destination_flow = inner.add{type = "flow", name = "destination_flow"}
+					destination_flow.add{
+						type = "label",
+						style = "caption_label",
+						caption = {"gui.drone-destination"}
+					}
+					destination_flow.style.vertical_align = "center"
+					destination_flow.add{
+						type = "label",
+						name = "destination_name",
+						caption = destination and destination.name or {"gui.drone-destination-not-set"}
+					}.style.maximal_width = 300
 					destination_flow.add{
 						type = "sprite-button",
-						name = "drone-port-open-destination-on-map",
+						name = "drone-port-open-destination-search",
 						style = "tool_button",
-						sprite = "utility/map",
-						tooltip = {"gui-train.open-in-map"}
+						sprite = "utility/change_recipe",
+						tooltip = {"gui.drone-destination-select"}
 					}
-				end
+					if player.force.technologies['mam-quartz-frequency-mapping'].researched then
+						destination_flow.add{
+							type = "sprite-button",
+							name = "drone-port-open-destination-on-map",
+							style = "tool_button",
+							sprite = "utility/map",
+							tooltip = {"gui-train.open-in-map"}
+						}
+					end
 
-				local search_flow = inner.add{type = "flow", direction = "vertical", name = "search_flow", visible = false}
-				search_flow.style.maximal_width = 300
-				local s = search_flow.add{
-					type = "textfield",
-					name = "drone-port-destination-search",
-					lose_focus_on_confirm = true
-				}
-				s.style.maximal_width = 300
-				s.style.horizontally_stretchable = true
-				s = search_flow.add{
-					type = "list-box",
-					name = "drone-port-destination-selection",
-					style = "list_box_in_shallow_frame"
-				}
-				s.tags = {['search-ids'] = {}}
-				s.style.height = 120
-				s.style.maximal_width = 300
-				s.style.horizontally_stretchable = true
-				s = search_flow.add{
-					type = "label",
-					caption = {"gui.drone-destination-update-on-takeoff"}
-				}
-				s.style.single_line = false
+					local search_flow = inner.add{type = "flow", direction = "vertical", name = "search_flow", visible = false}
+					search_flow.style.maximal_width = 300
+					local s = search_flow.add{
+						type = "textfield",
+						name = "drone-port-destination-search",
+						lose_focus_on_confirm = true
+					}
+					s.style.maximal_width = 300
+					s.style.horizontally_stretchable = true
+					s = search_flow.add{
+						type = "list-box",
+						name = "drone-port-destination-selection",
+						style = "list_box_in_shallow_frame"
+					}
+					s.tags = {['search-ids'] = {}}
+					s.style.height = 120
+					s.style.maximal_width = 300
+					s.style.horizontally_stretchable = true
+					s = search_flow.add{
+						type = "label",
+						caption = {"gui.drone-destination-update-on-takeoff"}
+					}
+					s.style.single_line = false
 
-				local stats_table = inner.add{type = "table", style = "bordered_table", column_count = 4, name = "stats_table"}
-				stats_table.add{type = "label", style = "caption_label", caption = {"gui.drone-stats-distance"}}
-				stats_table.add{type = "label", style = "caption_label", caption = {"gui.drone-stats-time"}}
-				stats_table.add{type = "label", style = "caption_label", caption = {"gui.drone-stats-batteries"}}
-				stats_table.add{type = "label", style = "caption_label", caption = {"gui.drone-stats-throughput"}}
-				stats_table.add{type = "label", name = "stat_distance", caption = {"gui.drone-stats-na"}}
-				stats_table.add{type = "label", name = "stat_time", caption = {"gui.drone-stats-na"}}
-				stats_table.add{type = "label", name = "stat_batteries", caption = {"gui.drone-stats-na"}}
-				stats_table.add{type = "label", name = "stat_throughput", caption = {"gui.drone-stats-na"}}
-				if destination then
-					updateTravelStatsGui(data.base, destination.base, stats_table)
+					local stats_table = inner.add{type = "table", style = "bordered_table", column_count = 4, name = "stats_table"}
+					stats_table.add{type = "label", style = "caption_label", caption = {"gui.drone-stats-distance"}}
+					stats_table.add{type = "label", style = "caption_label", caption = {"gui.drone-stats-time"}}
+					stats_table.add{type = "label", style = "caption_label", caption = {"gui.drone-stats-batteries"}}
+					stats_table.add{type = "label", style = "caption_label", caption = {"gui.drone-stats-throughput"}}
+					stats_table.add{type = "label", name = "stat_distance", caption = {"gui.drone-stats-na"}}
+					stats_table.add{type = "label", name = "stat_time", caption = {"gui.drone-stats-na"}}
+					stats_table.add{type = "label", name = "stat_batteries", caption = {"gui.drone-stats-na"}}
+					stats_table.add{type = "label", name = "stat_throughput", caption = {"gui.drone-stats-na"}}
+				else
+					local frame = gui['drone-port-stats']
+					-- status and statistics are updated below, just leaving the name and destination elements to be updated here
+					local title_flow = frame.title_flow
+					local name_flow = title_flow.name_flow
+					name_flow.children[1].caption = data.name
+					local rename_flow = title_flow.rename_flow
+					rename_flow.children[1].text = data.name
+					
+					local inner = frame.content
+					local destination_flow = inner.destination_flow
+					destination_flow.destination_name.caption = destination and destination.name or {"gui.drone-destination-not-set"}
+					if player.force.technologies['mam-quartz-frequency-mapping'].researched and not destination_flow['drone-port-open-destination-on-map'] then
+						destination_flow.add{
+							type = "sprite-button",
+							name = "drone-port-open-destination-on-map",
+							style = "tool_button",
+							sprite = "utility/map",
+							tooltip = {"gui-train.open-in-map"}
+						}
+					end
 				end
+				updateStatusGui(data, player.index)
+				updateTravelStatsGui(data.base, destination and destination.base, gui['drone-port-stats'].content.stats_table)
 			end
 		end
 	end
@@ -444,12 +475,6 @@ end
 local function onGuiClosed(event)
 	if event.gui_type == defines.gui_type.entity and event.entity.valid then
 		local player = game.players[event.player_index]
-		if event.entity.name == base or event.entity.name == storage or event.entity.name == fuelbox then
-			local gui = player.gui.relative['drone-port-tabs']
-			if gui then gui.destroy() end
-			gui = player.gui.relative['drone-port-stats']
-			if gui then gui.destroy() end
-		end
 		if event.entity.name == base then
 			local data = getStruct(event.entity)
 			for i,pid in pairs(data.gui) do
@@ -464,7 +489,6 @@ end
 local function onGuiClick(event)
 	if not event.element.valid then return end
 	local player = game.players[event.player_index]
-	local opened = player.opened
 	if event.element.name == "drone-port-rename-button" then
 		local name_flow = event.element.parent
 		local title_flow = name_flow.parent
@@ -516,7 +540,6 @@ end
 local function onGuiConfirm(event)
 	if not event.element.valid then return end
 	local player = game.players[event.player_index]
-	local opened = player.opened
 	if event.element.name == "drone-port-rename-input" then
 		local rename_flow = event.element.parent
 		local title_flow = rename_flow.parent
@@ -564,8 +587,6 @@ local function onGuiTextChange(event)
 	local opened = player.opened
 	if event.element.name == "drone-port-destination-search" then
 		local search_flow = event.element.parent
-		local inner_frame = search_flow.parent
-		local destination_flow = inner_frame.destination_flow
 		local search_box = search_flow['drone-port-destination-selection']
 		search_box.clear_items()
 		local query = event.element.text
@@ -595,7 +616,6 @@ end
 local function onGuiSelectionChange(event)
 	if not event.element.valid then return end
 	local player = game.players[event.player_index]
-	local opened = player.opened
 	if event.element.name == "drone-port-destination-selection" then
 		local search_flow = event.element.parent
 		local inner_frame = search_flow.parent
