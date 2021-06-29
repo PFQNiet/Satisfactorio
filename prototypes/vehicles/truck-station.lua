@@ -51,9 +51,9 @@ local storage = {
 	type = "container",
 	name = name.."-box",
 	localised_name = {"entity-name."..name},
-	selection_box = {{-3.5,-3.5},{3.5,3.5}},
+	selection_box = {{-2.5,-2.5},{2.5,2.5}},
 	selectable_in_game = false,
-	collision_box = {{-3.2,-3.2},{3.2,3.2}},
+	collision_box = {{-2.2,-2.2},{2.2,2.2}},
 	collision_mask = {},
 	flags = {"not-on-map"},
 	open_sound = sounds.open_sound,
@@ -63,7 +63,8 @@ local storage = {
 	inventory_size = 48,
 	enable_inventory_bar = false,
 	max_health = 1,
-	picture = empty_graphic
+	picture = empty_graphic,
+	scale_info_icons = true
 }
 
 sounds = copySoundsFrom(data.raw.container["wooden-chest"])

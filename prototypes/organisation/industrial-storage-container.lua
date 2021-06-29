@@ -14,6 +14,7 @@ local box = {
 	close_sound = sounds.close_sound,
 	max_health = 1,
 	picture = empty_graphic,
+	scale_info_icons = true,
 	inventory_size = 48,
 	enable_inventory_bar = false,
 	placeable_by = {item=name,count=1} -- item places a placeholder entity

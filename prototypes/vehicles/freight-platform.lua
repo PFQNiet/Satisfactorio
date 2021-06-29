@@ -81,7 +81,8 @@ local storage = {
 	max_health = 1,
 	picture = empty_graphic,
 	selection_box = {{-2.5,-2.5},{2.5,2.5}},
-	selectable_in_game = false
+	selectable_in_game = false,
+	scale_info_icons = true
 }
 
 local item = {

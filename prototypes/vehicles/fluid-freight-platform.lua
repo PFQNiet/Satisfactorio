@@ -70,7 +70,8 @@ local storage = {
 	selection_box = {{-2.5,-2.5},{2.5,2.5}},
 	selectable_in_game = false,
 	two_direction_only = false,
-	window_bounding_box = {{-0.125,0.6875},{0.1875,1.1875}}
+	window_bounding_box = {{-0.125,0.6875},{0.1875,1.1875}},
+	scale_info_icons = true
 }
 
 local item = {

@@ -55,7 +55,8 @@ local storage = {
 		mining_time = 0.5,
 		result = name
 	},
-	picture = empty_graphic
+	picture = empty_graphic,
+	scale_info_icons = true
 }
 
 sounds = copySoundsFrom(data.raw.container["wooden-chest"])

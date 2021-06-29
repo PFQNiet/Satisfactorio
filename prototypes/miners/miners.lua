@@ -12,7 +12,8 @@ local bufferbox = {
 	max_health = 1,
 	picture = empty_graphic,
 	selection_box = {{-1.5,-1.5},{1.5,1.5}},
-	selectable_in_game = false
+	selectable_in_game = false,
+	scale_info_icons = true
 }
 data:extend{bufferbox}
 
