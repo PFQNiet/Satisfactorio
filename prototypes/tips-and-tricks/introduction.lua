@@ -41,8 +41,8 @@ return {
 
 				-- miner
 				surface.create_entity{name=names.ore, position={-25.5,0.5}, force="neutral", amount=120}
-				surface.create_entity{name="miner-mk-1", position={-25.5,0.5}, direction=east, force="player"}
-				local buffer = surface.create_entity{name="miner-box", position={-25.5,0.5}, force="player"}
+				surface.create_entity{name=names.miner, position={-25.5,0.5}, direction=east, force="player"}
+				local buffer = surface.create_entity{name=names.minerbox, position={-25.5,0.5}, force="player"}
 				local loader = createLoader({-19.5,0.5}, east, 1, buffer, "output")
 				local belt
 				putItemsOnBelt(loader.belt, names.ore)
