@@ -35,6 +35,7 @@ for _,name in pairs(vanilla_tiptrick_items) do data.raw['tips-and-tricks-item'][
 ---@field zoom number
 ---@field altmode boolean
 ---@field player TipTrickPlayerData|nil
+---@field use_io boolean
 ---@field setup string|nil
 ---@field sequence TipTrickAnimationStep[]|nil
 
@@ -44,6 +45,7 @@ function tipTrickSetup(params)
 	local zoom = params.zoom or 1
 	local altmode = params.altmode
 	local player = params.player
+	local use_io = params.use_io
 	local setup = params.setup or ""
 	local steps = params.sequence
 
@@ -86,7 +88,92 @@ function tipTrickSetup(params)
 			]]
 		end
 	end
-	if setup then init = init..setup end
+
+	if use_io then
+		init = init..[[
+			-- simplified version of io.addConnection, takes precomputed position and direction rather than an offset and rotation, and a set belt tier
+			---@param position Position
+			---@param direction defines.direction
+			---@param tier uint8 1-5
+			---@param entity LuaEntity
+			---@param mode "input"|"output"
+			function createLoader(position, direction, tier, entity, mode)
+				assert(mode == "input" or mode == "output", "Invalid mode "..mode..", expected 'input' or 'output'")
+
+				local belt, inserter_left, inserter_right
+				if tier > 0 then
+					belt = entity.surface.create_entity{
+						name = "loader-conveyor-belt-mk-"..tier,
+						position = position,
+						direction = direction,
+						force = entity.force,
+						raise_built = true
+					}
+
+					local target_position = entity.position
+					local belt_shift = {
+						[defines.direction.north] = {{-0.25,0},{0.25,0}},
+						[defines.direction.east] = {{0,-0.25},{0,0.25}},
+						[defines.direction.south] = {{0.25,0},{-0.25,0}},
+						[defines.direction.west] = {{0,0.25},{0,-0.25}}
+					}
+					local belt_left_position = {x=belt.position.x + belt_shift[direction][1][1], y=belt.position.y + belt_shift[direction][1][2]}
+					local belt_right_position = {x=belt.position.x + belt_shift[direction][2][1], y=belt.position.y + belt_shift[direction][2][2]}
+
+					inserter_left = entity.surface.create_entity{
+						name = "loader-inserter",
+						position = entity.position,
+						direction = direction,
+						force = entity.force,
+						raise_built = true
+					}
+					inserter_left.pickup_position = mode == "input" and belt_left_position or target_position
+					inserter_left.drop_position = mode == "input" and target_position or belt_left_position
+					inserter_left.inserter_filter_mode = "blacklist" -- allow all items by default, specific uses may override this
+
+					inserter_right = entity.surface.create_entity{
+						name = "loader-inserter",
+						position = entity.position,
+						direction = direction,
+						force = entity.force,
+						raise_built = true
+					}
+					inserter_right.pickup_position = mode == "input" and belt_right_position or target_position
+					inserter_right.drop_position = mode == "input" and target_position or belt_right_position
+					inserter_right.inserter_filter_mode = "blacklist" -- allow all items by default, specific uses may override this
+				end
+
+				local sprite = mode == "input" and "indication_line" or "indication_arrow"
+				local visual = rendering.draw_sprite{
+					sprite = "utility."..sprite,
+					orientation = direction/8,
+					render_layer = "arrow",
+					target = entity,
+					target_offset = {
+						(position.x or position[1]) - entity.position.x,
+						(position.y or position[2]) - entity.position.y
+					},
+					surface = entity.surface,
+					only_in_alt_mode = true
+				}
+
+				-- pack it all up nice
+				local struct = {
+					target = entity,
+					belt = belt,
+					inserter_left = inserter_left,
+					inserter_right = inserter_right,
+					visual = visual
+				}
+				return struct
+			end
+		]]
+	end
+
+	if setup then
+		init = init..setup
+	end
+
 	if steps then
 		for i=1,#steps do
 			local step = steps[i]
@@ -114,23 +201,7 @@ end
 
 -- At least we can have a nice little build to show!
 data:extend{
-	{
-		type = "tips-and-tricks-item",
-		name = "introduction",
-		order = "a[introduction]",
-		starting_status = "unlocked",
-		simulation = {
-			save = "__Satisfactorio__/prototypes/tips-and-tricks/satis-tiptrick-intro.zip",
-			init = tipTrickSetup{
-				setup = [[
-					-- delete the placeholder tile boundary
-					for _,tile in pairs(game.surfaces[1].find_entities_filtered{type="tile-ghost"}) do
-						tile.destroy()
-					end
-				]]
-			}
-		}
-	},
+	require(modpath.."prototypes.tips-and-tricks.introduction"),
 	require(modpath.."prototypes.tips-and-tricks.melee-combat")
 }
 
