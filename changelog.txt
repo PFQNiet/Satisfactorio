@@ -346,8 +346,28 @@ Date: 2021.06.20
     - Fix incorrect delivery requirements for Hover Pack
 ---------------------------------------------------------------------------------------------------
 Version: 0.8.0
-Date: ????
+Date: 2021.06.26
   Changes:
     - Total overhaul of the code!!!
     - The only way to go fast, is to go well.
     - Added Infinity Storage Container and Infinity Pipeline, which are automatically unlocked in Sandbox mode
+---------------------------------------------------------------------------------------------------
+Version: 0.8.1
+Date: ????
+  Changes:
+    - Added some Tips and Tricks for melee combat and the smart-fast-transfer feature
+    - Clean up / remake GUI for Truck Station / Train Platform mode selection
+    - Scale the info icons of various containers
+    - Allow fast-transfer of ore back into matching miners
+  Balancing:
+    - Increased Hover Pack speed
+  Optimizations:
+    - Improved rendering of jump pad visualisation arrow
+  Bugfixes:
+    - Fixed Space Elevator not being rotatable due to being square
+    - Fixed Onboarding locale entries
+    - Fix build gun not consuming items for placeholder entities
+    - Make technology items only-in-cursor
+    - Fix invulnerability to gas when using the hover pack or jetpack, and also the game crashing if you die
+    - Allow pipeline construction on water again
+    - Make Particle Accelerator shut down in a blackout
