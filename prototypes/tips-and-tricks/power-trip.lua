@@ -6,7 +6,7 @@ return {
 	trigger = {
 		-- type = "low-power",
 		-- count = 1
-		type = "unlock-recipe",
+		type = "unlocked-recipe",
 		recipe = "smelter" -- first biomass burner acquired
 	},
 	image = graphics.."tips-and-tricks/power-trip.png"
