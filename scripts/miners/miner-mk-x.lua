@@ -1,5 +1,6 @@
 local io = require(modpath.."scripts.lualib.input-output")
 local bev = require(modpath.."scripts.lualib.build-events")
+local fastTransfer = require(modpath.."scripts.organisation.containers").fastTransfer
 local link = require(modpath.."scripts.lualib.linked-entity")
 
 local miners = {
@@ -28,6 +29,41 @@ local function onBuilt(event)
 	end
 end
 
+local function onFastTransfer(event, half)
+	local player = game.players[event.player_index]
+	local target = player.selected
+	if not (target and target.valid) then return end
+	if not miners[target.name] then return end
+	local store = target.surface.find_entity(box, target.position)
+	if not store then return end
+
+	if player.cursor_stack.valid_for_read then
+		-- allow placing resources into the drill only if it matches the resource node
+		local resource = target.surface.find_entities_filtered{type="resource", position=target.position}[1]
+		local rname = resource.prototype.mineable_properties.products[1].name
+		if player.cursor_stack.name == rname then
+			-- attempt to place in fuel box
+			return fastTransfer(player, store, half)
+		end
+		player.surface.create_entity{
+			name = "flying-text",
+			position = {target.position.x, target.position.y - 0.5},
+			text = {"inventory-restriction.cant-insert-into-restricted-slot", game.item_prototypes[rname].localised_name, player.cursor_stack.prototype.localised_name},
+			render_player_index = player.index
+		}
+		player.play_sound{
+			path = "utility/cannot_build"
+		}
+	else
+		-- retrieve items from box
+		fastTransfer(player, store, half)
+	end
+end
+
 return bev.applyBuildEvents{
-	on_build = onBuilt
+	on_build = onBuilt,
+	events = {
+		["fast-entity-transfer-hook"] = function(event) onFastTransfer(event, false) end,
+		["fast-entity-split-hook"] = function(event) onFastTransfer(event, true) end
+	}
 }
