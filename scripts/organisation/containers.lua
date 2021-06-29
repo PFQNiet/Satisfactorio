@@ -72,7 +72,9 @@ local function fastTransfer(player, target, half)
 				else
 					stack.count = stack.count - inserted
 				end
-				retrieved[name] = (retrieved[name] or 0) + inserted
+				if inserted > 0 then
+					retrieved[name] = (retrieved[name] or 0) + inserted
+				end
 			end
 		end
 		local line_number = 0
@@ -128,7 +130,7 @@ end
 return {
 	register = register,
 	fastTransfer = fastTransfer,
-	
+
 	lib = {
 		on_init = function()
 			global.containers = global.containers or script_data

@@ -202,7 +202,8 @@ end
 -- At least we can have a nice little build to show!
 data:extend{
 	require(modpath.."prototypes.tips-and-tricks.introduction"),
-	require(modpath.."prototypes.tips-and-tricks.melee-combat")
+	require(modpath.."prototypes.tips-and-tricks.melee-combat"),
+	require(modpath.."prototypes.tips-and-tricks.smart-fast-transfer")
 }
 
 --[==[ This is all old stuff that needs to be revamped/rewritten/put out of its misery
