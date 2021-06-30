@@ -353,7 +353,7 @@ Date: 2021.06.26
     - Added Infinity Storage Container and Infinity Pipeline, which are automatically unlocked in Sandbox mode
 ---------------------------------------------------------------------------------------------------
 Version: 0.8.1
-Date: ????
+Date: 2021.06.30
   Changes:
     - Added some Tips and Tricks for melee combat and the smart-fast-transfer feature
     - Clean up / remake GUI for Truck Station / Train Platform mode selection
