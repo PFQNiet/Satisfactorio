@@ -2,6 +2,7 @@ local name = "plutonium-waste"
 local item = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
+	localised_description = {"item-description.radioactivity",{"item-description.radioactivity-extreme"}},
 	name = name,
 	order = "k[uranium]-h["..name.."]",
 	stack_size = 500,

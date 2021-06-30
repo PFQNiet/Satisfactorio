@@ -3,6 +3,7 @@ local item = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	name = name,
+	localised_description = {"item-description.radioactivity",{"item-description.radioactivity-mild"}},
 	order = "k[uranium]-d["..name.."]",
 	stack_size = 500,
 	subgroup = "nuclear",

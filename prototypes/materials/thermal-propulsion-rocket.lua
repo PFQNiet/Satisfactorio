@@ -3,6 +3,7 @@ local item = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	name = name,
+	localised_description = {"item-description.project-part",8},
 	order = "h["..name.."]",
 	stack_size = 50,
 	subgroup = "space-parts-4",

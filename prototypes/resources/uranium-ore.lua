@@ -1,6 +1,7 @@
 -- tweak vanilla Uranium Ore
 local name = "uranium-ore"
 local ore = data.raw.resource[name]
+ore.localised_description = {"item-description.radioactivity",{"item-description.radioactivity-extreme"}}
 ore.icon = "__Satisfactorio__/graphics/icons/"..name..".png"
 ore.icon_mipmaps = 0
 ore.autoplace = nil
@@ -26,6 +27,7 @@ ore.stages.sheet.hr_version.scale = 1.5
 ore.emissions_per_second = 150/60
 
 local item = data.raw.item[name]
+item.localised_description = {"item-description.radioactivity",{"item-description.radioactivity-average"}}
 item.icon = ore.icon
 item.icon_mipmaps = 0
 item.stack_size = 100
