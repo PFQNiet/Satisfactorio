@@ -19,6 +19,8 @@ local spawndata = {
 local script_data = {}
 local buckets = 60
 for i=0,buckets-1 do script_data[i] = {} end
+---@param tick uint
+---@return UnitTracker[]
 local function getBucket(tick)
 	return script_data[tick%buckets]
 end
@@ -86,6 +88,12 @@ local function spawnGroup(surface,position,value,basedist)
 			-- *very* early spawns may even be undefended
 			return
 		end
+	elseif realdist < saferange*2 then
+		-- prevent Alphas from spawning within 2x the starting area
+		value = math.min(value, 2)
+	elseif realdist < saferange*4 then
+		-- prevent big groups within 4x the starting area
+		value = math.min(value, 4)
 	end
 
 	for name,count in pairs(spawndata[value]) do
@@ -177,7 +185,6 @@ local function onDamaged(event)
 end
 -- periodically check if unit has strayed too far (chasing the player) and go back to spawn if so
 local function onTick(event)
-	---@typelist number, UnitTracker
 	for _,struct in pairs(getBucket(event.tick)) do
 		if not struct.entity.valid then
 			unregisterStruct(struct.id)

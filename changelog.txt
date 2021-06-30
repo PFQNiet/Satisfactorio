@@ -359,6 +359,8 @@ Date: ????
     - Clean up / remake GUI for Truck Station / Train Platform mode selection
     - Scale the info icons of various containers
     - Allow fast-transfer of ore back into matching miners
+  Combat Balancing:
+    - Reduce frequency of stronger enemies within 2x / 4x the starting area size
   Balancing:
     - Increased Hover Pack speed
   Optimizations:
