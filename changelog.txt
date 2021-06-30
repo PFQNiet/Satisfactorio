@@ -363,6 +363,7 @@ Date: ????
     - Reduce frequency of stronger enemies within 2x / 4x the starting area size
   Balancing:
     - Increased Hover Pack speed
+    - More plants, fewer Power Slugs
   Optimizations:
     - Improved rendering of jump pad visualisation arrow
   Bugfixes:
