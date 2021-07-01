@@ -376,34 +376,51 @@ local function getNodes(name, surface, position)
 end
 
 --- scan the grid cells near the target (x,y) position to see if another resource node is too close
---- this is going to be checking ALL other resources to ensure there's enough space to spawn a cluster, but different node types are allowed much closer together
----@param mytype string
+---@param resource table
 ---@param surface LuaSurface
 ---@param x number
 ---@param y number
-local function existsNear(mytype, surface, x, y)
-	for type,resource in pairs(script_data.resources) do
-		local gx = math.floor(x/resource.gridsize);
-		local gy = math.floor(y/resource.gridsize);
-		local r = type == mytype and resource.r or (resource.border*2+2)
-		local surf = surface.index
-		local grid = resource.grid
-		for dy=-2,2 do
-			for dx=-2,2 do
-				local cell = surf.."."..(gy+dy).."."..(gx+dx)
-				local node = grid[cell]
-				if node then
-					-- check if it's too close
-					local mx = node[1]-x;
-					local my = node[2]-y;
-					if mx*mx+my*my < r*r then
-						return true
-					end
-				end
-			end
-		end
+local function existsNear(resource, surface, x, y)
+	local function checkCollision(grid,surf,cx,cy,r)
+		local node = grid[surf.."."..cy.."."..cx]
+		if not node then return false end
+		local mx = node[1]-x
+		local my = node[2]-y
+		return mx*mx+my*my < r*r
 	end
-	return false
+
+	local gx = math.floor(x/resource.gridsize);
+	local gy = math.floor(y/resource.gridsize);
+	local surf = surface.index
+	local grid = resource.grid
+	local r = resource.r
+	-- unrolled loop over -2,2, starting from the centre to try and bail out as early as possible
+	return checkCollision(grid,surf,gx  ,gy  ,r)
+		or checkCollision(grid,surf,gx-1,gy  ,r)
+		or checkCollision(grid,surf,gx  ,gy-1,r)
+		or checkCollision(grid,surf,gx+1,gy  ,r)
+		or checkCollision(grid,surf,gx  ,gy+1,r)
+		or checkCollision(grid,surf,gx-1,gy-1,r)
+		or checkCollision(grid,surf,gx+1,gy-1,r)
+		or checkCollision(grid,surf,gx-1,gy+1,r)
+		or checkCollision(grid,surf,gx+1,gy+1,r)
+		or checkCollision(grid,surf,gx-2,gy  ,r)
+		or checkCollision(grid,surf,gx  ,gy-2,r)
+		or checkCollision(grid,surf,gx+2,gy  ,r)
+		or checkCollision(grid,surf,gx  ,gy+2,r)
+		or checkCollision(grid,surf,gx-1,gy-2,r)
+		or checkCollision(grid,surf,gx+1,gy-2,r)
+		or checkCollision(grid,surf,gx-2,gy-1,r)
+		or checkCollision(grid,surf,gx+2,gy-1,r)
+		or checkCollision(grid,surf,gx-2,gy+1,r)
+		or checkCollision(grid,surf,gx+2,gy+1,r)
+		or checkCollision(grid,surf,gx-1,gy+2,r)
+		or checkCollision(grid,surf,gx+1,gy+2,r)
+		-- checking furthest diagonals seems exceedingly unlikely to provide a collision
+		-- or checkCollision(grid,surf,gx-2,gy-2,r)
+		-- or checkCollision(grid,surf,gx+2,gy-2,r)
+		-- or checkCollision(grid,surf,gx-2,gy+2,r)
+		-- or checkCollision(grid,surf,gx+2,gy+2,r)
 end
 
 local function scanForResources()
@@ -429,7 +446,7 @@ local function scanForResources()
 					-- local range = data.r * math.sqrt(math.random()*3 + 1)
 					local range = data.r * (math.random() + 1)
 					local test = {node[1]+math.cos(theta)*range, node[2]+math.sin(theta)*range}
-					if not existsNear(name, surface, test[1], test[2]) then
+					if not existsNear(data, surface, test[1], test[2]) then
 						-- it's free real estate!
 						addNode(data, surface, test[1], test[2])
 						break

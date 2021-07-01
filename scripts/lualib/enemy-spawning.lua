@@ -25,6 +25,13 @@ local function getBucket(tick)
 	return script_data[tick%buckets]
 end
 local function registerStruct(id, struct)
+	-- ensure struct spawn position has X and Y fields, not numeric ones
+	if not struct.spawn.x then
+		struct.spawn = {
+			x = struct.spawn[1],
+			y = struct.spawn[2]
+		}
+	end
 	script_data[id%buckets][id] = struct
 end
 local function unregisterStruct(id)
@@ -170,27 +177,17 @@ local function onCommandCompleted(event)
 		_guardSpawn(struct)
 	end
 end
--- after attacking a player, check if we went too far from spawn and return there if so
-local function onDamaged(event)
-	if not (event.entity and event.entity.valid) then return end
-	if event.entity.type == "character" and event.cause and event.cause.valid and event.cause.type == "unit" then
-		local struct = getStruct(event.cause.unit_number)
-		if struct then
-			local distance_from_home = math2d.position.distance(struct.entity.position, struct.spawn)
-			if distance_from_home > 50 then
-				_guardSpawn(struct)
-			end
-		end
-	end
-end
 -- periodically check if unit has strayed too far (chasing the player) and go back to spawn if so
 local function onTick(event)
 	for _,struct in pairs(getBucket(event.tick)) do
 		if not struct.entity.valid then
 			unregisterStruct(struct.id)
 		else
-			local distance_from_home = math2d.position.distance(struct.entity.position, struct.spawn)
-			if distance_from_home > 50 then
+			-- use Manhattan distance, it's good enough! The optimal way to run away is therefore to run diagonally...
+			local mypos = struct.entity.position
+			local spawnpos = struct.spawn
+			local distance_from_home = math.abs(mypos.x-spawnpos.x) + math.abs(mypos.y-spawnpos.y)
+			if distance_from_home > 60 then
 				_guardSpawn(struct)
 			end
 		end
@@ -214,7 +211,6 @@ return {
 		events = {
 			[defines.events.on_tick] = onTick,
 			[defines.events.on_entity_died] = onEntityDied,
-			[defines.events.on_entity_damaged] = onDamaged,
 			[defines.events.on_ai_command_completed] = onCommandCompleted
 		}
 	}
