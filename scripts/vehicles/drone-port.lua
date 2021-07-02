@@ -641,9 +641,9 @@ local function onGuiConfirm(event)
 end
 local function onGuiTextChange(event)
 	if not event.element.valid then return end
-	local player = game.players[event.player_index]
-	local opened = getStructFromGui(player.opened)
 	if event.element.name == "drone-port-destination-search" then
+		local player = game.players[event.player_index]
+		local opened = getStructFromGui(player.opened)
 		local search_flow = event.element.parent
 		local search_box = search_flow['drone-port-destination-selection']
 		search_box.clear_items()
