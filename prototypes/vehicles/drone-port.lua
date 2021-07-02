@@ -34,6 +34,25 @@ local base = {
 	selection_box = {{-6,-6},{6,6}}
 }
 
+-- invisible train stop placed on the drone port to provide a label and clickable access point on the map
+sounds = copySoundsFrom(data.raw["train-stop"]["train-stop"])
+local stop = {
+	type = "train-stop",
+	name = name.."-stop",
+	localised_name = {"entity-name."..name},
+	icon = base.icon,
+	icon_size = base.icon_size,
+	selection_box = {{-0.5,-0.5},{0.5,0.5}},
+	selectable_in_game = false,
+	collision_box = {{-0.2,-0.2},{0.2,0.2}},
+	collision_mask = {},
+	flags = {"placeable-neutral", "player-creation", "filter-directions"},
+	open_sound = sounds.open_sound,
+	close_sound = sounds.close_sound,
+	max_health = 1,
+	animation_ticks_per_frame = 20
+}
+
 sounds = copySoundsFrom(data.raw.container["steel-chest"])
 local storage = {
 	type = "container",
@@ -51,10 +70,6 @@ local storage = {
 	inventory_size = 18,
 	enable_inventory_bar = false,
 	max_health = 1,
-	minable = {
-		mining_time = 0.5,
-		result = name
-	},
 	picture = empty_graphic,
 	scale_info_icons = true
 }
@@ -75,10 +90,6 @@ local fuelbox = {
 	inventory_size = 1,
 	enable_inventory_bar = false,
 	max_health = 1,
-	minable = {
-		mining_time = 0.5,
-		result = name
-	},
 	picture = empty_graphic
 }
 
@@ -105,4 +116,4 @@ local stationrecipe = makeBuildingRecipe{
 	result = name
 }
 
-data:extend{base,storage,fuelbox,stationitem,stationrecipe}
+data:extend{base,stop,storage,fuelbox,stationitem,stationrecipe}

@@ -44,7 +44,7 @@ local function onRemoved(event)
 			elseif child.type == "car" then
 				getitems.car(child, event.buffer)
 			elseif child.type == "spider-vehicle" then
-				getitems.drone(child, event.buffer)
+				getitems.spider(child, event.buffer)
 			elseif child.type == "inserter" then
 				getitems.inserter(child, event.buffer)
 			elseif child.type == "infinity-container" then

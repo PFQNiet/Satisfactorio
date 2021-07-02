@@ -376,6 +376,8 @@ Date: 2021.06.30
     - Make Particle Accelerator shut down in a blackout
 ---------------------------------------------------------------------------------------------------
 Version: 0.8.2
-Date: 2021.07.01
+Date: 2021.07.02
+  Changes:
+    - Drone Port now uses a Train Stop internally so it can be opened from the map view
   Optimizations:
     - MASSIVE performance improvement of resource spawner. This does mean there's a small chance of "mixed patches" but that's worth it for code that's 60x faster!
