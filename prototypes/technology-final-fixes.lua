@@ -32,10 +32,10 @@ local function getRecipeName(rname)
 	if proto.place_result then
 		for key in pairs(defines.prototypes.entity) do
 			local test = data.raw[key][proto.place_result]
-			if test then return {"entity-name."..proto.place_result} end
+			if test then return test.localised_name or {"entity-name."..test.name} end
 		end
 	end
-	return {"item-name."..proto.name}
+	return proto.localised_name or {"item-name."..proto.name}
 end
 
 local function isRecipeABuilding(rname)
