@@ -545,11 +545,11 @@ local function onGuiOpened(event)
 						tooltip = {"gui-train.open-in-map"}
 					}
 				end
-				gui['drone-port-container']['drone-port-tabs'].selected_tab_index = 1
 			end
 			player.opened = gui['drone-port-container']
 			updateStatusGui(data, player.index)
 			updateTravelStatsGui(data.base, destination and destination.base, gui['drone-port-container']['drone-port-stats'].content.stats_table)
+			gui['drone-port-container']['drone-port-tabs'].selected_tab_index = 1
 			checkRangeForTabs(player, gui['drone-port-container']['drone-port-tabs'], data.stop, data.fuel, data.export, data.import)
 			gui['drone-port-container'].force_auto_center()
 		end
