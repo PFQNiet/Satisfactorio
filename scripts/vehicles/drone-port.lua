@@ -227,23 +227,23 @@ local function updateStatusGui(data, pid)
 end
 local function updateTravelStatsGui(source, destination, stats_table)
 	if not destination then
-		stats_table.stat_distance.caption = {"gui.drone-stats-na"}
-		stats_table.stat_time.caption = {"gui.drone-stats-na"}
-		stats_table.stat_batteries.caption = {"gui.drone-stats-na"}
-		stats_table.stat_throughput.caption = {"gui.drone-stats-na"}
+		stats_table.stat_distance.label.caption = {"gui.drone-stats-na"}
+		stats_table.stat_time.label.caption = {"gui.drone-stats-na"}
+		stats_table.stat_batteries.label.caption = {"gui.drone-stats-na"}
+		stats_table.stat_throughput.label.caption = {"gui.drone-stats-na"}
 	else
 		local distance = math2d.position.distance(source.position, destination.position)
-		distance_r = math.floor(distance/10)/100 -- km to 2 decimal places
+		local distance_r = math.floor(distance/10)/100 -- km to 2 decimal places
 		local travel_time = distance*2 / 67.9 + 5 -- measured 67.9m/s movement speed, try to get real value here
 		local batteries = travel_time / 15 + 4 -- 1 battery lasts 15 seconds - should really use values from prototypes but whatever
 		local total_time = travel_time + 100 -- 25 seconds each for takeoff and landing at source and destination
 		local time_r = math.floor(total_time)
 		local throughput = 9 / (total_time/60) -- stacks per minute
 		local throughput_r = math.floor(throughput*100)/100 -- truncate to 2 decimal places
-		stats_table.stat_distance.caption = {"gui.drone-stats-distance-value", distance_r}
-		stats_table.stat_time.caption = {"gui.drone-stats-time-value", math.floor(time_r/60), time_r%60<10 and "0" or "", time_r%60}
-		stats_table.stat_batteries.caption = {"gui.drone-stats-batteries-value", math.ceil(batteries)}
-		stats_table.stat_throughput.caption = {"gui.drone-stats-throughput-value", throughput_r}
+		stats_table.stat_distance.label.caption = {"gui.drone-stats-distance-value", distance_r}
+		stats_table.stat_time.label.caption = {"gui.drone-stats-time-value", math.floor(time_r/60), time_r%60<10 and "0" or "", time_r%60}
+		stats_table.stat_batteries.label.caption = {"gui.drone-stats-batteries-value", math.ceil(batteries)}
+		stats_table.stat_throughput.label.caption = {"gui.drone-stats-throughput-value", throughput_r}
 	end
 end
 
@@ -447,13 +447,12 @@ local function onGuiOpened(event)
 				end
 
 				local search_flow = inner.add{type = "flow", direction = "vertical", name = "search_flow", visible = false}
-				search_flow.style.maximal_width = 300
 				local s = search_flow.add{
 					type = "textfield",
 					name = "drone-port-destination-search",
 					lose_focus_on_confirm = true
 				}
-				s.style.maximal_width = 300
+				s.style.maximal_width = 0
 				s.style.horizontally_stretchable = true
 				s = search_flow.add{
 					type = "list-box",
@@ -462,7 +461,6 @@ local function onGuiOpened(event)
 				}
 				s.tags = {['search-ids'] = {}}
 				s.style.height = 120
-				s.style.maximal_width = 300
 				s.style.horizontally_stretchable = true
 				s = search_flow.add{
 					type = "label",
@@ -470,15 +468,23 @@ local function onGuiOpened(event)
 				}
 				s.style.single_line = false
 
-				local stats_table = inner.add{type = "table", style = "bordered_table", column_count = 4, name = "stats_table"}
-				stats_table.add{type = "label", style = "caption_label", caption = {"gui.drone-stats-distance"}}
-				stats_table.add{type = "label", style = "caption_label", caption = {"gui.drone-stats-time"}}
-				stats_table.add{type = "label", style = "caption_label", caption = {"gui.drone-stats-batteries"}}
-				stats_table.add{type = "label", style = "caption_label", caption = {"gui.drone-stats-throughput"}}
-				stats_table.add{type = "label", name = "stat_distance", caption = {"gui.drone-stats-na"}}
-				stats_table.add{type = "label", name = "stat_time", caption = {"gui.drone-stats-na"}}
-				stats_table.add{type = "label", name = "stat_batteries", caption = {"gui.drone-stats-na"}}
-				stats_table.add{type = "label", name = "stat_throughput", caption = {"gui.drone-stats-na"}}
+				local stats_table = inner.add{type = "flow", direction = "vertical", name = "stats_table"}
+				local flow = stats_table.add{type = "flow", direction = "horizontal", name = "stat_distance"}
+				flow.add{type = "label", style = "caption_label", caption = {"gui.drone-stats-distance"}}
+				flow.add{type = "label", name = "label", caption = {"gui.drone-stats-na"}}
+
+				flow = stats_table.add{type = "flow", direction = "horizontal", name = "stat_time"}
+				flow.add{type = "label", style = "caption_label", caption = {"gui.drone-stats-time"}}
+				flow.add{type = "label", name = "label", caption = {"gui.drone-stats-na"}}
+
+				flow = stats_table.add{type = "flow", direction = "horizontal", name = "stat_batteries"}
+				flow.add{type = "label", style = "caption_label", caption = {"gui.drone-stats-batteries"}}
+				flow.add{type = "label", name = "label", caption = {"gui.drone-stats-na"}}
+				flow.add{type = "label", caption = "[img=info]", tooltip = {"gui.drone-stats-batteries-info"}}
+
+				flow = stats_table.add{type = "flow", direction = "horizontal", name = "stat_throughput"}
+				flow.add{type = "label", style = "caption_label", caption = {"gui.drone-stats-throughput"}}
+				flow.add{type = "label", name = "label", caption = {"gui.drone-stats-na"}}
 			else
 				local container = gui['drone-port-container']
 				container.visible = true
