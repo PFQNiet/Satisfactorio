@@ -1,3 +1,24 @@
+---@class DroneStatus
+---@field status string
+---@field delay uint Tick number to wait until
+
+---@class DronePortData
+---@field name string
+---@field base LuaEntity ElectricEnergyInterface
+---@field stop LuaEntity TrainStop
+---@field fuel LuaEntity Container
+---@field export LuaEntity Container
+---@field import LuaEntity Container
+---@field target LuaEntity|nil Target drone port base
+---@field queued_target LuaEntity|nil Queued target change, to be applied next time the drone takes off
+---@field state DroneStatus
+---@field drone LuaEntity|nil SpiderVehicle
+---@field sticker LuaEntity|nil Speed sticker applied to spider to make it go fast
+---@field guests LuaEntity[] Drones - including own drone - queued at this station
+---@field gui table<uint,number> List of players who have this drone port's GUI open
+
+---@alias DronePortBucket DronePortData[]
+
 -- uses global.drones.ports to list all ports
 -- uses global.drones.drones to map drones back to their port
 -- uses global.player_build_error_debounce to track force -> last error tick to de-duplicate placement errors
@@ -15,10 +36,14 @@ local storage_pos_out = {-2.5,-1.5}
 local storage_pos_in = {2.5,-1.5}
 local fuelbox = base.."-fuelbox"
 local fuelbox_pos = {-3.5,3.5}
-local drone = "drone"
-local sticker = drone.."-speed-sticker"
+local vehicle = "drone"
+local sticker = vehicle.."-speed-sticker"
 
 local debounce_error = {}
+---@class global.drones
+---@field ports DronePortBucket[] indexed by the port, grouped by bucket
+---@field drones DronePortData[] indexed by the drone
+---@field drone_demo boolean|nil If set, drones take off and land super fast - used for menu sim demo
 local script_data = {
 	ports = {},
 	drones = {}
@@ -139,7 +164,7 @@ local function onBuilt(event)
 			gui = {}
 		}
 	end
-	if entity.name == drone then
+	if entity.name == vehicle then
 		-- ensure there is a drone port here
 		local port = entity.surface.find_entity(base, entity.position)
 		if not port then
@@ -168,7 +193,7 @@ local function onRemoved(event)
 	if entity.name == base then
 		clearStruct(entity)
 	end
-	if entity.name == drone then
+	if entity.name == vehicle then
 		local data = getStructFromDrone(entity)
 		if data then
 			-- check if drone is in home or destination queues - it probably is if it stood still long enough to be mined!
@@ -225,6 +250,19 @@ local function updateStatusGui(data, pid)
 		end
 	end
 end
+local function calculateTravelStats(source, destination)
+	if not destination then return end
+	local distance = math2d.position.distance(source.position, destination.position)
+	local drone_speed = 67.9 -- m/s, measured in-game
+	local travel_time = distance*2 / drone_speed + 5
+	local batteries = travel_time / 15 + 4 -- 1 battery lasts 15 seconds, plus 4 batteries per round trip
+	local total_time = travel_time + 100 -- 25 seconds each for takeoff and landing at source and destination
+	return {
+		distance = distance,
+		time = total_time,
+		batteries = batteries
+	}
+end
 local function updateTravelStatsGui(source, destination, stats_table)
 	if not destination then
 		stats_table.stat_distance.label.caption = {"gui.drone-stats-na"}
@@ -232,18 +270,14 @@ local function updateTravelStatsGui(source, destination, stats_table)
 		stats_table.stat_batteries.label.caption = {"gui.drone-stats-na"}
 		stats_table.stat_throughput.label.caption = {"gui.drone-stats-na"}
 	else
-		local distance = math2d.position.distance(source.position, destination.position)
-		local distance_r = math.floor(distance/10)/100 -- km to 2 decimal places
-		local travel_time = distance*2 / 67.9 + 5 -- measured 67.9m/s movement speed, try to get real value here
-		local batteries = travel_time / 15 + 4 -- 1 battery lasts 15 seconds - should really use values from prototypes but whatever
-		local total_time = travel_time + 100 -- 25 seconds each for takeoff and landing at source and destination
-		local time_r = math.floor(total_time)
-		local throughput = 9 / (total_time/60) -- stacks per minute
-		local throughput_r = math.floor(throughput*100)/100 -- truncate to 2 decimal places
-		stats_table.stat_distance.label.caption = {"gui.drone-stats-distance-value", distance_r}
-		stats_table.stat_time.label.caption = {"gui.drone-stats-time-value", math.floor(time_r/60), time_r%60<10 and "0" or "", time_r%60}
-		stats_table.stat_batteries.label.caption = {"gui.drone-stats-batteries-value", math.ceil(batteries)}
-		stats_table.stat_throughput.label.caption = {"gui.drone-stats-throughput-value", throughput_r}
+		local stats = calculateTravelStats(source, destination)
+		local distance = math.floor(stats.distance/10)/100 -- km to 2 decimal places
+		local time = math.floor(stats.time)
+		local throughput = math.floor(9 / (stats.time/60) * 100) / 100 -- stacks per minute, to 2 decimal places
+		stats_table.stat_distance.label.caption = {"gui.drone-stats-distance-value", distance}
+		stats_table.stat_time.label.caption = {"gui.drone-stats-time-value", math.floor(time/60), time%60<10 and "0" or "", time%60}
+		stats_table.stat_batteries.label.caption = {"gui.drone-stats-batteries-value", math.ceil(stats.batteries)}
+		stats_table.stat_throughput.label.caption = {"gui.drone-stats-throughput-value", throughput}
 	end
 end
 
@@ -732,6 +766,7 @@ local function transferInventory(source, target)
 		end
 	end
 end
+
 local function onTick(event)
 	for _,struct in pairs(getBucket(event.tick)) do
 		local station = struct.base
@@ -742,7 +777,7 @@ local function onTick(event)
 		local drone = struct.drone
 		local state = struct.state
 		local guests = struct.guests
-		if drone and drone.autopilot_destination and not drone.burner.currently_burning and not drone.burner.inventory[1].valid_for_read then
+		if drone and drone.autopilot_destination and not drone.burner.currently_burning and drone.burner.inventory.is_empty() then
 			for _,player in pairs(drone.force.players) do
 				player.add_alert(drone, defines.alert_type.train_out_of_fuel)
 			end
@@ -750,6 +785,7 @@ local function onTick(event)
 		if station.energy > 0 then
 			if state.status == "no-drone" or state.status == "emergency-recall" then
 				-- do nothing
+
 			elseif state.status == "loading" then
 				local source = drone.get_inventory(defines.inventory.spider_trunk)
 				local target = import.get_inventory(defines.inventory.chest)
@@ -757,6 +793,7 @@ local function onTick(event)
 				if source.is_empty() then
 					state.status = "waiting-for-destination"
 				end
+
 			elseif state.status == "waiting-for-destination" then
 				if struct.queued_target then
 					if struct.queued_target == "DEQUEUE" then
@@ -776,21 +813,24 @@ local function onTick(event)
 					-- take batteries and initiate takeoff
 					local fuelstore = fuel.get_inventory(defines.inventory.chest)
 					local fueltarget = drone.get_inventory(defines.inventory.fuel)
-					if not fuelstore.is_empty() then
-						if fueltarget.can_insert(fuelstore[1]) then
-							fuelstore.remove({name=fuelstore[1].name, count=fueltarget.insert(fuelstore[1])})
+					local stats = calculateTravelStats(station, destination)
+					local fuelstack = fuelstore[1]
+					if fuelstack.valid_for_read and fueltarget.can_insert(fuelstack) then
+						local targetstack = fueltarget[1]
+						local wanted = stats.batteries+1 - (targetstack.valid_for_read and targetstack.count or 0)
+						if wanted > 0 then
+							local transfer = {name=fuelstack.name, count=wanted}
+							fuelstore.remove({name=transfer.name, count=fueltarget.insert(transfer)})
 						end
 					end
-					local distance = math2d.position.distance(station.position, destination.position)
-					local travel_time = distance*2 / 67.9 + 5 -- measured 67.9m/s movement speed, try to get real value here
-					local batteries = travel_time / 15 + 4 -- 1 battery lasts 15 seconds - should really use values from prototypes but whatever
-					if not fueltarget.is_empty() and fueltarget[1].count >= batteries then
+					if not fueltarget.is_empty() and fueltarget[1].count >= stats.batteries then
 						-- consume base 4 batteries per trip
 						fueltarget[1].count = fueltarget[1].count - 4
 						state.status = "takeoff"
 						state.delay = event.tick + 25*60
 					end
 				end
+
 			elseif state.status == "takeoff" then
 				if not (destination and destination.valid) then
 					-- destination destroyed, return home
@@ -811,6 +851,7 @@ local function onTick(event)
 					end
 					drone.autopilot_destination = destination.position
 				end
+
 			elseif state.status == "outbound" then
 				-- do nothing; wait for on_spider_command_completed event
 				if not (destination and destination.valid) then
@@ -818,6 +859,7 @@ local function onTick(event)
 					state.status = "emergency-recall"
 					drone.autopilot_destination = station.position
 				end
+
 			elseif state.status == "reached-destination" then
 				if not (destination and destination.valid) then
 					-- destination destroyed, return home
@@ -829,6 +871,7 @@ local function onTick(event)
 					table.insert(ddata.guests, drone)
 					state.status = "waiting-to-arrive"
 				end
+
 			elseif state.status == "waiting-to-arrive" then
 				if not (destination and destination.valid) then
 					-- destination destroyed, return home
@@ -855,6 +898,7 @@ local function onTick(event)
 						)
 					end
 				end
+
 			elseif state.status == "arriving" then
 				if not (destination and destination.valid) then
 					-- destination destroyed, return home
@@ -866,6 +910,7 @@ local function onTick(event)
 						state.status = "unloading"
 					end
 				end
+
 			elseif state.status == "unloading" then
 				if not (destination and destination.valid) then
 					-- destination destroyed, return home
@@ -880,21 +925,27 @@ local function onTick(event)
 					if source.is_empty() then
 						local chest = ddata.export.get_inventory(defines.inventory.chest)
 						transferInventory(chest, source)
-	
+
 						-- take batteries and initiate takeoff
 						local fuelstore = ddata.fuel.get_inventory(defines.inventory.chest)
 						local fueltarget = drone.get_inventory(defines.inventory.fuel)
-						if not fuelstore.is_empty() then
-							if fueltarget.can_insert(fuelstore[1]) then
-								fuelstore.remove({name=fuelstore[1].name, count=fueltarget.insert(fuelstore[1])})
+						local stats = calculateTravelStats(station, destination)
+						local fuelstack = fuelstore[1]
+						if fuelstack.valid_for_read and fueltarget.can_insert(fuelstack) then
+							local targetstack = fueltarget[1]
+							local wanted = stats.batteries+1 - (targetstack.valid_for_read and targetstack.count or 0)
+							if wanted > 0 then
+								local transfer = {name=fuelstack.name, count=wanted}
+								fuelstore.remove({name=transfer.name, count=fueltarget.insert(transfer)})
 							end
 						end
-						if not fueltarget.is_empty() and fueltarget[1].count >= 10 then
+						if not fueltarget.is_empty() and fueltarget[1].count >= stats.batteries then
 							state.status = "leaving"
 							state.delay = event.tick + (script_data.drone_demo and 1 or 25)*60
 						end
 					end
 				end
+
 			elseif state.status == "leaving" then
 				if not (destination and destination.valid) then
 					-- destination destroyed, return home
@@ -916,12 +967,15 @@ local function onTick(event)
 					end
 					drone.autopilot_destination = station.position
 				end
+
 			elseif state.status == "inbound" then
 				-- do nothing; wait for on_spider_command_completed event
+
 			elseif state.status == "reached-home" then
 				-- register arrival into the queue
 				table.insert(guests, drone)
 				state.status = "waiting-to-return"
+
 			elseif state.status == "waiting-to-return" then
 				local qpos
 				for i=1,#guests do
@@ -941,15 +995,18 @@ local function onTick(event)
 						math2d.position.rotate_vector({0,-8}, (qpos-1)/#guests*360)
 					)
 				end
+
 			elseif state.status == "landing" then
 				drone.autopilot_destination = station.position
 				if event.tick > state.delay then
 					state.status = "loading"
 				end
+
 			elseif state.status == "emergency-arrival" then
 				-- register arrival into the destination queue
 				table.insert(guests, drone)
 				state.status = "waiting-to-emergency-arrive"
+
 			elseif state.status == "waiting-to-emergency-arrive" then
 				local qpos
 				for i=1,#guests do
@@ -968,11 +1025,13 @@ local function onTick(event)
 						math2d.position.rotate_vector({0,-8}, (qpos-1)/#guests*360)
 					)
 				end
+
 			elseif state.status == "emergency-landing" then
 				drone.autopilot_destination = station.position
 				if event.tick > state.delay then
 					state.status = "waiting-for-destination" -- skip loading phase
 				end
+
 			else
 				error("Unknown drone status "..state.status)
 			end
@@ -982,7 +1041,7 @@ local function onTick(event)
 end
 local function onSpiderDone(event)
 	local spider = event.vehicle
-	if spider.name == drone then
+	if spider.name == vehicle then
 		local data = getStructFromDrone(spider)
 		if data.state.status == "outbound" then
 			data.state.status = "reached-destination"
@@ -1002,7 +1061,7 @@ end
 local function onSetupSpiderRemote(event)
 	local player = game.players[event.player_index]
 	local spider = event.vehicle
-	if spider.name == drone then
+	if spider.name == vehicle then
 		if player.cursor_stack.valid_for_read and player.cursor_stack.type == "spidertron-remote" then
 			player.cursor_stack.connected_entity = nil
 		end
@@ -1023,8 +1082,8 @@ local function onFastTransfer(event, half)
 	local data = getStruct(target)
 	if not data then return end
 	if player.cursor_stack.valid_for_read then
-		-- if the player is holding batteries, try putting them in the fuel box
-		if player.cursor_stack.name == "battery" then
+		-- if the player is holding valid fuel for drones, try putting them in the fuel box
+		if game.entity_prototypes[vehicle].burner_prototype.fuel_categories[player.cursor_stack.prototype.fuel_category] then
 			if fastTransfer(player, data.fuel, half) then return end
 		end
 		-- otherwise, or if it can't go in the fuel box, put it in export

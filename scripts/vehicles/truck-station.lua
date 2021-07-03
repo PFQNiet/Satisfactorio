@@ -349,8 +349,8 @@ local function onFastTransfer(event, half)
 	local data = getStruct(target)
 	if not data then return end
 	if player.cursor_stack.valid_for_read then
-		-- vehicles accept all fuel so just check if a fuel value exists on the item
-		if player.cursor_stack.prototype.fuel_value then
+		-- check if a Truck can burn the given item
+		if game.entity_prototypes["truck"].burner_prototype.fuel_categories[player.cursor_stack.prototype.fuel_category] then
 			-- attempt to place in fuel box
 			if fastTransfer(player, data.fuel, half) then return end
 		end
