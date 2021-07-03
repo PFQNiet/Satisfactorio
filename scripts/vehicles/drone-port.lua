@@ -10,7 +10,7 @@
 ---@field export LuaEntity Container
 ---@field import LuaEntity Container
 ---@field target LuaEntity|nil Target drone port base
----@field queued_target LuaEntity|nil Queued target change, to be applied next time the drone takes off
+---@field queued_target LuaEntity|nil Queued target change, to be applied next time the drone takes off; if set to self.base, target will be cleared
 ---@field state DroneStatus
 ---@field drone LuaEntity|nil SpiderVehicle
 ---@field sticker LuaEntity|nil Speed sticker applied to spider to make it go fast
@@ -28,6 +28,8 @@ local fastTransfer = require(modpath.."scripts.organisation.containers").fastTra
 local refundEntity = require(modpath.."scripts.lualib.building-management").refundEntity
 local link = require(modpath.."scripts.lualib.linked-entity")
 local math2d = require("math2d")
+
+local is_demo = script.level.is_simulation
 
 local base = "drone-port"
 local stop = base.."-stop"
@@ -219,14 +221,41 @@ local function onRemoved(event)
 	end
 end
 
+local function calculateTravelStats(source, destination)
+	if not destination then return end
+	local distance = math2d.position.distance(source.position, destination.position)
+	local drone_speed = 67.9 -- m/s, measured in-game
+	local travel_time = distance*2 / drone_speed + 5
+	local batteries = travel_time / 15 + 4 -- 1 battery lasts 15 seconds, plus 4 batteries per round trip
+	local total_time = travel_time + 100 -- 25 seconds each for takeoff and landing at source and destination
+	return {
+		distance = distance,
+		time = total_time,
+		batteries = batteries
+	}
+end
 local function updateStatusGui(data, pid)
 	local status = data.state.status
 	local delay = data.state.delay and math.ceil((data.state.delay - game.tick)/60) or 0
 	if data.base.energy == 0 then
 		status = "no-power"
-	elseif data.drone and not data.drone.burner.currently_burning and data.drone.get_inventory(defines.inventory.fuel).is_empty() and data.state.status ~= "waiting-for-destination" then
-		-- allowed to have no batteries when waiting for destination
-		status = "out-of-batteries"
+	elseif data.drone then
+		local burner = data.drone.burner
+		if data.state.status == "waiting-for-destination" then
+			if data.destination and data.destination.valid then
+				-- ensure drone has sufficient batteries to take off
+				local stats = calculateTravelStats(data.base, data.destination)
+				local fuelstack = burner.inventory[1]
+				if not fuelstack.valid_for_read or fuelstack.count <= stats.batteries then
+					status = "out-of-batteries"
+				end
+			end
+		else
+			-- at any other time, ensure drone actually has batteries
+			if not burner.currently_burning and burner.inventory.is_empty() then
+				status = "out-of-batteries"
+			end
+		end
 	end
 	local statusmap = {
 		["no-drone"] = "status_not_working",
@@ -249,19 +278,6 @@ local function updateStatusGui(data, pid)
 			gui.status.caption = {"gui.drone-status-"..status, delay}
 		end
 	end
-end
-local function calculateTravelStats(source, destination)
-	if not destination then return end
-	local distance = math2d.position.distance(source.position, destination.position)
-	local drone_speed = 67.9 -- m/s, measured in-game
-	local travel_time = distance*2 / drone_speed + 5
-	local batteries = travel_time / 15 + 4 -- 1 battery lasts 15 seconds, plus 4 batteries per round trip
-	local total_time = travel_time + 100 -- 25 seconds each for takeoff and landing at source and destination
-	return {
-		distance = distance,
-		time = total_time,
-		batteries = batteries
-	}
 end
 local function updateTravelStatsGui(source, destination, stats_table)
 	if not destination then
@@ -346,7 +362,7 @@ local function onGuiOpened(event)
 			local data = getStruct(floor)
 			local gui = player.gui.screen
 			data.gui[player.index] = 0
-			local destination = (data.queued_target and data.queued_target ~= "DEQUEUE" and data.queued_target.valid and getStruct(data.queued_target))
+			local destination = (data.queued_target and data.queued_target ~= data.base and data.queued_target.valid and getStruct(data.queued_target))
 				or (data.target and data.target.valid and getStruct(data.target))
 				or nil
 			if not gui['drone-port-container'] then
@@ -561,14 +577,12 @@ local function onMove(event)
 	local data
 	if player.opened_gui_type == defines.gui_type.custom and player.opened.name == "drone-port-container" then
 		data = getStructFromGui(player.opened)
+		checkRangeForTabs(player, player.gui.screen['drone-port-container']['drone-port-tabs'], data.stop, data.fuel, data.export, data.import)
 	elseif player.opened_gui_type == defines.gui_type.entity and (player.opened.name == storage or player.opened.name == fuelbox) then
 		local floor = player.opened.surface.find_entity(base, player.opened.position)
 		data = getStruct(floor)
-	else
-		return
+		checkRangeForTabs(player, player.gui.relative['drone-port-tabs'], data.stop, data.fuel, data.export, data.import)
 	end
-	local gui = player.gui.relative
-	checkRangeForTabs(player, gui['drone-port-tabs'], data.stop, data.fuel, data.export, data.import)
 end
 local function onGuiClosed(event)
 	if event.gui_type == defines.gui_type.custom and event.element.valid and event.element.name == "drone-port-container" then
@@ -624,7 +638,7 @@ local function onGuiClick(event)
 		inner_frame.stats_table.visible = not search_flow.visible
 	elseif event.element.name == "drone-port-open-destination-on-map" then
 		local data = getStructFromGui(player.opened)
-		local target = (data.queued_target and data.queued_target ~= "DEQUEUE" and data.queued_target.valid and getStruct(data.queued_target)) or (data.target and data.target.valid and getStruct(data.target)) or nil
+		local target = (data.queued_target and data.queued_target ~= data.base and data.queued_target.valid and getStruct(data.queued_target)) or (data.target and data.target.valid and getStruct(data.target)) or nil
 		if target then
 			player.open_map(target.base.position)
 			player.opened = nil
@@ -671,7 +685,7 @@ local function onGuiConfirm(event)
 			destination_flow.destination_name.caption = target.name
 			updateTravelStatsGui(data, target, inner_frame.stats_table)
 		else
-			data.queued_target = "DEQUEUE"
+			data.queued_target = data.base
 			destination_flow.destination_name.caption = {"gui.drone-destination-not-set"}
 			updateTravelStatsGui(data, nil, inner_frame.stats_table)
 		end
@@ -730,7 +744,7 @@ local function onGuiSelectionChange(event)
 			data.queued_target = target.base
 			destination_flow.destination_name.caption = target.name
 		else
-			data.queued_target = "DEQUEUE"
+			data.queued_target = data.base
 			destination_flow.destination_name.caption = {"gui.drone-destination-not-set"}
 		end
 		updateTravelStatsGui(data.base, target.base, inner_frame.stats_table)
@@ -767,278 +781,308 @@ local function transferInventory(source, target)
 	end
 end
 
+-- load batteries and return if enough were loaded
+---@param struct DronePortData
+---@param source LuaEntity Fuel box to pull from (may be source or destination box)
+---@return boolean
+local function loadBatteriesIntoDrone(struct, source)
+	local fuelstore = source.get_inventory(defines.inventory.chest)
+	local fuelstack = fuelstore[1]
+	local fueltarget = struct.drone.burner.inventory
+	local targetstack = fueltarget[1]
+	local required = math.ceil(calculateTravelStats(struct.base, struct.target).batteries)
+	if fuelstack.valid_for_read and fueltarget.can_insert(fuelstack) then
+		local wanted = required + 1 - (targetstack.valid_for_read and targetstack.count or 0)
+		if wanted > 0 then
+			local inserted = fueltarget.insert{name=fuelstack.name, count=wanted}
+			fuelstore.remove{name=fuelstack.name, count=inserted}
+		end
+	end
+
+	return not fueltarget.is_empty() and targetstack.count > required
+end
+
+---@param struct DronePortData
+local function applySpeedSticker(struct)
+	if not struct.sticker then
+		local drone = struct.drone
+		struct.sticker = struct.drone.surface.create_entity{
+			name = sticker,
+			force = drone.force,
+			position = drone.position,
+			target = drone
+		}
+		-- effect still applies but time-to-live doesn't tick down when inactive. Weird, I know...
+		struct.sticker.active = false
+	end
+end
+---@param struct DronePortData
+local function removeSpeedSticker(struct)
+	if struct.sticker and struct.sticker.valid then
+		struct.sticker.destroy()
+	end
+	struct.sticker = nil
+end
+
+---@param struct DronePortData
+local function checkIfDroneRanOutOfFuel(struct)
+	local drone = struct.drone
+	if not (drone and drone.autopilot_destination) then return end
+	local burner = drone.burner
+	if burner.currently_burning or not burner.inventory.is_empty() then return end
+	for _,player in pairs(drone.force.players) do
+		player.add_alert(drone, defines.alert_type.train_out_of_fuel)
+	end
+end
+
+---@param struct DronePortData
+local function assertValidDestination(struct)
+	if not (struct.target and struct.target.valid) then
+		-- destination destroyed, return home
+		struct.state = {status = "emergency-recall"}
+		struct.drone.autopilot_destination = struct.base.position
+		return false
+	end
+	return true
+end
+
+---@param queue LuaEntity[]
+---@param drone LuaEntity
+local function getDronePositionInQueue(queue, drone)
+	for i,test in pairs(queue) do
+		if test == drone then return i end
+	end
+end
+
+---@type table<string,fun(struct:DronePortData)>
+local drone_control_functions = {
+	-- do nothing
+	["no-drone"] = function() end,
+
+	-- unload stuff from the drone to home port's import box
+	---@param struct DronePortData
+	["loading"] = function(struct)
+		if struct.base.energy > 0 then
+			local source = struct.drone.get_inventory(defines.inventory.spider_trunk)
+			local target = struct.import.get_inventory(defines.inventory.chest)
+			transferInventory(source, target)
+			if source.is_empty() then
+				struct.state.status = "waiting-for-destination"
+			end
+		end
+	end,
+
+	-- wait for user to set a destination if they haven't already; takeoff when ready
+	---@param struct DronePortData
+	["waiting-for-destination"] = function(struct)
+		-- update queued target, if any
+		if struct.queued_target then
+			if struct.queued_target == struct.base then
+				struct.target = nil
+			elseif struct.queued_target.valid then
+				struct.target = struct.queued_target
+			end
+			struct.queued_target = nil
+		end
+
+		if not (struct.target and struct.target.valid) then return end
+		-- load items from station
+		transferInventory(
+			struct.export.get_inventory(defines.inventory.chest),
+			struct.drone.get_inventory(defines.inventory.spider_trunk)
+		)
+
+		if not loadBatteriesIntoDrone(struct, struct.fuel) then return end
+
+		-- consume 4 batteries just for taking off (basically 1 each for takeoff/landing at source/destination)
+		local fuelstack = struct.drone.burner.inventory[1] -- will always be valid if we got this far
+		fuelstack.count = fuelstack.count - 4
+		struct.state = {
+			status = "takeoff",
+			delay = game.tick + 25*60
+		}
+	end,
+
+	-- wait for takeoff delay
+	---@param struct DronePortData
+	["takeoff"] = function(struct)
+		if not assertValidDestination(struct) then return end
+		if game.tick < struct.state.delay then return end
+		-- shift self from queue
+		table.remove(struct.guests, 1)
+
+		applySpeedSticker(struct)
+		struct.drone.autopilot_destination = struct.target.position
+
+		struct.state.status = "outbound"
+	end,
+
+	-- wait for spider command completion
+	---@param struct DronePortData
+	["outbound"] = function(struct)
+		assertValidDestination(struct)
+	end,
+
+	-- push arrival into destination queue
+	---@param struct DronePortData
+	["reached-destination"] = function(struct)
+		if not assertValidDestination(struct) then return end
+		local ddata = getStruct(struct.target)
+		table.insert(ddata.guests, struct.drone)
+		struct.state.status = "waiting-to-arrive"
+	end,
+
+	-- wait until the drone is first in line
+	---@param struct DronePortData
+	["waiting-to-arrive"] = function(struct)
+		if not assertValidDestination(struct) then return end
+		local ddata = getStruct(struct.target)
+		local mypos = getDronePositionInQueue(ddata.guests, struct.drone)
+		if mypos > 1 then
+			struct.drone.autopilot_destination = math2d.position.add(
+				struct.target.position,
+				math2d.position.rotate_vector({0,-8}, (mypos-1)/#ddata.guests * 360)
+			)
+		else
+			struct.drone.autopilot_destination = struct.target.position
+			struct.state = {
+				status = "arriving",
+				delay = game.tick + (is_demo and 5 or 25) * 60
+			}
+		end
+	end,
+
+	-- keep updating autopilot destination to target to counter over-shooting
+	---@param struct DronePortData
+	["arriving"] = function(struct)
+		if not assertValidDestination(struct) then return end
+		struct.drone.autopilot_destination = struct.target.position
+		if game.tick > struct.state.delay then
+			struct.state.status = "unloading"
+		end
+	end,
+
+	-- deliver items until empty, then pick up stuff to bring home
+	---@param struct DronePortData
+	["unloading"] = function(struct)
+		if not assertValidDestination(struct) then return end
+		local ddata = getStruct(struct.target)
+		local source = struct.drone.get_inventory(defines.inventory.spider_trunk)
+		local target = ddata.import.get_inventory(defines.inventory.chest)
+		transferInventory(source, target)
+		if not source.is_empty() then return end
+
+		transferInventory(ddata.export.get_inventory(defines.inventory.chest), source)
+		-- pick up batteries if available, but there should already be enough for at least a return trip unless the player screwed with it
+		loadBatteriesIntoDrone(struct, ddata.fuel)
+		struct.state = {
+			status = "leaving",
+			delay = game.tick + (is_demo and 1 or 25) * 60
+		}
+	end,
+
+	-- shift self from destination queue and return home
+	---@param struct DronePortData
+	["leaving"] = function(struct)
+		if not assertValidDestination(struct) then return end
+		if game.tick < struct.state.delay then return end
+		local ddata = getStruct(struct.target)
+		table.remove(ddata.guests, 1)
+
+		applySpeedSticker(struct)
+		struct.drone.autopilot_destination = struct.base.position
+
+		struct.state.status = "inbound"
+	end,
+
+	-- wait for spider command completed
+	["inbound"] = function() end,
+
+	-- push arrival into home queue
+	---@param struct DronePortData
+	["reached-home"] = function(struct)
+		table.insert(struct.guests, struct.drone)
+		struct.state.status = "waiting-to-return"
+	end,
+
+	-- wait until the drone is first in line
+	---@param struct DronePortData
+	["waiting-to-return"] = function(struct)
+		local mypos = getDronePositionInQueue(struct.guests, struct.drone)
+		if mypos > 1 then
+			struct.drone.autopilot_destination = math2d.position.add(
+				struct.base.position,
+				math2d.position.rotate_vector({0,-8}, (mypos-1)/#struct.guests * 360)
+			)
+		else
+			struct.drone.autopilot_destination = struct.base.position
+			struct.state = {
+				status = "landing",
+				delay = game.tick + 25 * 60
+			}
+		end
+	end,
+
+	-- keep updating autopilot destination to target to counter over-shooting
+	---@param struct DronePortData
+	["landing"] = function(struct)
+		struct.drone.autopilot_destination = struct.base.position
+		if game.tick > struct.state.delay then
+			struct.state.status = "loading"
+		end
+	end,
+
+	-- waiting for drone to arrive back home
+	["emergency-recall"] = function() end,
+
+	-- register arrival into home queue
+	---@param struct DronePortData
+	["emergency-arrival"] = function(struct)
+		table.insert(struct.guests, struct.drone)
+		struct.state.status = "waiting-to-emergency-arrive"
+	end,
+
+	-- wait until the drone is first in line
+	---@param struct DronePortData
+	["waiting-to-emergency-arrive"] = function(struct)
+		local mypos = getDronePositionInQueue(struct.guests, struct.drone)
+		if mypos > 1 then
+			struct.drone.autopilot_destination = math2d.position.add(
+				struct.base.position,
+				math2d.position.rotate_vector({0,-8}, (mypos-1)/#struct.guests * 360)
+			)
+		else
+			struct.drone.autopilot_destination = struct.base.position
+			struct.state = {
+				status = "emergency-landing",
+				delay = game.tick + 25 * 60
+			}
+		end
+	end,
+
+	-- keep updating autopilot destination to target to counter over-shooting
+	---@param struct DronePortData
+	["emergency-landing"] = function(struct)
+		struct.drone.autopilot_destination = struct.base.position
+		if game.tick > struct.state.delay then
+			-- skip loading phase so as not to contaminate Imports box
+			struct.state.status = "waiting-for-destination"
+		end
+	end,
+
+	__index = function(k)
+		error("Unknown drone status "..k)
+	end
+}
+
 local function onTick(event)
 	for _,struct in pairs(getBucket(event.tick)) do
-		local station = struct.base
-		local destination = struct.target
-		local fuel = struct.fuel
-		local import = struct.import
-		local export = struct.export
-		local drone = struct.drone
-		local state = struct.state
-		local guests = struct.guests
-		if drone and drone.autopilot_destination and not drone.burner.currently_burning and drone.burner.inventory.is_empty() then
-			for _,player in pairs(drone.force.players) do
-				player.add_alert(drone, defines.alert_type.train_out_of_fuel)
-			end
-		end
-		if station.energy > 0 then
-			if state.status == "no-drone" or state.status == "emergency-recall" then
-				-- do nothing
-
-			elseif state.status == "loading" then
-				local source = drone.get_inventory(defines.inventory.spider_trunk)
-				local target = import.get_inventory(defines.inventory.chest)
-				transferInventory(source, target)
-				if source.is_empty() then
-					state.status = "waiting-for-destination"
-				end
-
-			elseif state.status == "waiting-for-destination" then
-				if struct.queued_target then
-					if struct.queued_target == "DEQUEUE" then
-						struct.target = nil
-						destination = nil
-					elseif struct.queued_target.valid then
-						struct.target = struct.queued_target
-						destination = struct.target
-					end
-					struct.queued_target = nil
-				end
-				if destination and destination.valid then
-					local source = export.get_inventory(defines.inventory.chest)
-					local target = drone.get_inventory(defines.inventory.spider_trunk)
-					transferInventory(source, target)
-
-					-- take batteries and initiate takeoff
-					local fuelstore = fuel.get_inventory(defines.inventory.chest)
-					local fueltarget = drone.get_inventory(defines.inventory.fuel)
-					local stats = calculateTravelStats(station, destination)
-					local fuelstack = fuelstore[1]
-					if fuelstack.valid_for_read and fueltarget.can_insert(fuelstack) then
-						local targetstack = fueltarget[1]
-						local wanted = stats.batteries+1 - (targetstack.valid_for_read and targetstack.count or 0)
-						if wanted > 0 then
-							local transfer = {name=fuelstack.name, count=wanted}
-							fuelstore.remove({name=transfer.name, count=fueltarget.insert(transfer)})
-						end
-					end
-					if not fueltarget.is_empty() and fueltarget[1].count >= stats.batteries then
-						-- consume base 4 batteries per trip
-						fueltarget[1].count = fueltarget[1].count - 4
-						state.status = "takeoff"
-						state.delay = event.tick + 25*60
-					end
-				end
-
-			elseif state.status == "takeoff" then
-				if not (destination and destination.valid) then
-					-- destination destroyed, return home
-					state.status = "emergency-recall"
-					drone.autopilot_destination = station.position
-				elseif event.tick > state.delay then
-					-- remove self from queue - self will always be front of the queue at this point
-					table.remove(guests, 1)
-					state.status = "outbound"
-					if not struct.sticker then
-						struct.sticker = drone.surface.create_entity{
-							name = sticker,
-							target = drone,
-							force = drone.force,
-							position = drone.position
-						}
-						struct.sticker.active = false
-					end
-					drone.autopilot_destination = destination.position
-				end
-
-			elseif state.status == "outbound" then
-				-- do nothing; wait for on_spider_command_completed event
-				if not (destination and destination.valid) then
-					-- destination destroyed, return home
-					state.status = "emergency-recall"
-					drone.autopilot_destination = station.position
-				end
-
-			elseif state.status == "reached-destination" then
-				if not (destination and destination.valid) then
-					-- destination destroyed, return home
-					state.status = "emergency-recall"
-					drone.autopilot_destination = station.position
-				else
-					-- register arrival into the destination queue
-					local ddata = getStruct(destination)
-					table.insert(ddata.guests, drone)
-					state.status = "waiting-to-arrive"
-				end
-
-			elseif state.status == "waiting-to-arrive" then
-				if not (destination and destination.valid) then
-					-- destination destroyed, return home
-					state.status = "emergency-recall"
-					drone.autopilot_destination = station.position
-				else
-					local ddata = getStruct(destination)
-					local qpos
-					for i=1,#ddata.guests do
-						if ddata.guests[i] == drone then
-							qpos = i
-							break
-						end
-					end
-					if qpos == 1 and not (ddata.state.status == "loading" or ddata.state.status == "takeoff" or ddata.state.status == "landing") then
-						-- it's my turn!
-						state.status = "arriving"
-						state.delay = event.tick + (script_data.drone_demo and 5 or 25)*60
-						drone.autopilot_destination = destination.position
-					else
-						drone.autopilot_destination = math2d.position.add(
-							destination.position,
-							math2d.position.rotate_vector({0,-8}, (qpos-1)/#ddata.guests*360)
-						)
-					end
-				end
-
-			elseif state.status == "arriving" then
-				if not (destination and destination.valid) then
-					-- destination destroyed, return home
-					state.status = "emergency-recall"
-					drone.autopilot_destination = station.position
-				else
-					drone.autopilot_destination = destination.position
-					if event.tick > state.delay then
-						state.status = "unloading"
-					end
-				end
-
-			elseif state.status == "unloading" then
-				if not (destination and destination.valid) then
-					-- destination destroyed, return home
-					state.status = "emergency-recall"
-					drone.autopilot_destination = station.position
-				else
-					local ddata = getStruct(destination)
-					-- deliver items, pick up stuff, grab some batteries and come home
-					local source = drone.get_inventory(defines.inventory.spider_trunk)
-					local target = ddata.import.get_inventory(defines.inventory.chest)
-					transferInventory(source, target)
-					if source.is_empty() then
-						local chest = ddata.export.get_inventory(defines.inventory.chest)
-						transferInventory(chest, source)
-
-						-- take batteries and initiate takeoff
-						local fuelstore = ddata.fuel.get_inventory(defines.inventory.chest)
-						local fueltarget = drone.get_inventory(defines.inventory.fuel)
-						local stats = calculateTravelStats(station, destination)
-						local fuelstack = fuelstore[1]
-						if fuelstack.valid_for_read and fueltarget.can_insert(fuelstack) then
-							local targetstack = fueltarget[1]
-							local wanted = stats.batteries+1 - (targetstack.valid_for_read and targetstack.count or 0)
-							if wanted > 0 then
-								local transfer = {name=fuelstack.name, count=wanted}
-								fuelstore.remove({name=transfer.name, count=fueltarget.insert(transfer)})
-							end
-						end
-						if not fueltarget.is_empty() and fueltarget[1].count >= stats.batteries then
-							state.status = "leaving"
-							state.delay = event.tick + (script_data.drone_demo and 1 or 25)*60
-						end
-					end
-				end
-
-			elseif state.status == "leaving" then
-				if not (destination and destination.valid) then
-					-- destination destroyed, return home
-					state.status = "emergency-recall"
-					drone.autopilot_destination = station.position
-				elseif event.tick > state.delay then
-					local ddata = getStruct(destination)
-					-- remove self from queue - self will always be front of the queue at this point
-					table.remove(ddata.guests, 1)
-					state.status = "inbound"
-					if not struct.sticker then
-						struct.sticker = drone.surface.create_entity{
-							name = sticker,
-							target = drone,
-							force = drone.force,
-							position = drone.position
-						}
-						struct.sticker.active = false
-					end
-					drone.autopilot_destination = station.position
-				end
-
-			elseif state.status == "inbound" then
-				-- do nothing; wait for on_spider_command_completed event
-
-			elseif state.status == "reached-home" then
-				-- register arrival into the queue
-				table.insert(guests, drone)
-				state.status = "waiting-to-return"
-
-			elseif state.status == "waiting-to-return" then
-				local qpos
-				for i=1,#guests do
-					if guests[i] == drone then
-						qpos = i
-						break
-					end
-				end
-				if qpos == 1 then
-					-- it's my turn!
-					state.status = "landing"
-					state.delay = event.tick + 25*60
-					drone.autopilot_destination = station.position
-				else
-					drone.autopilot_destination = math2d.position.add(
-						station.position,
-						math2d.position.rotate_vector({0,-8}, (qpos-1)/#guests*360)
-					)
-				end
-
-			elseif state.status == "landing" then
-				drone.autopilot_destination = station.position
-				if event.tick > state.delay then
-					state.status = "loading"
-				end
-
-			elseif state.status == "emergency-arrival" then
-				-- register arrival into the destination queue
-				table.insert(guests, drone)
-				state.status = "waiting-to-emergency-arrive"
-
-			elseif state.status == "waiting-to-emergency-arrive" then
-				local qpos
-				for i=1,#guests do
-					if guests[i] == drone then
-						qpos = i
-						break
-					end
-				end
-				if qpos == 1 then
-					-- it's my turn!
-					state.status = "emergency-landing"
-					state.delay = event.tick + 25*60
-				else
-					drone.autopilot_destination = math2d.position.add(
-						station.position,
-						math2d.position.rotate_vector({0,-8}, (qpos-1)/#guests*360)
-					)
-				end
-
-			elseif state.status == "emergency-landing" then
-				drone.autopilot_destination = station.position
-				if event.tick > state.delay then
-					state.status = "waiting-for-destination" -- skip loading phase
-				end
-
-			else
-				error("Unknown drone status "..state.status)
-			end
-		end
+		checkIfDroneRanOutOfFuel(struct)
+		drone_control_functions[struct.state.status](struct)
 		updateStatusGui(struct)
 	end
 end
+
 local function onSpiderDone(event)
 	local spider = event.vehicle
 	if spider.name == vehicle then
@@ -1050,11 +1094,7 @@ local function onSpiderDone(event)
 		elseif data.state.status == "emergency-recall" then
 			data.state.status = "emergency-arrival"
 		end
-		-- clear speed sticker
-		if data.sticker then
-			data.sticker.destroy()
-			data.sticker = nil
-		end
+		removeSpeedSticker(data)
 	end
 end
 
