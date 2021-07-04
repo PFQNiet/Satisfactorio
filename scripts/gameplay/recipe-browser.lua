@@ -581,7 +581,7 @@ local function onGuiClick(event)
 		end
 		updateItemRequestCount(player, recipe.name, math.max(0,(wanted[recipe.name] or 0) - yield))
 	elseif event.element.name == "to-do-list-toggle" then
-		local elem = player.gui.screen['to-do-list'].content
+		local elem = player.gui.screen['to-do-list'].content.list
 		if elem.visible then
 			elem.visible = false
 			event.element.sprite = "utility/expand"
@@ -635,6 +635,21 @@ local function onBuilt(event)
 	local wanted = script_data[player.index]
 	updateItemRequestCount(player, recipe.name, math.max(0,(wanted[recipe.name] or 0) - 1))
 end
+local function onRemoved(event)
+	local entity = event.entity
+	if not (entity and entity.valid) then return end
+	-- when the player mines something, if it's in the to-do list, add one
+	local place = entity.prototype.items_to_place_this
+	if not place then return end
+	local _,item = next(place)
+	-- building recipes are assumed to be named the same as the item they produce
+	local recipe = game.recipe_prototypes[item.name]
+	if not recipe then return end
+	local player = game.players[event.player_index]
+	if not script_data[player.index] then script_data[player.index] = {} end
+	local wanted = script_data[player.index]
+	updateItemRequestCount(player, recipe.name, (wanted[recipe.name] or 0) + 1)
+end
 
 return {
 	on_init = function()
@@ -657,6 +672,7 @@ return {
 		[defines.events.on_gui_confirmed] = onGuiConfirmed,
 		[defines.events.on_gui_click] = onGuiClick,
 		[defines.events.on_player_main_inventory_changed] = onInventoryChanged,
-		[defines.events.on_built_entity] = onBuilt
+		[defines.events.on_built_entity] = onBuilt,
+		[defines.events.on_player_mined_entity] = onRemoved
 	}
 }

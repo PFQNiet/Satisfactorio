@@ -380,5 +380,7 @@ Date: 2021.07.02
   Changes:
     - Drone Port now uses a Train Stop internally so it can be opened from the map view
     - Drones now try to only pull as many batteries as needed for a round trip, rather than a full stack
+    - Collapsing the to-do list now keeps the item list open, only hiding the ingredient list
+    - Mining a building that is on your to-do list increments the list by one
   Optimizations:
     - MASSIVE performance improvement of resource spawner. This does mean there's a small chance of "mixed patches" but that's worth it for code that's 60x faster!
