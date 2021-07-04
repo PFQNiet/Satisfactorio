@@ -3,6 +3,9 @@
 -- uses global.awesome.sinks to track sinks to iterate through
 -- uses global.awesome.coupons to track force => {earned, printed, points}
 
+---@class global.awesome
+---@field sinks table<uint,LuaEntity> Sinks indexed by unit number
+---@field coupons number[] Total earned, total unprinted, points towards next, points per minute
 local script_data = {
 	sinks = {},
 	coupons = {}
@@ -241,7 +244,6 @@ return bev.applyBuildEvents{
 	on_destroy = onRemoved,
 	events = {
 		[defines.events.on_gui_opened] = onGuiOpened,
-		[defines.events.on_gui_closed] = onGuiClosed,
 		[defines.events.on_gui_click] = onGuiClick
 	}
 }
