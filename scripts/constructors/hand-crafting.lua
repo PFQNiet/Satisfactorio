@@ -21,13 +21,15 @@ local function updateBenchData(data)
 		local credit_to = next(data.players)
 		-- NB: craft bench recipes always have a single solid product with no probability factors
 		local recipe = entity.get_recipe()
-		local output = entity.get_output_inventory()[1]
-		for _=1,difference do
-			script.raise_player_crafted_item{
-				item_stack = output,
-				player_index = credit_to,
-				recipe = recipe
-			}
+		if recipe then
+			local output = entity.get_output_inventory()[1]
+			for _=1,difference do
+				script.raise_player_crafted_item{
+					item_stack = output,
+					player_index = credit_to,
+					recipe = recipe
+				}
+			end
 		end
 		data.products = crafted
 	end
