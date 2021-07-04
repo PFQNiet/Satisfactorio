@@ -1,5 +1,5 @@
 return {
-	require(modpath.."scripts.constructors.craft-bench"),
+	require(modpath.."scripts.constructors.hand-crafting"),
 	require(modpath.."scripts.constructors.smelter"),
 	require(modpath.."scripts.constructors.foundry"),
 	require(modpath.."scripts.constructors.constructor"),
