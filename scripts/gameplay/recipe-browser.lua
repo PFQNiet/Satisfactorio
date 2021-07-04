@@ -1,6 +1,7 @@
 -- provides both a recipe browser and an ingredient-gathering list for the player
 -- uses global.wanted_items to track a player's list of things
 local util = require("util")
+local string = require(modpath.."scripts.lualib.string")
 
 local script_data = {}
 
@@ -620,10 +621,10 @@ local function onInventoryChanged(event)
 		updateWantedList(player)
 	end
 end
+-- when the player builds something, if it's in the to-do list, remove one
 local function onBuilt(event)
 	local entity = event.created_entity
 	if not (entity and entity.valid) then return end
-	-- when the player builds something, if it's in the to-do list, remove one
 	local place = entity.prototype.items_to_place_this
 	if not place then return end
 	local _,item = next(place)
@@ -635,10 +636,10 @@ local function onBuilt(event)
 	local wanted = script_data[player.index]
 	updateItemRequestCount(player, recipe.name, math.max(0,(wanted[recipe.name] or 0) - 1))
 end
+-- when the player mines something, if it's in the to-do list, add one
 local function onRemoved(event)
 	local entity = event.entity
 	if not (entity and entity.valid) then return end
-	-- when the player mines something, if it's in the to-do list, add one
 	local place = entity.prototype.items_to_place_this
 	if not place then return end
 	local _,item = next(place)
@@ -646,9 +647,25 @@ local function onRemoved(event)
 	local recipe = game.recipe_prototypes[item.name]
 	if not recipe then return end
 	local player = game.players[event.player_index]
-	if not script_data[player.index] then script_data[player.index] = {} end
+	if not script_data[player.index] then return end
 	local wanted = script_data[player.index]
-	updateItemRequestCount(player, recipe.name, (wanted[recipe.name] or 0) + 1)
+	if not wanted[recipe.name] or wanted[recipe.name] == 0 then return end
+	updateItemRequestCount(player, recipe.name, wanted[recipe.name] + 1)
+end
+-- when the player crafts something in the Craft Bench or Equipment Workshop, an event is raised
+---@param event on_player_crafted_item
+local function onCraft(event)
+	local player = game.players[event.player_index]
+	if not script_data[player.index] then return end
+	local wanted = script_data[player.index]
+	local recipe = event.recipe
+	local rname = recipe.name
+	if string.ends_with(rname, "-manual") then
+		rname = string.remove_suffix(rname, "-manual")
+	end
+	if wanted[rname] then
+		updateItemRequestCount(player, rname, math.max(0,wanted[rname] - recipe.products[1].amount))
+	end
 end
 
 return {
@@ -673,6 +690,7 @@ return {
 		[defines.events.on_gui_click] = onGuiClick,
 		[defines.events.on_player_main_inventory_changed] = onInventoryChanged,
 		[defines.events.on_built_entity] = onBuilt,
-		[defines.events.on_player_mined_entity] = onRemoved
+		[defines.events.on_player_mined_entity] = onRemoved,
+		[defines.events.on_player_crafted_item] = onCraft
 	}
 }
