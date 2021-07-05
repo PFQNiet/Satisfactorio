@@ -7,6 +7,7 @@ local link = require(modpath.."scripts.lualib.linked-entity")
 local box = "storage-container"
 local fakebox = "storage-container-placeholder"
 
+---@param event on_build
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not (entity and entity.valid) then return end
@@ -27,6 +28,7 @@ local function onBuilt(event)
 	end
 end
 
+---@param event on_gui_opened
 local function onGuiOpened(event)
 	if event.entity and event.entity.valid and event.entity.name == fakebox then
 		game.players[event.player_index].opened = event.entity.surface.find_entity(box, event.entity.position)

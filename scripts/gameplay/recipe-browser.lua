@@ -5,29 +5,31 @@ local string = require(modpath.."scripts.lualib.string")
 
 local script_data = {}
 
+---@param recipe LuaRecipePrototype
 local function getRecipeYield(recipe)
 	return (recipe.main_product and recipe.main_product.amount or recipe.products[1].amount) or 1
 end
 
+---@param player LuaPlayer
 local function openRecipeGui(player)
-	local gui = player.gui.screen['recipe-browser']
-	if not gui then
-		gui = player.gui.screen.add{
+	local gui = player.gui.screen
+	if not gui['recipe-browser'] then
+		local frame = gui.add{
 			type = "frame",
 			name = "recipe-browser",
 			direction = "vertical",
 			style = "inner_frame_in_outer_frame"
 		}
-		local title_flow = gui.add{type = "flow", name = "title_flow"}
+		local title_flow = frame.add{type = "flow", name = "title_flow"}
 		local title = title_flow.add{type = "label", caption = {"gui.recipe-browser-title"}, style = "frame_title"}
-		title.drag_target = gui
+		title.drag_target = frame
 		local pusher = title_flow.add{type = "empty-widget", style = "draggable_space_header"}
 		pusher.style.height = 24
 		pusher.style.horizontally_stretchable = true
-		pusher.drag_target = gui
+		pusher.drag_target = frame
 		title_flow.add{type = "sprite-button", style = "frame_action_button", sprite = "utility/close_white", name = "recipe-browser-close"}
 
-		local content = gui.add{
+		local content = frame.add{
 			type = "frame",
 			style = "inside_shallow_frame",
 			direction = "vertical",
@@ -74,39 +76,41 @@ local function openRecipeGui(player)
 		recipes.style.margin = 12
 		recipes.style.vertical_spacing = 12
 		recipes.style.horizontally_stretchable = true
-		gui.visible = false
+		frame.visible = false
 	end
+	local frame = gui['recipe-browser']
 
-	if gui.visible then
-		gui.visible = false
+	if frame.visible then
+		frame.visible = false
 		player.opened = nil
 	else
-		gui.visible = true
-		player.opened = gui
-		gui.force_auto_center()
+		frame.visible = true
+		player.opened = frame
+		frame.force_auto_center()
 	end
 end
 
+---@param player LuaPlayer
 local function updateWantedList(player)
-	local gui = player.gui.screen['to-do-list']
-	if not gui then
-		gui = player.gui.screen.add{
+	local gui = player.gui.screen
+	if not gui['to-do-list'] then
+		local frame = gui.add{
 			type = "frame",
 			name = "to-do-list",
 			direction = "vertical",
 			style = "inner_frame_in_outer_frame"
 		}
-		local title_flow = gui.add{type = "flow", name = "title_flow"}
+		local title_flow = frame.add{type = "flow", name = "title_flow"}
 		title_flow.add{type = "sprite-button", style = "frame_action_button", sprite = "utility/collapse", name = "to-do-list-toggle"}.style.right_margin = 6
 		local title = title_flow.add{type = "label", caption = {"gui.to-do-title"}, style = "frame_title"}
-		title.drag_target = gui
+		title.drag_target = frame
 		local pusher = title_flow.add{type = "empty-widget", style = "draggable_space_header"}
 		pusher.style.height = 24
 		pusher.style.horizontally_stretchable = true
-		pusher.drag_target = gui
+		pusher.drag_target = frame
 		title_flow.add{type = "sprite-button", style = "frame_action_button", sprite = "utility/close_white", name = "to-do-list-close"}
 
-		local content = gui.add{
+		local content = frame.add{
 			type = "frame",
 			style = "inside_shallow_frame",
 			direction = "vertical",
@@ -144,25 +148,25 @@ local function updateWantedList(player)
 		table.style.vertical_spacing = 12
 		table.style.horizontally_stretchable = true
 
-		gui.location = {player.display_resolution.width-512*player.display_scale, 40*player.display_scale}
+		frame.location = {player.display_resolution.width-512*player.display_scale, 40*player.display_scale}
 	end
-	gui.visible = true
+	local frame = gui['to-do-list']
+	frame.visible = true
 
-	local wanted = gui.content.wanted['to-do-list-wanted']
-	local list = gui.content.list['to-do-list-ingredients']
+	local wanted = frame.content.wanted['to-do-list-wanted']
+	local list = frame.content.list['to-do-list-ingredients']
 	local ingredients = {}
 
 	wanted.clear()
-	local game = game
-	local recipe_proto = game.recipe_prototypes
 	for name,count in pairs(script_data[player.index]) do
-		local recipe = recipe_proto[name]
+		local recipe = game.recipe_prototypes[name]
 		wanted.add{
 			type = "sprite-button",
 			style = "slot_button",
 			sprite = "recipe/"..recipe.name,
 			tooltip = recipe.localised_name,
-			number = count
+			number = count,
+			tags = {name = recipe.name}
 		}
 		local yield = getRecipeYield(recipe)
 		for _,ingredient in pairs(recipe.ingredients) do
@@ -184,7 +188,7 @@ local function updateWantedList(player)
 	table.sort(ings, function(a,b)
 		return a.type.."/"..a.name < b.type.."/"..b.name
 	end)
-	
+
 	local inventory = player.get_main_inventory().get_contents()
 	list.clear()
 	for _,ingredient in pairs(ings) do
@@ -230,27 +234,12 @@ local function updateWantedList(player)
 		}
 	end
 end
+---@param player LuaPlayer
+---@param source LuaGuiElement
 local function editItemRequestCount(player,source)
-	-- determine which slot was clicked
-	local index = 0
-	for i,slot in pairs(source.parent.children) do
-		if slot == source then
-			index = i
-			break
-		end
-	end
-	if index == 0 then return end
 	source.style = "yellow_slot_button"
-
-	local name
-	local count = index
-	for key,_ in pairs(script_data[player.index]) do
-		count = count - 1
-		if count == 0 then
-			name = key
-			break
-		end
-	end
+	local index = source.get_index_in_parent()
+	local name = source.tags['name']
 	local number = math.ceil(source.number)
 
 	local mask = player.gui.screen['to-do-request-mask']
@@ -269,13 +258,13 @@ local function editItemRequestCount(player,source)
 	gui = player.gui.screen.add{
 		type = "frame",
 		name = "to-do-request-number",
-		style = "inner_frame_in_outer_frame"
+		style = "inner_frame_in_outer_frame",
+		tags = {name = name}
 	}
 	gui.style.vertical_align = "center"
 	local flow = gui.add{
 		type = "flow",
-		direction = "horizontal",
-		name = name -- data stash :D
+		direction = "horizontal"
 	}
 
 	local input = flow.add{
@@ -288,14 +277,14 @@ local function editItemRequestCount(player,source)
 		lose_focus_on_confirm = true
 	}
 	input.style.width = 50
-	local addbtn = flow.add{
+	flow.add{
 		type = "sprite-button",
 		name = "to-do-request-confirm",
 		style = "tool_button_green",
 		tooltip = {"gui.confirm"},
 		sprite = "utility/check_mark_white"
 	}
-	local delbtn = flow.add{
+	flow.add{
 		type = "sprite-button",
 		name = "to-do-request-delete",
 		style = "tool_button_red",
@@ -309,15 +298,19 @@ local function editItemRequestCount(player,source)
 		loc.y + 92 + math.floor((index-1)/5)*40
 	}
 end
+---@param player LuaPlayer
 local function closeItemRequestCount(player)
 	for _,slot in pairs(player.gui.screen['to-do-list'].content.wanted['to-do-list-wanted'].children) do slot.style = "slot_button" end
 	player.gui.screen['to-do-request-mask'].destroy()
 	player.gui.screen['to-do-request-number'].destroy()
 end
+---@param player LuaPlayer
+---@param name string
+---@param count number
 local function updateItemRequestCount(player, name, count)
 	if count == 0 then
 		script_data[player.index][name] = nil
-		if table_size(script_data[player.index]) == 0 then
+		if not next(script_data[player.index]) then
 			if player.gui.screen['to-do-list'] then
 				player.gui.screen['to-do-list'].visible = false
 			end
@@ -335,12 +328,14 @@ local function updateItemRequestCount(player, name, count)
 	end
 end
 
+---@param event on_gui_closed
 local function onGuiClosed(event)
 	if event.element and event.element.valid and event.element.name == "recipe-browser" then
 		event.element.visible = false
 	end
 end
 
+---@param event on_gui_elem_changed
 local function onGuiElemChanged(event)
 	if event.element and event.element.valid and (event.element.name == "recipe-browser-choose-item" or event.element.name == "recipe-browser-choose-fluid") then
 		local player = game.players[event.player_index]
@@ -415,14 +410,14 @@ local function onGuiElemChanged(event)
 						style = "caption_label",
 						caption = {"gui.recipe-browser-tech-unlock",#techs}
 					}
-					for i,tech in ipairs(techs) do
+					for _,tech in ipairs(techs) do
 						local entry = techlist.add{
 							type = "flow",
 							direction = "horizontal",
 							name = tech.name -- stash some data here!
 						}
 						entry.style.vertical_align = "center"
-						local sprite = entry.add{
+						entry.add{
 							type = "sprite-button",
 							style = "slot_button_in_shallow_frame",
 							name = "recipe-browser-open-tech-tree",
@@ -550,14 +545,17 @@ local function onGuiElemChanged(event)
 	end
 end
 
+---@param event on_gui_click
 local function onGuiClick(event)
 	if not (event.element and event.element.valid) then return end
 	local player = game.players[event.player_index]
 	if event.element.name == "recipe-browser-close" then
 		player.gui.screen['recipe-browser'].visible = false
 		player.opened = nil
+
 	elseif event.element.name == "recipe-browser-open-tech-tree" then
 		player.open_technology_gui(event.element.parent.name)
+
 	elseif event.element.name == "recipe-browser-add-to-list" then
 		local recipe = game.recipe_prototypes[event.element.parent.parent.parent.name]
 		if not script_data[player.index] then script_data[player.index] = {} end
@@ -570,6 +568,7 @@ local function onGuiClick(event)
 		end
 		wanted[recipe.name] = (wanted[recipe.name] or 0) + yield
 		updateWantedList(player)
+
 	elseif event.element.name == "recipe-browser-remove-from-list" then
 		local recipe = game.recipe_prototypes[event.element.parent.parent.parent.name]
 		if not script_data[player.index] then script_data[player.index] = {} end
@@ -581,6 +580,7 @@ local function onGuiClick(event)
 			yield = math.floor((game.item_prototypes[recipe.main_product.name or recipe.products[1].name] or {stack_size = 100}).stack_size / yield) * yield
 		end
 		updateItemRequestCount(player, recipe.name, math.max(0,(wanted[recipe.name] or 0) - yield))
+
 	elseif event.element.name == "to-do-list-toggle" then
 		local elem = player.gui.screen['to-do-list'].content.list
 		if elem.visible then
@@ -590,31 +590,41 @@ local function onGuiClick(event)
 			elem.visible = true
 			event.element.sprite = "utility/collapse"
 		end
+
 	elseif event.element.name == "to-do-list-close" then
 		player.gui.screen['to-do-list'].visible = false
 		script_data[player.index] = nil
+
 	elseif event.element.parent and event.element.parent.valid and event.element.parent.name == "to-do-list-wanted" then
 		editItemRequestCount(player, event.element)
+
 	elseif event.element.name == "to-do-request-confirm" then
+		local frame = player.gui.screen['to-do-request-number']
 		local flow = event.element.parent
 		local count = tonumber(flow['to-do-request-number-input'].text)
-		updateItemRequestCount(player, flow.name, count)
+		updateItemRequestCount(player, frame.tags.name, count)
+
 	elseif event.element.name == "to-do-request-delete" then
-		local flow = event.element.parent
-		updateItemRequestCount(player, flow.name, 0)
+		local frame = player.gui.screen['to-do-request-number']
+		updateItemRequestCount(player, frame.tags.name, 0)
+
 	elseif event.element.name == "to-do-request-mask" then
 		closeItemRequestCount(player)
+
 	end
 end
+---@param event on_gui_confirmed
 local function onGuiConfirmed(event)
 	if event.element and event.element.valid and event.element.name == "to-do-request-number-input" then
 		local player = game.players[event.player_index]
+		local frame = player.gui.screen['to-do-request-number']
 		local flow = event.element.parent
 		local count = tonumber(flow['to-do-request-number-input'].text)
-		updateItemRequestCount(player, flow.name, count)
+		updateItemRequestCount(player, frame.tags.name, count)
 	end
 end
 
+---@param event on_player_main_inventory_changed
 local function onInventoryChanged(event)
 	local player = game.players[event.player_index]
 	if script_data[player.index] then
@@ -622,6 +632,7 @@ local function onInventoryChanged(event)
 	end
 end
 -- when the player builds something, if it's in the to-do list, remove one
+---@param event on_built_entity
 local function onBuilt(event)
 	local entity = event.created_entity
 	if not (entity and entity.valid) then return end
@@ -637,6 +648,7 @@ local function onBuilt(event)
 	updateItemRequestCount(player, recipe.name, math.max(0,(wanted[recipe.name] or 0) - 1))
 end
 -- when the player mines something, if it's in the to-do list, add one
+---@param event on_player_mined_entity
 local function onRemoved(event)
 	local entity = event.entity
 	if not (entity and entity.valid) then return end

@@ -2,8 +2,13 @@
 -- - if there are gas filters in the player's inventory, then drain 1 durability from it
 -- - otherwise damage the player despite resistance
 -- uses global.poison_damage to track player > last tick poison damage was taken, to prevent multiple clouds from stacking
+
+---@alias global.poison_damage table<uint, uint>
+-- Map player index to tick of last damage to prevent stacking multiple clouds
+---@type global.poison_damage
 local script_data = {}
 
+---@param event on_player_armor_inventory_changed
 local function onEquipBody(event)
 	local player = game.players[event.player_index]
 	local armour = player.get_inventory(defines.inventory.character_armor)[1]
@@ -21,6 +26,7 @@ local function onEquipBody(event)
 	end
 end
 
+---@param event on_entity_damaged
 local function onDamaged(event)
 	local entity = event.entity
 	if not (entity and entity.valid and entity.type == "character") then return end
@@ -47,7 +53,7 @@ local function onDamaged(event)
 			else
 				filter.drain_durability(event.original_damage_amount/5) -- durability is in seconds, and base damage is 5/s
 				-- update gas mask "equipment" energy - if we got this far, ie resisted poison damage with filter, then we can assume it's all valid
-				local equipment = entity.get_inventory(defines.inventory.character_armor)[1].grid.equipment[1]
+				local equipment = mask.grid.equipment[1]
 				local max_durability = game.item_prototypes["gas-filter"].durability
 				equipment.energy = filter.valid_for_read and (filter.durability / max_durability * equipment.max_energy) or 0
 			end

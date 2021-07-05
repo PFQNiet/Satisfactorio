@@ -5,9 +5,14 @@ local script_data = {}
 
 local item_name = "map-marker"
 
+---@param beacon LuaEntity
+---@return LuaCustomChartTag
 local function findBeaconTag(beacon)
 	return beacon.force.find_chart_tags(beacon.surface, {{beacon.position.x-0.1,beacon.position.y-0.1},{beacon.position.x+0.1,beacon.position.y+0.1}})[1]
 end
+
+---@param beacon LuaEntity
+---@param player LuaPlayer
 local function openBeaconGUI(beacon, player)
 	local tag = findBeaconTag(beacon)
 	if player.gui.screen['beacon-naming'] then return end
@@ -33,7 +38,7 @@ local function openBeaconGUI(beacon, player)
 		type = "label",
 		caption = {"gui.beacon-name"}
 	}
-	local textbox = table.add{
+	table.add{
 		type = "textfield",
 		name = "beacon-naming-name",
 		text = tag.text,
@@ -67,17 +72,24 @@ local function openBeaconGUI(beacon, player)
 	gui.force_auto_center()
 	script_data[player.index] = beacon
 end
+--- TODO Don't destroy the gui, just hide it and repopulate it later
+---@param player LuaPlayer
 local function closeBeaconGUI(player)
 	local gui = player.gui.screen['beacon-naming']
 	if gui then gui.destroy() end
 	script_data[player.index] = nil
 	player.opened = nil
 end
+
+---@param event on_gui_opened
 local function onGuiOpened(event)
 	if event.entity and event.entity.valid and event.entity.name == item_name then
 		openBeaconGUI(event.entity, game.players[event.player_index])
 	end
 end
+
+---@param beacon LuaEntity
+---@param gui LuaGuiElement
 local function saveBeacon(beacon, gui)
 	local tag = findBeaconTag(beacon)
 	if tag and tag.valid then
@@ -88,6 +100,7 @@ local function saveBeacon(beacon, gui)
 		beacon.force.add_chart_tag(beacon.surface, params)
 	end
 end
+---@param event on_gui_click
 local function onGuiClick(event)
 	if not (event.element and event.element.valid) then return end
 	local player = game.players[event.player_index]
@@ -101,7 +114,7 @@ local function onGuiClick(event)
 	end
 end
 
----@param event on_built_entity|on_robot_built_entity|script_raised_built|script_raised_revive
+---@param event on_build
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not entity or not entity.valid then return end
@@ -114,6 +127,7 @@ local function onBuilt(event)
 		end
 	end
 end
+---@param event on_destroy
 local function onRemoved(event)
 	local entity = event.entity
 	if not entity or not entity.valid then return end
@@ -131,6 +145,7 @@ local function onRemoved(event)
 	end
 end
 
+---@param event on_player_changed_position
 local function onMove(event)
 	-- if the player moves and has a beacon open, check that the beacon can still be reached
 	local player = game.players[event.player_index]

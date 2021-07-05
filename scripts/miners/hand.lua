@@ -8,8 +8,15 @@ local dead_trees = {
 	["dry-tree"] = true
 }
 
+---@class PlantRegeneration
+---@field entity LuaEntity
+---@field regen_at uint
+
+---@alias global.plant_regen PlantRegeneration[]
+---@type global.plant_regen
 local script_data = {}
 
+---@param event on_player_mined_entity|on_robot_mined_entity
 local function onMined(event)
 	local entity = event.entity
 	if not (entity and entity.valid) then return end
@@ -57,7 +64,6 @@ local function onMined(event)
 end
 
 -- plants may be harvested, and may leave behind a "harvested" entity which can later regenerate
--- uses global.plant_regen to track when such plants should regenerate
 local function onHarvest(event)
 	-- check if the "open GUI" event is intended for a plant...
 	local player = game.players[event.player_index]
@@ -94,6 +100,8 @@ local function onHarvest(event)
 		end
 	end
 end
+
+---@param event NthTickEventData
 local function checkForRegrowth(event)
 	for i,plant in pairs(script_data) do
 		if plant.regen_at < event.tick then

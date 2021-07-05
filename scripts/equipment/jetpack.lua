@@ -6,7 +6,20 @@ local vehicle = item.."-flying"
 local shadow = item.."-flying-shadow"
 local fuel = "packaged-fuel"
 
+---@class JetpackData
+---@field player LuaPlayer
+---@field car LuaEntity Car
+---@field shadow uint64
+---@field ring uint64
+---@field arc uint64
+---@field time uint
+---@field position Position
+---@field momentum Vector
+
+---@alias global.jetpack_flight table<uint, JetpackData>
+---@type global.jetpack_flight
 local script_data = {}
+
 local sqrt2 = math.sqrt(2)
 
 local function onJump(event)
@@ -77,6 +90,7 @@ local function onJump(event)
 	end
 end
 
+---@param event on_player_driving_changed_state
 local function onVehicle(event)
 	local player = game.players[event.player_index]
 	if not player.driving then
@@ -87,6 +101,8 @@ local function onVehicle(event)
 		end
 	end
 end
+
+---@param event on_player_died
 local function onDied(event)
 	local player = game.players[event.player_index]
 	local yeet = script_data[player.index]

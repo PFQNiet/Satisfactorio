@@ -9,16 +9,26 @@ local link = require(modpath.."scripts.lualib.linked-entity")
 
 local elevator = "space-elevator"
 
+---@class SpaceElevator
+---@field elevator LuaEntity
+---@field silo LuaEntity
+---@field inserter LuaEntity
+
+---@class global.space_elevator
+---@field elevator table<uint, SpaceElevator> Force ID => Elevator
+---@field phase table<uint, string> Player ID => Last shown phase in GUI
 local script_data = {
 	elevator = {},
 	phase = {}
 }
 local debounce_error = {}
 
+---@param force LuaForce
 local function findElevatorForForce(force)
 	return script_data.elevator[force.index]
 end
 
+---@param event on_build
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not (entity and entity.valid) then return end
@@ -78,6 +88,7 @@ local function onBuilt(event)
 	end
 end
 
+---@param event on_destroy
 local function onRemoved(event)
 	local entity = event.entity
 	if not (entity and entity.valid) then return end
@@ -86,12 +97,14 @@ local function onRemoved(event)
 	end
 end
 
+---@param struct SpaceElevator
 local function launchFreighter(struct, item)
 	if not struct then return end
 	struct.inserter.held_stack.set_stack{name=item, count=1}
 	struct.silo.rocket_parts = 1
 end
 
+---@param technology LuaTechnology
 local function completeElevator(technology)
 	if game.tick > 5 then
 		local message = {"message.space-elevator-complete",technology.name,technology.localised_name}
@@ -193,6 +206,8 @@ local function updateElevatorGUI(force)
 		end
 	end
 end
+---@param force LuaForce
+---@param player LuaPlayer
 local function submitElevator(force, player)
 	local hub = findElevatorForForce(force).elevator
 	if not hub or not hub.valid then return end
@@ -240,6 +255,7 @@ local function onResearch(event)
 		completeElevator(event.research)
 	end
 end
+---@param event on_gui_opened
 local function onGuiOpened(event)
 	if event.entity and event.entity.name == elevator then
 		local force = event.entity.force
@@ -256,6 +272,7 @@ local function onGuiOpened(event)
 		end
 	end
 end
+---@param event on_gui_click
 local function onGuiClick(event)
 	if event.element and event.element.valid and event.element.name == "space-elevator-submit" then
 		local player = game.players[event.player_index]

@@ -4,9 +4,12 @@ local bev = require(modpath.."scripts.lualib.build-events")
 local getitems = require(modpath.."scripts.lualib.get-items-from")
 local script_data = {}
 
+---@param parent LuaEntity
 local function getRegistration(parent)
 	return script_data[parent.unit_number]
 end
+---@param parent LuaEntity
+---@return LuaEntity[]
 local function getOrCreateRegistration(parent)
 	local reg = getRegistration(parent)
 	if reg then return reg end
@@ -14,9 +17,13 @@ local function getOrCreateRegistration(parent)
 	script_data[parent.unit_number] = reg
 	return reg
 end
+---@param parent LuaEntity
+---@param child LuaEntity
 local function registerLink(parent, child)
 	table.insert(getOrCreateRegistration(parent), child)
 end
+---@param parent LuaEntity
+---@param child LuaEntity
 local function unregisterLink(parent, child)
 	local reg = getRegistration(parent)
 	if not reg then return end
@@ -28,6 +35,7 @@ local function unregisterLink(parent, child)
 	end
 end
 
+---@param event on_destroy
 local function onRemoved(event)
 	local entity = event.entity
 	if not (entity and entity.valid) then return end

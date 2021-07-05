@@ -1,5 +1,12 @@
--- uses global.splitter.splitters to track structures {base, buffer, filters, {left1, left2}, {middle1, middle2}, {right1, right2}}
--- GUI uses global.splitter.gui to track player > opened smart splitter
+---@class SmartSplitterData
+---@field base LuaEntity ConstantCombinator
+---@field buffer LuaEntity Container
+---@field filters table<string, string|string[]|nil> Names of one or more items or any/any-undefined/overflow to allow through the given direction
+---@field connections table<string, MachineConnection>
+
+---@class global.splitters
+---@field splitters table<uint, SmartSplitterData> Map of splitter unit number to data
+---@field gui table<uint, SmartSplitterData> Map of player ID to opened splitter data
 local script_data = {
 	splitters = {},
 	gui = {}

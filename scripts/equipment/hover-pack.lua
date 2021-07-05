@@ -6,21 +6,36 @@ local vehicle = item.."-flying"
 local shadow = item.."-flying-shadow"
 local interface = item.."-eei"
 
+---@class HoverpackData
+---@field player LuaPlayer
+---@field car LuaEntity Car
+---@field interface LuaEntity ElectricEnergyInterface
+---@field line uint64
+---@field aura uint64
+---@field shadow uint64
+---@field height number
+---@field start_tick uint
+---@field exiting boolean
+---@field position Position
+---@field momentum Vector
+
+---@alias global.hoverpack_flight table<uint, HoverpackData>
+---@type global.hoverpack_flight
 local script_data = {}
+
 local sqrt2 = math.sqrt(2)
 local math2d = require("math2d")
 
-local function findNearestPowerPole(surface,pos)
-	for r=1,16,1 do
-		local pole = surface.find_entities_filtered{
-			type = "electric-pole",
-			position = pos,
-			radius = r,
-			limit = 1
-		}[1]
-		if pole then return pole end
-	end
-	return nil
+---@param surface LuaSurface
+---@param pos Position
+local function findNearestPowerPoleInRange(surface,pos)
+	local poles = surface.find_entities_filtered{
+		type = "electric-pole",
+		position = pos,
+		radius = 16
+	}
+	if #poles == 0 then return end
+	return surface.get_closest(pos, poles)
 end
 
 local function onJump(event)
@@ -85,6 +100,7 @@ local function onJump(event)
 	end
 end
 
+---@param event on_player_driving_changed_state
 local function onVehicle(event)
 	local player = game.players[event.player_index]
 	local entity = event.entity
@@ -98,6 +114,7 @@ local function onVehicle(event)
 		end
 	end
 end
+---@param event on_player_died
 local function onDied(event)
 	local player = game.players[event.player_index]
 	local yeet = script_data[player.index]
@@ -108,9 +125,10 @@ local function onDied(event)
 	end
 end
 
+---@param event on_tick
 local function onTick(event)
-	for pid,struct in pairs(script_data) do
-		local powersource = findNearestPowerPole(struct.car.surface,struct.position)
+	for _,struct in pairs(script_data) do
+		local powersource = findNearestPowerPoleInRange(struct.car.surface,struct.position)
 		if struct.exiting or (struct.start_tick < event.tick-2 and struct.interface.energy == 0) then powersource = nil end
 		-- local powerdistance = powersource and math2d.position.distance(struct.position, powersource.position) or math.huge
 		if powersource then

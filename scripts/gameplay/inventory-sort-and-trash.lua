@@ -1,6 +1,7 @@
 -- add a trash slot to the player inventory gui (controller_gui)
 local sinkable = require(modpath.."constants.sink-tradein") -- items that can be sunk can also be trashed
 
+---@param event on_player_created
 local function onPlayerCreated(event)
 	local player = game.players[event.player_index]
 	local frame = player.gui.relative.add{
@@ -23,12 +24,13 @@ local function onPlayerCreated(event)
 	slot.style.padding = 6
 end
 
+---@param event on_gui_opened
 local function onGuiOpened(event)
 	local player = game.players[event.player_index]
 	if player.opened_gui_type ~= defines.gui_type.entity then return end
-	local flow = player.gui.relative['sort-storage-flow']
-	if not flow then
-		flow = player.gui.relative.add{
+	local gui = player.gui.relative
+	if not gui['sort-storage-flow'] then
+		local flow = player.gui.relative.add{
 			type = "flow",
 			name = "sort-storage-flow",
 			anchor = {
@@ -46,30 +48,31 @@ local function onGuiOpened(event)
 		}
 		frame.style.horizontally_stretchable = false
 		frame.style.use_header_filler = false
-		local button = frame.add{
+		frame.add{
 			type = "button",
 			style = "dialog_button",
 			name = "sort-storage",
 			caption = {"gui.sort-storage"}
 		}
 	end
+	local flow = gui['sort-storage-flow']
 	-- change anchor depending on opened entity
-	local type
+	local anchortype
 	if player.opened.type == "container" then
 		if #player.opened.get_inventory(defines.inventory.chest) > 1 then
-			type = defines.relative_gui_type.container_gui
+			anchortype = defines.relative_gui_type.container_gui
 		end
 	elseif player.opened.type == "cargo-wagon" then
-		type = defines.relative_gui_type.container_gui
+		anchortype = defines.relative_gui_type.container_gui
 	elseif player.opened.type == "linked-chest" then
-		type = defines.relative_gui_type.linked_container_gui
+		anchortype = defines.relative_gui_type.linked_container_gui
 	elseif player.opened.type == "car" then
-		type = defines.relative_gui_type.car_gui
+		anchortype = defines.relative_gui_type.car_gui
 	end
-	if type then
+	if anchortype then
 		flow.visible = true
 		flow.anchor = {
-			gui = type,
+			gui = anchortype,
 			position = defines.relative_gui_position.bottom
 		}
 	else
@@ -77,6 +80,7 @@ local function onGuiOpened(event)
 	end
 end
 
+---@param event on_gui_click
 local function onGuiClick(event)
 	if event.element and event.element.valid then
 		local player = game.players[event.player_index]
@@ -129,7 +133,7 @@ local function onGuiClick(event)
 	end
 end
 
---[[ FEATURE WANTED but doesn't work due to transport belt interactions https://forums.factorio.com/92323 
+--[[ FEATURE WANTED but doesn't work due to transport belt interactions https://forums.factorio.com/92323
 local function dropStack(event)
 	local player = game.players[event.player_index]
 	if not player.selected and player.cursor_stack.valid_for_read then

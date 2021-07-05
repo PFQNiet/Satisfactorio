@@ -8,9 +8,11 @@ local buffer = "merger-splitter-box"
 
 local script_data = require(modpath.."scripts.logistics.splitters").data
 
+---@param entity LuaEntity
 local function findStruct(entity)
 	return script_data.splitters[entity.unit_number]
 end
+---@param player LuaPlayer
 local function closeGui(player)
 	local gui = player.gui.screen['smart-splitter']
 	if gui then gui.visible = false end
@@ -18,6 +20,7 @@ local function closeGui(player)
 	script_data.gui[player.index] = nil
 end
 
+---@param event on_build
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not (entity and entity.valid) then return end
@@ -49,7 +52,7 @@ local function onBuilt(event)
 		local control = entity.get_or_create_control_behavior()
 		control.set_signal(2, {signal={type="virtual",name="signal-any"},count=1})
 		control.enabled = false
-		
+
 		local conn = io.addConnection(entity, {0,1}, "input", box)
 		-- connect inserters to buffer and only enable if item count = 0
 		for _,inserter in pairs{conn.inserter_left, conn.inserter_right} do
@@ -85,6 +88,7 @@ local function onBuilt(event)
 	end
 end
 
+---@param event on_destroy
 local function onRemoved(event)
 	local entity = event.entity
 	if not (entity and entity.valid) then return end
@@ -105,6 +109,10 @@ local others = {
 	forward = {"left","right"},
 	right = {"left","forward"}
 }
+---@param filter string|string[]|nil Item name or any/any-undefined/overflow
+---@param item string Name of the item being checked
+---@param struct SmartSplitterData
+---@param look string[] Other directions to peek at
 local function testFilter(filter, item, struct, look)
 	-- "overflow" is treated as "any-undefined" here
 	if type(filter) == "table" then
@@ -137,6 +145,7 @@ local function testFilter(filter, item, struct, look)
 		return filter == item
 	end
 end
+---@param filter string|string[]|nil
 local function filterContainsOverflow(filter)
 	if not filter then
 		return false
@@ -149,6 +158,9 @@ local function filterContainsOverflow(filter)
 		return filter == "overflow"
 	end
 end
+---@param look string[] Directions to peek in - if all are filled then overflow is true
+---@param valid string[] List of directions to consider in the first place
+---@param struct SmartSplitterData
 local function checkOverflow(look, valid, struct)
 	for _,dir in pairs(look) do
 		local active = (valid[1] and valid[1] == dir) or (valid[2] and valid[2] == dir) or (valid[3] and valid[3] == dir) -- unrolled in_array
@@ -162,8 +174,10 @@ local function checkOverflow(look, valid, struct)
 	end
 	return true
 end
+
+---@param event on_tick
 local function onTick(event)
-	for i,struct in pairs(script_data.splitters) do
+	for _,struct in pairs(script_data.splitters) do
 		local contents = struct.buffer.get_inventory(defines.inventory.chest)[1]
 		if contents.valid_for_read then
 			local valid = {}
@@ -205,6 +219,8 @@ local function onTick(event)
 	end
 end
 
+---@param struct SmartSplitterData
+---@param columns LuaGuiElement
 local function fullGuiUpdate(struct, columns)
 	local prototypes = game.item_prototypes
 
@@ -240,8 +256,10 @@ local function fullGuiUpdate(struct, columns)
 		item.visible = menu.selected_index == 5
 	end
 end
+---@param struct SmartSplitterData
+---@param gui LuaGuiElement columns (left forward right) each containing a "filters" as an array of one (multiple for programmable) consisting of the drop-down and item elements
 local function updateSplitter(struct, gui)
-	-- gui is the columns (left forward right) each containing a "filters" as an array of one (multiple for programmable) consisting of the drop-down and item elements
+	---@type LuaConstantCombinatorControlBehavior
 	local control = struct.base.get_control_behavior()
 	for slot,dir in pairs({"left","forward","right"}) do
 		local flow = gui["filter-"..dir].filters.children[1]
@@ -260,11 +278,13 @@ local function updateSplitter(struct, gui)
 		)
 	end
 end
+---@param event on_entity_settings_pasted
 local function onPaste(event)
 	if event.destination.name == splitter then
 		-- read signals and update struct accordingly
 		local players = game.players
 		local struct = findStruct(event.destination)
+		---@type LuaConstantCombinatorControlBehavior
 		local control = struct.base.get_control_behavior()
 		for slot,dir in pairs({"left","forward","right"}) do
 			local signal = control.get_signal(slot).signal
@@ -280,14 +300,14 @@ local function onPaste(event)
 				struct.filters[dir] = signal.name
 			end
 		end
-		local base = struct.base
-		for pid,struct in pairs(script_data.gui) do
-			if struct.base == base then
-				fullGuiUpdate(struct, players[pid].gui.screen['programmable-splitter'].columns)
+		for pid,other in pairs(script_data.gui) do
+			if other.base == struct.base then
+				fullGuiUpdate(other, players[pid].gui.screen['programmable-splitter'].columns)
 			end
 		end
 	end
 end
+
 --[[
 	GUI[screen]
 	- frame[smart-splitter]
@@ -301,29 +321,30 @@ end
 	------ dropdown[smart-splitter-{DIR}-selection]
 	------ item[smart-splitter-{DIR}-item]
 ]]
+
+---@param event on_gui_opened
 local function onGuiOpened(event)
 	local player = game.players[event.player_index]
 	if event.gui_type == defines.gui_type.entity and event.entity.name == splitter then
 		-- create the custom gui and open that instead
-		local gui = player.gui.screen['smart-splitter']
-		local columns
-		if not gui then
-			gui = player.gui.screen.add{
+		local gui = player.gui.screen
+		if not gui['smart-splitter'] then
+			local frame = player.gui.screen.add{
 				type = "frame",
 				name = "smart-splitter",
 				direction = "vertical",
 				style = "inner_frame_in_outer_frame"
 			}
-			local title_flow = gui.add{type = "flow", name = "title_flow"}
+			local title_flow = frame.add{type = "flow", name = "title_flow"}
 			local title = title_flow.add{type = "label", caption = event.entity.localised_name, style = "frame_title"}
-			title.drag_target = gui
+			title.drag_target = frame
 			local pusher = title_flow.add{type = "empty-widget", style = "draggable_space_header"}
 			pusher.style.height = 24
 			pusher.style.horizontally_stretchable = true
-			pusher.drag_target = gui
+			pusher.drag_target = frame
 			title_flow.add{type = "sprite-button", style = "frame_action_button", sprite = "utility/close_white", name = "smart-splitter-close"}
-			
-			columns = gui.add{
+
+			local columns = frame.add{
 				type = "flow",
 				name = "columns"
 			}
@@ -354,31 +375,34 @@ local function onGuiOpened(event)
 				list.style.horizontally_stretchable = true
 				list.style.minimal_width = 240
 			end
-		else
-			columns = gui.columns
 		end
-		
+		local frame = gui['programmable-splitter']
+		local columns = frame.columns
+
 		local struct = findStruct(event.entity)
 		fullGuiUpdate(struct, columns)
-		
-		gui.visible = true
-		player.opened = gui
+
+		frame.visible = true
+		player.opened = frame
 		script_data.gui[player.index] = struct
-		gui.force_auto_center()
+		frame.force_auto_center()
 	end
 end
+---@param event on_gui_closed
 local function onGuiClosed(event)
 	if event.element and event.element.valid and event.element.name == "smart-splitter" then
 		local player = game.players[event.player_index]
 		closeGui(player)
 	end
 end
+---@param event on_gui_click
 local function onGuiClick(event)
 	if event.element and event.element.valid and event.element.name == "smart-splitter-close" then
 		local player = game.players[event.player_index]
 		closeGui(player)
 	end
 end
+---@param event on_gui_selection_state_changed
 local function onGuiSelected(event)
 	if event.element.valid and (
 		event.element.name == "smart-splitter-left-selection"
@@ -393,15 +417,14 @@ local function onGuiSelected(event)
 		local itemsel = event.element.parent.children[2]
 		itemsel.visible = index == 5
 		-- mirror this change to other players with this entity open
-		local base = struct.base
 		local dir = ({
 			["smart-splitter-left-selection"] = "left",
 			["smart-splitter-forward-selection"] = "forward",
 			["smart-splitter-right-selection"] = "right"
 		})[event.element.name]
 
-		for pid,struct in pairs(script_data.gui) do
-			if event.player_index ~= pid and struct.base == base then
+		for pid,other in pairs(script_data.gui) do
+			if event.player_index ~= pid and other.base == struct.base then
 				local flow = players[pid].gui.screen['smart-splitter'].columns["filter-"..dir].filters.children[1]
 				flow.children[1].selected_index = index
 				flow.children[2].visible = index == 5
@@ -409,6 +432,7 @@ local function onGuiSelected(event)
 		end
 	end
 end
+---@param event on_gui_elem_changed
 local function onGuiElemChanged(event)
 	if event.element.valid and (
 		event.element.name == "smart-splitter-left-item"
@@ -418,14 +442,13 @@ local function onGuiElemChanged(event)
 		local struct = script_data.gui[event.player_index]
 		updateSplitter(struct, game.players[event.player_index].gui.screen['smart-splitter'].columns)
 		-- mirror this change to other players with this entity open
-		local base = struct.base
 		local dir = ({
 			["smart-splitter-left-item"] = "left",
 			["smart-splitter-forward-item"] = "forward",
 			["smart-splitter-right-item"] = "right"
 		})[event.element.name]
-		for pid,struct in pairs(script_data.gui) do
-			if event.player_index ~= pid and struct.base == base then
+		for pid,other in pairs(script_data.gui) do
+			if event.player_index ~= pid and other.base == struct.base then
 				local flow = game.players[pid].gui.screen['smart-splitter'].columns["filter-"..dir].filters.children[1]
 				flow.children[2].elem_value = event.element.elem_value
 			end
@@ -433,8 +456,9 @@ local function onGuiElemChanged(event)
 	end
 end
 
+-- if the player moves and has a splitter open, check that the splitter can still be reached
+---@param event on_player_changed_position
 local function onMove(event)
-	-- if the player moves and has a splitter open, check that the splitter can still be reached
 	local player = game.players[event.player_index]
 	local struct = script_data.gui[player.index]
 	if struct and struct.base.name == splitter then

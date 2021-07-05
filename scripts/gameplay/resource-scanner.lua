@@ -243,6 +243,7 @@ return {
 		[defines.events.on_lua_shortcut] = toggleResourceScanner,
 		[defines.events.on_tick] = onTick,
 		[defines.events.on_gui_click] = onGuiClick,
+		---@param event on_gui_closed
 		[defines.events.on_gui_closed] = function(event)
 			if event.element and event.element.valid and event.element.name == "resource-scanner" then
 				closeResourceScanner(game.players[event.player_index])

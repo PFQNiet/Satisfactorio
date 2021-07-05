@@ -1,8 +1,22 @@
 local bev = require(modpath.."scripts.lualib.build-events")
 local math2d = require("math2d")
+
+---@class SelfDrivingWaypoint:Position
+---@field wait number Seconds to wait at this position
+
+---@class SelfDrivingCarData
+---@field car LuaEntity
+---@field waypoints SelfDrivingWaypoint[]
+---@field waypoint_index uint Index of the waypoint that's being travelled to next
+---@field wait_until uint Tick to depart from current waypoint
+---@field recording boolean
+---@field autopilot boolean
+---@field rendering uint64[] Graphics IDs
+
+---@alias global.cars table<uint, SelfDrivingCarData> Indexed by car unit number
 local script_data = {}
 
--- uses global.cars to store all data
+---@param car LuaEntity Car
 local function getCar(car)
 	if not script_data[car.unit_number] then
 		script_data[car.unit_number] = {
@@ -17,10 +31,15 @@ local function getCar(car)
 	end
 	return script_data[car.unit_number]
 end
+---@param car LuaEntity Car
 local function deleteCar(car)
 	script_data[car.unit_number] = nil
 end
 
+---@param myvector Vector
+---@param targetvector Vector
+---@return defines.riding.direction
+---@return number Angle +anticlockwise -clockwise
 local function turn(myvector, targetvector)
 	myvector = math2d.position.ensure_xy(myvector)
 	targetvector = math2d.position.ensure_xy(targetvector)
@@ -31,6 +50,13 @@ local function turn(myvector, targetvector)
 	if dir < -0.035 then return defines.riding.direction.left, dir end
 	return defines.riding.direction.straight, dir
 end
+---@param myspeed number
+---@param mypos Position
+---@param targetpos SelfDrivingWaypoint
+---@param steer defines.riding.direction
+---@param delta number Angle in radians
+---@return defines.riding.acceleration
+---@return number Distance
 local function speed(myspeed, mypos, targetpos, steer, delta)
 	-- if we're getting close to the target, slow down
 	local wait = targetpos.wait
@@ -56,6 +82,8 @@ local function speed(myspeed, mypos, targetpos, steer, delta)
 	return accel, dist
 end
 
+---@param car SelfDrivingCarData
+---@return number Index
 local function findClosestWaypoint(car)
 	local closest = {0,math.huge}
 	for i,waypoint in pairs(car.waypoints) do
@@ -69,6 +97,8 @@ local function findClosestWaypoint(car)
 	return closest[1]
 end
 
+---@param car SelfDrivingCarData
+---@param menu LuaGuiElement
 local function refreshStopList(car, menu)
 	local index = menu.selected_index
 	menu.clear_items()
@@ -88,6 +118,7 @@ local function refreshStopList(car, menu)
 		menu.selected_index = index > 0 and math.min(index,#menu.items) or #menu.items
 	end
 end
+---@param car SelfDrivingCarData
 local function refreshPathRender(car)
 	for _,line in pairs(car.rendering) do
 		rendering.destroy(line)
@@ -149,6 +180,7 @@ local function refreshPathRender(car)
 	end
 end
 
+---@param event on_tick
 local function onTick(event)
 	for i,car in pairs(script_data) do
 		if not (car.car and car.car.valid) then
@@ -213,11 +245,14 @@ local function onTick(event)
 	end
 end
 
+---@param entity LuaEntity
 local function isSelfDrivingCar(entity)
 	return entity.name == "truck" or
 		entity.name == "tractor" or
 		entity.name == "explorer"
 end
+-- On crashing into something, record that into the struct so it tries to reverse
+---@param event on_entity_damaged
 local function onDamaged(event)
 	local entity = event.entity
 	if isSelfDrivingCar(entity) and event.damage_type.name == "impact" then
@@ -227,8 +262,8 @@ local function onDamaged(event)
 		end
 	end
 end
+---@param event on_player_driving_changed_state
 local function onDriving(event)
-	-- when a player enters/leaves a car
 	local player = game.players[event.player_index]
 	local entity = event.entity
 	if entity and entity.valid and isSelfDrivingCar(entity) then
@@ -325,6 +360,7 @@ local function onDriving(event)
 		end
 	end
 end
+---@param event on_gui_click
 local function onGuiClick(event)
 	local player = game.players[event.player_index]
 	if event.element.valid and event.element.name == "self-driving-record" then
@@ -409,7 +445,6 @@ local function onGuiClick(event)
 		if index > 0 and index <= #car.waypoints then
 			list.remove_item(index)
 			-- scan waypoint list for stops
-			local stops = {}
 			for i,waypoint in pairs(car.waypoints) do
 				if waypoint.wait > 0 then
 					index = index - 1
@@ -423,6 +458,7 @@ local function onGuiClick(event)
 		end
 	end
 end
+---@param event on_gui_selection_state_changed
 local function onGuiSelection(event)
 	local player = game.players[event.player_index]
 	if event.element.valid and event.element.name == "self-driving-waypoints" then
@@ -445,6 +481,7 @@ local function onGuiSelection(event)
 		end
 	end
 end
+---@param event on_gui_switch_state_changed
 local function onGuiSwitch(event)
 	local player = game.players[event.player_index]
 	if event.element.valid and event.element.name == "self-driving-mode-toggle" then
@@ -468,6 +505,7 @@ local function onGuiSwitch(event)
 	end
 end
 
+---@param event on_destroy
 local function onRemoved(event)
 	local entity = event.entity
 	if not entity or not entity.valid then return end
@@ -480,6 +518,7 @@ local function onRemoved(event)
 	end
 end
 
+---@param event on_player_died
 local function onPlayerDied(event)
 	local player = game.players[event.player_index]
 	local gui = player.gui.left['self-driving']

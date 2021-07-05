@@ -4,6 +4,7 @@ local link = require(modpath.."scripts.lualib.linked-entity")
 local miner = "portable-miner"
 local box = "portable-miner-box"
 
+---@param event on_build
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not (entity and entity.valid) then return end

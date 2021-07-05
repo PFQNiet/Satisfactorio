@@ -273,6 +273,7 @@ local function putObjectScannerInCursor(player)
 	end
 end
 
+---@param event on_gui_click
 local function onGuiClick(event)
 	if not (event.element and event.element.valid) then return end
 	local player = game.players[event.player_index]

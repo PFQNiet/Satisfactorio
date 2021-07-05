@@ -24,12 +24,6 @@ local function onSurfaceChanged(event)
 end
 
 return {
-	on_init = function()
-		global.corpse_scanner = global.corpse_scanner or script_data
-	end,
-	on_load = function()
-		script_data = global.corpse_scanner or script_data
-	end,
 	events = {
 		---@param event on_post_entity_died
 		[defines.events.on_post_entity_died] = function(event)

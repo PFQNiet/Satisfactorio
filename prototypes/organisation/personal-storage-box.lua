@@ -7,6 +7,7 @@ local box = {
 	icon_size = 64,
 	selection_box = {{-0.5,-0.5},{0.5,0.5}},
 	collision_box = {{-0.2,-0.2},{0.2,0.2}},
+	flags = {"placeable-neutral", "player-creation"},
 	open_sound = sounds.open_sound,
 	close_sound = sounds.close_sound,
 	max_health = 1,

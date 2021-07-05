@@ -2,6 +2,8 @@
 -- - if there are iodine-infused filters in the player's inventory, then drain 1 durability from it
 -- - otherwise damage the player despite resistance
 -- doesn't use a debounce timer since radiation damage is already applied periodically
+
+---@param event on_player_armor_inventory_changed
 local function onEquipBody(event)
 	local player = game.players[event.player_index]
 	local armour = player.get_inventory(defines.inventory.character_armor)[1]
@@ -19,6 +21,7 @@ local function onEquipBody(event)
 	end
 end
 
+---@param event on_entity_damaged
 local function onDamaged(event)
 	local entity = event.entity
 	if not (entity and entity.valid and entity.type == "character") then return end
@@ -35,7 +38,7 @@ local function onDamaged(event)
 		else
 			filter.drain_durability(event.original_damage_amount/20) -- durability is in seconds, and base damage is 20/s
 			-- update hazmat "equipment" energy - if we got this far, ie resisted radiation damage with filter, then we can assume it's all valid
-			local equipment = entity.get_inventory(defines.inventory.character_armor)[1].grid.equipment[1]
+			local equipment = mask.grid.equipment[1]
 			local max_durability = game.item_prototypes["iodine-infused-filter"].durability
 			equipment.energy = filter.valid_for_read and (filter.durability / max_durability * equipment.max_energy) or 0
 		end

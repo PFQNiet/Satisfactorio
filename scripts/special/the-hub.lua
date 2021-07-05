@@ -65,6 +65,7 @@ local burner_2_pos = {-4,-2}
 local powerpole_pos = {-5,0}
 local freighter_pos = {6,0}
 
+---@param floor LuaEntity
 local function buildTerminal(floor)
 	local term = floor.surface.create_entity{
 		name = terminal,
@@ -80,6 +81,7 @@ local function buildTerminal(floor)
 	return term
 end
 
+---@param term LuaEntity
 local function buildCraftBench(term)
 	local craft = term.surface.create_entity{
 		name = bench,
@@ -93,6 +95,7 @@ local function buildCraftBench(term)
 	return craft
 end
 
+---@param term LuaEntity
 local function buildStorageChest(term)
 	-- only if HUB Upgrade 1 is done
 	if not term.force.technologies['hub-tier0-hub-upgrade1'].researched then
@@ -110,6 +113,7 @@ local function buildStorageChest(term)
 	return box
 end
 
+---@param term LuaEntity
 local function buildBiomassBurner1(term)
 	-- only if HUB Upgrade 2 is done
 	if not term.force.technologies['hub-tier0-hub-upgrade2'].researched then
@@ -135,6 +139,7 @@ local function buildBiomassBurner1(term)
 	link.register(term, pole)
 	return burner, pole
 end
+---@param term LuaEntity
 local function buildBiomassBurner2(term)
 	-- only if HUB Upgrade 5 is done
 	if not term.force.technologies['hub-tier0-hub-upgrade5'].researched then
@@ -152,6 +157,7 @@ local function buildBiomassBurner2(term)
 	return burner
 end
 
+---@param term LuaEntity
 local function buildFreighter(term)
 	-- only if HUB Upgrade 6 is done
 	if not term.force.technologies['hub-tier0-hub-upgrade6'].researched then
@@ -180,6 +186,8 @@ local function buildFreighter(term)
 	link.register(term, inserter)
 end
 
+---@param term LuaEntity
+---@param item string
 local function launchFreighter(term, item)
 	if not term then return end
 	local silo = term.surface.find_entity(freighter,position(freighter_pos,term))
@@ -220,6 +228,7 @@ local upgrades = {
 	["hub-tier0-hub-upgrade5"] = buildBiomassBurner2,
 	["hub-tier0-hub-upgrade6"] = buildFreighter
 }
+---@param technology LuaTechnology
 local function completeMilestone(technology)
 	if upgrades[technology.name] then
 		local hub = findHubForForce(technology.force)
@@ -464,6 +473,8 @@ local function updateMilestoneGUI(force)
 		end
 	end
 end
+---@param force LuaForce
+---@param player LuaPlayer
 local function submitMilestone(force,player)
 	local hub = findHubForForce(force)
 	if not hub or not hub.valid then return end
@@ -500,6 +511,7 @@ local function submitMilestone(force,player)
 	hub.set_recipe(nil)
 end
 
+---@param event on_build
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not entity or not entity.valid then return end

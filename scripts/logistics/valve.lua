@@ -7,12 +7,24 @@ local valve = "valve"
 local valvein = valve.."-input"
 local valveout = valve.."-output"
 
+---@class ValveData
+---@field base LuaEntity
+---@field flow number Set by the player
+---@field input LuaEntity
+---@field output LuaEntity
+---@field arrow uint64
+
+---@alias ValveBucket table<uint, ValveData>
+
 local buckets = 30
+---@alias global.valves ValveBucket[]
+---@type global.valves
 local script_data = {}
 for i=0,buckets-1 do script_data[i] = {} end
 local function getBucket(tick)
 	return script_data[tick%buckets]
 end
+---@param entity LuaEntity
 local function createStruct(entity)
 	local struct = {
 		base = entity,
@@ -45,13 +57,16 @@ local function createStruct(entity)
 	link.register(struct.base, struct.output)
 	script_data[entity.unit_number%buckets][entity.unit_number] = struct
 end
+---@param entity LuaEntity
 local function getStruct(entity)
 	return script_data[entity.unit_number%buckets][entity.unit_number]
 end
+---@param entity LuaEntity
 local function deleteStruct(entity)
 	script_data[entity.unit_number%buckets][entity.unit_number] = nil
 end
 
+---@param event on_build
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not (entity and entity.valid) then return end
@@ -60,6 +75,7 @@ local function onBuilt(event)
 	end
 end
 
+---@param event on_destroy
 local function onRemoved(event)
 	local entity = event.entity
 	if not (entity and entity.valid) then return end
@@ -68,6 +84,7 @@ local function onRemoved(event)
 	end
 end
 
+---@param event on_player_rotated_entity
 local function onRotated(event)
 	local entity = event.entity
 	if not (entity and entity.valid) then return end
@@ -82,6 +99,7 @@ local function onRotated(event)
 	end
 end
 
+---@param event on_tick
 local function onTick(event)
 	for _,struct in pairs(getBucket(event.tick)) do
 		-- transfer half the difference between input and output in the forward direction, if fluids match
@@ -99,13 +117,14 @@ local function onTick(event)
 	end
 end
 
+---@param event on_gui_opened
 local function onGuiOpened(event)
 	local player = game.players[event.player_index]
 	if event.gui_type == defines.gui_type.entity and event.entity.name == valve then
 		-- create the custom gui and open that instead
-		local gui = player.gui.relative['valve']
-		if not gui then
-			gui = player.gui.relative.add{
+		local gui = player.gui.relative
+		if not gui['valve'] then
+			local frame = player.gui.relative.add{
 				type = "frame",
 				name = "valve",
 				anchor = {
@@ -116,14 +135,14 @@ local function onGuiOpened(event)
 				direction = "vertical",
 				style = "inner_frame_in_outer_frame"
 			}
-			gui.style.use_header_filler = false
+			frame.style.use_header_filler = false
 
-			local frame = gui.add{
+			local inner = frame.add{
 				type = "frame",
 				style = "inside_shallow_frame_with_padding",
 				name = "frame"
 			}
-			local content = frame.add{
+			local content = inner.add{
 				type = "flow",
 				direction = "vertical",
 				name = "content"
@@ -162,13 +181,16 @@ local function onGuiOpened(event)
 				caption = {"gui.valve-flow-rate-unit-and-max",{"per-minute-suffix"},600}
 			}
 		end
+		local frame = gui['valve']
+		local content = frame.frame.content
 
 		local struct = getStruct(event.entity)
-		gui.frame.content['valve-flow-slider'].set_slider_minimum_maximum(0,struct.base.force.recipes['pipeline-mk-2'].enabled and 600 or 300)
-		gui.frame.content['valve-flow-slider'].slider_value = struct.flow
-		gui.frame.content.bottom['valve-flow-input'].text = tostring(struct.flow)
+		content['valve-flow-slider'].set_slider_minimum_maximum(0,struct.base.force.recipes['pipeline-mk-2'].enabled and 600 or 300)
+		content['valve-flow-slider'].slider_value = struct.flow
+		content.bottom['valve-flow-input'].text = tostring(struct.flow)
 	end
 end
+---@param event on_gui_value_changed
 local function onGuiValueChanged(event)
 	if event.element and event.element.valid and event.element.name == "valve-flow-slider" then
 		local player = game.players[event.player_index]
@@ -187,6 +209,7 @@ local function onGuiValueChanged(event)
 		end
 	end
 end
+---@param event on_gui_confirmed
 local function onGuiConfirmed(event)
 	if event.element and event.element.valid and event.element.name == "valve-flow-input" then
 		local player = game.players[event.player_index]

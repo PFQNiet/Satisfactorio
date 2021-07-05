@@ -1,6 +1,6 @@
 local tech_tree_cache = nil
--- Technology effects don't include -manual or awesome-shop- recipes, to avoid polluting the technology GUI
--- Instead they are unlocked here.
+-- Technology effects don't include -manual or awesome-shop- recipes, to avoid polluting the technology GUI. Instead they are unlocked here.
+---@param event on_research_finished
 local function onResearch(event)
 	local technology = event.research
 	local force = technology.force
@@ -21,8 +21,8 @@ local function onResearch(event)
 
 	-- find techs that depend on the tech we just did, and unlock their associated recipe items
 	if not tech_tree_cache then
+		-- map techs to the things they unlock
 		tech_tree_cache = {}
-		-- remap techs to the things they unlock
 		for _,tech in pairs(technology.force.technologies) do
 			if frecipes[tech.name] then
 				for _,req in pairs(tech.prerequisites) do
@@ -62,6 +62,7 @@ local function onResearch(event)
 		}
 	end
 end
+---@param event on_technology_effects_reset
 local function onTechEffectsReset(event)
 	-- if/when a force's tech effects are reset, re-apply the unlocks above for all researched techs
 	for _,tech in pairs(event.force.technologies) do

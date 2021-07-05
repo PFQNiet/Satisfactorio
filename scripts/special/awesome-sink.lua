@@ -1,7 +1,5 @@
 -- sink is a furnace that produces awesome-points "fluid"
 -- n = tickets earned so far, next ticket earned at 500*floor(n/3)^2+1000 points
--- uses global.awesome.sinks to track sinks to iterate through
--- uses global.awesome.coupons to track force => {earned, printed, points}
 
 ---@class global.awesome
 ---@field sinks table<uint,LuaEntity> Sinks indexed by unit number
@@ -11,9 +9,12 @@ local script_data = {
 	coupons = {}
 }
 
+---@param earned uint Number of earned tickets
 local function pointsToNext(earned)
 	return 500 * math.floor(earned / 3)^2 + 1000
 end
+---@param force LuaForce
+---@param points uint
 local function gainPoints(force, points)
 	if not script_data.coupons[force.index] then script_data.coupons[force.index] = {0,0,0,0} end
 	local entry = script_data.coupons[force.index]
@@ -33,6 +34,7 @@ local bev = require(modpath.."scripts.lualib.build-events")
 
 local base = "awesome-sink"
 
+---@param sink LuaEntity
 local function processSink(sink)
 	local fluidbox = sink.fluidbox[1]
 	if fluidbox then
@@ -42,6 +44,7 @@ local function processSink(sink)
 	end
 end
 
+---@param event on_build
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not (entity and entity.valid) then return end
@@ -52,6 +55,7 @@ local function onBuilt(event)
 	end
 end
 
+---@param event on_destroy
 local function onRemoved(event)
 	local entity = event.entity
 	if not (entity and entity.valid) then return end
@@ -61,6 +65,7 @@ local function onRemoved(event)
 	end
 end
 
+---@param player LuaPlayer
 local function updatePlayerGui(player)
 	if player.opened and player.opened_gui_type == defines.gui_type.entity and player.opened.valid and player.opened.name == base then
 		-- GUI can be assumed to exist
@@ -79,6 +84,7 @@ local function updateAllPlayerGuis()
 	end
 end
 
+---@param event on_gui_opened
 local function onGuiOpened(event)
 	local player = game.players[event.player_index]
 	if event.gui_type == defines.gui_type.entity and event.entity.valid and event.entity.name == base then
@@ -196,6 +202,7 @@ local function onGuiOpened(event)
 		end
 	end
 end
+---@param event on_gui_click
 local function onGuiClick(event)
 	if event.element.valid and event.element.name == "awesome-sink-print" then
 		local player = game.players[event.player_index]

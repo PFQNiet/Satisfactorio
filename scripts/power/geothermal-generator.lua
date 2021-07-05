@@ -8,15 +8,22 @@ local gen = miner.."-eei"
 local accumulator = miner.."-buffer"
 local basepower = 100 -- average power generation in MW for an Impure geyser (100% yield)
 
+---@class GeothermalGeneratorData
+---@field interface LuaEntity
+---@field power number[]
+---@field time_offset number
+
+---@alias GeothermalGeneratorBucket table<uint, GeothermalGeneratorData>
+---@alias global.geogens GeothermalGeneratorBucket[]
+---@type global.geogens
 local script_data = {}
 local buckets = 60
 for i=0,buckets-1 do script_data[i] = {} end
 local function getBucket(tick)
 	return script_data[tick%buckets]
 end
-local function getStruct(entity)
-	return script_data[entity.unit_number%buckets][entity.unit_number]
-end
+
+---@param entity LuaEntity
 local function createStruct(entity)
 	local node = entity.surface.find_entity("geyser", entity.position)
 	-- replace miner with generator
@@ -38,10 +45,12 @@ local function createStruct(entity)
 	powertrip.registerGenerator(nil, pow, accumulator)
 	script_data[pow.unit_number%buckets][pow.unit_number] = struct
 end
+---@param entity LuaEntity
 local function deleteStruct(entity)
 	script_data[entity.unit_number%buckets][entity.unit_number] = nil
 end
 
+---@param event on_build
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not (entity and entity.valid) then return end
@@ -50,6 +59,7 @@ local function onBuilt(event)
 	end
 end
 
+---@param event on_destroy
 local function onRemoved(event)
 	local entity = event.entity
 	if not (entity and entity.valid) then return end
@@ -58,6 +68,7 @@ local function onRemoved(event)
 	end
 end
 
+---@param event on_tick
 local function onTick(event)
 	for _,struct in pairs(getBucket(event.tick)) do
 		-- power consumption ranges based on the resource node, in a sine wave, over a minute-long cycle

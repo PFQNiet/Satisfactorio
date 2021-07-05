@@ -167,6 +167,7 @@ local function onTick()
 end
 
 -- on changing surface, all pings for the given player are invalidated
+---@param event on_player_changed_surface
 local function onSurfaceChange(event)
 	local player = game.players[event.player_index]
 	for _,ping in pairs(script_data.pings) do

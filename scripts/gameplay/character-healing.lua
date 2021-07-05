@@ -1,4 +1,5 @@
 -- the character only regenerates to 30HP, and also respawns at 30HP
+---@param event NthTickEventData
 local function onSecond(event)
 	for _,player in pairs(game.players) do
 		local character = player.character
@@ -9,6 +10,7 @@ local function onSecond(event)
 		end
 	end
 end
+---@param event on_player_respawned
 local function onRespawn(event)
 	local player = game.players[event.player_index]
 	local character = player.character

@@ -3,6 +3,7 @@ local bev = require(modpath.."scripts.lualib.build-events")
 
 local assembler = "assembler"
 
+---@param event on_build
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not (entity and entity.valid) then return end

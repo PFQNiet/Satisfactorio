@@ -2,6 +2,7 @@
 -- this auto-drives the car along the path of the hyper tube until it reaches an exit, ie. an entity with only one connection
 -- uses global.hyper_tube to track player -> movement data
 -- uses global.player_build_error_debounce to track force -> last error tick to de-duplicate placement errors
+
 local bev = require(modpath.."scripts.lualib.build-events")
 local link = require(modpath.."scripts.lualib.linked-entity")
 
@@ -10,19 +11,34 @@ local underground = "underground-hyper-tube"
 local entrance = "hyper-tube-entrance"
 local car = entrance.."-car"
 
+---@class HyperTubeData
+---@field car LuaEntity Car
+---@field character LuaEntity Character
+---@field entity LuaEntity
+---@field entity_last LuaEntity|nil
+---@field offset number
+---@field direction defines.direction
+---@field direction_last defines.direction
+
+---@alias global.hyper_tube table<uint, HyperTubeData>
+---@type global.hyper_tube
 local script_data = {}
 local debounce_error = {}
 
-local function getUndergroundPipeExit(entrance)
-	if entrance.name ~= underground then return nil end
-	for _,exit in pairs(entrance.neighbours[1]) do
-		if entrance.direction == defines.direction.north and exit.direction == defines.direction.south and entrance.position.y < exit.position.y then return exit end
-		if entrance.direction == defines.direction.east and exit.direction == defines.direction.west and entrance.position.x > exit.position.x then return exit end
-		if entrance.direction == defines.direction.south and exit.direction == defines.direction.north and entrance.position.y > exit.position.y then return exit end
-		if entrance.direction == defines.direction.west and exit.direction == defines.direction.east and entrance.position.x < exit.position.x then return exit end
+---@param source LuaEntity
+---@return LuaEntity|nil
+local function getUndergroundPipeExit(source)
+	if source.name ~= underground then return nil end
+	for _,exit in pairs(source.neighbours[1]) do
+		if source.direction == defines.direction.north and exit.direction == defines.direction.south and source.position.y < exit.position.y then return exit end
+		if source.direction == defines.direction.east and exit.direction == defines.direction.west and source.position.x > exit.position.x then return exit end
+		if source.direction == defines.direction.south and exit.direction == defines.direction.north and source.position.y > exit.position.y then return exit end
+		if source.direction == defines.direction.west and exit.direction == defines.direction.east and source.position.x < exit.position.x then return exit end
 	end
 	return nil
 end
+
+---@param event on_build
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not (entity and entity.valid) then return end
@@ -37,12 +53,14 @@ local function onBuilt(event)
 	end
 end
 
+---@type table<defines.direction, Vector>
 local vectors = {
 	[defines.direction.north] = {0,-1},
 	[defines.direction.east] = {1,0},
 	[defines.direction.south] = {0,1},
 	[defines.direction.west] = {-1,0}
 }
+---@param event on_player_driving_changed_state
 local function onVehicle(event)
 	local player = game.players[event.player_index]
 	local entity = event.entity
@@ -51,7 +69,6 @@ local function onVehicle(event)
 		if player.driving then
 			if not travel[player.index] then
 				local enter = entity.surface.find_entity(entrance,entity.position)
-				local driver = entity.get_driver()
 				if enter.energy == 0 then
 					-- must have power
 					player.driving = false
@@ -92,8 +109,9 @@ local function onVehicle(event)
 		end
 	end
 end
+
 local SPEED = 24/60 -- tiles per tick, must be <1; 24/60 = 24m/s = 86.4kmh
-local function onTick(event)
+local function onTick()
 	local travel = script_data
 	if not travel then return end
 	for pid,data in pairs(travel) do

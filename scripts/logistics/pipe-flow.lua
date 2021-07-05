@@ -1,5 +1,13 @@
 -- uses global.pipe_flow to track rolling average flow
 -- opening a pipe's GUI adds it to the tracking list, closing it (provided no other player has it open) removes it
+
+---@class PipeFlowData
+---@field entity LuaEntity Pipe or PipeToGround
+---@field opened_by table<uint, LuaGuiElement> Map of players who have this pipe open, to the GUI element showing pipe flow
+---@field rolling_average number[] Flow rate over the last 60 ticks
+
+---@alias global.pipe_flow table<uint, PipeFlowData>
+---@type global.pipe_flow
 local script_data = {}
 
 local tier1 = {flow = 300, distance = 20}
@@ -15,6 +23,8 @@ local entities = {
 local entity_names = {}
 for k,_ in pairs(entities) do table.insert(entity_names,k) end
 
+---@param root LuaEntity
+---@return number|LocalisedString
 local function measurePipeSection(root)
 	local visited = {[root.unit_number] = true}
 	local bailout = 200 -- entities[root.name].distance * 1.5
@@ -31,7 +41,7 @@ local function measurePipeSection(root)
 		end
 		return max
 	end
-	
+
 	local lengths = {}
 	for _,next in pairs(root.neighbours[1]) do
 		if (next.type == "pipe" or next.type == "pipe-to-ground") and not visited[next.unit_number] then
@@ -52,6 +62,7 @@ local function measurePipeSection(root)
 	return total < bailout and total or {"gui.pipe-too-long"}
 end
 
+---@param event on_gui_opened
 local function onGuiOpened(event)
 	if not (event.entity and event.entity.valid) then return end
 	if entities[event.entity.name] then
@@ -63,9 +74,9 @@ local function onGuiOpened(event)
 			}
 		end
 		local player = game.players[event.player_index]
-		local gui = player.gui.relative['pipe-flow']
-		if not gui then
-			gui = player.gui.relative.add{
+		local gui = player.gui.relative
+		if not gui['pipe-flow'] then
+			local frame = player.gui.relative.add{
 				type = "frame",
 				name = "pipe-flow",
 				anchor = {
@@ -76,9 +87,9 @@ local function onGuiOpened(event)
 				direction = "vertical",
 				style = "inset_frame_container_frame"
 			}
-			gui.style.use_header_filler = false
+			frame.style.use_header_filler = false
 
-			local inner = gui.add{
+			local inner = frame.add{
 				type = "frame",
 				name = "inner",
 				direction = "vertical",
@@ -97,7 +108,7 @@ local function onGuiOpened(event)
 			flow.style.top_margin = 4
 			flow.style.bottom_margin = 12
 			flow.style.horizontal_spacing = 12
-			local sprite = flow.add{
+			flow.add{
 				type = "sprite-button",
 				name = "fluid",
 				style = "transparent_slot"
@@ -124,11 +135,12 @@ local function onGuiOpened(event)
 			}
 		end
 
-		gui.inner['pipe-length'].caption = {"gui.pipe-length",measurePipeSection(event.entity),entities[event.entity.name].distance}
+		gui['pipe-flow'].inner['pipe-length'].caption = {"gui.pipe-length",measurePipeSection(event.entity),entities[event.entity.name].distance}
 
-		script_data[event.entity.unit_number].opened_by[player.index] = gui
+		script_data[event.entity.unit_number].opened_by[player.index] = gui['pipe-flow'].inner.content
 	end
 end
+---@param event on_gui_closed
 local function onGuiClosed(event)
 	if not (event.entity and event.entity.valid) then return end
 	if entities[event.entity.name] and script_data[event.entity.unit_number] then
@@ -141,7 +153,7 @@ local function onGuiClosed(event)
 	end
 end
 
-local function onTick(event)
+local function onTick()
 	for id,struct in pairs(script_data) do
 		if not struct.entity.valid then
 			script_data[id] = nil
@@ -169,9 +181,9 @@ local function onTick(event)
 				caption = {"gui.pipe-flow-details",{"gui.pipe-flow-no-fluid"},"---.-",max,{"per-minute-suffix"}}
 			end
 			for _,gui in pairs(struct.opened_by) do
-				gui.inner.content.fluid.sprite = sprite
-				gui.inner.content.details.flowtext.caption = caption
-				gui.inner.content.details.bar.value = bar
+				gui['fluid'].sprite = sprite
+				gui['details'].flowtext.caption = caption
+				gui['details'].bar.value = bar
 			end
 		end
 	end

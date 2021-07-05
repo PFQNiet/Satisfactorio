@@ -4,6 +4,7 @@ local math2d = require("math2d")
 local foundation = "foundation"
 local tile = "stone-path"
 
+---@param event on_build
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not (entity and entity.valid) then return end
@@ -50,6 +51,7 @@ local function onBuilt(event)
 	end
 end
 
+---@param event on_destroy
 local function onRemoved(event)
 	local entity = event.entity
 	if not (entity and entity.valid) then return end
@@ -79,6 +81,7 @@ local function onRemoved(event)
 	end
 end
 
+---@param event on_player_selected_area
 local function onSelectedArea(event)
 	if event.item == "deconstruct-foundation" then
 		local player = game.players[event.player_index]
@@ -104,6 +107,7 @@ local function onSelectedArea(event)
 		end
 	end
 end
+---@param event on_player_alt_selected_area
 local function onDeselectedArea(event)
 	if event.item == "deconstruct-foundation" then
 		local player = game.players[event.player_index]
@@ -113,11 +117,13 @@ local function onDeselectedArea(event)
 		end
 	end
 end
+---@param event on_marked_for_deconstruction
 local function onDeconstruct(event)
 	if event.entity.type == "deconstructible-tile-proxy" then
 		event.entity.cancel_deconstruction(event.entity.force, event.player_index and game.players[event.player_index] or nil)
 	end
 end
+---@param event on_cancelled_deconstruction
 local function onUndoDeconstruct(event)
 	if event.entity.name == foundation then
 		event.entity.minable = false

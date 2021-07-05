@@ -1,4 +1,5 @@
 local cache = {}
+---@param name string
 local function getBuildingRecipe(name)
 	if cache[name] then return cache[name] end
 
@@ -31,8 +32,10 @@ local function getBuildingRecipe(name)
 	end
 end
 
+-- if the entity has an undo recipe, refund the components instead
+---@param player LuaPlayer
+---@param entity LuaEntity
 local function refundEntity(player, entity)
-	-- if the entity has an undo recipe, refund the components instead
 	if not (player and player.cheat_mode) then
 		local recipe = getBuildingRecipe(entity.name)
 		local insert = recipe and recipe.ingredients or {{name=entity.name,amount=1}}

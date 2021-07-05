@@ -2,6 +2,7 @@ local bev = require(modpath.."scripts.lualib.build-events")
 
 local tower = "lookout-tower"
 
+---@param event on_build
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not (entity and entity.valid) then return end
@@ -10,6 +11,7 @@ local function onBuilt(event)
 	end
 end
 
+---@param event on_player_driving_changed_state
 local function onVehicle(event)
 	local player = game.players[event.player_index]
 	local entity = event.entity

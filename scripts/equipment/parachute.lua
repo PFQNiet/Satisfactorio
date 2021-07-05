@@ -8,6 +8,16 @@ local item = "parachute"
 local vehicle = item.."-flying"
 local shadow = item.."-flying-shadow"
 
+---@class ParachuteData
+---@field player LuaPlayer
+---@field car LuaEntity Car
+---@field shadow uint64
+---@field time uint
+---@field position Position
+---@field direction defines.direction
+
+---@alias global.parachute_flight table<uint, ParachuteData>
+---@type global.parachute_flight
 local script_data = {}
 
 local function onJump(event)
@@ -81,9 +91,9 @@ local function onJump(event)
 	end
 end
 
+---@param event on_player_driving_changed_state
 local function onVehicle(event)
 	local player = game.players[event.player_index]
-	local entity = event.entity
 	if not player.driving then
 		-- check if player is being yeeted and put them back in if so
 		local yeet = script_data[player.index]
@@ -92,6 +102,8 @@ local function onVehicle(event)
 		end
 	end
 end
+
+---@param event on_player_died
 local function onDied(event)
 	local player = game.players[event.player_index]
 	local yeet = script_data[player.index]
@@ -101,8 +113,8 @@ local function onDied(event)
 	end
 end
 
-local function onTick(event)
-	for pid,struct in pairs(script_data) do
+local function onTick()
+	for _,struct in pairs(script_data) do
 		struct.time = struct.time+1
 
 		local altitude = 2*math.sin(struct.time/60*math.pi)

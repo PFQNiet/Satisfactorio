@@ -8,15 +8,22 @@ local buffer = "nuclear-power-plant-eei"
 local accumulator = "nuclear-power-plant-buffer"
 local power = 2500
 
+---@class NuclearGeneratorData
+---@field generator LuaEntity
+---@field interface LuaEntity
+---@field ticks uint Number of ticks since last waste generation
+
+---@alias NuclearGeneratorBucket table<uint, NuclearGeneratorData>
+---@alias global.nuclear_generators NuclearGeneratorBucket[]
+---@type global.nuclear_generators
 local script_data = {}
 local buckets = 60
 for i=0,buckets-1 do script_data[i] = {} end
 local function getBucket(tick)
 	return script_data[tick%buckets]
 end
-local function getStruct(entity)
-	return script_data[entity.unit_number%buckets][entity.unit_number]
-end
+
+---@param entity LuaEntity
 local function createStruct(entity)
 	local pow = entity.surface.create_entity{
 		name = buffer,
@@ -36,10 +43,12 @@ local function createStruct(entity)
 	powertrip.registerGenerator(entity, pow, accumulator)
 	script_data[entity.unit_number%buckets][entity.unit_number] = struct
 end
+---@param entity LuaEntity
 local function deleteStruct(entity)
 	script_data[entity.unit_number%buckets][entity.unit_number] = nil
 end
 
+---@param event on_build
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not (entity and entity.valid) then return end
@@ -50,6 +59,7 @@ local function onBuilt(event)
 	end
 end
 
+---@param event on_destroy
 local function onRemoved(event)
 	local entity = event.entity
 	if not (entity and entity.valid) then return end
@@ -68,6 +78,7 @@ local waste_data = {
 		ticks = 60*60 -- ticks per waste
 	}
 }
+---@param event on_tick
 local function onTick(event)
 	for _,struct in pairs(getBucket(event.tick)) do
 		-- if the machine is crafting then output power, and don't if not

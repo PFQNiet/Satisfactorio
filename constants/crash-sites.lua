@@ -1,3 +1,8 @@
+---@class CrashSiteLootEntry
+---@field probability number
+---@field amount uint8[]
+
+---@type table<string, CrashSiteLootEntry>
 local loot = {
 	["screw"] = {
 		probability = 0.8,
@@ -39,11 +44,11 @@ local loot = {
 		probability = 0.2,
 		amount = {10,20}
 	},
-	["ai-limiter"] = { -- ai limiter
+	["ai-limiter"] = {
 		probability = 0.15,
 		amount = {8,16}
 	},
-	["high-speed-connector"] = { -- high speed connector
+	["high-speed-connector"] = {
 		probability = 0.1,
 		amount = {8,16}
 	},
@@ -69,6 +74,9 @@ local loot = {
 	}
 }
 
+---@class CrashSiteRequirementsProbabilities
+---@field total number
+---@field items table<string, number>
 local reqs = {
 	total = 100, -- chance of no item being needed, only power
 	items = {

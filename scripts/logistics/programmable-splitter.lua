@@ -10,12 +10,17 @@ local buffer = "merger-splitter-box"
 
 local script_data = require(modpath.."scripts.logistics.splitters").data
 
+---@param entity LuaEntity
 local function findStruct(entity)
 	return script_data.splitters[entity.unit_number]
 end
+-- Determine which signal slot to use for the given side and slot number
+---@param side string
+---@param index number
 local function signalIndex(side, index)
 	return ({left=0,forward=1,right=2})[side]*32+index
 end
+---@param player LuaPlayer
 local function closeGui(player)
 	local gui = player.gui.screen['programmable-splitter']
 	if gui then gui.visible = false end
@@ -23,6 +28,7 @@ local function closeGui(player)
 	script_data.gui[player.index] = nil
 end
 
+---@param event on_build
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not (entity and entity.valid) then return end
@@ -179,6 +185,7 @@ local function onPaste(event)
 	if event.destination.name == splitter then
 		-- read signals and update struct accordingly
 		local struct = findStruct(event.destination)
+		---@type LuaConstantCombinatorControlBehavior
 		local control = struct.base.get_control_behavior()
 		for _,dir in pairs({"left","forward","right"}) do
 			struct.filters[dir] = {}
@@ -220,29 +227,30 @@ end
 	------ item[smart-splitter-{DIR}-item]
 	---- button[programmable-splitter-{DIR}-add]
 ]]
+
+---@param event on_gui_opened
 local function onGuiOpened(event)
 	local player = game.players[event.player_index]
 	if event.gui_type == defines.gui_type.entity and event.entity.name == splitter then
 		-- create the custom gui and open that instead
-		local gui = player.gui.screen['programmable-splitter']
-		local columns
-		if not gui then
-			gui = player.gui.screen.add{
+		local gui = player.gui.screen
+		if not gui['programmable-splitter'] then
+			local frame = player.gui.screen.add{
 				type = "frame",
 				name = "programmable-splitter",
 				direction = "vertical",
 				style = "inner_frame_in_outer_frame"
 			}
-			local title_flow = gui.add{type = "flow", name = "title_flow"}
+			local title_flow = frame.add{type = "flow", name = "title_flow"}
 			local title = title_flow.add{type = "label", caption = event.entity.localised_name, style = "frame_title"}
-			title.drag_target = gui
+			title.drag_target = frame
 			local pusher = title_flow.add{type = "empty-widget", style = "draggable_space_header"}
 			pusher.style.height = 24
 			pusher.style.horizontally_stretchable = true
-			pusher.drag_target = gui
+			pusher.drag_target = frame
 			title_flow.add{type = "sprite-button", style = "frame_action_button", sprite = "utility/close_white", name = "programmable-splitter-close"}
-			
-			columns = gui.add{
+
+			local columns = frame.add{
 				type = "flow",
 				name = "columns"
 			}
@@ -254,13 +262,13 @@ local function onGuiOpened(event)
 					direction = "vertical",
 					name = "filter-"..dir
 				}
-				local title = col.add{
+				local subtitle = col.add{
 					type = "frame",
 					name = "title",
 					style = "subheader_frame"
 				}
-				title.style.horizontally_stretchable = true
-				title.add{
+				subtitle.style.horizontally_stretchable = true
+				subtitle.add{
 					type = "label",
 					name = "label",
 					style = "heading_2_label",
@@ -279,10 +287,10 @@ local function onGuiOpened(event)
 				list.style.maximal_height = 400
 				list.style.minimal_width = 240
 
-				title.add{
+				subtitle.add{
 					type = "empty-widget"
 				}.style.horizontally_stretchable = true
-				local button = title.add{
+				subtitle.add{
 					type = "sprite-button",
 					name = "programmable-splitter-"..dir.."-add",
 					style = "tool_button_green",
@@ -290,25 +298,27 @@ local function onGuiOpened(event)
 					sprite = "utility.add"
 				}
 			end
-		else
-			columns = gui.columns
 		end
-		
+		local frame = gui['programmable-splitter']
+		local columns = frame.columns
+
 		local struct = findStruct(event.entity)
 		fullGuiUpdate(struct, columns)
 
-		gui.visible = true
-		player.opened = gui
+		frame.visible = true
+		player.opened = frame
 		script_data.gui[player.index] = struct
-		gui.force_auto_center()
+		frame.force_auto_center()
 	end
 end
+---@param event on_gui_closed
 local function onGuiClosed(event)
 	if event.element and event.element.valid and event.element.name == "programmable-splitter" then
 		local player = game.players[event.player_index]
 		closeGui(player)
 	end
 end
+---@param event on_gui_click
 local function onGuiClick(event)
 	if event.element and event.element.valid then
 		if event.element.name == "programmable-splitter-close" then
@@ -321,15 +331,14 @@ local function onGuiClick(event)
 	 	) then
 			local struct = script_data.gui[event.player_index]
 			-- apply this change to other players with this entity open, including the current player
-			local base = struct.base
 			local dir = ({
 				["programmable-splitter-left-add"] = "left",
 				["programmable-splitter-forward-add"] = "forward",
 				["programmable-splitter-right-add"] = "right"
 			})[event.element.name]
 			local players = game.players
-			for pid,struct in pairs(script_data.gui) do
-				if struct.base == base then
+			for pid,other in pairs(script_data.gui) do
+				if other.base == struct.base then
 					local player = players[pid]
 					local list = player.gui.screen['programmable-splitter'].columns["filter-"..dir].filters
 					local i = #list.children+1
@@ -338,13 +347,14 @@ local function onGuiClick(event)
 					elseif i == 32 then
 						player.gui.screen['programmable-splitter'].columns["filter-"..dir].title[event.element.name].enabled = false
 					end
-					addFilterEntry(list, struct, dir, i)
+					addFilterEntry(list, other, dir, i)
 					if event.player_index == pid then list.scroll_to_bottom() end
 				end
 			end
 		end
 	end
 end
+---@param event on_gui_selection_state_changed
 local function onGuiSelected(event)
 	if event.element.valid and (
 		event.element.name == "programmable-splitter-left-selection"
@@ -375,6 +385,7 @@ local function onGuiSelected(event)
 		end
 	end
 end
+---@param event on_gui_elem_changed
 local function onGuiElemChanged(event)
 	if event.element.valid and (
 		event.element.name == "programmable-splitter-left-item"
@@ -401,8 +412,9 @@ local function onGuiElemChanged(event)
 	end
 end
 
+-- if the player moves and has a splitter open, check that the splitter can still be reached
+---@param event on_player_changed_position
 local function onMove(event)
-	-- if the player moves and has a splitter open, check that the splitter can still be reached
 	local player = game.players[event.player_index]
 	local struct = script_data.gui[player.index]
 	if struct and struct.base.name == splitter then

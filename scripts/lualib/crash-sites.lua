@@ -8,10 +8,25 @@ local requirement_table = data.requirements
 local crash_site = require("crash-site")
 local spaceship = "crash-site-spaceship"
 
+---@class CrashSiteRequirements
+---@field item string|nil
+---@field count uint8|nil
+---@field power uint
+
+---@class CrashSiteData
+---@field ship LuaEntity Container
+---@field eei LuaEntity ElectricEnergyInterface
+---@field requirements CrashSiteRequirements
+
+---@class global.crash_site
+---@field sites table<uint, CrashSiteData>
+---@field opened table<uint, uint> Map player index to opened ship number
 local script_data = {
 	sites = {},
 	opened = {}
 }
+
+---@param player LuaPlayer
 local function closeGui(player)
 	local gui = player.gui.screen['crash-site-locked']
 	if gui then gui.visible = false end
@@ -19,16 +34,18 @@ local function closeGui(player)
 	player.opened = nil
 end
 
+---@return table<string, uint8>
 local function generateLoot()
 	local loot = {}
 	local random = math.random
-	for item,data in pairs(loot_table) do
-		if random() < data.probability then
-			loot[item] = random(data.amount[1],data.amount[2])
+	for item,entry in pairs(loot_table) do
+		if random() < entry.probability then
+			loot[item] = random(entry.amount[1],entry.amount[2])
 		end
 	end
 	return loot
 end
+---@return CrashSiteRequirements
 local function generateRequirements()
 	local random = math.random
 	local selected = random(requirement_table.total)
@@ -48,6 +65,9 @@ local function generateRequirements()
 		power = power
 	}
 end
+
+---@param surface LuaSurface
+---@param position Position
 local function createCrashSite(surface, position)
 	crash_site.create_crash_site(
 		surface,
@@ -97,6 +117,7 @@ end
 
 -- on opening a spaceship, check to see if it is registered in crash-sites. If so, it is locked and should present a new GUI to accept items/power
 -- if it isn't registered, then either something went wrong or the player actually unlocked it, so just allow the entity to be opened from then on
+---@param event on_gui_opened
 local function onGuiOpened(event)
 	local player = game.players[event.player_index]
 	if event.gui_type ~= defines.gui_type.entity then return end
@@ -107,25 +128,25 @@ local function onGuiOpened(event)
 		return
 	end
 	script_data.opened[player.index] = event.entity.unit_number
-	
-	local gui = player.gui.screen['crash-site-locked']
-	if not gui then
-		gui = player.gui.screen.add{
+
+	local gui = player.gui.screen
+	if not gui['crash-site-locked'] then
+		local frame = player.gui.screen.add{
 			type = "frame",
 			name = "crash-site-locked",
 			direction = "vertical",
 			style = "inner_frame_in_outer_frame"
 		}
-		local title_flow = gui.add{type = "flow", name = "title_flow"}
+		local title_flow = frame.add{type = "flow", name = "title_flow"}
 		local title = title_flow.add{type = "label", caption = {"gui.crash-site-title"}, style = "frame_title"}
-		title.drag_target = gui
+		title.drag_target = frame
 		local pusher = title_flow.add{type = "empty-widget", style = "draggable_space_header"}
 		pusher.style.height = 24
 		pusher.style.horizontally_stretchable = true
-		pusher.drag_target = gui
+		pusher.drag_target = frame
 		title_flow.add{type = "sprite-button", style = "frame_action_button", sprite = "utility/close_white", name = "crash-site-close"}
 
-		local content = gui.add{
+		local content = frame.add{
 			type = "frame",
 			style = "inside_shallow_frame_with_padding",
 			direction = "vertical",
@@ -143,7 +164,7 @@ local function onGuiOpened(event)
 			name = "left",
 			style = "deep_frame_in_shallow_frame"
 		}
-		local preview = col1.add{
+		col1.add{
 			type = "entity-preview",
 			name = "preview",
 			style = "entity_button_base"
@@ -208,9 +229,11 @@ local function onGuiOpened(event)
 			caption = {"gui.crash-site-open"}
 		}
 	end
+	local frame = gui['crash-site-locked']
+	local content_table = frame.content.table
 
-	gui.content.table.left.preview.entity = struct.ship
-	local repairs = gui.content.table.right.repairs
+	content_table.left.preview.entity = struct.ship
+	local repairs = content_table.right.repairs
 	local ready = true
 	if struct.requirements.item then
 		repairs['parts-needed'].caption = {"gui.crash-site-parts",struct.requirements.count,struct.requirements.item,game.item_prototypes[struct.requirements.item].localised_name}
@@ -232,15 +255,18 @@ local function onGuiOpened(event)
 	end
 	repairs.parent.button['crash-site-repair-submit'].enabled = ready
 
-	gui.visible = true
-	player.opened = gui
-	gui.force_auto_center()
+	frame.visible = true
+	player.opened = frame
+	frame.force_auto_center()
 end
+---@param event on_gui_closed
 local function onGuiClosed(event)
 	if event.element and event.element.valid and event.element.name == "crash-site-locked" then
 		closeGui(game.players[event.player_index])
 	end
 end
+
+---@param event on_gui_click
 local function onGuiClick(event)
 	if not (event.element and event.element.valid) then return end
 	local player = game.players[event.player_index]
@@ -279,8 +305,9 @@ local function onGuiClick(event)
 	end
 end
 
+-- if the player moves and has a site open, check that the site can still be reached
+---@param event on_player_changed_position
 local function onMove(event)
-	-- if the player moves and has a site open, check that the site can still be reached
 	local player = game.players[event.player_index]
 	local site = script_data.opened[player.index]
 	if site and script_data.sites[site] then

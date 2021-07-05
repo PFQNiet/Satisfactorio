@@ -5,6 +5,7 @@ local link = require(modpath.."scripts.lualib.linked-entity")
 local splitter = "conveyor-merger"
 local buffer = "merger-splitter-box"
 
+---@param event on_build
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not (entity and entity.valid) then return end

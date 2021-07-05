@@ -423,11 +423,11 @@ local function existsNear(resource, surface, x, y)
 		-- or checkCollision(grid,surf,gx+2,gy+2,r)
 end
 
+-- pick a random open node and process it
 local function scanForResources()
-	-- pick a random number and iterate the groups again until that many have passed
 	local rand = math.random(1,script_data.node_count)
 	local resource_list = script_data.resources
-	for name, data in pairs(resource_list) do
+	for _, data in pairs(resource_list) do
 		if rand > #data.nodes then
 			rand = rand - #data.nodes
 		else
@@ -539,6 +539,7 @@ local function onInit()
 	registerSurface(game.surfaces.nauvis)
 end
 
+---@param event on_player_display_resolution_changed
 local function onResolutionChanged(event)
 	local player = game.players[event.player_index]
 	local gui = player.gui.screen['resources-loading']
@@ -546,6 +547,8 @@ local function onResolutionChanged(event)
 		gui.location = {(player.display_resolution.width-300*player.display_scale)/2, 40*player.display_scale}
 	end
 end
+
+---@param event on_tick
 local function onTick(event)
 	local count = script_data.node_count
 	-- run more often the more open nodes there are
@@ -574,19 +577,19 @@ local function onTick(event)
 	if event.tick%30 == 0 then
 		-- if there are many nodes on the player's current surface, show a GUI to indicate the map is loading
 		for _,player in pairs(game.players) do
-			local gui = player.gui.screen['resources-loading']
-			if not gui then
-				gui = player.gui.screen.add{
+			local gui = player.gui.screen
+			if not gui['resources-loading'] then
+				local frame = player.gui.screen.add{
 					type = "frame",
 					name = "resources-loading",
 					direction = "vertical",
 					caption = {"gui.map-generator-working-title"},
 					style = "inner_frame_in_outer_frame"
 				}
-				gui.style.horizontally_stretchable = false
-				gui.style.use_header_filler = false
-				gui.style.width = 300
-				local flow = gui.add{
+				frame.style.horizontally_stretchable = false
+				frame.style.use_header_filler = false
+				frame.style.width = 300
+				local flow = frame.add{
 					type = "frame",
 					direction = "vertical",
 					name = "content",
@@ -602,19 +605,20 @@ local function onTick(event)
 					type = "label",
 					name = "count"
 				}
-				gui.visible = false
+				frame.visible = false
 			end
+			local frame = gui['resources-loading']
 			if count < 5 then
-				if gui.visible then
-					gui.visible = false
+				if frame.visible then
+					frame.visible = false
 				end
 			else
-				if not gui.visible then
-					gui.visible = true
+				if not frame.visible then
+					frame.visible = true
 					onResolutionChanged({player_index=player.index})
 				end
 				if event.tick > 0 then -- don't show node count on first tick
-					gui.content.count.caption = {"gui.map-generator-node-count",count}
+					frame.content.count.caption = {"gui.map-generator-node-count",count}
 				end
 			end
 		end

@@ -1,15 +1,30 @@
--- uses global.io to track structures
+---@class MachineConnection
+---@field target LuaEntity
+---@field belt LuaEntity TransportBelt
+---@field inserter_left LuaEntity Inserter
+---@field inserter_right LuaEntity Inserter
+---@field visual uint64 Rendering arrow/line
+---@field active boolean Activity toggled by there being a valid belt connected
+
+---@class MachineConnectionList
+---@field active boolean
+---@field connections MachineConnection[]
+
 local bev = require(modpath.."scripts.lualib.build-events")
+local getitems = require(modpath.."scripts.lualib.get-items-from")
 local math2d = require("math2d")
+
+---@class global.io
+---@field structures table<uint, MachineConnectionList>
+---@field belts table<uint, MachineConnection> reverse lookup
 local script_data = {
-	-- io struct: {target, belt, inserter_left, inserter_right, visual, active, suppressed}
-	structures = {}, -- table<base unit number, table<coordinate, io struct>>
-	belts = {} -- table<belt unit number, io struct> used for reverse lookup
+	structures = {},
+	belts = {}
 }
 
 local inserter_name = "loader-inserter"
+-- map belt/underground names to tiers
 local belt_tiers = {
-	-- map belt/underground names to tiers
 	["conveyor-belt-mk-1"] = 1,
 	["conveyor-lift-mk-1"] = 1,
 	["conveyor-belt-mk-2"] = 2,
@@ -21,8 +36,8 @@ local belt_tiers = {
 	["conveyor-belt-mk-5"] = 5,
 	["conveyor-lift-mk-5"] = 5
 }
+-- map tier to loader belt name
 local loader_belts = {
-	-- map tier to loader belt name
 	[0] = "loader-conveyor",
 	[1] = "loader-conveyor-belt-mk-1",
 	[2] = "loader-conveyor-belt-mk-2",
@@ -30,6 +45,7 @@ local loader_belts = {
 	[4] = "loader-conveyor-belt-mk-4",
 	[5] = "loader-conveyor-belt-mk-5"
 }
+---@param belt LuaEntity
 local function isLoaderBelt(belt)
 	for _,name in pairs(loader_belts) do
 		if name == belt.name then return true end
@@ -37,9 +53,12 @@ local function isLoaderBelt(belt)
 	return false
 end
 
+---@param entity LuaEntity
 local function getStructsForEntity(entity)
 	return script_data.structures[entity.unit_number]
 end
+---@param entity LuaEntity
+---@param struct MachineConnection
 local function addStructForEntity(entity, struct)
 	local obj = getStructsForEntity(entity)
 	if not obj then
@@ -51,45 +70,28 @@ local function addStructForEntity(entity, struct)
 	end
 	table.insert(obj.connections, struct)
 end
+---@param entity LuaEntity
 local function deleteStructsForEntity(entity)
 	script_data.structures[entity.unit_number] = nil
 end
 
+---@param belt LuaEntity
 local function getStructForBelt(belt)
 	return script_data.belts[belt.unit_number]
 end
+---@param belt LuaEntity
+---@param struct MachineConnection
 local function setStructForBelt(belt, struct)
 	script_data.belts[belt.unit_number] = struct
 end
+---@param belt LuaEntity
 local function deleteStructForBelt(belt)
 	setStructForBelt(belt, nil)
 end
 
-local function addToBufferOrSpillStack(stack, buffer, entity)
-	if buffer then
-		buffer.insert(stack)
-	else
-		entity.surface.spill_item_stack(entity.position, stack, true, entity.force, false)
-	end
-end
-local function getItemsFromTransportBelt(belt, buffer)
-	-- belts are awkward XD But this will prevent accidentally replenishing items on belts, eg. ammo, and since it's only called on entity mining, it's probably fine
-	for i=1,belt.get_max_transport_line_index() do
-		local line = belt.get_transport_line(i)
-		if #line > 0 then
-			for j=1,#line do
-				addToBufferOrSpillStack(line[j], buffer, belt)
-			end
-		end
-		line.clear()
-	end
-end
-local function getItemsFromInserter(inserter, buffer)
-	if not inserter.held_stack.valid_for_read then return end
-	addToBufferOrSpillStack(inserter.held_stack, buffer, inserter)
-	inserter.held_stack.clear()
-end
-
+---@param belt LuaEntity
+---@param tier number
+---@param buffer LuaInventory|nil
 local function replaceBelt(belt, tier, buffer)
 	-- don't bother if the belt is already the correct type
 	if belt.name == loader_belts[tier] then return end
@@ -97,9 +99,9 @@ local function replaceBelt(belt, tier, buffer)
 	local struct = getStructForBelt(belt)
 	if tier == 0 then
 		-- spill the old belt's contents as well as anything in the inserters' hands
-		getItemsFromTransportBelt(struct.belt, buffer)
-		getItemsFromInserter(struct.inserter_left, buffer)
-		getItemsFromInserter(struct.inserter_right, buffer)
+		getitems.belt(struct.belt, buffer)
+		getitems.inserter(struct.inserter_left, buffer)
+		getitems.inserter(struct.inserter_right, buffer)
 	end
 	deleteStructForBelt(belt)
 	struct.belt = belt.surface.create_entity{
@@ -113,10 +115,14 @@ local function replaceBelt(belt, tier, buffer)
 	}
 	setStructForBelt(struct.belt, struct)
 	struct.active = tier > 0
-	struct.inserter_left.active = struct.active and not struct.suppressed
-	struct.inserter_right.active = struct.active and not struct.suppressed
+	local parent_active = getStructsForEntity(struct.target).active
+	struct.inserter_left.active = struct.active and parent_active
+	struct.inserter_right.active = struct.active and parent_active
 end
 
+---@param belt LuaEntity
+---@param tier number
+---@param buffer LuaInventory|nil
 local function snapNeighbouringLoaderBelts(belt, tier, buffer)
 	for _,side in pairs{"inputs","outputs"} do
 		-- Due to the "no naked merging" rule, there should only be 0 or 1 neighbours, so we can assume that to be true
@@ -127,8 +133,11 @@ local function snapNeighbouringLoaderBelts(belt, tier, buffer)
 	end
 end
 
+-- check if a neighbour exists in the given direction, quick-replace the belt if so and return either the existing or newly replaced belt
+---@param belt LuaEntity
+---@param direction "inputs"|"outputs"
+---@return LuaEntity
 local function snapToExistingBelt(belt, direction)
-	-- check if a neighbour exists in the given direction, quick-replace the belt if so and return either the existing or newly replaced belt
 	-- can assume just one neighbour since only one edge of the belt is exposed to the player
 	local neighbour = belt.belt_neighbours[direction][1]
 	if not neighbour then return belt end
@@ -148,6 +157,13 @@ local function snapToExistingBelt(belt, direction)
 	}
 end
 
+-- Add an input or output to the given machine
+---@param entity LuaEntity
+---@param offset Position Relative to the entity facing North
+---@param mode "input"|"output"
+---@param target LuaEntity|nil Child entity to target
+---@param direction defines.direction Default to North
+---@return MachineConnection
 local function addConnection(entity, offset, mode, target, direction)
 	assert(mode == "input" or mode == "output", "Invalid mode "..mode..", expected 'input' or 'output'")
 
@@ -224,18 +240,20 @@ local function addConnection(entity, offset, mode, target, direction)
 end
 
 -- clean up all entities involved in the entity's IO, putting any items into the provided buffer (or spilling them)
+---@param entity LuaEntity
+---@param buffer LuaInventory
 local function destroyConnections(entity, buffer)
 	local structs = getStructsForEntity(entity)
 	if not structs then return end
 	for _,struct in pairs(structs.connections) do
-		getItemsFromTransportBelt(struct.belt, buffer)
+		getitems.belt(struct.belt, buffer)
 		deleteStructForBelt(struct.belt)
 		struct.belt.destroy()
 
-		getItemsFromInserter(struct.inserter_left, buffer)
+		getitems.inserter(struct.inserter_left, buffer)
 		struct.inserter_left.destroy()
 
-		getItemsFromInserter(struct.inserter_right, buffer)
+		getitems.inserter(struct.inserter_right, buffer)
 		struct.inserter_right.destroy()
 
 		-- visualisation is linked to the main entity so it gets destroyed automatically
@@ -243,6 +261,8 @@ local function destroyConnections(entity, buffer)
 	deleteStructsForEntity(entity)
 end
 
+---@param entity LuaEntity
+---@param enable boolean
 local function toggleConnections(entity, enable)
 	local structs = getStructsForEntity(entity)
 	assert(structs, "Call to toggle on "..entity.name.." at "..entity.position.x..","..entity.position.y.." failed: no registration")
@@ -254,12 +274,14 @@ local function toggleConnections(entity, enable)
 		struct.inserter_right.active = structs.active and struct.active
 	end
 end
+---@param entity LuaEntity
 local function isEnabled(entity)
 	local structs = getStructsForEntity(entity)
 	assert(structs, "Call to isEnabled on "..entity.name.." at "..entity.position.x..","..entity.position.y.." failed: no registration")
 	return structs.active
 end
 
+---@param event on_build|on_player_rotated_entity
 local function onBuiltOrRotated(event)
 	-- building and rotating both have the same effects!
 	local entity = event.created_entity or event.entity
@@ -269,6 +291,7 @@ local function onBuiltOrRotated(event)
 	snapNeighbouringLoaderBelts(entity, tier)
 end
 
+---@param event on_destroy
 local function onRemoved(event)
 	local entity = event.entity
 	if not (entity and entity.valid) then return end

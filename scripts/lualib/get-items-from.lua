@@ -14,13 +14,14 @@ local function retrieveItemStack(entity, stack, target)
 end
 
 ---@param entity LuaEntity
----@param inventory LuaInventory
+---@param inventory LuaInventory|LuaTransportLine
 ---@param target LuaInventory|nil
 local function retrieveItemsFromInventory(entity, inventory, target)
 	if not (inventory and inventory.valid) then return end
 	for i=1,#inventory do
 		retrieveItemStack(entity, inventory[i], target)
 	end
+	inventory.clear()
 end
 
 --- collect held item from inserter
@@ -63,6 +64,17 @@ local function retrieveItemsFromStorage(box, target)
 	retrieveItemsFromInventory(box, source, target)
 end
 
+--- collect items from transport belt lanes
+---@param belt LuaEntity
+---@param target LuaInventory|nil
+local function retrieveItemsFromBelt(belt, target)
+	for i=1,belt.get_max_transport_line_index() do
+		local line = belt.get_transport_line(i)
+		-- belt lines thankfully are similar enough to inventories for this to work
+		retrieveItemsFromInventory(belt, line, target)
+	end
+end
+
 --- collect items from the fuel inventory and place them in target event buffer
 ---@param burner LuaEntity
 ---@param target LuaInventory|nil
@@ -91,6 +103,7 @@ end
 
 return {
 	inserter = retrieveItemFromInserter,
+	belt = retrieveItemsFromBelt,
 	assembler = retrieveItemsFromAssembler,
 	storage = retrieveItemsFromStorage,
 	burner = retrieveItemsFromBurner,

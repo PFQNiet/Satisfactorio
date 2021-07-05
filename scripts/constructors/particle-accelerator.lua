@@ -6,15 +6,27 @@ local link = require(modpath.."scripts.lualib.linked-entity")
 local accelerator = "particle-accelerator"
 local eei = accelerator.."-eei"
 
+---@class ParticleAcceleratorData
+---@field accelerator LuaEntity AssemblingMachine
+---@field interface LuaEntity ElectricEnergyInterface
+
+---@alias ParticleAcceleratorBucket table<uint, ParticleAcceleratorData>
+
+---@alias global.accelerators table<uint8, ParticleAcceleratorBucket>
+---@type global.accelerators
 local script_data = {}
 local buckets = 30
 for i=0,buckets-1 do script_data[i] = {} end
 local function getBucket(tick)
 	return script_data[tick%buckets]
 end
+
+---@param entity LuaEntity
 local function getStruct(entity)
 	return script_data[entity.unit_number%buckets][entity.unit_number]
 end
+
+---@param entity LuaEntity
 local function createStruct(entity)
 	local pow = entity.surface.create_entity{
 		name = eei,
@@ -34,10 +46,12 @@ local function createStruct(entity)
 	-- the EEI is the interactible entity
 	script_data[pow.unit_number%buckets][pow.unit_number] = struct
 end
+---@param entity LuaEntity
 local function deleteStruct(entity)
 	script_data[entity.unit_number%buckets][entity.unit_number] = nil
 end
 
+---@param event on_build
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not (entity and entity.valid) then return end
@@ -50,6 +64,7 @@ local function onBuilt(event)
 	end
 end
 
+---@param event on_destroy
 local function onRemoved(event)
 	local entity = event.entity
 	if not (entity and entity.valid) then return end
@@ -67,6 +82,8 @@ local power_data = {
 	["nuclear-pasta"] = {500, 1500},
 	["plutonium-pellet"] = {250, 750}
 }
+
+---@param event on_tick
 local function onTick(event)
 	for _,struct in pairs(getBucket(event.tick)) do
 		-- power consumption ranges based on recipe and crafting progress
@@ -83,6 +100,7 @@ local function onTick(event)
 	end
 end
 
+---@param event on_gui_opened
 local function onGuiOpened(event)
 	local player = game.players[event.player_index]
 	if event.entity and event.entity.valid and event.entity.name == eei then

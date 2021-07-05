@@ -1,9 +1,16 @@
--- uses global.rail_freebies to give 5 free rails for every rail paid for
--- this effectively reduces the cost of rails to 1/6
-local script_data = {} -- dictionary of player index to number of free rails granted
+---@alias global.rail_freebies table<uint, uint8>
+-- give 5 free rails for every rail paid for, effectively reducing the cost of rails to 1/6
+---@type global.rail_freebies
+local script_data = {}
 
 local bm = require(modpath.."scripts.lualib.building-management")
 
+---Determin if, and how many, of the buildings can be built
+---@param player LuaPlayer
+---@param materials Product[]
+---@param inventory LuaInventory
+---@param buffer LuaInventory|nil An additional buffer, such as from a mining event, whose items should also be counted
+---@return number
 local function canAfford(player, materials, inventory, buffer)
 	if player.cheat_mode then return 100 end
 	local contents = inventory.get_contents()
@@ -19,21 +26,22 @@ local function canAfford(player, materials, inventory, buffer)
 	return affordable
 end
 
+---@param player LuaPlayer
+---@param buffer LuaInventory|nil An additional buffer, such as from a mining event, whose items should also be counted
 local function updateGUI(player, buffer)
-	-- if an event buffer is passed, add its contents to the player's inventory for counting purposes
-	local gui = player.gui.screen.buildgun
-	if not gui then
-		gui = player.gui.screen.add{
+	local gui = player.gui.screen
+	if not gui['buildgun'] then
+		local frame = player.gui.screen.add{
 			type = "frame",
 			name = "buildgun",
 			direction = "vertical",
 			ignored_by_interaction = true,
 			style = "blurry_frame"
 		}
-		gui.style.horizontally_stretchable = false
-		gui.style.use_header_filler = false
-		gui.style.width = 540
-		local flow = gui.add{
+		frame.style.horizontally_stretchable = false
+		frame.style.use_header_filler = false
+		frame.style.width = 540
+		local flow = frame.add{
 			type = "flow",
 			direction = "horizontal",
 			name = "content"
@@ -46,7 +54,8 @@ local function updateGUI(player, buffer)
 		}
 		flow.add{type="empty-widget"}.style.horizontally_stretchable = true
 	end
-	gui.visible = false
+	local frame = gui['buildgun']
+	frame.visible = false
 
 	local name = (player.cursor_stack.valid_for_read and player.cursor_stack.name) or (player.cursor_ghost and player.cursor_ghost.name) or ""
 	local recipe = bm.getBuildingRecipe(name)
@@ -56,8 +65,8 @@ local function updateGUI(player, buffer)
 	local cost = recipe.ingredients
 
 	local item = game.item_prototypes[name]
-	gui.caption = {"gui.build-gun-caption", name, item.localised_name}
-	local list = gui.content.materials
+	frame.caption = {"gui.build-gun-caption", name, item.localised_name}
+	local list = frame.content.materials
 	list.clear()
 	local table = list.add{
 		type = "table",
@@ -96,12 +105,13 @@ local function updateGUI(player, buffer)
 		bar.style.width = 64
 	end
 
-	gui.visible = true
-	gui.location = {(player.display_resolution.width-540*player.display_scale)/2, player.display_resolution.height-300*player.display_scale}
+	frame.visible = true
+	frame.location = {(player.display_resolution.width-540*player.display_scale)/2, player.display_resolution.height-300*player.display_scale}
 end
 
+-- if the item to craft is a building, cancel the craft and put the item in the cursor
+---@param event on_pre_player_crafted_item
 local function onCraft(event)
-	-- if the item to craft has an undo recipe, cancel the craft and put the item in the cursor
 	local recipe = bm.getBuildingRecipe(event.recipe.prototype.main_product.name)
 	if recipe then
 		local player = game.players[event.player_index]
@@ -117,14 +127,16 @@ local function onCraft(event)
 			player.print("Can't find the item in the crafting queue...")
 		else
 			player.cancel_crafting{index=index,count=event.queued_count}
-			player.clear_cursor()
-			local item = event.recipe.prototype.products[1].name
-			local affordable = canAfford(player, recipe.ingredients, player.get_main_inventory())
-			player.cursor_stack.set_stack{name=item, count=math.min(affordable,game.item_prototypes[item].stack_size)}
-			if player.opened_self then player.opened = nil end
+			if player.clear_cursor() then
+				local item = event.recipe.prototype.products[1].name
+				local affordable = canAfford(player, recipe.ingredients, player.get_main_inventory())
+				player.cursor_stack.set_stack{name=item, count=math.min(affordable,game.item_prototypes[item].stack_size)}
+				if player.opened_self then player.opened = nil end
+			end
 		end
 	end
 end
+
 ---@param event on_player_crafted_item
 local function onCheatCraft(event)
 	local recipe = bm.getBuildingRecipe(event.recipe.prototype.main_product.name)
@@ -137,6 +149,8 @@ local function onCheatCraft(event)
 		if player.opened_self then player.opened = nil end
 	end
 end
+
+---@param event on_player_cursor_stack_changed|on_player_main_inventory_changed|on_destroy
 local function onCursorChange(event)
 	-- also called on main inventory change
 	-- also called from onRemoved to update affordability and re-put a real entity if you mined stuff to afford what you're holding, so event.buffer may exist
@@ -155,14 +169,14 @@ local function onCursorChange(event)
 	if affordable < 1 then return end
 	player.clear_cursor()
 	player.cursor_stack.set_stack{name=name, count=math.min(affordable,game.item_prototypes[name].stack_size)}
-	-- updateGUI(player)
 end
 
+---@param event on_build
 local function onBuilt(event)
 	local player = game.players[event.player_index]
 	local entity = event.created_entity
 	local name = entity.name
-	-- if the item in the cursor is an undo-able building, check if the player has enough stuff (something else may have pulled items from the player's inventory)
+	-- if the item in the cursor is a building, check if the player has enough stuff (something else may have pulled items from the player's inventory)
 	local recipe = bm.getBuildingRecipe(name)
 	if not recipe then return end
 
@@ -184,7 +198,6 @@ local function onBuilt(event)
 			path = "utility/cannot_build"
 		}
 		entity.destroy()
-		-- updateGUI(player)
 		return
 	end
 	if not player.cheat_mode then
@@ -212,6 +225,7 @@ local function onBuilt(event)
 	updateGUI(player)
 end
 
+---@param event on_destroy
 local function onRemoved(event)
 	local player = event.player_index and game.players[event.player_index]
 	local cheater = player and player.cheat_mode

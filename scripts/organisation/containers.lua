@@ -1,12 +1,22 @@
--- uses global.containers to track structures {combinator, storage} for updating
+---@class TrackedContainer
+---@field combinator LuaEntity ConstantCombinator
+---@field container LuaEntity Container
+
+---@alias TrackedContainerBucket table<uint, TrackedContainer>
+---@alias global.containers TrackedContainerBucket[]
+---@type global.containers
 local script_data = {}
 for i=0,59 do script_data[i] = {} end
+
+---@param combinator LuaEntity
+---@param storage LuaEntity
 local function register(combinator, storage)
 	script_data[combinator.unit_number%60][combinator.unit_number] = {
 		combinator = combinator,
 		container = storage
 	}
 end
+---@param entity LuaEntity
 local function getRegistration(entity)
 	return entity and entity.valid and entity.unit_number and script_data[entity.unit_number%60][entity.unit_number]
 end
@@ -94,6 +104,7 @@ local function fastTransfer(player, target, half)
 	end
 end
 
+---@param data TrackedContainer
 local function updateSignals(data)
 	-- get contents and update combinator
 	local contents = data.container.get_inventory(defines.inventory.chest).get_contents()
@@ -107,6 +118,8 @@ local function updateSignals(data)
 	end
 	data.combinator.get_or_create_control_behavior().parameters = signals
 end
+
+---@param event on_tick
 local function onTick(event)
 	local mod = event.tick%60
 	for id,data in pairs(script_data[mod]) do
@@ -119,6 +132,8 @@ local function onTick(event)
 	end
 end
 
+---@param event table "on_custom_input"
+---@param half boolean
 local function onFastTransfer(event, half)
 	local player = game.players[event.player_index]
 	local data = player.selected and player.selected.valid and getRegistration(player.selected)

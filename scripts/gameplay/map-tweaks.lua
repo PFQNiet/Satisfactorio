@@ -6,7 +6,7 @@ return {
 			local player = game.players[event.player_index]
 			player.minimap_enabled = player.force.technologies[maptech].researched
 		end,
-		[defines.events.on_tick] = function(event)
+		[defines.events.on_tick] = function()
 			for _,player in pairs(game.players) do
 				if player.render_mode ~= defines.render_mode.game and not player.minimap_enabled then
 					player.print({"message.map-needs-research"})

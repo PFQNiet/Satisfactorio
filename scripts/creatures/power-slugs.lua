@@ -1,3 +1,5 @@
+local bev = require(modpath.."scripts.lualib.build-events")
+
 -- add a light to each power slug to draw attention
 local colours = {
 	["green-power-slug"] = {0.25,1,0.25},
@@ -7,6 +9,7 @@ local colours = {
 	["purple-power-slug"] = {0.5,0.25,1},
 	["purple-power-slug-decorative"] = {0.5,0.25,1}
 }
+---@param event on_build
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not entity or not entity.valid then return end
@@ -21,11 +24,6 @@ local function onBuilt(event)
 	}
 end
 
-return {
-	events = {
-		[defines.events.on_built_entity] = onBuilt,
-		[defines.events.on_robot_built_entity] = onBuilt,
-		[defines.events.script_raised_built] = onBuilt,
-		[defines.events.script_raised_revive] = onBuilt
-	}
+return bev.applyBuildEvents{
+	on_build = onBuilt
 }

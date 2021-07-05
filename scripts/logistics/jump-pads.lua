@@ -5,12 +5,29 @@
 -- uses global.jump_pads.rebounce to track visited jump pads in a chain, to detect a loop and break out of it
 -- on landing, player takes "fall damage" unless they land on U-Jelly Landing Pad. If they land on water, they die instantly.
 
+local bev = require(modpath.."scripts.lualib.build-events")
+local link = require(modpath.."scripts.lualib.linked-entity")
+
 local launcher = "jump-pad"
 local vehicle = launcher.."-car"
 local flying = launcher.."-flying"
 local shadow = launcher.."-flying-shadow"
 local landing = "u-jelly-landing-pad"
 
+---@class JumpPadData
+---@field player LuaPlayer
+---@field start Position
+---@field time uint Number of ticks since launch
+---@field direction defines.direction
+---@field range number Range setting of the pad at the time of launch
+---@field car LuaEntity
+---@field shadow uint64
+
+---@class global.jump_pads
+---@field pads table<uint, number> Map unit number of jump pad to its range setting
+---@field launch table<uint, JumpPadData> Map player ID to jumping data
+---@field rebounce table<uint, table<uint, boolean>> Map player ID to a dictionary of visited jump pad IDs in the current chain
+---@field visualisation table<uint, uint64[]> Map player ID to visualisation components
 local script_data = {
 	pads = {},
 	launch = {},
@@ -18,20 +35,23 @@ local script_data = {
 	visualisation = {}
 }
 
+---@param event on_build
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not entity or not entity.valid then return end
 	if entity.name == launcher then
-		entity.surface.create_entity{
+		local car = entity.surface.create_entity{
 			name = vehicle,
 			position = entity.position,
 			direction = entity.direction,
 			force = entity.force,
 			raise_built = true
 		}
+		link.register(entity, car)
 		script_data.pads[entity.unit_number] = 40
 	end
 end
+---@param event on_destroy
 local function onRemoved(event)
 	local entity = event.entity
 	if not entity or not entity.valid then return end
@@ -60,12 +80,14 @@ local function onRotated(event)
 	end
 end
 
+---@type table<defines.direction, Vector>
 local vectors = {
 	[defines.direction.north] = {0,-1},
 	[defines.direction.east] = {1,0},
 	[defines.direction.south] = {0,1},
 	[defines.direction.west] = {-1,0}
 }
+---@param event on_player_driving_changed_state
 local function onVehicle(event)
 	local player = game.players[event.player_index]
 	local entity = event.entity
@@ -186,8 +208,8 @@ local function onTick()
 	end
 end
 
-local function onInteract(event)
-	local player = game.players[event.player_index]
+---@param player LuaPlayer
+local function drawVisualisationArrow(player)
 	if player.selected and player.selected.name == launcher then
 		local visualisation = script_data.visualisation
 		if visualisation[player.index] then
@@ -232,7 +254,7 @@ local function onInteract(event)
 				players = {player}
 			}
 		}
-		
+
 		visualisation[player.index] = vis
 	end
 end
@@ -241,7 +263,7 @@ local function onRangeDown(event)
 	if player.selected and player.selected.name == launcher then
 		local entity = player.selected
 		script_data.pads[entity.unit_number] = math.max(4,script_data.pads[entity.unit_number]-1)
-		onInteract(event)
+		drawVisualisationArrow(player)
 	end
 end
 local function onRangeUp(event)
@@ -249,37 +271,29 @@ local function onRangeUp(event)
 	if player.selected and player.selected.name == launcher then
 		local entity = player.selected
 		script_data.pads[entity.unit_number] = math.min(40,script_data.pads[entity.unit_number]+1)
-		onInteract(event)
+		drawVisualisationArrow(player)
 	end
 end
 
-return {
+return bev.applyBuildEvents{
 	on_init = function()
 		global.launch_pads = global.launch_pads or script_data
 	end,
 	on_load = function()
 		script_data = global.launch_pads or script_data
 	end,
+	on_build = onBuilt,
+	on_destroy = onRemoved,
 	events = {
-		[defines.events.on_built_entity] = onBuilt,
-		[defines.events.on_robot_built_entity] = onBuilt,
-		[defines.events.script_raised_built] = onBuilt,
-		[defines.events.script_raised_revive] = onBuilt,
-
-		[defines.events.on_player_mined_entity] = onRemoved,
-		[defines.events.on_robot_mined_entity] = onRemoved,
-		[defines.events.on_entity_died] = onRemoved,
-		[defines.events.script_raised_destroy] = onRemoved,
-
 		[defines.events.on_player_rotated_entity] = function(event)
 			onRotated(event)
-			onInteract(event)
+			drawVisualisationArrow(game.players[event.player_index])
 		end,
 
 		[defines.events.on_player_driving_changed_state] = onVehicle,
 		[defines.events.on_tick] = onTick,
 
-		["interact"] = onInteract,
+		["interact"] = function(event) drawVisualisationArrow(game.players[event.player_index]) end,
 		["tile-smaller"] = onRangeDown,
 		["tile-bigger"] = onRangeUp,
 		[defines.events.on_gui_opened] = function(event)

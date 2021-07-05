@@ -3,6 +3,7 @@ local spawner = "flying-crab-hatcher"
 local spawn = "crab-spawn"
 local impact = "crab-impact"
 
+---@param event on_script_trigger_effect
 local function onScriptTriggerEffect(event)
 	if event.effect_id == impact
 	and event.source_entity and event.source_entity.valid and event.source_entity.name == name
@@ -26,6 +27,7 @@ local function onScriptTriggerEffect(event)
 	end
 	if event.effect_id == spawn and event.source_entity and event.source_entity.valid and event.source_entity.name == spawner then
 		-- self-destruct
+		-- Manually place carapace here rather than using loot system, because loot system uses collision and these are mostly on water
 		event.source_entity.surface.create_entity{
 			name = "item-on-ground",
 			force = "neutral",
@@ -35,9 +37,12 @@ local function onScriptTriggerEffect(event)
 		event.source_entity.die(event.source_entity.force, event.source_entity)
 	end
 end
+
+-- When a spawner dies, spawn 3 crabs and have them spread out fast
+---@param event on_entity_died
 local function onEntityDied(event)
 	if event.entity.name == spawner then
-		for i=1,3 do
+		for _=1,3 do
 			local r = math.random()+1
 			local theta = math.random()*math.pi*2
 			local crab = event.entity.surface.create_entity{

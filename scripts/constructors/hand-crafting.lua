@@ -35,6 +35,7 @@ local function updateBenchData(data)
 	end
 end
 
+---@param event on_build
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not (entity and entity.valid) then return end
@@ -43,8 +44,9 @@ local function onBuilt(event)
 	entity.active = false
 end
 
+---@param event on_destroy
 local function onRemoved(event)
-	local entity = event.created_entity or event.entity
+	local entity = event.entity
 	if not (entity and entity.valid) then return end
 	if entity.name ~= bench and entity.name ~= workshop then return end
 

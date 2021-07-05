@@ -10,6 +10,7 @@ local miners = {
 }
 local box = "miner-box"
 
+---@param event on_build
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not (entity and entity.valid) then return end
@@ -29,6 +30,8 @@ local function onBuilt(event)
 	end
 end
 
+---@param event table "on_custom_input"
+---@param half boolean
 local function onFastTransfer(event, half)
 	local player = game.players[event.player_index]
 	local target = player.selected

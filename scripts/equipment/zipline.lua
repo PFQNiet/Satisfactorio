@@ -8,8 +8,27 @@ local item = "zipline"
 local vehicle = item.."-flying"
 local shadow = item.."-flying-shadow"
 
+---@class ZiplineData
+---@field player LuaPlayer
+---@field car LuaEntity Car
+---@field shadow uint64
+---@field position Position
+---@field direction number Angle in radians
+---@field source LuaEntity ElectricPole
+---@field target LuaEntity ElectricPole
+---@field timeout uint If this somehow reaches 0, abort zipping
+
+---@alias global.zipline table<uint, ZiplineData>
+---@type global.zipline
 local script_data = {}
+
 local math2d = require("math2d")
+---@param p Position
+---@param u Position
+---@param v Position
+---@return number Distance
+---@return Position Projection
+---@return number Progress along line (0-1)
 local function distance_to_line_segment(p, u, v)
 	p = math2d.position.ensure_xy(p)
 	u = math2d.position.ensure_xy(u)
@@ -31,11 +50,16 @@ local function distance_to_line_segment(p, u, v)
 	return math.sqrt(dx*dx + dy*dy), projection, param
 end
 
+-- Scan outwards from the given position until enough entities are found
+---@param surface LuaSurface
+---@param filters LuaSurface.find_entities_filtered_param
+---@param limit number
+---@return LuaEntity[]
 local function findNClosest(surface, filters, limit)
 	-- "limit" may be exceeded if increasing the radius crosses the threshold, but whatever it's good enough for this
 	local entities = surface.find_entities_filtered(filters)
 	if #entities <= limit then return entities end
-	
+
 	-- if I could be bothered, I'd make this into a binary search but the difference between O(n) and O(log n) is basically nil when n is so small...
 	for r=1,filters.radius or 10,1 do
 		filters.radius = r
@@ -58,7 +82,6 @@ local function onJump(event)
 			position = player.position,
 			radius = 16
 		}, 5)
-		local wire = nil
 		local closest = {distance = 2} -- don't snap to a wire more than 2 tiles away
 		local pos = math2d.position.ensure_xy(player.position)
 		pos.y = pos.y - 3 -- approximate height of the wire over the player's head
@@ -130,6 +153,7 @@ local function onJump(event)
 	end
 end
 
+---@param event on_player_driving_changed_state
 local function onVehicle(event)
 	local player = game.players[event.player_index]
 	local entity = event.entity
@@ -142,6 +166,8 @@ local function onVehicle(event)
 		end
 	end
 end
+
+---@param event on_player_died
 local function onDied(event)
 	local player = game.players[event.player_index]
 	local yeet = script_data[player.index]
@@ -152,14 +178,14 @@ local function onDied(event)
 end
 
 local SPEED = 12/60 -- tiles per tick, must be <1; 12/60 = 12m/s = 43.2kmh
-local function onTick(event)
-	for pid,data in pairs(script_data) do
-		local player = game.players[pid]
+local function onTick()
+	for _,data in pairs(script_data) do
+		local player = data.player
 		-- data: {player, car, shadow, position, direction, source, target, timeout}
 		data.timeout = data.timeout - 1
 		if not (data.source.valid and data.target.valid) or data.timeout <= 0 then
 			-- someone mined the pole, or something went wrong
-			script_data[pid] = nil
+			script_data[player.index] = nil
 			data.car.destroy() -- drop the player
 			player.teleport(player.surface.find_non_colliding_position("character", data.position, 2, 0.1, false) or data.position)
 		else
@@ -197,7 +223,7 @@ local function onTick(event)
 				end
 				if not closest.pole then
 					-- no poles found, drop off here
-					script_data[pid] = nil
+					script_data[player.index] = nil
 					data.car.destroy()
 					-- add a little more position to overshoot the pole
 					data.position = math2d.position.add(data.position, {0.4 * math.cos(data.direction), -0.4 * math.sin(data.direction)})

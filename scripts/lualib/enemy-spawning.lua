@@ -1,6 +1,4 @@
 -- uses global.unit_tracking to track units unit_number = {spawn, entity}
-local math2d = require("math2d")
-
 local spawndata = {
 	[1] = {["fluffy-tailed-hog"] = 1},
 	[2] = {["spitter"] = 1},

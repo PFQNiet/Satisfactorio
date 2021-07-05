@@ -5,8 +5,10 @@ local bev = require(modpath.."scripts.lualib.build-events")
 local refundEntity = require(modpath.."scripts.lualib.building-management").refundEntity
 
 -- prevent placement of transport belts if it would lead to a belt having more than one input
+-- ensure this entity, and its output neighbour, have fewer than 2 input neighbours
+---@param entity LuaEntity TransportBelt
+---@return boolean
 local function isValidBelt(entity)
-	-- ensure this entity, and its output neighbour, have fewer than 2 input neighbours
 	local neighbours = entity.belt_neighbours
 	local max_allowed = (entity.type == "underground-belt" and entity.belt_to_ground_type == "output") and 0 or 1
 	if #neighbours.inputs > max_allowed then return false end
@@ -30,6 +32,7 @@ local belts = {
 	["conveyor-lift-mk-5"] = true
 }
 
+---@param event on_build
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not entity or not entity.valid then return end
@@ -50,6 +53,7 @@ local function onBuilt(event)
 		end
 	end
 end
+---@param event on_player_rotated_entity
 local function onRotated(event)
 	local entity = event.entity
 	if not entity or not entity.valid then return end

@@ -1,3 +1,9 @@
+---@class DoggoLootEntry
+---@field probability number
+---@field amount_min uint8
+---@field amount_max uint8
+
+---@type table<string, DoggoLootEntry>
 local loot = {
 	["iron-ore"] = {
 		probability = 11,

@@ -1,16 +1,22 @@
--- uses global.mam.lab to save a reference to the global lab for the force
--- uses global.mam.hard_drive to record which alt recipes have been selected as rewards
 local bev = require(modpath.."scripts.lualib.build-events")
 local string = require(modpath.."scripts.lualib.string")
 
 local mam = "mam"
 local lab = "omnilab"
 
+---@class HardDriveData
+---@field done boolean
+---@field options string Chosen hard drive techs to unlock
+
+---@class global.mam
+---@field lab table<uint, LuaEntity> Force index => Omnilab
+---@field hard_drive table<uint, HardDriveData> Force index => Selected rewards
 local script_data = {
 	lab = {},
 	hard_drive = {}
 }
 
+---@param force LuaForce
 local function getOmnilab(force)
 	local omnilab = script_data.lab[force.index]
 	if not (omnilab and omnilab.valid) then
@@ -25,8 +31,9 @@ local function getOmnilab(force)
 	end
 	return omnilab
 end
+-- check hard drive techs that have been unlocked but not completed
+---@param force LuaForce
 local function prepareHardDriveTech(force)
-	-- check hard drive techs that have been unlocked but not completed...
 	local valid = {}
 	for _,tech in pairs(force.technologies) do
 		if string.starts_with(tech.name, "alt-") and not tech.researched then
@@ -44,7 +51,7 @@ local function prepareHardDriveTech(force)
 	end
 	local selected = {}
 	if #valid > 0 then
-		for i=1,3 do
+		for _=1,3 do
 			local rand = math.random(#valid)
 			table.insert(selected, valid[rand])
 			table.remove(valid, rand)
@@ -56,16 +63,20 @@ local function prepareHardDriveTech(force)
 		options = selected
 	}
 end
+---@param force LuaForce
 local function completeHardDriveTech(force)
 	if script_data.hard_drive[force.index] then
 		script_data.hard_drive[force.index].done = true
 	end
 end
+---@param force LuaForce
 local function clearHardDriveTech(force)
 	script_data.hard_drive[force.index] = nil
 	force.recipes["mam-hard-drive"].enabled = true
 	force.recipes["mam-hard-drive-done"].enabled = false
 end
+---@param force LuaForce
+---@param tech string
 local function selectHardDriveReward(force,tech)
 	local technology = force.technologies[tech]
 	technology.researched = true
@@ -102,6 +113,7 @@ local function isRecipeAMaterial(recipe)
 	return recipe.group.name == "intermediate-products" or recipe.group.name == "space-elevator"
 end
 
+---@param technology LuaTechnology
 local function completeMam(technology)
 	if game.tick > 5 then
 		local message = {"", {"message.mam-research-complete",technology.name,technology.localised_name}}
@@ -134,6 +146,7 @@ local function completeMam(technology)
 		completeHardDriveTech(technology.force)
 	end
 end
+---@param player LuaPlayer
 local function manageMamGUI(player)
 	if not player then
 		for _,p in pairs(game.players) do
@@ -210,6 +223,7 @@ local function manageMamGUI(player)
 		end
 	end
 end
+---@param event on_gui_click
 local function submitMam(event)
 	if not (event.element and event.element.valid and event.element.name == "mam-submit") then return end
 	-- the GUI only exists if the player has a M.A.M. open, but double-check just to be sure
@@ -219,7 +233,7 @@ local function submitMam(event)
 	local recipe = entity.get_recipe()
 	if not recipe then return end
 	local force = player.force
-	
+
 	local research = recipe.products[1].name
 	if force.technologies[research].researched then return end
 	local inventory = entity.get_inventory(defines.inventory.assembling_machine_input)
@@ -235,8 +249,8 @@ local function submitMam(event)
 		}
 	end
 	-- place appropriate item in the Omnilab and start the research process
-	local lab = getOmnilab(force)
-	lab.insert{name=research,count=1}
+	local omnilab = getOmnilab(force)
+	omnilab.insert{name=research,count=1}
 	force.research_queue = {research}
 	force.print({"message.mam-research-started",research,game.technology_prototypes[research].localised_name})
 
@@ -268,6 +282,7 @@ local function onResearch(event)
 	end
 end
 
+---@param event on_gui_opened
 local function onGuiOpened(event)
 	local player = game.players[event.player_index]
 	if event.gui_type ~= defines.gui_type.entity then return end
@@ -284,7 +299,7 @@ local function onGuiOpened(event)
 	else
 		manageMamGUI(player)
 	end
-	
+
 	local struct = script_data.hard_drive[player.force.index]
 	if not struct or not struct.done then return end
 
@@ -428,11 +443,13 @@ local function onGuiOpened(event)
 		gui.force_auto_center()
 	end
 end
+---@param event on_gui_closed
 local function onGuiClosed(event)
 	if event.element and event.element.valid and event.element.name == "hard-drive-reward" then
 		event.element.destroy()
 	end
 end
+---@param event on_gui_click
 local function onGuiClick(event)
 	if event.element and event.element.valid then
 		local player = game.players[event.player_index]
@@ -452,6 +469,7 @@ local function onGuiClick(event)
 	end
 end
 
+---@param event on_build
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not (entity and entity.valid) then return end

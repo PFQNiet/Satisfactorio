@@ -77,14 +77,17 @@ local function onChunkGenerated(event)
 	getOrCreateChunk(surface, pos)
 end
 
+---@param entity LuaEntity Resource
 local function addRadiationForResource(entity)
 	-- the only radioactive resource is uranium-ore
 	return entity.name == "uranium-ore" and 10000*entity.amount/120 or 0
 end
+---@param entity LuaEntity SimpleEntity
 local function addRadiationForSimpleEntity(entity)
 	-- the only radioactive simple entity is rock-big-uranium-ore
 	return entity.name == "rock-big-uranium-ore" and 1250 or 0
 end
+---@param inventory LuaInventory
 local function addRadiationForInventory(inventory)
 	if not (inventory and inventory.valid) then return 0 end
 	-- once an inventory has been identified, check it for radioactive items
@@ -99,6 +102,7 @@ local function addRadiationForInventory(inventory)
 		+ (contents['plutonium-fuel-rod'] or 0) * 120
 		+ (contents['plutonium-waste'] or 0) * 20
 end
+---@param stack LuaItemStack
 local function addRadiationForItemStack(stack)
 	if not (stack and stack.valid and stack.valid_for_read) then return 0 end
 	local radioactive_items = {
@@ -117,39 +121,49 @@ local function addRadiationForItemStack(stack)
 	return radioactive_items[stack.name] * stack.count
 end
 
+---@param entity LuaEntity Container
 local function addRadiationForContainer(entity)
 	return addRadiationForInventory(entity.get_inventory(defines.inventory.chest))
 end
+---@param entity LuaEntity AssemblingMachine
 local function addRadiationForAssembler(entity)
 	return addRadiationForInventory(entity.get_inventory(defines.inventory.fuel))
 		+ addRadiationForInventory(entity.get_inventory(defines.inventory.assembling_machine_input))
 		+ addRadiationForInventory(entity.get_inventory(defines.inventory.assembling_machine_output))
 end
+---@param entity LuaEntity Car
 local function addRadiationForCar(entity)
 	return addRadiationForInventory(entity.get_inventory(defines.inventory.fuel))
 		+ addRadiationForInventory(entity.get_inventory(defines.inventory.car_trunk))
 end
+---@param entity LuaEntity Locomotive
 local function addRadiationForTrain(entity)
 	return addRadiationForInventory(entity.get_inventory(defines.inventory.fuel))
 end
+---@param entity LuaEntity CargoWagon
 local function addRadiationForCargoWagon(entity)
 	return addRadiationForInventory(entity.get_inventory(defines.inventory.cargo_wagon))
 end
+---@param entity LuaEntity SpiderVehicle
 local function addRadiationForSpiderVehicle(entity)
 	return addRadiationForInventory(entity.get_inventory(defines.inventory.spider_trunk))
 end
+---@param entity LuaEntity Character
 local function addRadiationForCharacter(entity)
 	return addRadiationForInventory(entity.get_inventory(defines.inventory.character_main))
 		+ addRadiationForInventory(entity.get_inventory(defines.inventory.character_trash))
 		+ addRadiationForItemStack(entity.cursor_stack)
 	-- no radioactive items can go in guns, armor, etc. so skip those
 end
+---@param entity LuaEntity ItemEntity
 local function addRadiationForItemOnGround(entity)
 	return addRadiationForItemStack(entity.stack)
 end
+---@param entity LuaEntity Inserter
 local function addRadiationForInserter(entity)
 	return addRadiationForItemStack(entity.held_stack)
 end
+---@param entity LuaEntity TransportBelt
 local function addRadiationForTransportBelt(entity)
 	local max = entity.get_max_transport_line_index()
 	local rad = 0
@@ -159,9 +173,12 @@ local function addRadiationForTransportBelt(entity)
 	end
 	return rad
 end
+-- tamed Lizard Doggos may sometimes find Nuclear Waste, which should be accounted for
+---@param entity LuaEntity Unit
 local function addRadiationForUnit(entity)
-	-- tamed Lizard Doggos may sometimes find Nuclear Waste, which should be accounted for
-	local doggos = global.small_biter.lizard_doggos
+	---@type global.pets
+	local petdata = global.pets
+	local doggos = petdata.lizard_doggos
 	local stack = doggos[entity.unit_number] and doggos[entity.unit_number].helditem
 	return stack and addRadiationForItemStack{
 		valid = true,
@@ -170,6 +187,7 @@ local function addRadiationForUnit(entity)
 		count = stack.count
 	} or 0
 end
+
 local radioactivity_functions = {
 	["resource"] = addRadiationForResource,
 	["container"] = addRadiationForContainer,
@@ -188,10 +206,11 @@ local radioactivity_functions = {
 	["simple-entity"] = addRadiationForSimpleEntity
 }
 local radioactive_containers = {}
-for k,_ in pairs(radioactivity_functions) do
+for k in pairs(radioactivity_functions) do
 	table.insert(radioactive_containers, k)
 end
 
+---@param event on_player_display_resolution_changed
 local function onResolutionChanged(event)
 	local player = game.players[event.player_index]
 	local gui = player.gui.screen['radiation']
@@ -200,6 +219,7 @@ local function onResolutionChanged(event)
 	end
 end
 
+---@param entry RadioactiveChunkData
 local function updateChunk(entry)
 	local surface = entry.surface
 	local area = entry.area
@@ -285,11 +305,11 @@ local function updateGui(player, radiation)
 		}
 		flow.style.horizontally_stretchable = true
 		flow.style.vertical_align = "center"
-		local sprite = flow.add{
+		flow.add{
 			type = "sprite",
 			sprite = "tooltip-category-nuclear"
 		}
-		local bar = flow.add{
+		flow.add{
 			type = "progressbar",
 			name = "bar",
 			style = "radioactivity-progressbar"
@@ -355,6 +375,7 @@ local function updatePlayerCharacter(player, do_damage)
 	end
 end
 
+---@param event on_tick
 local function onTick(event)
 	if not script_data.enabled then return end
 	local tick = event.tick
@@ -369,6 +390,7 @@ local function onTick(event)
 	end
 end
 
+---@param event on_build
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not entity or not entity.valid then return end
@@ -395,7 +417,7 @@ return bev.applyBuildEvents{
 		end
 
 		global.radioactivity = global.radioactivity or script_data
-		global.radioactivity.enabled = game.map_settings.pollution.enabled
+		global.radioactivity.enabled = game.map_settings['pollution'].enabled
 	end,
 	on_load = function()
 		script_data = global.radioactivity or script_data
@@ -408,11 +430,11 @@ return bev.applyBuildEvents{
 				if player.admin then
 					if script_data.enabled then
 						script_data.enabled = false
-						game.map_settings.pollution.enabled = false
+						game.map_settings['pollution'].enabled = false
 						game.print({"message.radiation-disabled",player.name})
 					else
 						script_data.enabled = true
-						game.map_settings.pollution.enabled = true
+						game.map_settings['pollution'].enabled = true
 						game.print({"message.radiation-enabled",player.name})
 					end
 				end

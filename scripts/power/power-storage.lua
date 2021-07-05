@@ -1,9 +1,19 @@
--- uses global.battery_flow to track rolling average flow
 -- opening a battery's GUI adds it to the tracking list, closing it (provided no other player has it open) removes it
+
+---@class PowerStorageData
+---@field entity LuaEntity
+---@field energy_last_tick number
+---@field capacity number
+---@field opened_by table<uint, LuaGuiElement> Map player ID to the GUI element
+---@field rolling_average number[]
+
+---@alias global.battery_flow table<uint, PowerStorageData>
+---@type global.battery_flow
 local script_data = {}
 
 local battery = "power-storage"
 
+---@param event on_gui_opened
 local function onGuiOpened(event)
 	if not (event.entity and event.entity.valid) then return end
 	if event.entity.name == battery then
@@ -17,9 +27,9 @@ local function onGuiOpened(event)
 			}
 		end
 		local player = game.players[event.player_index]
-		local gui = player.gui.relative['battery-flow']
-		if not gui then
-			gui = player.gui.relative.add{
+		local gui = player.gui.relative
+		if not gui['battery-flow'] then
+			local frame = player.gui.relative.add{
 				type = "frame",
 				name = "battery-flow",
 				anchor = {
@@ -30,9 +40,9 @@ local function onGuiOpened(event)
 				direction = "vertical",
 				style = "inset_frame_container_frame"
 			}
-			gui.style.use_header_filler = false
+			frame.style.use_header_filler = false
 
-			local inner = gui.add{
+			local inner = frame.add{
 				type = "frame",
 				name = "inner",
 				direction = "vertical",
@@ -73,9 +83,10 @@ local function onGuiOpened(event)
 			bar.style.horizontally_stretchable = true
 		end
 
-		script_data[event.entity.unit_number].opened_by[player.index] = gui
+		script_data[event.entity.unit_number].opened_by[player.index] = gui['battery-flow'].inner.content.details
 	end
 end
+---@param event on_gui_closed
 local function onGuiClosed(event)
 	if not (event.entity and event.entity.valid) then return end
 	if event.entity.name == battery and script_data[event.entity.unit_number] then
@@ -88,7 +99,7 @@ local function onGuiClosed(event)
 	end
 end
 
-local function onTick(event)
+local function onTick()
 	for id,struct in pairs(script_data) do
 		if not struct.entity.valid then
 			script_data[id] = nil
@@ -141,9 +152,9 @@ local function onTick(event)
 				end
 			end
 			for _,gui in pairs(struct.opened_by) do
-				gui.inner.content.details.flowtext.caption = caption
-				gui.inner.content.details.bar.value = bar
-				gui.inner.content.details.bar.style.color = colours[colour]
+				gui['flowtext'].caption = caption
+				gui['bar'].value = bar
+				gui['bar'].style.color = colours[colour]
 			end
 		end
 	end

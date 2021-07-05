@@ -10,29 +10,57 @@ local string = require(modpath.."scripts.lualib.string")
 local pressuriser = "resource-well-pressuriser"
 local extractor = "resource-well-extractor"
 
+---@class ResourceWell
+---@field pressuriser LuaEntity
+---@field nodes uint64[] IDs for the satellite nodes
+
+---@class ResourceWellPressuriser
+---@field entity LuaEntity
+---@field well_id uint64 ID of the well this is built on
+
+---@alias ResourceWellPressuriserBucket table<uint, ResourceWellPressuriser>
+
+---@class ResourceWellNode
+---@field node LuaEntity Resource
+---@field amount uint Base amount of the resource
+---@field well_id uint64 ID of the well this belongs to
+
+---@class ResourceWellExtractor
+---@field entity LuaEntity
+---@field node_id uint64 ID of the node this is built on
+
+---@class global.wells
+---@field pressurisers ResourceWellPressuriserBucket[]
+---@field wells table<uint64, ResourceWell>
+---@field nodes table<uint64, ResourceWellNode>
+---@field extractors table<uint, ResourceWellExtractor>
 local script_data = {
-	pressurisers = {}, -- partitioned, entry = {entity, well_id}
-	wells = {}, -- map well UID to entity, pressuriser (if present), and satellite node UIDs
-	nodes = {}, -- map node UID to entity, base amount, and well UID
-	extractors = {} -- map extractor unit number to its entity and corresponding node UID
+	pressurisers = {},
+	wells = {},
+	nodes = {},
+	extractors = {}
 }
 for i=0,60-1 do script_data.pressurisers[i] = {} end
 
-local function getPressuriserForExtractor(extractor)
-	local exdata = script_data.extractors[extractor.unit_number]
+---@param entity LuaEntity
+---@return LuaEntity
+local function getPressuriserForExtractor(entity)
+	local exdata = script_data.extractors[entity.unit_number]
 	if not exdata then return end
-	local ndata = script_data.wells[exdata.node_id]
+	local ndata = script_data.nodes[exdata.node_id]
 	if not ndata then return end
 	local well = script_data.wells[ndata.well_id]
 	return well and well.pressuriser
 end
-local function getSatelliteNodesForPressuriser(pressuriser)
-	local pdata = script_data.pressurisers[pressuriser.unit_number % 60][pressuriser.unit_number]
+---@param entity LuaEntity
+local function getSatelliteNodesForPressuriser(entity)
+	local pdata = script_data.pressurisers[entity.unit_number % 60][entity.unit_number]
 	if not pdata then return end
 	local well = script_data.wells[pdata.well_id]
 	return well.nodes
 end
 
+---@param event on_build
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not (entity and entity.valid) then return end
@@ -115,6 +143,7 @@ local function onBuilt(event)
 	end
 end
 
+---@param event on_destroy
 local function onRemoved(event)
 	local entity = event.entity
 	if not (entity and entity.valid) then return end
@@ -134,16 +163,16 @@ local function onRemoved(event)
 	end
 end
 
+---@param event on_tick
 local function onTick(event)
-	for i,entry in pairs(script_data.pressurisers[event.tick%60]) do
+	for _,entry in pairs(script_data.pressurisers[event.tick%60]) do
 		-- each station will "tick" once every 60 in-game ticks, ie. every second
 		-- check pressuriser for power and modules, and modify the satellite nodes accordingly
-		local pressuriser = entry.entity
-		local well_id = entry.well_id
-		local nodes = getSatelliteNodesForPressuriser(pressuriser)
+		local pressure = entry.entity
+		local nodes = getSatelliteNodesForPressuriser(pressure)
 		local modifier = 0
-		if pressuriser.energy > 0 then
-			modifier = 1 + pressuriser.speed_bonus
+		if pressure.energy > 0 then
+			modifier = 1 + pressure.speed_bonus
 		end
 		for _,node_id in pairs(nodes) do
 			local ndata = script_data.nodes[node_id]
