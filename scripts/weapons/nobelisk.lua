@@ -138,6 +138,16 @@ local function processExplosion(target, dist2, force)
 		-- slightly smaller explosion radius
 		if dist2 < 6*6 then
 			target.destructible = true
+			-- spill contents so you don't accidentally do something dumb like put the HUB Parts in wreckage and blow them up...
+			if target.type == "container" then
+				local inventory = target.get_output_inventory()
+				for i=1,#inventory do
+					local stack = inventory[i]
+					if stack.valid_for_read then
+						target.surface.spill_item_stack(target.position, stack, true, force, false)
+					end
+				end
+			end
 			if target.is_entity_with_health then
 				target.die(force)
 			else
