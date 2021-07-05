@@ -129,7 +129,7 @@ local function onTick(event)
 						entity.destroy{do_cliff_correction=true}
 					end
 				end
-				if entity.valid and entity.name == "big-worm-turret" then
+				if entity.valid and entity.name == "spore-flower" then
 					local dx = entity.position.x - pos[1]
 					local dy = entity.position.y - pos[2]
 					if dx*dx+dy*dy < 6*6 then
@@ -137,7 +137,7 @@ local function onTick(event)
 						entity.die(explosion.force)
 					end
 				end
-				if entity.valid and entity.name == "behemoth-worm-turret" then
+				if entity.valid and entity.name == "gas-emitter" then
 					local dx = entity.position.x - pos[1]
 					local dy = entity.position.y - pos[2]
 					if dx*dx+dy*dy < 6*6 then
