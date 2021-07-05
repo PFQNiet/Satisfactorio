@@ -6,11 +6,21 @@ local detonator = "nobelisk-detonator"
 local sticker = name.."-armed"
 local onground = name.."-on-ground"
 
+---@class ExplosionData
+---@field entity LuaEntity Either the entity it is stuck to, or the nobelisk-on-ground entity
+---@field surface LuaSurface
+---@field offset Position When stuck to an entity, the offset determines where exactly it was stuck on the entity
+---@field force ForceIdentification The force that will be blamed for the death of anything blown up
+
+---@class global.nobelisk
+---@field queue table<uint, ExplosionData[]> Map source player ID to placed Nobelisks
+---@field explosions table<uint, ExplosionData[]> Map game tick on which to explode, to the exploding Nobelisks
 local script_data = {
 	queue = {},
 	explosions = {}
 }
 
+---@param event on_script_trigger_effect
 local function onScriptTriggerEffect(event)
 	local source = event.source_entity and event.source_entity.type == "character" and event.source_entity.player and event.source_entity.player.index or 0
 	if event.effect_id == name then
@@ -41,8 +51,7 @@ local function onScriptTriggerEffect(event)
 			entity = target,
 			surface = target.surface,
 			offset = offset,
-			force = event.source_entity and event.source_entity.force or "player",
-			cause = event.source_entity
+			force = event.source_entity and event.source_entity.force or "player"
 		})
 	end
 	if event.effect_id == detonator then
@@ -76,6 +85,7 @@ local function onEntityDied(event)
 		end
 	end
 end
+-- dictionary of entity names that are part of explodable spaceship wreckage
 local spaceship_wreckage = {
 	["crash-site-spaceship"] = true,
 	["crash-site-spaceship-wreck-big-1"] = true,
@@ -90,6 +100,54 @@ local spaceship_wreckage = {
 	["crash-site-spaceship-wreck-small-5"] = true,
 	["crash-site-spaceship-wreck-small-6"] = true
 }
+-- target is in range of an explosion, do something!
+---@param target LuaEntity
+---@param dist2 number Distance^2 from the centre of the explosion
+---@param force LuaForce The force that owns the explosion
+local function processExplosion(target, dist2, force)
+	if target.is_entity_with_health and target.destructible then
+		local damage = math.max(1, 50 - dist2)
+		if target.type == "tree" then damage = 100 end
+		target.damage(damage, force, "explosion")
+		return
+	end
+	if target.type == "cliff" then
+		-- smaller explosion radius
+		if dist2 < 4*4 then
+			target.destroy{do_cliff_correction = true}
+		end
+		return
+	end
+	if target.name == "spore-flower" or (target.name == "gas-emitter" and target.health < 5) then
+		-- slightly smaller explosion radius
+		if dist2 < 6*6 then
+			-- override destructibility to kill the entity
+			target.destructible = true
+			target.die(force)
+		end
+		return
+	end
+	if target.name == "rock-huge" then
+		-- slightly smaller explosion radius
+		if dist2 < 6*6 then
+			target.destroy()
+		end
+		return
+	end
+	if spaceship_wreckage[target.name] then
+		-- slightly smaller explosion radius
+		if dist2 < 6*6 then
+			target.destructible = true
+			if target.is_entity_with_health then
+				target.die(force)
+			else
+				target.destroy()
+			end
+		end
+		return
+	end
+end
+
 local function onTick(event)
 	if script_data.explosions[event.tick] then
 		for _,explosion in pairs(script_data.explosions[event.tick]) do
@@ -115,56 +173,12 @@ local function onTick(event)
 				radius = 7
 			}
 			for _,entity in pairs(entities) do
-				if entity.valid and entity.is_entity_with_health and entity.destructible then
-					local dx = entity.position.x - pos[1]
-					local dy = entity.position.y - pos[2]
-					local damage = math.max(1,50-(dx*dx+dy*dy))
-					if entity.type == "tree" then damage = 100 end -- just wreck the trees
-					entity.damage(damage, explosion.force, "explosion")
-				end
-				if entity.valid and entity.type == "cliff" then
-					local dx = entity.position.x - pos[1]
-					local dy = entity.position.y - pos[2]
-					if dx*dx+dy*dy < 4*4 then
-						entity.destroy{do_cliff_correction=true}
-					end
-				end
-				if entity.valid and entity.name == "spore-flower" then
-					local dx = entity.position.x - pos[1]
-					local dy = entity.position.y - pos[2]
-					if dx*dx+dy*dy < 6*6 then
-						entity.destructible = true
-						entity.die(explosion.force)
-					end
-				end
-				if entity.valid and entity.name == "gas-emitter" then
-					local dx = entity.position.x - pos[1]
-					local dy = entity.position.y - pos[2]
-					if dx*dx+dy*dy < 6*6 then
-						if entity.health < 5 then
-							entity.destructible = true
-							entity.die(explosion.force)
-						end
-					end
-				end
-				if entity.valid and entity.name == "rock-huge" then
-					local dx = entity.position.x - pos[1]
-					local dy = entity.position.y - pos[2]
-					if dx*dx+dy*dy < 6*6 then
-						entity.destroy()
-					end
-				end
-				if entity.valid and spaceship_wreckage[entity.name] then
-					local dx = entity.position.x - pos[1]
-					local dy = entity.position.y - pos[2]
-					if dx*dx+dy*dy < 6*6 then
-						entity.destructible = true
-						if entity.is_entity_with_health then
-							entity.die()
-						else
-							entity.destroy()
-						end
-					end
+				if entity.valid then
+					local tpos = entity.position
+					local dx = tpos.x - pos[1]
+					local dy = tpos.y - pos[2]
+					local distance_squared = dx*dx+dy*dy
+					processExplosion(entity, distance_squared, explosion.force)
 				end
 			end
 			if explosion.entity.valid then
@@ -174,10 +188,13 @@ local function onTick(event)
 					-- if entity survived and nobody else has stickied it, remove its sticker
 					local clean = true
 					for _,q in pairs(script_data.queue) do
-						if q.target and q.target.valid and q.target == explosion.entity then
-							clean = false
-							break
+						for _,e in pairs(q) do
+							if e.entity and e.entity.valid and e.entity == explosion.entity then
+								clean = false
+								break
+							end
 						end
+						if not clean then break end
 					end
 					if clean then
 						for _,s in pairs(explosion.entity.stickers) do
