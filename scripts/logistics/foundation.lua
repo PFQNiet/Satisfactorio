@@ -85,7 +85,13 @@ local function onSelectedArea(event)
 		local blocked = 0
 		for _,f in pairs(event.entities) do
 			if f.force == player.force then
-				if f.surface.count_entities_filtered{area=f.selection_box, force="neutral", name=foundation, invert=true} == 0 then
+				if f.surface.count_entities_filtered{
+					area = f.selection_box,
+					invert = true, -- any of the following are fine...
+					force = "neutral",
+					name = {foundation,"nobelisk-on-ground"},
+					type = "smoke-with-trigger"
+				} == 0 then
 					f.minable = true
 					f.order_deconstruction(player.force, player)
 				else
