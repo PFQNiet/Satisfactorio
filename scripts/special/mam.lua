@@ -468,7 +468,7 @@ return bev.applyBuildEvents{
 		script_data = global.mam or script_data
 	end,
 	on_nth_tick = {
-		[10] = function() manageMamGUI() end
+		[6] = function() manageMamGUI() end
 	},
 	on_build = onBuilt,
 	events = {

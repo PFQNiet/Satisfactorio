@@ -113,7 +113,7 @@ return bev.applyBuildEvents{
 		global.craft_bench = global.craft_bench or script_data
 	end,
 	on_nth_tick = {
-		[60] = updateAllBenches
+		[6] = updateAllBenches
 	},
 	on_build = onBuilt,
 	on_destroy = onRemoved,

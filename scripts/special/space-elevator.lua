@@ -273,7 +273,7 @@ return bev.applyBuildEvents{
 		debounce_error = global.player_build_error_debounce or debounce_error
 	end,
 	on_nth_tick = {
-		[10] = on10thTick,
+		[6] = on10thTick,
 	},
 	on_build = onBuilt,
 	on_destroy = onRemoved,
