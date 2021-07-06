@@ -2,6 +2,11 @@
 ---@field status string
 ---@field delay uint Tick number to wait until
 
+---@class DroneTravelStats
+---@field distance number
+---@field time number
+---@field batteries number
+
 ---@class DronePortData
 ---@field name string
 ---@field base LuaEntity ElectricEnergyInterface
@@ -55,24 +60,31 @@ for i=0,buckets-1 do script_data.ports[i] = {} end
 local function getBucket(tick)
 	return script_data.ports[tick%buckets]
 end
+---@param struct DronePortData
 local function registerStruct(struct)
 	script_data.ports[struct.base.unit_number%buckets][struct.base.unit_number] = struct
 end
+---@param struct DronePortData
 local function registerDrone(struct)
 	script_data.drones[struct.drone.unit_number] = struct
 end
+---@param id uint
 local function getStructById(id)
 	return script_data.ports[id%buckets][id]
 end
+---@param floor LuaEntity
 local function getStruct(floor)
 	return getStructById(floor.unit_number)
 end
+---@param gui LuaGuiElement
 local function getStructFromGui(gui)
 	return getStructById(gui.tags['port-number'])
 end
+---@param drone LuaEntity
 local function getStructFromDrone(drone)
 	return script_data.drones[drone.unit_number]
 end
+---@param floor LuaEntity
 local function clearStruct(floor)
 	local struct = getStruct(floor)
 	for pid in pairs(struct.gui) do
@@ -80,10 +92,14 @@ local function clearStruct(floor)
 	end
 	script_data.ports[floor.unit_number%buckets][floor.unit_number] = nil
 end
+---@param drone LuaEntity
 local function clearStructFromDrone(drone)
 	script_data.drones[drone.unit_number] = nil
 end
 
+---@param event on_build
+---@param entity LuaEntity
+---@param reason LocalisedString
 local function rejectBuild(event, entity, reason)
 	local player = entity.last_user
 	refundEntity(player, entity)
@@ -101,6 +117,7 @@ local function rejectBuild(event, entity, reason)
 	end
 end
 
+---@param data DronePortData
 local function renamePortTag(data)
 	data.stop.backer_name = "[img=entity.drone-port] "..data.name
 	if data.drone then
@@ -108,6 +125,7 @@ local function renamePortTag(data)
 	end
 end
 
+---@param event on_build
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not (entity and entity.valid) then return end
@@ -189,6 +207,7 @@ local function onBuilt(event)
 	end
 end
 
+---@param event on_destroy
 local function onRemoved(event)
 	local entity = event.entity
 	if not (entity and entity.valid) then return end
@@ -221,6 +240,9 @@ local function onRemoved(event)
 	end
 end
 
+---@param source LuaEntity
+---@param destination LuaEntity
+---@return DroneTravelStats
 local function calculateTravelStats(source, destination)
 	if not destination then return end
 	local distance = math2d.position.distance(source.position, destination.position)
@@ -234,6 +256,8 @@ local function calculateTravelStats(source, destination)
 		batteries = batteries
 	}
 end
+---@param data DronePortData
+---@param pid uint
 local function updateStatusGui(data, pid)
 	local status = data.state.status
 	local delay = data.state.delay and math.ceil((data.state.delay - game.tick)/60) or 0
@@ -242,9 +266,9 @@ local function updateStatusGui(data, pid)
 	elseif data.drone then
 		local burner = data.drone.burner
 		if data.state.status == "waiting-for-destination" then
-			if data.destination and data.destination.valid then
+			if data.target and data.target.valid then
 				-- ensure drone has sufficient batteries to take off
-				local stats = calculateTravelStats(data.base, data.destination)
+				local stats = calculateTravelStats(data.base, data.target)
 				local fuelstack = burner.inventory[1]
 				if not fuelstack.valid_for_read or fuelstack.count <= stats.batteries then
 					status = "out-of-batteries"
@@ -279,33 +303,43 @@ local function updateStatusGui(data, pid)
 		end
 	end
 end
+---@param source LuaEntity
+---@param destination LuaEntity
+---@param stats_table LuaGuiElement
 local function updateTravelStatsGui(source, destination, stats_table)
 	if not destination then
-		stats_table.stat_distance.label.caption = {"gui.drone-stats-na"}
-		stats_table.stat_time.label.caption = {"gui.drone-stats-na"}
-		stats_table.stat_batteries.label.caption = {"gui.drone-stats-na"}
-		stats_table.stat_throughput.label.caption = {"gui.drone-stats-na"}
+		stats_table['stat_distance'].label.caption = {"gui.drone-stats-na"}
+		stats_table['stat_time'].label.caption = {"gui.drone-stats-na"}
+		stats_table['stat_batteries'].label.caption = {"gui.drone-stats-na"}
+		stats_table['stat_throughput'].label.caption = {"gui.drone-stats-na"}
 	else
 		local stats = calculateTravelStats(source, destination)
 		local distance = math.floor(stats.distance/10)/100 -- km to 2 decimal places
 		local time = math.floor(stats.time)
 		local throughput = math.floor(9 / (stats.time/60) * 100) / 100 -- stacks per minute, to 2 decimal places
-		stats_table.stat_distance.label.caption = {"gui.drone-stats-distance-value", distance}
-		stats_table.stat_time.label.caption = {"gui.drone-stats-time-value", math.floor(time/60), time%60<10 and "0" or "", time%60}
-		stats_table.stat_batteries.label.caption = {"gui.drone-stats-batteries-value", math.ceil(stats.batteries)}
-		stats_table.stat_throughput.label.caption = {"gui.drone-stats-throughput-value", throughput}
+		stats_table['stat_distance'].label.caption = {"gui.drone-stats-distance-value", distance}
+		stats_table['stat_time'].label.caption = {"gui.drone-stats-time-value", math.floor(time/60), time%60<10 and "0" or "", time%60}
+		stats_table['stat_batteries'].label.caption = {"gui.drone-stats-batteries-value", math.ceil(stats.batteries)}
+		stats_table['stat_throughput'].label.caption = {"gui.drone-stats-throughput-value", throughput}
 	end
 end
 
-local function checkRangeForTabs(player, gui, base, fuel, export, import)
+---@param player LuaPlayer
+---@param gui LuaGuiElement
+---@param port LuaEntity
+---@param fuel LuaEntity
+---@param export LuaEntity
+---@param import LuaEntity
+local function checkRangeForTabs(player, gui, port, fuel, export, import)
 	if not (gui and gui.valid) then return end
-	for i,obj in pairs({base,fuel,export,import}) do
+	for i,obj in pairs({port,fuel,export,import}) do
 		local reach = player.can_reach_entity(obj)
 		local tab = gui.tabs[i].tab
 		tab.enabled = reach
 		if reach then tab.tooltip = "" else tab.tooltip = {"cant-reach"} end
 	end
 end
+---@param event on_gui_opened
 local function onGuiOpened(event)
 	local player = game.players[event.player_index]
 	if event.gui_type == defines.gui_type.entity and event.entity.valid then
@@ -571,6 +605,7 @@ local function onGuiOpened(event)
 		end
 	end
 end
+---@param event on_player_changed_position
 local function onMove(event)
 	-- update tab enabled state based on reach
 	local player = game.players[event.player_index]
@@ -584,6 +619,7 @@ local function onMove(event)
 		checkRangeForTabs(player, player.gui.relative['drone-port-tabs'], data.stop, data.fuel, data.export, data.import)
 	end
 end
+---@param event on_gui_closed
 local function onGuiClosed(event)
 	if event.gui_type == defines.gui_type.custom and event.element.valid and event.element.name == "drone-port-container" then
 		local player = game.players[event.player_index]
@@ -592,6 +628,7 @@ local function onGuiClosed(event)
 		event.element.visible = false
 	end
 end
+---@param event on_gui_click
 local function onGuiClick(event)
 	if not event.element.valid then return end
 	local player = game.players[event.player_index]
@@ -600,14 +637,14 @@ local function onGuiClick(event)
 	elseif event.element.name == "drone-port-rename-button" then
 		local name_flow = event.element.parent
 		local title_flow = name_flow.parent
-		local rename_flow = title_flow.rename_flow
+		local rename_flow = title_flow['rename_flow']
 		name_flow.visible = false
 		rename_flow.visible = true
 		rename_flow.children[1].focus()
 	elseif event.element.name == "drone-port-rename-confirm" then
 		local rename_flow = event.element.parent
 		local title_flow = rename_flow.parent
-		local name_flow = title_flow.name_flow
+		local name_flow = title_flow['name_flow']
 		local newname = rename_flow.children[1].text
 		if newname ~= "" then
 			local data = getStructFromGui(player.opened)
@@ -625,7 +662,7 @@ local function onGuiClick(event)
 	elseif event.element.name == "drone-port-rename-cancel" then
 		local rename_flow = event.element.parent
 		local title_flow = rename_flow.parent
-		local name_flow = title_flow.name_flow
+		local name_flow = title_flow['name_flow']
 		rename_flow.children[1].text = name_flow.children[1].caption
 		name_flow.visible = true
 		rename_flow.visible = false
@@ -633,9 +670,9 @@ local function onGuiClick(event)
 	elseif event.element.name == "drone-port-open-destination-search" then
 		local destination_flow = event.element.parent
 		local inner_frame = destination_flow.parent
-		local search_flow = inner_frame.search_flow
+		local search_flow = inner_frame['search_flow']
 		search_flow.visible = not search_flow.visible
-		inner_frame.stats_table.visible = not search_flow.visible
+		inner_frame['stats_table'].visible = not search_flow.visible
 	elseif event.element.name == "drone-port-open-destination-on-map" then
 		local data = getStructFromGui(player.opened)
 		local target = (data.queued_target and data.queued_target ~= data.base and data.queued_target.valid and getStruct(data.queued_target)) or (data.target and data.target.valid and getStruct(data.target)) or nil
@@ -649,13 +686,14 @@ local function onGuiClick(event)
 		player.opened = nil
 	end
 end
+---@param event on_gui_confirmed
 local function onGuiConfirm(event)
 	if not event.element.valid then return end
 	local player = game.players[event.player_index]
 	if event.element.name == "drone-port-rename-input" then
 		local rename_flow = event.element.parent
 		local title_flow = rename_flow.parent
-		local name_flow = title_flow.name_flow
+		local name_flow = title_flow['name_flow']
 		local newname = rename_flow.children[1].text
 		if newname ~= "" then
 			local data = getStructFromGui(player.opened)
@@ -674,7 +712,8 @@ local function onGuiConfirm(event)
 	elseif event.element.name == "drone-port-destination-search" then
 		local search_flow = event.element.parent
 		local inner_frame = search_flow.parent
-		local destination_flow = inner_frame.destination_flow
+		local destination_flow = inner_frame['destination_flow']
+		local stats_table = inner_frame['stats_table']
 		-- grab top search result and set destination
 		local search_box = search_flow['drone-port-destination-selection']
 		local first_result = search_box.tags['search-ids'][1]
@@ -683,16 +722,17 @@ local function onGuiConfirm(event)
 		if target then
 			data.queued_target = target.base
 			destination_flow.destination_name.caption = target.name
-			updateTravelStatsGui(data, target, inner_frame.stats_table)
+			updateTravelStatsGui(data, target, stats_table)
 		else
 			data.queued_target = data.base
 			destination_flow.destination_name.caption = {"gui.drone-destination-not-set"}
-			updateTravelStatsGui(data, nil, inner_frame.stats_table)
+			updateTravelStatsGui(data, nil, stats_table)
 		end
 		search_flow.visible = false
-		inner_frame.stats_table.visible = true
+		stats_table.visible = true
 	end
 end
+---@param event on_gui_text_changed
 local function onGuiTextChange(event)
 	if not event.element.valid then return end
 	if event.element.name == "drone-port-destination-search" then
@@ -729,13 +769,15 @@ local function onGuiTextChange(event)
 		end
 	end
 end
+---@param event on_gui_selection_state_changed
 local function onGuiSelectionChange(event)
 	if not event.element.valid then return end
 	local player = game.players[event.player_index]
 	if event.element.name == "drone-port-destination-selection" then
 		local search_flow = event.element.parent
 		local inner_frame = search_flow.parent
-		local destination_flow = inner_frame.destination_flow
+		local destination_flow = inner_frame['destination_flow']
+		local stats_table = inner_frame['stats_table']
 		-- grab top search result and set destination
 		local result = event.element.tags['search-ids'][event.element.selected_index]
 		local data = getStructFromGui(player.opened)
@@ -747,12 +789,13 @@ local function onGuiSelectionChange(event)
 			data.queued_target = data.base
 			destination_flow.destination_name.caption = {"gui.drone-destination-not-set"}
 		end
-		updateTravelStatsGui(data.base, target.base, inner_frame.stats_table)
+		updateTravelStatsGui(data.base, target.base, stats_table)
 		search_flow.visible = false
-		inner_frame.stats_table.visible = true
+		stats_table.visible = true
 	end
 end
 
+---@param event on_gui_selected_tab_changed
 local function onGuiTabChange(event)
 	if event.element.valid and event.element.name == "drone-port-tabs" then
 		local player = game.players[event.player_index]
@@ -770,6 +813,8 @@ local function onGuiTabChange(event)
 	end
 end
 
+---@param source LuaInventory
+---@param target LuaInventory
 local function transferInventory(source, target)
 	for i=1,#source do
 		local stack = source[i]
@@ -1075,6 +1120,7 @@ local drone_control_functions = {
 	end
 }
 
+---@param event on_tick
 local function onTick(event)
 	for _,struct in pairs(getBucket(event.tick)) do
 		checkIfDroneRanOutOfFuel(struct)
@@ -1083,6 +1129,7 @@ local function onTick(event)
 	end
 end
 
+---@param event on_spider_command_completed
 local function onSpiderDone(event)
 	local spider = event.vehicle
 	if spider.name == vehicle then
@@ -1098,6 +1145,7 @@ local function onSpiderDone(event)
 	end
 end
 
+---@param event on_player_configured_spider_remote
 local function onSetupSpiderRemote(event)
 	local player = game.players[event.player_index]
 	local spider = event.vehicle
@@ -1158,7 +1206,7 @@ return bev.applyBuildEvents{
 		[defines.events.on_gui_selection_state_changed] = onGuiSelectionChange,
 		[defines.events.on_gui_selected_tab_changed] = onGuiTabChange,
 		[defines.events.on_player_changed_position] = onMove,
-		
+
 		[defines.events.on_player_configured_spider_remote] = onSetupSpiderRemote,
 		[defines.events.on_spider_command_completed] = onSpiderDone,
 		[defines.events.on_tick] = onTick,

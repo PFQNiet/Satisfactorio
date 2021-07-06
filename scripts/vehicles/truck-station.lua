@@ -11,20 +11,34 @@ local storage_pos = {1,-0.5}
 local fuelbox = base.."-fuelbox"
 local fuelbox_pos = {-4,2.5}
 
+---@class TruckStationData
+---@field base LuaEntity ElectricEnergyInterface
+---@field fuel LuaEntity Container
+---@field cargo LuaEntity Container
+---@field mode "input"|"output"
+
+---@alias TruckStationBucket table<uint, TruckStationData>
+
+---@class global.trucks
+---@field stations TruckStationBucket[]
 local script_data = {
 	stations = {}
 }
 for i=0,30-1 do script_data.stations[i] = {} end
+
+---@param floor LuaEntity
 local function getStruct(floor)
 	return script_data.stations[floor.unit_number%30][floor.unit_number]
 end
 local function getBucket(tick)
 	return script_data.stations[tick%30]
 end
+---@param floor LuaEntity
 local function clearStruct(floor)
 	script_data.stations[floor.unit_number%30][floor.unit_number] = nil
 end
 
+---@param event on_build
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not entity or not entity.valid then return end
@@ -57,6 +71,7 @@ local function onBuilt(event)
 	end
 end
 
+---@param event on_destroy
 local function onRemoved(event)
 	local entity = event.entity
 	if not entity or not entity.valid then return end
@@ -65,6 +80,10 @@ local function onRemoved(event)
 	end
 end
 
+---@param player LuaPlayer
+---@param gui LuaGuiElement
+---@param fuel LuaEntity
+---@param cargo LuaEntity
 local function checkRangeForTabs(player, gui, fuel, cargo)
 	if not (gui and gui.valid) then return end
 	for i,obj in pairs({fuel,cargo}) do
@@ -74,6 +93,8 @@ local function checkRangeForTabs(player, gui, fuel, cargo)
 		if reach then tab.tooltip = "" else tab.tooltip = {"cant-reach"} end
 	end
 end
+
+---@param event on_gui_opened
 local function onGuiOpened(event)
 	local player = game.players[event.player_index]
 	if event.gui_type ~= defines.gui_type.entity then return end
@@ -221,6 +242,8 @@ local function onGuiOpened(event)
 	gui['truck-station-tabs'].selected_tab_index = event.entity.name == fuelbox and 1 or 2
 	checkRangeForTabs(player, gui['truck-station-tabs'], data.fuel, data.cargo)
 end
+
+---@param event on_player_changed_position
 local function onMove(event)
 	-- update tab enabled state based on reach
 	local player = game.players[event.player_index]
@@ -232,6 +255,8 @@ local function onMove(event)
 	local gui = player.gui.relative
 	checkRangeForTabs(player, gui['truck-station-tabs'], data.fuel, data.cargo)
 end
+
+---@param event on_gui_click
 local function onGuiClick(event)
 	if not event.element.valid then return end
 	if event.element.name ~= "truck-station-mode-load" and event.element.name ~= "truck-station-mode-unload" then return end
@@ -277,6 +302,8 @@ local function onGuiClick(event)
 		end
 	end
 end
+
+---@param event on_gui_selected_tab_changed
 local function onGuiTabChange(event)
 	if event.element.valid and event.element.name == "truck-station-tabs" then
 		local player = game.players[event.player_index]
@@ -291,6 +318,7 @@ local function onGuiTabChange(event)
 	end
 end
 
+---@param event on_tick
 local function onTick(event)
 	for _,struct in pairs(getBucket(event.tick)) do
 		local station = struct.base

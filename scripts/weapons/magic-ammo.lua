@@ -1,36 +1,57 @@
-local name = "xeno-zapper"
+local guns_and_ammo = {
+	["xeno-zapper"] = "xeno-zapper-ammo",
+	["xeno-basher"] = "xeno-basher-ammo"
+}
+local ammo_and_guns = {}
+for g,a in pairs(guns_and_ammo) do ammo_and_guns[a] = g end
 
+---@param player LuaPlayer
 local function fix_ammo(player)
 	local guns = player.get_inventory(defines.inventory.character_guns)
-	if not guns then return end
 	local ammo = player.get_inventory(defines.inventory.character_ammo)
-	if not ammo then return end
+	if not (guns and ammo) then return end
 	for i=1,#guns do
-		if guns[i].valid_for_read and guns[i].name == name then
-			if not ammo[i].valid_for_read or ammo[i].name ~= name.."-ammo" then
-				ammo[i].set_stack({name=name.."-ammo",count=1})
+		if guns[i].valid_for_read then
+			local expect = guns_and_ammo[guns[i].name]
+			if expect and ammo[i].name ~= expect then
+				ammo[i].set_stack{name=expect, count=1}
 			end
-		elseif ammo[i].valid_for_read and ammo[i].name == name.."-ammo" then
-			ammo[i].clear()
+		elseif ammo[i].valid_for_read then
+			if ammo_and_guns[ammo[i].name] then
+				ammo[i].clear()
+			end
 		end
 	end
 end
+
+---@param player LuaPlayer
 local function remove_ammo(player)
 	local main = player.get_inventory(defines.inventory.character_main)
 	if not main then return end
-	main.remove({name=name.."-ammo",count=1000000}) -- no kill like overkill - make really damn sure no magic ammo ends up in the player's inventory
+	for ammo in pairs(ammo_and_guns) do
+		main.remove{name=ammo,count=1000000}
+	end
 end
+
+---@param player LuaPlayer
 local function no_touching(player)
 	local cursor = player.cursor_stack
 	if not cursor.valid_for_read then return end
-	if cursor.name == name.."-ammo" then
-		cursor.clear()
+	for ammo in pairs(ammo_and_guns) do
+		if cursor.name == ammo then
+			cursor.clear()
+			return
+		end
 	end
 end
+
+---@param corpse LuaEntity CharacterCorpse
 local function clean_corpse(corpse)
 	local remains = corpse.get_inventory(defines.inventory.character_corpse)
 	if not remains then return end
-	remains.remove({name=name.."-ammo",count=1000000})
+	for ammo in pairs(ammo_and_guns) do
+		remains.remove{name=ammo,count=1000000}
+	end
 end
 
 return {
