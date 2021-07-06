@@ -5,6 +5,7 @@ local saw = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	stack_size = 1,
+	flags = {"not-stackable"},
 	subgroup = "melee",
 	order = "s-x["..name.."]",
 	attack_parameters = {

@@ -42,7 +42,7 @@ local mineritem = {
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	place_result = name,
-	stack_size = 1,
+	stack_size = 50,
 	subgroup = "production-fluid",
 	order = "f["..name.."]"
 }

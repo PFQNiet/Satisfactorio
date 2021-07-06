@@ -2,7 +2,7 @@
 local name = "rebar-gun"
 local item = table.deepcopy(data.raw.gun.pistol)
 item.name = name
-item.flags = {}
+item.flags = {"not-stackable"}
 item.attack_parameters.ammo_category = "rebar"
 item.attack_parameters.cooldown = 3.5*60
 item.attack_parameters.range = 50
