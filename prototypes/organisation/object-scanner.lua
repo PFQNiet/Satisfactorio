@@ -14,7 +14,7 @@ local scanneritem = {
 	alt_selection_color = {a=0},
 	alt_selection_cursor_box_type = "entity",
 	mouse_cursor = name,
-	flags = {"mod-openable","not-stackable"}
+	flags = {"mod-openable"}
 }
 local defaultcursor = {
 	type = "mouse-cursor",

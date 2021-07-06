@@ -7,7 +7,6 @@ local item = {
 	infinite = true,
 	order = "c["..name.."]",
 	subgroup = "armor",
-	flags = {"not-stackable"},
 	stack_size = 1
 }
 local vehicle = {

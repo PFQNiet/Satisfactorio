@@ -139,7 +139,6 @@ detonator = {
 	subgroup = "gun",
 	order = "b[nobelisk]",
 	stack_size = 1,
-	flags = {"not-stackable"},
 	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
 	icon_size = 64,
 	capsule_action = {
