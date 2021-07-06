@@ -45,6 +45,7 @@ local accumulator = {
 	selection_box = burner.selection_box,
 	selectable_in_game = false,
 	collision_box = burner.collision_box,
+	collision_mask = {},
 	picture = {
 		filename = "__core__/graphics/empty.png",
 		size = {1,1}

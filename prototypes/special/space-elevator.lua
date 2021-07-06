@@ -28,4 +28,5 @@ silo.fixed_recipe = nil
 silo.minable = nil
 silo.selectable_in_game = false
 silo.flags = {}
+silo.collision_mask = {}
 data:extend{silo}

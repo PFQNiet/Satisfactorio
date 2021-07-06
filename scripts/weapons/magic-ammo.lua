@@ -13,7 +13,7 @@ local function fix_ammo(player)
 	for i=1,#guns do
 		if guns[i].valid_for_read then
 			local expect = guns_and_ammo[guns[i].name]
-			if expect and ammo[i].name ~= expect then
+			if expect and (not ammo[i].valid_for_read or ammo[i].name ~= expect) then
 				ammo[i].set_stack{name=expect, count=1}
 			end
 		elseif ammo[i].valid_for_read then
