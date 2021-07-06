@@ -153,9 +153,6 @@ return {
 		on_load = function()
 			script_data = global.containers or script_data
 		end,
-		on_configuration_changed = function()
-			if not global.containers then global.containers = script_data end
-		end,
 		events = {
 			[defines.events.on_tick] = onTick,
 			["fast-entity-transfer-hook"] = function(event) onFastTransfer(event, false) end,

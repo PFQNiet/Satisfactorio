@@ -167,9 +167,6 @@ return {
 	on_load = function()
 		script_data = global.battery_flow or script_data
 	end,
-	on_configuration_changed = function()
-		if not global.battery_flow then global.battery_flow = script_data end
-	end,
 	events = {
 		[defines.events.on_gui_opened] = onGuiOpened,
 		[defines.events.on_gui_closed] = onGuiClosed,

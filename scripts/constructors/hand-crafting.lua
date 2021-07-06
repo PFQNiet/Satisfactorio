@@ -111,9 +111,6 @@ return bev.applyBuildEvents{
 	on_load = function()
 		script_data = global.craft_bench or script_data
 	end,
-	on_configuration_changed = function()
-		global.craft_bench = global.craft_bench or script_data
-	end,
 	on_nth_tick = {
 		[6] = updateAllBenches
 	},

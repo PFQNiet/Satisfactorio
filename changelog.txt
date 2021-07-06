@@ -389,3 +389,11 @@ Date: 2021.07.04
     - Collapsing the to-do list now keeps the item list open, only hiding the ingredient list
     - Mining a building that is on your to-do list increments the list by one
     - To-do list now responds to Craft Bench and Equipment Workshop items
+---------------------------------------------------------------------------------------------------
+Version: 0.8.4
+Date: 2021.07.06
+  Optimizations:
+    - Further performance improvements and refactoring
+  Modding:
+    - Added compatibility with Text Plates
+    - Added compatibility with BottleneckLite

@@ -47,7 +47,8 @@ local hubterminal = {
 	entity_info_icon_shift = {0,0},
 	draw_entity_info_icon_background = false,
 	placeable_by = {item="hub-parts",count=1},
-	return_ingredients_on_change = false
+	return_ingredients_on_change = false,
+	bottleneck_ignore = true
 }
 
 local hubitem = {
@@ -84,6 +85,7 @@ silo.energy_source = {type="void"}
 silo.rocket_parts_required = 1
 silo.max_health = 1
 silo.fixed_recipe = nil
+silo.bottleneck_ignore = true
 -- scale silo graphics down to 1/3
 for _,key in pairs({
 	"arm_01_back_animation", "arm_02_right_animation", "arm_03_front_animation",

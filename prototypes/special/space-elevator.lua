@@ -16,6 +16,7 @@ elevator.machine.collision_box[1][1] = elevator.machine.collision_box[1][1]-0.01
 elevator.machine.draw_entity_info_icon_background = false
 elevator.machine.return_ingredients_on_change = false
 elevator.machine.minable.mining_time = 5
+elevator.machine.bottleneck_ignore = true
 elevator.item.stack_size = 1
 
 local silo = table.deepcopy(data.raw['rocket-silo']['rocket-silo'])
@@ -29,4 +30,5 @@ silo.minable = nil
 silo.selectable_in_game = false
 silo.flags = {}
 silo.collision_mask = {}
+silo.bottleneck_ignore = true
 data:extend{silo}

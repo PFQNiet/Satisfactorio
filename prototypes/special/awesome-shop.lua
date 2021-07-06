@@ -1,5 +1,5 @@
 -- the shop is an assembler that "dispenses" items for coupons ("coin")
-makeAssemblingMachine{
+local shop = makeAssemblingMachine{
 	name = "awesome-shop",
 	size = {3,2},
 	category = "awesome-shop",
@@ -12,6 +12,7 @@ makeAssemblingMachine{
 		{"copper-cable",30}
 	}
 }
+shop.machine.bottleneck_ignore = true
 
 local prices = require("constants.sink-cashout")
 -- prices = table of [item] = {cost, number}

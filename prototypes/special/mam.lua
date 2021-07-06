@@ -12,3 +12,4 @@ local mam = makeAssemblingMachine{
 }
 mam.machine.draw_entity_info_icon_background = false
 mam.machine.return_ingredients_on_change = false
+mam.machine.bottleneck_ignore = true

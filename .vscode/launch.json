@@ -14,7 +14,22 @@
 				"debugadapter": true,
 				"Satisfactorio": true,
 				"Factorissimo2": true,
+				"textplates": true,
+				"BottleneckLite": true,
+				"flib": true,
 				"GCKI": true
+			},
+			"modsPath": "E:\\Documents\\factorio-mods"
+		},
+		{
+			"type": "factoriomod",
+			"request": "launch",
+			"name": "Factorio Mod Debug (no 3rd party)",
+			"factorioPath": "E:\\Steam (SSD)\\steamapps\\common\\Factorio\\bin\\x64\\factorio.exe",
+			"disableExtraMods": true,
+			"adjustMods": {
+				"debugadapter": true,
+				"Satisfactorio": true
 			},
 			"modsPath": "E:\\Documents\\factorio-mods"
 		},
@@ -26,9 +41,7 @@
 			"disableExtraMods": true,
 			"adjustMods": {
 				"debugadapter": true,
-				"Satisfactorio": true,
-				"Factorissimo2": true,
-				"GCKI": true
+				"Satisfactorio": true
 			},
 			"modsPath": "E:\\Documents\\factorio-mods",
 			"hookMode": "profile"

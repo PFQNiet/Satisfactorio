@@ -1,6 +1,6 @@
 local sounds = copySoundsFrom(data.raw["assembling-machine"]["assembling-machine-1"])
 sounds.working_sound.sound[1].filename = "__base__/sound/manual-repair-simple.ogg"
-makeAssemblingMachine{
+local bench = makeAssemblingMachine{
 	name = "equipment-workshop",
 	size = {5,3},
 	category = "equipment",
@@ -13,3 +13,4 @@ makeAssemblingMachine{
 		-- {"iron-rod",4}
 	}
 }
+bench.machine.bottleneck_ignore = true

@@ -469,13 +469,6 @@ return bev.applyBuildEvents{
 	on_load = function()
 		script_data = global.pets or script_data
 	end,
-	on_configuration_changed = function()
-		if not global.pets and global.small_biter then
-			global.pets = global.small_biter
-			global.small_biter = nil
-			script_data = global.pets
-		end
-	end,
 	events = {
 		[defines.events.on_player_dropped_item] = onDroppedItem,
 		[defines.events.on_entity_destroyed] = onEntityDestroyed,
