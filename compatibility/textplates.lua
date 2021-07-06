@@ -25,6 +25,12 @@ if mods[mod] then
 
 		local entity = data.raw["simple-entity-with-force"][type.name]
 		entity.max_health = 1
+		-- apply purple tint to quartz-glass
+		if type.material == "glass" then
+			for _,pic in pairs(entity.pictures) do
+				pic.layers[1].tint = {0.95,0.9,1}
+			end
+		end
 
 		local item = data.raw.item[type.name]
 		if not item.flags then item.flags = {} end
