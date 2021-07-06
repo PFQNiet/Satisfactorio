@@ -14,12 +14,14 @@ local scanneritem = {
 	alt_selection_color = {a=0},
 	alt_selection_cursor_box_type = "entity",
 	mouse_cursor = name,
-	flags = {"mod-openable"}
+	flags = {"mod-openable","not-stackable"}
 }
 local defaultcursor = {
 	type = "mouse-cursor",
 	name = name,
-	system_cursor = "arrow"
+	filename = graphics.."empty.png",
+	hot_pixel_x = 0,
+	hot_pixel_y = 0
 }
 
 local ingredients = {

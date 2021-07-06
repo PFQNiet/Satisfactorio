@@ -57,6 +57,7 @@ local hubitem = {
 	icon_size = 64,
 	place_result = name,
 	stack_size = 1,
+	flags = {"not-stackable"},
 	subgroup = "special",
 	order = "a["..name.."]"
 }

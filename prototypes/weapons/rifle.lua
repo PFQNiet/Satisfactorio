@@ -2,7 +2,7 @@
 local name = "rifle"
 local item = table.deepcopy(data.raw.gun["submachine-gun"])
 item.name = name
-item.flags = {}
+item.flags = {"not-stackable"}
 item.attack_parameters.cooldown = 12 -- 5 per second
 item.attack_parameters.range = 50
 item.icon = "__Satisfactorio__/graphics/icons/"..name..".png"

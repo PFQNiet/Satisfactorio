@@ -55,7 +55,7 @@ local function addTech(name, icon, category, subgroup, order, time, prerequisite
 			}},
 			stack_size = 1,
 			durability = 1,
-			flags = {"hidden","only-in-cursor"}
+			flags = {"hidden","not-stackable","only-in-cursor"}
 		},
 		recipe = {
 			type = "recipe",
@@ -162,7 +162,7 @@ data:extend{
 		subgroup = "hub-tier0",
 		type = "tool",
 		infinite = true,
-		flags = {"hidden"}
+		flags = {"hidden","not-stackable"}
 	}
 }
 

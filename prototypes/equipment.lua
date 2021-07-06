@@ -25,6 +25,7 @@ function makeEquipment(params)
 		order = order.."["..name.."]",
 		subgroup = subgroup,
 		stack_size = 1,
+		flags = {"not-stackable"},
 		equipment_grid = name
 	}
 	local grid = {
