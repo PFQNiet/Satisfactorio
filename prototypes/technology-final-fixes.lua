@@ -40,22 +40,7 @@ end
 
 local function isRecipeABuilding(rname)
 	local recipe = data.raw.recipe[rname]
-	-- building-type recipes always have a single `result`: the building
-	if not recipe.result then return false end
-	local iname = recipe.result
-	local item = getProductPrototype(iname)
-	if not item then return false end
-	-- check if the item's flags includes "only-in-cursor"
-	local flags = item.flags or {}
-	local only_in_cursor = false
-	for _,flag in pairs(flags) do
-		if flag == "only-in-cursor" then
-			only_in_cursor = true
-			break
-		end
-	end
-	-- if it's craftable but only-in-cursor, then it's a building
-	return only_in_cursor
+	return recipe.category == "building"
 end
 local function isRecipeAMaterial(rname)
 	-- "material" recipe is any recipe in the "intermediate-products" or "space-elevator" groups

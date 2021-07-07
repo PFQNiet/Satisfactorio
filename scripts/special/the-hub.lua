@@ -204,24 +204,6 @@ local function launchFreighter(term, item)
 	silo.rocket_parts = 1
 end
 
---- "building" recipes have only one item product and that item is only-in-cursor
----@param recipe LuaRecipePrototype
-local function isRecipeABuilding(recipe)
-	local products = recipe.products
-	-- assert there is only one product
-	if #products ~= 1 then return end
-	local product = products[1]
-	if product.type ~= "item" then return end
-	local item = game.item_prototypes[product.name]
-	-- if it is only-in-cursor then it's a building
-	return item.has_flag("only-in-cursor")
-end
---- "material" recipes are any recipe in the "intermediate-products" or "space-elevator" groups
----@param recipe LuaRecipePrototype
-local function isRecipeAMaterial(recipe)
-	return recipe.group.name == "intermediate-products" or recipe.group.name == "space-elevator"
-end
-
 local upgrades = {
 	["hub-tier0-hub-upgrade1"] = buildStorageChest,
 	["hub-tier0-hub-upgrade2"] = buildBiomassBurner1,
@@ -251,9 +233,9 @@ local function completeMilestone(technology)
 				local subtype
 				if recipe.category == "resource-scanner" then
 					subtype = "resource"
-				elseif isRecipeABuilding(recipe) then
+				elseif recipe.category == "building" then
 					subtype = "building"
-				elseif isRecipeAMaterial(recipe) then
+				elseif recipe.group.name == "intermediate-products" or recipe.group.name == "space-elevator" then
 					subtype = "material"
 				else
 					subtype = "equipment"
