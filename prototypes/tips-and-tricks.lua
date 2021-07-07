@@ -38,6 +38,7 @@ for _,name in pairs(vanilla_tiptrick_items) do data.raw['tips-and-tricks-item'][
 ---@field use_io boolean
 ---@field setup string|nil
 ---@field sequence TipTrickAnimationStep[]|nil
+---@field update string|nil
 
 -- center the camera, set zoom, turn Alt mode on/off and unpause the game
 ---@param params TipTrickSetup_params
@@ -48,6 +49,7 @@ function tipTrickSetup(params)
 	local use_io = params.use_io
 	local setup = params.setup or ""
 	local steps = params.sequence
+	local update = params.update
 
 	local init = [[
 		game.camera_position = {0,0}
@@ -195,6 +197,12 @@ function tipTrickSetup(params)
 			end
 			step_1()
 		]]
+	elseif update then
+		init = init..[[
+			script.on_nth_tick(1, function()
+				]]..update..[[
+			end)
+		]]
 	end
 	return init
 end
@@ -205,5 +213,6 @@ data:extend{
 	require(modpath.."prototypes.tips-and-tricks.build-gun"),
 	require(modpath.."prototypes.tips-and-tricks.power-trip"),
 	require(modpath.."prototypes.tips-and-tricks.conveyor-belts"),
-	require(modpath.."prototypes.tips-and-tricks.smart-fast-transfer")
+	require(modpath.."prototypes.tips-and-tricks.smart-fast-transfer"),
+	require(modpath.."prototypes.tips-and-tricks.train-loading")
 }
