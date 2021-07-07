@@ -7,3 +7,10 @@ require("prototypes.logistics.jump-pads")
 require("prototypes.logistics.hyper-tubes")
 require("prototypes.logistics.foundation")
 require("prototypes.logistics.wall")
+
+data:extend{
+	{type="item-subgroup",group="logistics",name="pipe-distribution",order="da"},
+	{type="item-subgroup",group="logistics",name="logistics-observation",order="s-b"},
+	{type="item-subgroup",group="logistics",name="logistics-wall",order="s-c"},
+	{type="item-subgroup",group="logistics",name="transport-player",order="dz"}
+}

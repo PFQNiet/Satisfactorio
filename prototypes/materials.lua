@@ -74,3 +74,55 @@ require("prototypes.materials.magnetic-field-generator")
 require("prototypes.materials.thermal-propulsion-rocket")
 require("prototypes.materials.nuclear-pasta")
 require("prototypes.materials.packaged-fluids")
+
+data:extend{
+	{type="item-subgroup",group="intermediate-products",name="organic-resource",order="s-a"},
+	{type="item-subgroup",group="intermediate-products",name="mineral-resource",order="s-b"},
+	{type="item-subgroup",group="intermediate-products",name="ingots",order="s-c"},
+	{type="item-subgroup",group="intermediate-products",name="parts",order="s-d"},
+	{type="item-subgroup",group="intermediate-products",name="components",order="s-e"},
+	{type="item-subgroup",group="intermediate-products",name="nuclear",order="s-f"},
+	{type="item-subgroup",group="intermediate-products",name="fluid-recipe",order="s-o"},
+	{type="item-subgroup",group="intermediate-products",name="packed-fluid",order="s-p"},
+	{type="item-subgroup",group="intermediate-products",name="unpack-fluid",order="s-q"},
+	{type="item-subgroup",group="fluids",name="fluid-resource",order="s-a"},
+	{type="item-subgroup",group="fluids",name="fluid-product",order="s-b"},
+	{type="item-subgroup",group="fluids",name="fluid-fuel",order="s-c"},
+
+	{type="fuel-category",name="carbon"}, -- coal, compacted coal, coke
+	{type="fuel-category",name="packaged-fuel"}, -- packaged fuel, packaged turbofuel, packaged heavy oil residue, packaged oil
+	{type="fuel-category",name="battery"}, -- batteries
+	{
+		filename = "__base__/graphics/icons/tooltips/tooltip-category-chemical.png",
+		flags = {"gui-icon"},
+		height = 40,
+		mipmap_count = 2,
+		name = "tooltip-category-carbon",
+		priority = "extra-high-no-scale",
+		scale = 0.5,
+		type = "sprite",
+		width = 40
+	},
+	{
+		filename = "__base__/graphics/icons/tooltips/tooltip-category-water.png",
+		flags = {"gui-icon"},
+		height = 40,
+		mipmap_count = 2,
+		name = "tooltip-category-liquid-fuel",
+		priority = "extra-high-no-scale",
+		scale = 0.5,
+		type = "sprite",
+		width = 40
+	},
+	{
+		filename = "__Satisfactorio__/graphics/icons/tooltip-category-packaged-fuel.png",
+		flags = {"gui-icon"},
+		height = 40,
+		mipmap_count = 2,
+		name = "tooltip-category-packaged-fuel",
+		priority = "extra-high-no-scale",
+		scale = 0.5,
+		type = "sprite",
+		width = 40
+	}
+}

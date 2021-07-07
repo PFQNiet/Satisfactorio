@@ -153,3 +153,24 @@ require("prototypes.constructors.refinery")
 require("prototypes.constructors.blender")
 require("prototypes.constructors.particle-accelerator")
 require("prototypes.constructors.packager")
+
+data:extend{
+	{type="recipe-category",name="craft-bench"},
+	{type="recipe-category",name="equipment"},
+	{type="recipe-category",name="smelter"},
+	{type="recipe-category",name="foundry"},
+	{type="recipe-category",name="constructing"},
+	{type="recipe-category",name="assembling"},
+	{type="recipe-category",name="manufacturing"},
+	{type="recipe-category",name="refining"},
+	{type="recipe-category",name="blending"},
+	{type="recipe-category",name="accelerating"},
+	{type="recipe-category",name="packaging"},
+
+	{type="item-subgroup",group="production",name="production-power",order="s-a"},
+	{type="item-subgroup",group="production",name="production-fluid",order="s-b"},
+	{type="item-subgroup",group="production",name="production-manufacturer",order="s-c"},
+	{type="item-subgroup",group="production",name="production-miner",order="s-d"},
+	{type="item-subgroup",group="production",name="production-smelter",order="s-e"},
+	{type="item-subgroup",group="production",name="production-workstation",order="s-f"}
+}

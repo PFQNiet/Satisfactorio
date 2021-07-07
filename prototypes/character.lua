@@ -18,7 +18,7 @@ char.tool_attack_result = {
 		target_effects = {
 			{
 				type = "create-sticker",
-				sticker = "xeno-zapper-stun-sticker"
+				sticker = "xeno-basher-stun-sticker"
 			},
 			{
 				type = "push-back",
@@ -59,3 +59,9 @@ data.raw['custom-input']['toggle-personal-logistic-requests'] = nil
 data.raw['custom-input']['toggle-personal-roboport'] = nil
 data.raw['shortcut']['toggle-equipment-movement-bonus'] = nil
 data.raw['shortcut']['toggle-personal-roboport'] = nil
+
+-- Sandbox mode
+table.insert(data.raw['god-controller'].default.crafting_categories, "building")
+table.insert(data.raw['god-controller'].default.mining_categories, "solid")
+data.raw['god-controller'].default.mining_speed = 2
+data.raw['god-controller'].default.inventory_size = 18

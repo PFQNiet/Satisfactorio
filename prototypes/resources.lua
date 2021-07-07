@@ -26,3 +26,13 @@ require("prototypes.resources.alien-organs")
 require("prototypes.resources.beryl-nut")
 require("prototypes.resources.paleberry")
 require("prototypes.resources.bacon-agaric")
+
+data:extend{
+	{type="recipe-category",name="resource-scanner"},
+	{type="resource-category",name="solid"},
+	{type="resource-category",name="water"},
+	{type="resource-category",name="crude-oil"},
+	{type="resource-category",name="resource-well"},
+	{type="resource-category",name="resource-node"},
+	{type="resource-category",name="geothermal"}
+}

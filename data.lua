@@ -73,107 +73,15 @@ foundation_layer = nil
 train_platform_layer = nil
 
 data:extend({
-	{type="ammo-category",name="rebar"},
-	{type="ammo-category",name="rifle"},
-	{type="ammo-category",name="infinite"},
-	{type="ammo-category",name="solid-biofuel"}, -- for the Chainsaw
-	{type="fuel-category",name="carbon"}, -- coal, compacted coal, coke
-	{type="fuel-category",name="packaged-fuel"}, -- packaged fuel, packaged turbofuel, packaged heavy oil residue, packaged oil
-	{type="fuel-category",name="battery"}, -- batteries
-	{type="resource-category",name="solid"},
-	{type="resource-category",name="water"},
-	{type="resource-category",name="crude-oil"},
-	{type="resource-category",name="resource-well"},
-	{type="resource-category",name="resource-node"},
-	{type="resource-category",name="geothermal"},
-	{type="recipe-category",name="craft-bench"},
 	{type="recipe-category",name="building"},
-	{type="recipe-category",name="equipment"},
-	{type="recipe-category",name="smelter"},
-	{type="recipe-category",name="foundry"},
-	{type="recipe-category",name="constructing"},
-	{type="recipe-category",name="assembling"},
-	{type="recipe-category",name="manufacturing"},
-	{type="recipe-category",name="refining"},
-	{type="recipe-category",name="blending"},
-	{type="recipe-category",name="accelerating"},
-	{type="recipe-category",name="packaging"},
-	{type="recipe-category",name="resource-scanner"},
-	{type="recipe-category",name="object-scanner"},
-	{type="recipe-category",name="hub-progressing"},
-	{type="recipe-category",name="space-elevator"},
-	{type="recipe-category",name="mam"},
-	{type="recipe-category",name="awesome-sink"},
-	{type="recipe-category",name="awesome-shop"},
-	{type="recipe-category",name="coal-generator"},
-	{type="recipe-category",name="fuel-generator"},
-	{type="recipe-category",name="nuclear-power"},
 	{type="item-group",name="special",order="91",icon="__Satisfactorio__/graphics/item-group/special.png",icon_size=64},
-	{type="item-group",name="milestones",order="92",icon="__Satisfactorio__/graphics/icons/the-hub.png",icon_size=64},
-	{type="item-group",name="space-elevator",order="x3",icon="__Satisfactorio__/graphics/icons/space-elevator.png",icon_size=64},
-	{type="item-group",name="mam-research",order="x4",icon="__Satisfactorio__/graphics/icons/mam.png",icon_size=64},
-	{type="item-subgroup",group="special",name="special",order="s-a"},
-	{type="item-subgroup",group="special",name="special-undo",order="s-undo"},
-	{type="item-subgroup",group="logistics",name="pipe-distribution",order="da"},
-	{type="item-subgroup",group="logistics",name="logistics-observation",order="s-b"},
-	{type="item-subgroup",group="logistics",name="logistics-wall",order="s-c"},
-	{type="item-subgroup",group="logistics",name="transport-player",order="dz"},
-	{type="item-subgroup",group="production",name="production-power",order="s-a"},
-	{type="item-subgroup",group="production",name="production-fluid",order="s-b"},
-	{type="item-subgroup",group="production",name="production-manufacturer",order="s-c"},
-	{type="item-subgroup",group="production",name="production-miner",order="s-d"},
-	{type="item-subgroup",group="production",name="production-smelter",order="s-e"},
-	{type="item-subgroup",group="production",name="production-workstation",order="s-f"},
-	{type="item-subgroup",group="intermediate-products",name="organic-resource",order="s-a"},
-	{type="item-subgroup",group="intermediate-products",name="mineral-resource",order="s-b"},
-	{type="item-subgroup",group="intermediate-products",name="ingots",order="s-c"},
-	{type="item-subgroup",group="intermediate-products",name="parts",order="s-d"},
-	{type="item-subgroup",group="intermediate-products",name="components",order="s-e"},
-	{type="item-subgroup",group="intermediate-products",name="nuclear",order="s-f"},
-	{type="item-subgroup",group="intermediate-products",name="fluid-recipe",order="s-o"},
-	{type="item-subgroup",group="intermediate-products",name="packed-fluid",order="s-p"},
-	{type="item-subgroup",group="intermediate-products",name="unpack-fluid",order="s-q"},
-	{type="item-subgroup",group="combat",name="melee",order="9"},
-	{type="item-subgroup",group="combat",name="environment",order="f"},
-	{type="item-subgroup",group="fluids",name="fluid-resource",order="s-a"},
-	{type="item-subgroup",group="fluids",name="fluid-product",order="s-b"},
-	{type="item-subgroup",group="fluids",name="fluid-fuel",order="s-c"},
-	{type="item-subgroup",group="milestones",name="hub-tier0",order="a"},
-	{type="item-subgroup",group="milestones",name="hub-tier1",order="b"},
-	{type="item-subgroup",group="milestones",name="hub-tier2",order="c"},
-	{type="item-subgroup",group="milestones",name="hub-tier3",order="d"},
-	{type="item-subgroup",group="milestones",name="hub-tier4",order="e"},
-	{type="item-subgroup",group="milestones",name="hub-tier5",order="f"},
-	{type="item-subgroup",group="milestones",name="hub-tier6",order="g"},
-	{type="item-subgroup",group="milestones",name="hub-tier7",order="h"},
-	{type="item-subgroup",group="milestones",name="hub-tier8",order="i"},
-	{type="item-subgroup",group="space-elevator",name="space-parts-1",order="a"},
-	{type="item-subgroup",group="space-elevator",name="space-parts-2",order="b"},
-	{type="item-subgroup",group="space-elevator",name="space-parts-3",order="c"},
-	{type="item-subgroup",group="space-elevator",name="space-parts-4",order="d"},
-	{type="item-subgroup",group="mam-research",name="mam-hard-drive",order="a"},
-	{type="item-subgroup",group="mam-research",name="mam-alien-organisms",order="b"},
-	{type="item-subgroup",group="mam-research",name="mam-caterium",order="c"},
-	{type="item-subgroup",group="mam-research",name="mam-flower-petals",order="d"},
-	{type="item-subgroup",group="mam-research",name="mam-mycelia",order="e"},
-	{type="item-subgroup",group="mam-research",name="mam-nutrients",order="f"},
-	{type="item-subgroup",group="mam-research",name="mam-power-slugs",order="g"},
-	{type="item-subgroup",group="mam-research",name="mam-quartz",order="h"},
-	{type="item-subgroup",group="mam-research",name="mam-sulfur",order="i"}
 })
-data.raw['item-subgroup']['transport'].order = "e"
-data.raw['item-subgroup']['train-transport'].order = "f"
-local igroups = data.raw['item-group']
 for _,key in pairs({"logistics","production","intermediate-products","combat"}) do
-	local igroup = igroups[key]
+	local igroup = data.raw["item-group"][key]
 	igroup.icon = "__Satisfactorio__/graphics/item-group/"..key..".png"
 	igroup.icon_size = 64
 	igroup.icon_mipmaps = 1
 end
-table.insert(data.raw['god-controller'].default.crafting_categories, "building")
-table.insert(data.raw['god-controller'].default.mining_categories, "solid")
-data.raw['god-controller'].default.mining_speed = 2
-data.raw['god-controller'].default.inventory_size = 18
 
 require("prototypes.fonts")
 require("prototypes.character")
@@ -197,67 +105,15 @@ require("prototypes.vanilla-cleanup")
 require("prototypes.tips-and-tricks")
 require("prototypes.menu-sims")
 
-require(modpath.."compatibility")
+require("compatibility.factorissimo2")
+require("compatibility.gcki")
+require("compatibility.textplates")
 
 for _,fluid in pairs(data.raw.fluid) do
 	fluid.auto_barrel = false
 end
 
-data:extend({
-	{
-		type = "sound",
-		name = "power-startup",
-		filename = "__base__/sound/nightvision-on.ogg"
-	},
-	{
-		type = "sound",
-		name = "power-failure",
-		filename = "__base__/sound/nightvision-off.ogg"
-	},
-	{
-		filename = "__base__/graphics/icons/tooltips/tooltip-category-chemical.png",
-		flags = {"gui-icon"},
-		height = 40,
-		mipmap_count = 2,
-		name = "tooltip-category-carbon",
-		priority = "extra-high-no-scale",
-		scale = 0.5,
-		type = "sprite",
-		width = 40
-	},
-	{
-		filename = "__base__/graphics/icons/tooltips/tooltip-category-chemical.png",
-		flags = {"gui-icon"},
-		height = 40,
-		mipmap_count = 2,
-		name = "tooltip-category-solid-biofuel",
-		priority = "extra-high-no-scale",
-		scale = 0.5,
-		type = "sprite",
-		width = 40
-	},
-	{
-		filename = "__base__/graphics/icons/tooltips/tooltip-category-water.png",
-		flags = {"gui-icon"},
-		height = 40,
-		mipmap_count = 2,
-		name = "tooltip-category-liquid-fuel",
-		priority = "extra-high-no-scale",
-		scale = 0.5,
-		type = "sprite",
-		width = 40
-	},
-	{
-		filename = "__Satisfactorio__/graphics/icons/tooltip-category-packaged-fuel.png",
-		flags = {"gui-icon"},
-		height = 40,
-		mipmap_count = 2,
-		name = "tooltip-category-packaged-fuel",
-		priority = "extra-high-no-scale",
-		scale = 0.5,
-		type = "sprite",
-		width = 40
-	},
+data:extend{
 	{
 		type = "custom-input",
 		name = "recipe-browser",
@@ -291,4 +147,4 @@ data:extend({
 		minable = {mining_time=0.25}
 	}
 	]]
-})
+}

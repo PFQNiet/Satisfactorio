@@ -15,3 +15,6 @@ require("prototypes.vehicles.empty-platform")
 
 require("prototypes.vehicles.drone-port")
 require("prototypes.vehicles.drone")
+
+data.raw['item-subgroup']['transport'].order = "e"
+data.raw['item-subgroup']['train-transport'].order = "f"

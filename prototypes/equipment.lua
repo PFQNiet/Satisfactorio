@@ -97,8 +97,9 @@ require("prototypes.equipment.hover-pack")
 require("prototypes.equipment.gas-mask")
 require("prototypes.equipment.hazmat-suit")
 
--- Jump!
 data:extend({
+	{type="item-subgroup",group="combat",name="environment",order="f"},
+	-- Jump!
 	{
 		type = "custom-input",
 		name = "jump",

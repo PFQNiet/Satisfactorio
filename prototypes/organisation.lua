@@ -10,6 +10,7 @@ require("prototypes.organisation.map-marker")
 require("prototypes.organisation.object-scanner")
 
 data:extend{
+	{type="recipe-category",name="object-scanner"},
 	-- fast-transfer hooks for containers
 	{
 		type = "custom-input",

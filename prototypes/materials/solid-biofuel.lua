@@ -51,6 +51,18 @@ copyToHandcraft(recipe, 10)
 data:extend{item,recipe}
 
 data:extend{
+	{type="ammo-category",name="solid-biofuel"}, -- for the Chainsaw
+	{
+		filename = "__base__/graphics/icons/tooltips/tooltip-category-chemical.png",
+		flags = {"gui-icon"},
+		height = 40,
+		mipmap_count = 2,
+		name = "tooltip-category-solid-biofuel",
+		priority = "extra-high-no-scale",
+		scale = 0.5,
+		type = "sprite",
+		width = 40
+	},
 	{
 		type = "damage-type",
 		name = "chainsaw"
