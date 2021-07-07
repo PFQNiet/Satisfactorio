@@ -10,6 +10,14 @@ char.healing_per_tick = 0
 char.ticks_to_stay_in_combat = 50*60
 
 -- character can't damage targets without a weapon, but can at least "punch" them away and stun them
+local stun = {
+	duration_in_ticks = 150,
+	flags = {"not-on-map"},
+	name = "unarmed-strike-stun-sticker",
+	target_movement_modifier = 0,
+	type = "sticker"
+}
+data:extend{stun}
 char.tool_attack_distance = 3
 char.tool_attack_result = {
 	type = "direct",
@@ -18,7 +26,7 @@ char.tool_attack_result = {
 		target_effects = {
 			{
 				type = "create-sticker",
-				sticker = "xeno-basher-stun-sticker"
+				sticker = stun.name
 			},
 			{
 				type = "push-back",
