@@ -22,16 +22,6 @@ local equipment = makeEquipment{
 
 -- create a fake generator item to power the exoskeleton
 equipment.grid.width = 2
-local fakegenitem = {
-	type = "item",
-	name = name.."-power",
-	localised_name = {"entity-name.generator-buffer",{"item-name."..name}},
-	icon = graphics.."icons/battery.png",
-	icon_size = 64,
-	stack_size = 1,
-	flags = {"hidden"},
-	place_as_equipment_result = name.."-power"
-}
 local fakegen = {
 	type = "generator-equipment",
 	name = name.."-power",
@@ -50,6 +40,7 @@ local fakegen = {
 		width = 1,
 		height = 1,
 		type = "full"
-	}
+	},
+	take_result = "raw-fish"
 }
-data:extend{fakegenitem, fakegen}
+data:extend{fakegen}

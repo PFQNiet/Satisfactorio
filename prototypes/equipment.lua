@@ -1,19 +1,30 @@
+---@class makeEquipment_params
+---@field name string
+---@field subgroup string
+---@field order string
+---@field type string
+---@field energy_source LuaElectricEnergySourcePrototype
+---@field properties table Additional properties of the equipment
+---@field ingredients Ingredient[]
+---@field craft_time number
+
+---@class makeEquipment_return
+---@field item table
+---@field grid table
+---@field category table
+---@field equipment table
+---@field recipe table
+
+---@param params makeEquipment_params
+---@return makeEquipment_return
 function makeEquipment(params)
-	---@type string
 	local name = params.name
-	---@type string
 	local subgroup = params.subgroup
-	---@type string
 	local order = params.order
-	---@type string
 	local type = params.type
-	---@type table
 	local energy_source = params.energy_source
-	---@type table
 	local properties = params.properties
-	---@type table
 	local ingredients = params.ingredients
-	---@type number
 	local time = params.craft_time
 
 	local item = {
@@ -39,15 +50,6 @@ function makeEquipment(params)
 		type = "equipment-category",
 		name = name
 	}
-	local fakeitem = {
-		type = "item",
-		name = name.."-equipment",
-		icon = item.icon,
-		icon_size = item.icon_size,
-		stack_size = 1,
-		flags = {"hidden"},
-		place_as_equipment_result = name.."-equipment"
-	}
 	local fakeequip = {
 		type = type,
 		name = name.."-equipment",
@@ -61,7 +63,8 @@ function makeEquipment(params)
 		sprite = {
 			filename = item.icon,
 			size = {64,64}
-		}
+		},
+		take_result = "raw-fish"
 	}
 	for k,v in pairs(properties or {}) do
 		fakeequip[k] = v
@@ -76,14 +79,13 @@ function makeEquipment(params)
 		enabled = false
 	}
 
-	data:extend{item, grid, category, fakeitem, fakeequip, recipe}
+	data:extend{item, grid, category, fakeequip, recipe}
 
 	return {
 		item = item,
 		grid = grid,
 		category = category,
-		fakeitem = fakeitem,
-		fakeequip = fakeequip,
+		equipment = fakeequip,
 		recipe = recipe
 	}
 end
