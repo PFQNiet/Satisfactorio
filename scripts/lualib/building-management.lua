@@ -1,7 +1,9 @@
 local cache = {}
 ---@param name string
 local function getBuildingRecipe(name)
-	if cache[name] then return cache[name] end
+	local cached = cache[name]
+	if cached == "NONE" then return nil end
+	if cached then return cached end
 
 	if not name then return nil end
 	local item = game.item_prototypes[name]
@@ -30,6 +32,7 @@ local function getBuildingRecipe(name)
 			end
 		end
 	end
+	cache[name] = "NONE"
 end
 
 -- if the entity has an undo recipe, refund the components instead

@@ -645,6 +645,7 @@ local function onBuilt(event)
 	local player = game.players[event.player_index]
 	if not script_data[player.index] then script_data[player.index] = {} end
 	local wanted = script_data[player.index]
+	if not wanted[recipe.name] then return end
 	updateItemRequestCount(player, recipe.name, math.max(0,(wanted[recipe.name] or 0) - 1))
 end
 -- when the player mines something, if it's in the to-do list, add one
