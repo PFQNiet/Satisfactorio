@@ -129,6 +129,10 @@ local function onSecond(event)
 
 			if script_data.step == 4 then
 				game.surfaces.nauvis.find_entity("drop-pod",{0.5,-1.5}).minable = true
+			elseif script_data.step == 5 then
+				game.forces.player.technologies['tips-and-tricks-melee-combat'].researched = true
+			elseif script_data.step == 6 then
+				game.forces.player.technologies['tips-and-tricks-build-gun'].researched = true
 			end
 		end
 	end

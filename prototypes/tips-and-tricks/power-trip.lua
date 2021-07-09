@@ -4,10 +4,8 @@ return {
 	order = "d[power-trip]",
 	tag = "[img=utility/electricity_icon]",
 	trigger = {
-		-- type = "low-power",
-		-- count = 1
-		type = "unlocked-recipe",
-		recipe = "smelter" -- first biomass burner acquired
+		type = "research",
+		technology = "tips-and-tricks-power-trip"
 	},
 	image = graphics.."tips-and-tricks/power-trip.png"
 }

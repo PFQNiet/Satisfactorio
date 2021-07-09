@@ -4,8 +4,8 @@ return {
 	order = "c[build-gun]",
 	tag = "[item=hub-parts]",
 	trigger = {
-		type = "time-elapsed",
-		ticks = 60*60
+		type = "research",
+		technology = "tips-and-tricks-build-gun"
 	},
 	image = graphics.."tips-and-tricks/build-gun.png"
 }

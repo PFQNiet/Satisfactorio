@@ -141,6 +141,8 @@ local function on60thTick(event)
 				if script_data.last_outage[force.index]+3600 < event.tick then
 					-- only show console message at most once a minute
 					force.print({"message.power-failure"})
+					-- set "invisible" tech to researched to unlock tip/trick
+					force.technologies['tips-and-tricks-power-trip'].researched = true
 				end
 				script_data.last_outage[force.index] = event.tick
 				-- see if any player on this entity's force has this generator opened

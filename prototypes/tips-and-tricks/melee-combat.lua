@@ -4,8 +4,8 @@ return {
 	order = "b[melee-combat]",
 	tag = "[item=xeno-zapper]",
 	trigger = {
-		type = "time-elapsed",
-		ticks = 30*60
+		type = "research",
+		technology = "tips-and-tricks-melee-combat"
 	},
 	simulation = {
 		init = tipTrickSetup{

@@ -209,8 +209,50 @@ end
 
 data:extend{
 	require(modpath.."prototypes.tips-and-tricks.introduction"),
+	{
+		type = "technology",
+		name = "tips-and-tricks-melee-combat",
+		icon = graphics.."empty.png",
+		icon_size = 32,
+		hidden = true,
+		unit = {
+			count = 1,
+			time = 1,
+			ingredients = {}
+		},
+		prerequisites = {},
+		effects = {}
+	},
 	require(modpath.."prototypes.tips-and-tricks.melee-combat"),
+	{
+		type = "technology",
+		name = "tips-and-tricks-build-gun",
+		icon = graphics.."empty.png",
+		icon_size = 32,
+		hidden = true,
+		unit = {
+			count = 1,
+			time = 1,
+			ingredients = {}
+		},
+		prerequisites = {},
+		effects = {}
+	},
 	require(modpath.."prototypes.tips-and-tricks.build-gun"),
+	{
+		type = "technology",
+		name = "tips-and-tricks-power-trip",
+		icon = graphics.."empty.png",
+		icon_size = 32,
+		hidden = true,
+		unit = {
+			count = 1,
+			time = 1,
+			ingredients = {}
+		},
+		prerequisites = {},
+		effects = {}
+	},
 	require(modpath.."prototypes.tips-and-tricks.power-trip"),
 	require(modpath.."prototypes.tips-and-tricks.conveyor-belts"),
 	require(modpath.."prototypes.tips-and-tricks.smart-fast-transfer"),
