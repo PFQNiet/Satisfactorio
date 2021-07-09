@@ -402,5 +402,10 @@ Version: 0.8.5
 Date: 2021.07.07
   Changes:
     - Added Tips + Tricks entry explaining how (not) to use Train conditions
+  Bugfixes:
+    - Fixed resource wells spawning off-centre
+  Gui:
+    - Improvements to Resource/Object/Beacon Scanner GUIs
+    - Tidying up of Milestone GUI
   Combat Balancing:
     - Unarmed melee strikes now stun the target for much longer

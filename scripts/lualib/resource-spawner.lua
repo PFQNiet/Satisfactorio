@@ -251,7 +251,8 @@ local function spawnNode(resource, surface, cx, cy)
 					name = resource.type,
 					position = {tx,ty},
 					force = neutral_force,
-					amount = 60*pval
+					amount = 60*pval,
+					snap_to_tile_center = false
 				}
 				if not surface.is_chunk_generated({chunkpos.x, chunkpos.y}) then
 					queueEntity(entity, surface, chunkpos)
@@ -488,12 +489,7 @@ local function onChunkGenerated(event)
 				else
 					node.position = surface.find_non_colliding_position(node.name, node.position, 0, 1, false)
 				end
-				local result = event.surface.create_entity(node)
-				-- resource wells are erroneously placed on a tile centre by the game, despite being even-sized and instructed to go on a border
-				-- fix that here
-				if string.ends_with(node.name, "-well") and result.position.x ~= node.position[1] then
-					result.teleport(node.position)
-				end
+				event.surface.create_entity(node)
 			end
 		end
 		clearQueuedEntities(surface, pos)
