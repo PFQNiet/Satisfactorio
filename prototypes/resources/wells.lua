@@ -50,12 +50,12 @@ water.minable.results[1].name = "water"
 water.map_color = data.raw.resource['water'].map_color
 local oil = table.deepcopy(template)
 oil.name = "crude-oil-well"
-oil.icons[1].icon = "__Satisfactorio__/graphics/icons/crude-oil.png"
+oil.icons[2].icon = "__Satisfactorio__/graphics/icons/crude-oil.png"
 oil.minable.results[1].name = "crude-oil"
 oil.map_color = data.raw.resource['crude-oil'].map_color
 local nitro = table.deepcopy(template)
 nitro.name = "nitrogen-gas-well"
-nitro.icons[1].icon = "__Satisfactorio__/graphics/icons/nitrogen-gas.png"
+nitro.icons[2].icon = "__Satisfactorio__/graphics/icons/nitrogen-gas.png"
 nitro.minable.results[1].name = "nitrogen-gas"
 nitro.map_color = {r=180,g=180,b=180}
 data:extend({water,oil,nitro})
