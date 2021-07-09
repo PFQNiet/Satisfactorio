@@ -258,6 +258,17 @@ for type,items in pairs(vanilla_items) do
 	end
 end
 
+local vanilla_fuels = {
+	"solid-fuel", "rocket-fuel", "nuclear-fuel", "uranium-fuel-cell"
+}
+for _,name in pairs(vanilla_fuels) do
+	local item = data.raw.item[name]
+	if item then
+		if not item.flags then item.flags = {} end
+		table.insert(item.flags, "hide-from-fuel-tooltip")
+	end
+end
+
 local vanilla_entities = {
 	accumulator = {"accumulator"},
 	["ammo-turret"] = {"gun-turret"},
