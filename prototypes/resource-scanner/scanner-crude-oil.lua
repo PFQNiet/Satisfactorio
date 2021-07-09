@@ -11,6 +11,7 @@ data:extend({{
 	results = {{type="fluid",name=name,amount=1}},
 	energy_required = 1,
 	category = "resource-scanner",
+	order = "e",
 	allow_intermediates = false,
 	allow_as_intermediate = false,
 	hide_from_stats = true,
