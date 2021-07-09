@@ -11,6 +11,7 @@ data:extend({{
 	result = name,
 	energy_required = 1,
 	category = "object-scanner",
+	order = "d",
 	allow_intermediates = false,
 	allow_as_intermediate = false,
 	hide_from_stats = true,

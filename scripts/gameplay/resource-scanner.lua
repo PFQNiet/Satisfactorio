@@ -1,6 +1,12 @@
 local resource_spawner = require(modpath..'scripts.lualib.resource-spawner')
 local pings = require(modpath.."scripts.lualib.pings")
 
+---@class ResourceScannerEntryTags
+---@field recipe string
+---@field type string
+---@field name string
+---@field localised_name LocalisedString
+
 ---@class ResourceScannerNotFoundData
 ---@field sprite SpritePath
 ---@field name LocalisedString
@@ -34,86 +40,133 @@ local function queueEffect(tick, effect)
 	table.insert(script_data.fx[tick], effect)
 end
 
----@param force LuaForce
 ---@return LuaRecipe[]
-local function getUnlockedScans(force)
+local function getAllScans()
 	local recipes = {}
-	for _,recipe in pairs(force.recipes) do
-		if recipe.category == "resource-scanner" and recipe.enabled then
+	for _,recipe in pairs(game.recipe_prototypes) do
+		if recipe.category == "resource-scanner" then
 			table.insert(recipes, recipe)
 		end
 	end
-	table.sort(recipes, function(a,b) return (a.order or a.name) < (b.order or b.name) end)
+	table.sort(recipes, function(a,b) return a.order < b.order end)
 	return recipes
 end
 
 ---@param player LuaPlayer
 local function openResourceScanner(player)
-	local screen = player.gui.screen
-	if not screen['resource-scanner'] then
-		local gui = screen.add{
+	local gui = player.gui.screen
+	if not gui['resource-scanner'] then
+		local frame = gui.add{
 			type = "frame",
 			name = "resource-scanner",
 			direction = "vertical",
 			style = "inner_frame_in_outer_frame"
 		}
-		local title_flow = gui.add{type = "flow", name = "title_flow"}
+		local title_flow = frame.add{type = "flow", name = "title_flow"}
 		local title = title_flow.add{type = "label", caption = {"gui.resource-scanner-title"}, style = "frame_title"}
-		title.drag_target = gui
+		title.drag_target = frame
 		local pusher = title_flow.add{type = "empty-widget", style = "draggable_space_header"}
 		pusher.style.height = 24
 		pusher.style.horizontally_stretchable = true
-		pusher.drag_target = gui
+		pusher.drag_target = frame
 		title_flow.add{type = "sprite-button", style = "frame_action_button", sprite = "utility/close_white", name = "resource-scanner-close"}
 
-		gui.add{
+		local content = frame.add{
+			type = "frame",
+			name = "content",
+			style = "inside_shallow_frame",
+			direction = "vertical"
+		}
+		local head = content.add{
+			type = "frame",
+			style = "subheader_frame"
+		}
+		head.style.horizontally_stretchable = true
+		head.add{
 			type = "label",
-			caption = {"","[font=heading-2]",{"gui.resource-scanner-scan-for"},"[/font]"}
+			style = "heading_2_label",
+			caption = {"gui.resource-scanner-scan-for"}
 		}
 
-		local menu = gui.add{
-			type = "list-box",
-			name = "resource-scanner-item"
+		local list = content.add{
+			type = "table",
+			name = "list",
+			column_count = 5
 		}
-		menu.style.top_margin = 4
-		menu.style.bottom_margin = 4
+		list.style.margin = 12
+		list.style.horizontal_spacing = 12
+		list.style.vertical_spacing = 18
 
-		local flow = gui.add{
-			type = "flow",
-			direction = "horizontal"
-		}
-		pusher = flow.add{type = "empty-widget"}
-		pusher.style.horizontally_stretchable = true
-		flow.add{
-			type = "button",
-			style = "confirm_button",
-			name = "resource-scanner-scan",
-			caption = {"gui.resource-scanner-scan"}
-		}
+		for _,recipe in pairs(getAllScans()) do
+			local product = recipe.products[1]
+			---@type LuaItemPrototype|LuaFluidPrototype
+			local proto = game[product.type.."_prototypes"][product.name]
+			local sprite = product.type.."/"..product.name
+			local name = proto.localised_name
+
+			local flow = list.add{
+				type = "flow",
+				direction = "vertical",
+				tags = {
+					scan = {
+						recipe = recipe.name,
+						type = product.type,
+						name = product.name,
+						localised_name = name
+					}
+				}
+			}
+			flow.style.horizontal_align = "center"
+			flow.style.vertical_spacing = 6
+
+			flow.add{
+				type = "sprite-button",
+				name = "resource-scanner-scan",
+				sprite = sprite,
+				style = "resource_scanner_button"
+			}
+
+			flow.add{
+				type = "label",
+				name = "label",
+				caption = name
+			}
+		end
 	end
 
-	local gui = screen['resource-scanner']
-	local menu = gui['resource-scanner-item']
-	-- record last selected menu item before refreshing the list
-	local index = menu.selected_index or 0
-	if index == 0 then index = 1 end
-	menu.clear_items()
-	for _,recipe in pairs(getUnlockedScans(player.force)) do
-		local product = recipe.products[1]
-		menu.add_item({"","[img="..product.type.."."..product.name.."] ",game[product.type.."_prototypes"][product.name].localised_name})
-	end
-	menu.selected_index = index
+	local frame = gui['resource-scanner']
+	---@type LuaGuiElement
+	local menu = frame.content.list
+	for _,flow in pairs(menu.children) do
+		---@type LuaGuiElement
+		local label = flow['label']
+		---@type LuaGuiElement
+		local button = flow['resource-scanner-scan']
+		---@type ResourceScannerEntryTags
+		local data = flow.tags['scan']
+		local recipe = player.force.recipes[data.recipe]
 
-	gui.visible = true
-	player.opened = gui
-	gui.force_auto_center()
+		if recipe.enabled then
+			label.caption = data.localised_name
+			button.sprite = data.type.."/"..data.name
+			button.enabled = true
+		else
+			label.caption = {"gui.resource-scanner-unknown"}
+			button.sprite = "item/item-unknown"
+			button.enabled = false
+		end
+	end
+
+	frame.visible = true
+	player.opened = frame
+	frame.force_auto_center()
 end
 
 ---@param player LuaPlayer
 local function closeResourceScanner(player)
-	local gui = player.gui.screen['resource-scanner']
-	if gui then
-		gui.visible = false
+	local frame = player.gui.screen['resource-scanner']
+	if frame then
+		frame.visible = false
 	end
 end
 
@@ -139,18 +192,15 @@ local function onGuiClick(event)
 	end
 	if event.element.name == "resource-scanner-scan" then
 		player.opened = nil
-		local index = player.gui.screen['resource-scanner']['resource-scanner-item'].selected_index
-		if not index then
-			return
-		end
 
-		local product = getUnlockedScans(player.force)[index].products[1]
-		local selected = product.name
-		local types = {selected}
-		if selected == "crude-oil" then
-			types = {selected, selected.."-well"}
-		elseif selected == "water" or selected == "nitrogen-gas" then
-			types = {selected.."-well"}
+		---@type ResourceScannerEntryTags
+		local data = event.element.parent.tags['scan']
+
+		local types = {data.name}
+		if data.name == "crude-oil" then
+			types = {data.name, data.name.."-well"}
+		elseif data.name == "water" or data.name == "nitrogen-gas" then
+			types = {data.name.."-well"}
 		end
 
 		local nodes = {}
@@ -192,8 +242,8 @@ local function onGuiClick(event)
 				type = "notfound",
 				player = player,
 				searched_for = {
-					sprite = product.type.."/"..selected,
-					name = game[product.type.."_prototypes"][selected].localised_name
+					sprite = data.type.."/"..data.name,
+					name = data.localised_name
 				}
 			})
 		else
@@ -209,7 +259,7 @@ local function onGuiClick(event)
 					target = {
 						surface = player.surface,
 						position = {x=pos[1], y=pos[2]},
-						sprite = product.type.."/"..selected
+						sprite = data.type.."/"..data.name
 					}
 				})
 			end

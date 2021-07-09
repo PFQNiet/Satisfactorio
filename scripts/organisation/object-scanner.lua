@@ -2,6 +2,17 @@ local pings = require(modpath.."scripts.lualib.pings")
 
 local scanner = "object-scanner"
 
+---@class ObjectScannerEntryTags
+---@field recipe string
+---@field type string
+---@field name string
+---@field localised_name LocalisedString
+
+---@class BeaconScannerEntryTags
+---@field icon SpritePath
+---@field name LocalisedString
+---@field position Position
+
 ---@class ObjectScan
 ---@field type string
 ---@field target LuaEntity|PingTarget
@@ -57,94 +68,134 @@ local function updateScan(player)
 	end
 end
 
----@param force LuaForce
 ---@return LuaRecipe[]
-local function getUnlockedScans(force)
+local function getAllScans()
 	local recipes = {}
-	for _,recipe in pairs(force.recipes) do
-		if recipe.category == "object-scanner" and recipe.enabled then
+	for _,recipe in pairs(game.recipe_prototypes) do
+		if recipe.category == "object-scanner" then
 			table.insert(recipes, recipe)
 		end
 	end
-	table.sort(recipes, function(a,b) return (a.order or a.name) < (b.order or b.name) end)
+	table.sort(recipes, function(a,b) return a.order < b.order end)
 	return recipes
 end
 
 ---@param player LuaPlayer
 local function openObjectScanner(player)
-	if not player.gui.screen['object-scanner'] then
-		local gui = player.gui.screen.add{
+	local gui = player.gui.screen
+	if not gui['object-scanner'] then
+		local frame = gui.add{
 			type = "frame",
 			name = "object-scanner",
 			direction = "vertical",
 			style = "inner_frame_in_outer_frame"
 		}
-		local title_flow = gui.add{type = "flow", name = "title_flow"}
+		local title_flow = frame.add{type = "flow", name = "title_flow"}
 		local title = title_flow.add{type = "label", caption = {"gui.object-scanner-title"}, style = "frame_title"}
-		title.drag_target = gui
+		title.drag_target = frame
 		local pusher = title_flow.add{type = "empty-widget", style = "draggable_space_header"}
 		pusher.style.height = 24
 		pusher.style.horizontally_stretchable = true
-		pusher.drag_target = gui
+		pusher.drag_target = frame
 		title_flow.add{type = "sprite-button", style = "frame_action_button", sprite = "utility/close_white", name = "object-scanner-close"}
 
-		gui.add{
+		local content = frame.add{
+			type = "frame",
+			name = "content",
+			style = "inside_shallow_frame",
+			direction = "vertical"
+		}
+		local head = content.add{
+			type = "frame",
+			style = "subheader_frame"
+		}
+		head.style.horizontally_stretchable = true
+		head.add{
 			type = "label",
-			caption = {"","[font=heading-2]",{"gui.object-scanner-scan-for"},"[/font]"}
+			style = "heading_2_label",
+			caption = {"gui.object-scanner-scan-for"}
 		}
 
-		local menu = gui.add{
-			type = "list-box",
-			name = "object-scanner-item"
+		local list = content.add{
+			type = "table",
+			name = "list",
+			column_count = 4
 		}
-		menu.style.top_margin = 4
-		menu.style.bottom_margin = 4
+		list.style.margin = 12
+		list.style.horizontal_spacing = 12
+		list.style.vertical_spacing = 18
 
-		local flow = gui.add{
-			type = "flow",
-			direction = "horizontal"
-		}
-		pusher = flow.add{type = "empty-widget"}
-		pusher.style.horizontally_stretchable = true
-		flow.add{
-			type = "button",
-			style = "confirm_button",
-			name = "object-scanner-select",
-			caption = {"gui.object-scanner-select"}
-		}
+		for _,recipe in pairs(getAllScans()) do
+			local product = recipe.products[1]
+			---@type LuaItemPrototype|LuaFluidPrototype
+			local proto = game[product.type.."_prototypes"][product.name]
+			local sprite = product.type.."/"..product.name
+			local name = proto.localised_name
+			if product.name == "green-power-slug" then name = {"gui.object-scanner-power-slugs"} end
+
+			local flow = list.add{
+				type = "flow",
+				direction = "vertical",
+				tags = {
+					scan = {
+						recipe = recipe.name,
+						type = product.type,
+						name = product.name,
+						localised_name = name
+					}
+				}
+			}
+			flow.style.horizontal_align = "center"
+			flow.style.vertical_spacing = 6
+
+			flow.add{
+				type = "sprite-button",
+				name = "object-scanner-select",
+				sprite = sprite,
+				style = "resource_scanner_button"
+			}
+
+			flow.add{
+				type = "label",
+				name = "label",
+				caption = name
+			}
+		end
 	end
 
-	local gui = player.gui.screen['object-scanner']
-	local menu = gui['object-scanner-item']
-	-- record last selected menu item before refreshing the list
-	local index = menu.selected_index or 0
-	if index == 0 then index = 1 end
-	menu.clear_items()
-	for _,recipe in pairs(getUnlockedScans(player.force)) do
-		local product = recipe.products[1]
-		local scan_for = game[product.type.."_prototypes"][product.name].localised_name
-		if product.name == "green-power-slug" then scan_for = {"gui.object-scanner-power-slugs"} end
-		menu.add_item({"","[img="..product.type.."."..product.name.."] ",scan_for})
+	local frame = gui['object-scanner']
+	---@type LuaGuiElement
+	local menu = frame.content.list
+	for _,flow in pairs(menu.children) do
+		---@type LuaGuiElement
+		local label = flow['label']
+		---@type LuaGuiElement
+		local button = flow['object-scanner-select']
+		---@type ResourceScannerEntryTags
+		local data = flow.tags['scan']
+		local recipe = player.force.recipes[data.recipe]
+
+		if recipe.enabled then
+			label.caption = data.localised_name
+			button.sprite = data.type.."/"..data.name
+			button.enabled = true
+		else
+			label.caption = {"gui.resource-scanner-unknown"}
+			button.sprite = "item/item-unknown"
+			button.enabled = false
+		end
 	end
 
-	if #menu.items == 0 then
-		player.opened = nil
-		player.print({"message.object-scanner-no-scans-unlocked"})
-	else
-		menu.selected_index = index
-
-		gui.visible = true
-		player.opened = gui
-		gui.force_auto_center()
-	end
+	frame.visible = true
+	player.opened = frame
+	frame.force_auto_center()
 end
 
 ---@param player LuaPlayer
 local function closeObjectScanner(player)
-	local gui = player.gui.screen['object-scanner']
-	if gui then gui.visible = false end
-	if player.opened_gui_type == defines.gui_type.custom and player.opened.name == "object-scanner" then
-		player.opened = nil
+	local frame = player.gui.screen['object-scanner']
+	if frame then
+		frame.visible = false
 	end
 end
 
@@ -157,56 +208,60 @@ end
 
 ---@param player LuaPlayer
 local function openBeaconScanner(player)
-	local screen = player.gui.screen
-	if not screen['beacon-scanner'] then
-		local gui = player.gui.screen.add{
+	local gui = player.gui.screen
+	if not gui['beacon-scanner'] then
+		local frame = player.gui.screen.add{
 			type = "frame",
 			name = "beacon-scanner",
 			direction = "vertical",
 			style = "inner_frame_in_outer_frame"
 		}
-		local title_flow = gui.add{type = "flow", name = "title_flow"}
+		local title_flow = frame.add{type = "flow", name = "title_flow"}
 		local title = title_flow.add{type = "label", caption = {"gui.beacon-scanner-title"}, style = "frame_title"}
-		title.drag_target = gui
+		title.drag_target = frame
 		local pusher = title_flow.add{type = "empty-widget", style = "draggable_space_header"}
 		pusher.style.height = 24
 		pusher.style.horizontally_stretchable = true
-		pusher.drag_target = gui
+		pusher.drag_target = frame
 		title_flow.add{type = "sprite-button", style = "frame_action_button", sprite = "utility/close_white", name = "beacon-scanner-close"}
 
-		gui.add{
+		local content = frame.add{
+			type = "frame",
+			name = "content",
+			style = "inside_shallow_frame",
+			direction = "vertical"
+		}
+		local head = content.add{
+			type = "frame",
+			style = "subheader_frame"
+		}
+		head.style.horizontally_stretchable = true
+		head.add{
 			type = "label",
-			caption = {"","[font=heading-2]",{"gui.beacon-scanner-scan-for"},"[/font]"}
+			style = "heading_2_label",
+			caption = {"gui.beacon-scanner-scan-for"}
 		}
 
-		local menu = gui.add{
-			type = "list-box",
-			name = "beacon-scanner-item"
+		local body = content.add{
+			type = "scroll-pane",
+			name = "body"
 		}
-		menu.style.top_margin = 4
-		menu.style.bottom_margin = 4
-		menu.style.height = 200
+		body.style.maximal_height = 500
 
-		local flow = gui.add{
-			type = "flow",
-			direction = "horizontal"
+		local list = body.add{
+			type = "table",
+			name = "list",
+			column_count = 6
 		}
-		pusher = flow.add{type = "empty-widget"}
-		pusher.style.horizontally_stretchable = true
-		flow.add{
-			type = "button",
-			style = "confirm_button",
-			name = "beacon-scanner-select",
-			caption = {"gui.beacon-scanner-select"}
-		}
+		list.style.margin = 12
+		list.style.horizontal_spacing = 12
+		list.style.vertical_spacing = 18
 	end
 
-	local gui = screen['beacon-scanner']
-	local menu = gui['beacon-scanner-item']
-	-- record last selected menu item before refreshing the list
-	local index = menu.selected_index or 0
-	if index == 0 then index = 1 end
-	menu.clear_items()
+	local frame = gui['beacon-scanner']
+	---@type LuaGuiElement
+	local menu = frame.content.body.list
+	menu.clear()
 	local entities = player.surface.find_entities_filtered{name="map-marker",force=player.force}
 	local tags = {}
 	for _,beacon in pairs(entities) do
@@ -225,35 +280,73 @@ local function openBeaconScanner(player)
 		end
 	end)
 
-	local beacon_cache = {}
+	local use_minimap = player.minimap_enabled
 	for _,beacon in pairs(entities) do
 		local tag = tags[beacon.unit_number]
 		local type = tag.icon.type
 		if type == "virtual" then type = "virtual-signal" end
-		menu.add_item({"","[img="..type.."."..tag.icon.name.."] ",tag.text == "" and {"entity-name.map-marker"} or tag.text})
-		table.insert(beacon_cache, beacon)
+		local icon = type.."/"..tag.icon.name
+		local name = tag.text == "" and {"entity-name.map-marker"} or tag.text
+
+		local flow = menu.add{
+			type = "flow",
+			direction = "vertical",
+			tags = {
+				scan = {
+					icon = icon,
+					name = name,
+					position = beacon.position
+				}
+			}
+		}
+		flow.style.horizontal_align = "center"
+		flow.style.vertical_spacing = 6
+
+		if use_minimap then
+			local mapframe = flow.add{
+				type = "frame",
+				style = "deep_frame_in_shallow_frame"
+			}
+			local map = mapframe.add{
+				type = "minimap",
+				name = "beacon-scanner-select",
+				position = beacon.position,
+				surface_index = beacon.surface.index
+			}
+			map.style.width = 100
+			map.style.height = 100
+		else
+			flow.add{
+				type = "sprite-button",
+				name = "beacon-scanner-select",
+				sprite = icon,
+				style = "resource_scanner_button"
+			}
+		end
+
+		flow.add{
+			type = "label",
+			name = "label",
+			caption = {"", "[img="..icon.."] ", name}
+		}
 	end
-	script_data.cached_beacon_order[player.index] = beacon_cache
 
-	if #menu.items == 0 then
-		gui.visible = false
+	if #entities == 0 then
+		frame.visible = false
 		openObjectScanner(player)
-		player.print({"message.beacon-scanner-no-beacons-placed"})
+		player.print{"message.beacon-scanner-no-beacons-placed"}
 	else
-		menu.selected_index = index
-
-		gui.visible = true
-		player.opened = gui
-		gui.force_auto_center()
+		frame.visible = true
+		player.opened = frame
+		frame.force_auto_center()
 	end
 end
 
 ---@param player LuaPlayer
 local function closeBeaconScanner(player)
 	local gui = player.gui.screen['beacon-scanner']
-	if gui then gui.visible = false end
-	if player.opened_gui_type == defines.gui_type.custom and player.opened.name == "beacon-scanner" then
-		player.opened = nil
+	if gui then
+		gui.visible = false
 	end
 end
 
@@ -278,48 +371,45 @@ local function onGuiClick(event)
 	if not (event.element and event.element.valid) then return end
 	local player = game.players[event.player_index]
 	if event.element.name == "object-scanner-close" then
-		closeObjectScanner(player)
+		player.opened = nil
 	elseif event.element.name == "object-scanner-select" then
-		closeObjectScanner(player)
-		local index = player.gui.screen['object-scanner']['object-scanner-item'].selected_index
-		if not index or index == 0 then
-			return
-		end
-		local type = getUnlockedScans(player.force)[index].products[1].name
+		player.opened = nil
+
+		---@type ObjectScannerEntryTags
+		local data = event.element.parent.tags['scan']
+		local scan = data.name
 
 		script_data.scans[player.index] = {
-			type = type,
+			type = scan,
 			target = nil,
 			ping = nil
 		}
 
-		if type == "map-marker" then
+		if scan == "map-marker" then
 			openBeaconScanner(player)
 		else
 			putObjectScannerInCursor(player)
 			updateScan(player)
 		end
 	elseif event.element.name == "beacon-scanner-close" then
-		closeBeaconScanner(player)
+		player.opened = nil
 	elseif event.element.name == "beacon-scanner-select" then
-		closeBeaconScanner(player)
-		local index = player.gui.screen['beacon-scanner']['beacon-scanner-item'].selected_index
-		if not index or index == 0 then
-			return
-		end
+		player.opened = nil
 
-		local beacon = script_data.cached_beacon_order[player.index][index]
-		script_data.cached_beacon_order[player.index] = nil
-		if not (beacon and beacon.valid) then
-			return
-		end
+		local parent = event.element.parent
+		if event.element.type == "minimap" then parent = parent.parent end
+		---@type BeaconScannerEntryTags
+		local data = parent.tags['scan']
+		local beacon = player.surface.find_entity("map-marker", data.position)
+		if not beacon then return end
+
 		local tag = findBeaconTag(beacon)
 		script_data.scans[player.index] = {
 			type = "map-marker",
 			target = {
 				surface = beacon.surface,
 				position = beacon.position,
-				sprite = (tag.icon.type == "virtual" and "virtual-signal" or tag.icon.type).."/"..tag.icon.name
+				sprite = data.icon
 			},
 			ping = nil
 		}
