@@ -84,21 +84,19 @@ local function onTick(event)
 		-- if the machine is crafting then output power, and don't if not
 		local eei = struct.interface
 		if eei.active then
-			if struct.generator.is_crafting() then
+			local burning = struct.generator.burner.currently_burning
+			if burning and struct.generator.is_crafting() then
 				eei.power_production = (power*1000*1000+1)/60 -- +1 for the buffer
 
 				struct.ticks = struct.ticks + buckets
-				local burning = struct.generator.burner.currently_burning
-				if burning then
-					local fuel = burning.name
-					if fuel then
-						local waste = waste_data[fuel]
-						if waste then
-							if struct.ticks >= waste.ticks then
-								struct.ticks = struct.ticks - waste.ticks
-								struct.generator.get_inventory(defines.inventory.assembling_machine_output).insert{name=waste.name,count=1}
-								struct.generator.force.item_production_statistics.on_flow(waste.name,1)
-							end
+				local fuel = burning.name
+				if fuel then
+					local waste = waste_data[fuel]
+					if waste then
+						if struct.ticks >= waste.ticks then
+							struct.ticks = struct.ticks - waste.ticks
+							struct.generator.get_inventory(defines.inventory.assembling_machine_output).insert{name=waste.name,count=1}
+							struct.generator.force.item_production_statistics.on_flow(waste.name,1)
 						end
 					end
 				end

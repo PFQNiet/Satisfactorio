@@ -71,7 +71,7 @@ local function onTick(event)
 		-- if the machine is crafting then output power, and don't if not
 		local eei = struct.interface
 		if eei.active then
-			if struct.generator.is_crafting() then
+			if struct.generator.burner.currently_burning and struct.generator.is_crafting() then
 				eei.power_production = (power*1000*1000+1)/60 -- +1 for the buffer
 			else
 				eei.power_production = 0
