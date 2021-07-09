@@ -1,12 +1,17 @@
 local resource_spawner = require(modpath..'scripts.lualib.resource-spawner')
 local pings = require(modpath.."scripts.lualib.pings")
 
+---@class ResourceScannerNotFoundData
+---@field sprite SpritePath
+---@field name LocalisedString
+
 ---@class ResourceScannerQueuedEffect
----@field type "pulse"|"ping"|"unping"
+---@field type "pulse"|"ping"|"unping"|"notfound"
 ---@field player LuaPlayer
 ---@field surface LuaSurface
 ---@field target PingTarget
 ---@field ping uint
+---@field searched_for ResourceScannerNotFoundData
 
 --- A queue of effects
 ---@class global.resource_scanner
@@ -139,7 +144,8 @@ local function onGuiClick(event)
 			return
 		end
 
-		local selected = getUnlockedScans(player.force)[index].products[1].name
+		local product = getUnlockedScans(player.force)[index].products[1]
+		local selected = product.name
 		local types = {selected}
 		if selected == "crude-oil" then
 			types = {selected, selected.."-well"}
@@ -181,21 +187,32 @@ local function onGuiClick(event)
 			player = player,
 			surface = player.surface
 		})
-		for _,pos in pairs(closest) do
-			local dx = pos[1] - playerpos.x
-			local dy = pos[2] - playerpos.y
-			local distance = math.sqrt(dx*dx+dy*dy)
-			local delay = math.floor(distance/2+1)
-			queueEffect(event.tick + delay + 30, {
-				type = "ping",
+		if #closest == 0 then
+			queueEffect(event.tick + 240, {
+				type = "notfound",
 				player = player,
-				surface = player.surface,
-				target = {
-					surface = player.surface,
-					position = {x=pos[1], y=pos[2]},
-					sprite = (game.fluid_prototypes[selected] and "fluid" or "item").."/"..selected
+				searched_for = {
+					sprite = product.type.."/"..selected,
+					name = game[product.type.."_prototypes"][selected].localised_name
 				}
 			})
+		else
+			for _,pos in pairs(closest) do
+				local dx = pos[1] - playerpos.x
+				local dy = pos[2] - playerpos.y
+				local distance = math.sqrt(dx*dx+dy*dy)
+				local delay = math.floor(distance/2+1)
+				queueEffect(event.tick + delay + 30, {
+					type = "ping",
+					player = player,
+					surface = player.surface,
+					target = {
+						surface = player.surface,
+						position = {x=pos[1], y=pos[2]},
+						sprite = product.type.."/"..selected
+					}
+				})
+			end
 		end
 	end
 end
@@ -205,7 +222,9 @@ local function onTick(event)
 	local fx = popEffects(event.tick)
 	if fx then
 		for _,effect in pairs(fx) do
-			if effect.surface ~= effect.player.surface then
+			if effect.type == "notfound" then
+				effect.player.print{"message.resource-not-found", effect.searched_for.sprite, effect.searched_for.name}
+			elseif effect.surface ~= effect.player.surface then
 				-- skip this effect
 			elseif effect.type == "pulse" then
 				effect.player.surface.create_trivial_smoke{
