@@ -35,6 +35,7 @@ local function makePowerSlug(params)
 		icon_size = 64,
 		selection_box = {{-1,-1},{1,1}},
 		collision_box = {{-0.7,-0.7},{0.7,0.7}},
+		collision_mask = {"object-layer","train-layer"},
 		picture = {
 			filename = graphics.."icons/"..name..".png",
 			size = {64,64}

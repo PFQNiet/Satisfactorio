@@ -15,6 +15,7 @@ for _,n in pairs({
 	local box = data.raw.container[n]
 	box.max_health = 1
 	box.minable = nil
+	box.collision_mask = {"object-layer","train-layer"}
 	box.inventory_size = 6
 	box.localised_description = {"entity-description.crash-site-debris"}
 end
@@ -24,6 +25,7 @@ for _,n in pairs({
 	local box = data.raw.container[n]
 	box.max_health = 1
 	box.minable = nil
+	box.collision_mask = {"object-layer","train-layer"}
 	box.inventory_size = 4
 	box.localised_description = {"entity-description.crash-site-debris"}
 end
@@ -34,6 +36,7 @@ for _,n in pairs({
 	local box = data.raw['simple-entity-with-owner'][n]
 	box.max_health = 1
 	box.minable = nil
+	box.collision_mask = {"object-layer","train-layer"}
 	box.localised_description = {"entity-description.crash-site-debris"}
 end
 
