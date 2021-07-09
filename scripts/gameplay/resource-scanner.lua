@@ -106,9 +106,9 @@ end
 
 ---@param player LuaPlayer
 local function closeResourceScanner(player)
-	if player.opened_gui_type == defines.gui_type.custom and player.opened.name == "resource-scanner" then
-		player.opened.visible = false
-		player.opened = nil
+	local gui = player.gui.screen['resource-scanner']
+	if gui then
+		gui.visible = false
 	end
 end
 
@@ -119,7 +119,7 @@ local function toggleResourceScanner(event)
 		return
 	end
 	if player.opened_gui_type == defines.gui_type.custom and player.opened.name == "resource-scanner" then
-		closeResourceScanner(player)
+		player.opened = nil
 	else
 		openResourceScanner(player)
 	end
@@ -130,10 +130,10 @@ local function onGuiClick(event)
 	if not (event.element and event.element.valid) then return end
 	local player = game.players[event.player_index]
 	if event.element.name == "resource-scanner-close" then
-		closeResourceScanner(player)
+		player.opened = nil
 	end
 	if event.element.name == "resource-scanner-scan" then
-		closeResourceScanner(player)
+		player.opened = nil
 		local index = player.gui.screen['resource-scanner']['resource-scanner-item'].selected_index
 		if not index then
 			return
