@@ -1,5 +1,4 @@
 -- uses global.hub.terminal as table of Force index -> HUB terminal
--- uses global.hub.milestone_selected as table of Player index -> milestone shown in GUI - if different to current selection then GUI needs refresh, otherwise just update counts
 -- uses global.hub.cooldown as table of Force index -> tick at which the Freighter returns
 local util = require("util")
 local math2d = require("math2d")
@@ -16,12 +15,10 @@ local powerpole = "power-pole-mk-1"
 local freighter = "ficsit-freighter"
 
 ---@class global.hub
----@field terminal table<uint, LuaEntity>
----@field milestone_selected table<uint, string> Player index => which Milestone the GUI was last updated for
+---@field terminal table<uint, LuaEntity> Force index => HUB Terminal entity
 ---@field cooldown table<uint, uint> Force index => Tick at which the Freighter returns
 local script_data = {
 	terminal = {},
-	milestone_selected = {},
 	cooldown = {}
 }
 
@@ -308,11 +305,10 @@ local function updateMilestoneGUI(force)
 	end
 
 	for _,player in pairs(force.players) do
-		local gui = player.gui.left
-		local frame = gui['hub-milestone']
+		local left = player.gui.left
 		-- create the GUI if it doesn't exist yet, but only once a HUB has been built for the first time
-		if not frame and force.technologies['the-hub'].researched then
-			frame = gui.add{
+		if not left['hub-milestone'] and force.technologies['the-hub'].researched then
+			local frame = left.add{
 				type = "frame",
 				name = "hub-milestone",
 				direction = "vertical",
@@ -321,36 +317,49 @@ local function updateMilestoneGUI(force)
 			}
 			frame.style.horizontally_stretchable = false
 			frame.style.use_header_filler = false
-			frame.add{
-				type = "label",
-				name = "hub-milestone-name",
-				caption = {"","[font=heading-2]",{"gui.hub-milestone-tracking-none-selected"},"[/font]"}
-			}
-			local inner = frame.add{
+
+			local content = frame.add{
 				type = "frame",
-				name = "hub-milestone-content",
+				name = "content",
 				style = "inside_shallow_frame",
-				direction = "vertical"
+				direction = "vertical",
+				tags = {
+					milestone = "none"
+				}
 			}
-			inner.style.horizontally_stretchable = true
-			inner.style.top_margin = 4
-			inner.style.bottom_margin = 4
-			inner.add{
+			local head = content.add{
+				type = "frame",
+				name = "head",
+				style = "subheader_frame"
+			}
+			head.style.horizontally_stretchable = true
+			head.add{
+				type = "label",
+				name = "milestone",
+				style = "heading_2_label",
+				caption = {"gui.hub-milestone-tracking-none-selected"}
+			}
+
+			local table = content.add{
 				type = "table",
-				name = "hub-milestone-table",
+				name = "requirements",
 				style = "bordered_table",
 				column_count = 3
 			}
-			local cooldown = frame.add{
+			table.style.margin = 12
+			table.visible = false
+
+			local cooldown = content.add{
 				type = "label",
-				name = "hub-milestone-cooldown"
+				name = "cooldown"
 			}
+			cooldown.style.margin = 12
+			cooldown.style.top_margin = 0
 			cooldown.visible = false
 		end
-		gui = player.gui.relative
-		local flow = gui['hub-milestone']
-		if frame and not flow then
-			flow = gui.add{
+		local relative = player.gui.relative
+		if left['hub-milestone'] and not relative['hub-milestone'] then
+			local flow = relative.add{
 				type = "flow",
 				name = "hub-milestone",
 				anchor = {
@@ -369,7 +378,7 @@ local function updateMilestoneGUI(force)
 			}
 			frame.style.horizontally_stretchable = false
 			frame.style.use_header_filler = false
-			local button = frame.add{
+			frame.add{
 				type = "button",
 				style = "confirm_button",
 				name = "hub-milestone-submit",
@@ -377,25 +386,27 @@ local function updateMilestoneGUI(force)
 			}
 		end
 
+		local frame = left['hub-milestone']
+		local flow = relative['hub-milestone']
 		if frame then
 			-- gather up GUI element references
-			local name = frame['hub-milestone-name']
-			local inner = frame['hub-milestone-content']
-			local table = inner['hub-milestone-table']
-			local cooldown = frame['hub-milestone-cooldown']
+			local content = frame.content
+			local name = content.head.milestone
+			local table = content.requirements
+			local cooldown = content.cooldown
 			local button = flow['hub-milestone-frame']['hub-milestone-submit']
 
 			-- check if the selected milestone has been changed
-			if milestone.name ~= script_data.milestone_selected[player.index] then
-				script_data.milestone_selected[player.index] = milestone.name
-				inner.visible = milestone.name ~= "none"
+			if milestone.name ~= content.tags.milestone then
+				content.tags = {milestone = milestone.name}
+				table.visible = milestone.name ~= "none"
 				button.enabled = false
 				table.clear()
 				if milestone.name == "none" then
-					name.caption = {"","[font=heading-2]",{"gui.hub-milestone-tracking-none-selected"},"[/font]"}
+					name.caption = {"gui.hub-milestone-tracking-none-selected"}
 				else
 					-- if milestone is actually set then we know this is valid
-					name.caption = {"","[img=recipe/"..milestone.name.."] [font=heading-2]",milestone.localised_name,"[/font]"}
+					name.caption = {"","[img=recipe/"..milestone.name.."] ",milestone.localised_name}
 					for _,ingredient in ipairs(recipe.ingredients) do
 						local sprite = table.add{
 							type = "sprite-button",
@@ -411,14 +422,14 @@ local function updateMilestoneGUI(force)
 						}
 						local count_flow = table.add{
 							type = "flow",
-							name = "hub-milestone-ingredient-"..ingredient.name
+							name = ingredient.name
 						}
 						local pusher = count_flow.add{type="empty-widget"}
 						pusher.style.horizontally_stretchable = true
 						count_flow.add{
 							type = "label",
-							name = "hub-milestone-ingredient-"..ingredient.name.."-count",
-							caption = {"gui.fraction", -1, -1} -- unset by default, will be populated in the next block
+							name = "count",
+							caption = {"gui.fraction", "-", "-"} -- unset by default, will be populated in the next block
 						}
 					end
 				end
@@ -444,7 +455,7 @@ local function updateMilestoneGUI(force)
 			end
 			if milestone.name ~= "none" then
 				for _,ingredient in ipairs(recipe.ingredients) do
-					local label = table['hub-milestone-ingredient-'..ingredient.name]['hub-milestone-ingredient-'..ingredient.name..'-count']
+					local label = table[ingredient.name].count
 					label.caption = {"gui.fraction", util.format_number(math.min(submitted[ingredient.name] or 0, ingredient.amount)), util.format_number(ingredient.amount)}
 					if (submitted[ingredient.name] or 0) < ingredient.amount then
 						ready = false
@@ -551,6 +562,14 @@ return bev.applyBuildEvents{
 	end,
 	on_load = function()
 		script_data = global.hub or script_data
+	end,
+	on_configuration_changed = function()
+		for _,p in pairs(game.players) do
+			local gui = p.gui.left['hub-milestone']
+			if gui and not gui.content then
+				gui.destroy()
+			end
+		end
 	end,
 	on_nth_tick = {
 		[6] = on10thTick
