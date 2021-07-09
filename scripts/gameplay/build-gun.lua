@@ -47,11 +47,12 @@ local function updateGUI(player, buffer)
 			name = "content"
 		}
 		flow.add{type="empty-widget"}.style.horizontally_stretchable = true
-		flow.add{
+		local mats = flow.add{
 			type = "flow",
 			direction = "horizontal",
 			name = "materials"
 		}
+		mats.style.horizontal_spacing = 12
 		flow.add{type="empty-widget"}.style.horizontally_stretchable = true
 	end
 	local frame = gui['buildgun']
@@ -68,22 +69,20 @@ local function updateGUI(player, buffer)
 	frame.caption = {"gui.build-gun-caption", name, item.localised_name}
 	local list = frame.content.materials
 	list.clear()
-	local table = list.add{
-		type = "table",
-		column_count = #cost
-	}
-	table.style.left_cell_padding = 6
-	table.style.right_cell_padding = 6
-	for i,product in pairs(cost) do
-		table.style.column_alignments[i] = "right"
-		-- first row: icons
+	for _,product in pairs(cost) do
+		local col = list.add{
+			type = "flow",
+			direction = "vertical",
+			name = product.name
+		}
 		local number = product.amount
 		if item.type == "rail-planner" then
 			if (script_data[player.index] or 0) > 0 then
 				number = 0.1*script_data[player.index]
 			end
 		end
-		local icon = table.add{
+
+		local icon = col.add{
 			type = "sprite-button",
 			style = "transparent_slot",
 			sprite = "item/"..product.name,
@@ -92,11 +91,9 @@ local function updateGUI(player, buffer)
 		}
 		icon.style.width = 64
 		icon.style.height = 64
-	end
-	for _,product in pairs(cost) do
-		-- second row: progress bars
+
 		local satisfaction = player.cheat_mode and product.amount or ((inventory[product.name] or 0) + (buffer[product.name] or 0))
-		local bar = table.add{
+		local bar = col.add{
 			type = "progressbar",
 			value = satisfaction / product.amount,
 			style = "electric_satisfaction_statistics_progressbar",
