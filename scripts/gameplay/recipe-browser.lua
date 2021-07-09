@@ -151,6 +151,10 @@ local function updateWantedList(player)
 		frame.location = {player.display_resolution.width-512*player.display_scale, 40*player.display_scale}
 	end
 	local frame = gui['to-do-list']
+	if not script_data[player.index] or not next(script_data[player.index]) then
+		frame.visible = false
+		return
+	end
 	frame.visible = true
 
 	local wanted = frame.content.wanted['to-do-list-wanted']
