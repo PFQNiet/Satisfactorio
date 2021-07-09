@@ -143,8 +143,8 @@ local function spawnNode(resource, surface, cx, cy)
 			if resource.type == "x-plant" then
 				pval = 1 -- "purity" is just the number of plants
 				-- "plant" spawns bacon agaric where elevation is near or below 0, paleberry when moisture is >50% and beryl nut otherwise
-				local tx = cx+math.floor(x+0.5)
-				local ty = cy+math.floor(y+0.5)
+				local tx = math.floor(cx+x+0.5) + 0.5
+				local ty = math.floor(cy+y+0.5) + 0.5
 				local chunkpos = {x=math.floor(tx/32), y=math.floor(ty/32)}
 				local tiledata = surface.calculate_tile_properties({"elevation","moisture"},{{tx,ty}})
 				local elevation = tiledata.elevation[1]
@@ -161,7 +161,7 @@ local function spawnNode(resource, surface, cx, cy)
 				if not surface.is_chunk_generated({chunkpos.x, chunkpos.y}) then
 					queueEntity(entity, surface, chunkpos)
 				else
-					entity.position = surface.find_non_colliding_position(entity.name, entity.position, 0, 1, true)
+					entity.position = surface.find_non_colliding_position(entity.name, entity.position, 0, 1, false)
 					surface.create_entity(entity)
 				end
 			elseif resource.type == "x-deposit" then
@@ -239,9 +239,10 @@ local function spawnNode(resource, surface, cx, cy)
 					crash_site.createCrashSite(surface, {tx,ty})
 				end
 			else
-				local tx = cx+math.floor(x+0.5)
-				local ty = cy+math.floor(y+0.5)
-				if string.ends_with(resource.type, "-well") then
+				local tx = math.floor(cx+x+0.5)
+				local ty = math.floor(cy+y+0.5)
+				-- wells are 10x10 so they go on integer positions. All other resources are 3x3 so go in a tile centre.
+				if not string.ends_with(resource.type, "-well") then
 					tx = tx + 0.5
 					ty = ty + 0.5
 				end
@@ -274,7 +275,7 @@ local function spawnNode(resource, surface, cx, cy)
 						end
 					end
 				else
-					entity.position = surface.find_non_colliding_position(entity.name, entity.position, 0, 1, true)
+					entity.position = surface.find_non_colliding_position(entity.name, entity.position, 0, 1, false)
 					surface.create_entity(entity)
 					-- only spawn rocks if deposits are enabled
 					if game.default_map_gen_settings.autoplace_controls['x-deposit'].size > 0 then
@@ -485,9 +486,14 @@ local function onChunkGenerated(event)
 				if node.nobump then
 					node.nobump = nil
 				else
-					node.position = surface.find_non_colliding_position(node.name, node.position, 0, 1, true)
+					node.position = surface.find_non_colliding_position(node.name, node.position, 0, 1, false)
 				end
-				event.surface.create_entity(node)
+				local result = event.surface.create_entity(node)
+				-- resource wells are erroneously placed on a tile centre by the game, despite being even-sized and instructed to go on a border
+				-- fix that here
+				if string.ends_with(node.name, "-well") and result.position.x ~= node.position[1] then
+					result.teleport(node.position)
+				end
 			end
 		end
 		clearQueuedEntities(surface, pos)
