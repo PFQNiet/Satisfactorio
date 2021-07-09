@@ -20,7 +20,7 @@ require("prototypes.resource-scanner.scanner-power-slugs")
 require("prototypes.resource-scanner.scanner-crash-site")
 require("prototypes.resource-scanner.scanner-enemies")
 
-data:extend({
+data:extend{
 	{
 		type = "custom-input",
 		name = "resource-scanner",
@@ -109,4 +109,12 @@ data:extend({
 		filename = "__Satisfactorio__/graphics/particles/resource-scanner-ping.png",
 		size = 64
 	}
-})
+}
+
+local gui = data.raw["gui-style"].default
+gui['resource_scanner_button'] = {
+	type = "button_style",
+	size = 100,
+	draw_shadow_under_picture = true,
+	left_click_sound = gui['confirm_button'].left_click_sound
+}
