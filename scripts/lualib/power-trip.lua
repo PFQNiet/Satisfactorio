@@ -95,7 +95,7 @@ local function createFusebox(player)
 		frame.style.use_header_filler = false
 		frame.add{
 			type = "button",
-			style = "confirm_button",
+			style = "submit_button",
 			name = "fusebox-reset-fuse",
 			caption = {"gui.power-trip-reset-fuse-button"}
 		}

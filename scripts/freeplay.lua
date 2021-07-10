@@ -1,10 +1,35 @@
--- uses global.onboarding to track freeplay-based story
-
+-- track story progress in freeplay
+---@class global.onboarding
+---@field step uint
+---@field wait_until uint Tick number on which to proceed to the next step
+---@field message LocalisedString
 local script_data = {
 	step = 0,
 	wait_until = 0,
 	message = ""
 }
+
+local messages = {
+	"welcome-to-satisfactorio",
+	"i-am-ada",
+	"begin-onboarding",
+	"first-objective", -- dismantle drop pod
+	"second-objective", -- find iron ore
+	"third-objective", -- build HUB
+	"hub-built", -- 7
+	"fourth-objective", -- complete hub upgrades 1-6
+	"fifth-objective",
+	"sixth-objective",
+	"seventh-objective",
+	"eighth-objective",
+	"ninth-objective",
+	"congratulations", -- 14
+	"additional-knowledge"
+}
+-- steps that have a "continue" button for the player to click
+local function isContinuable(step)
+	return step < 4 or step == 7 or step >= 14
+end
 
 -- modify default freeplay scenario
 local function onInit()
@@ -35,6 +60,9 @@ local function onInit()
 			raise_built = true
 		}.minable = false
 		game.forces.player.set_spawn_position({0.5,0.5}, game.surfaces.nauvis)
+
+		script_data.step = 0
+		script_data.wait_until = 120
 	else
 		script_data.step = 999
 		global.onboarding = script_data
@@ -71,47 +99,24 @@ local function onPlayerCreated(event)
 	}.style.horizontally_stretchable = true
 	flow.add{
 		type = "button",
-		style = "confirm_button",
+		style = "submit_button",
 		name = "story-continue-button",
 		caption = {"story-message.continue"}
 	}
-	flow.visible = script_data.step < 4 or script_data.step == 7 or script_data.step >= 14
+	flow.visible = isContinuable(script_data.step)
 	gui.visible = script_data.message ~= ""
-
-	if script_data.step == 0 and script_data.wait_until == 0 then
-		script_data.wait_until = event.tick < 10 and 60 or event.tick + 180 -- keep the first one short since resource spawning causes a delay anyway
-	end
 end
-
-local messages = {
-	"welcome-to-satisfactorio",
-	"i-am-ada",
-	"begin-onboarding",
-	"first-objective",
-	"second-objective",
-	"third-objective",
-	"hub-built", -- 7
-	"fourth-objective",
-	"fifth-objective",
-	"sixth-objective",
-	"seventh-objective",
-	"eighth-objective",
-	"ninth-objective",
-	"congratulations", -- 14
-	"additional-knowledge"
-}
 
 local function setMessage(message, button)
 	script_data.message = message
 	for _,player in pairs(game.forces.player.players) do
-		local gui = player.gui.left.onboarding.content
-		local flow = gui.continue_button_flow
+		local gui = player.gui.left['onboarding']
 		if message == "" then
-			gui.parent.visible = false
+			gui.visible = false
 		else
-			gui.parent.visible = true
-			gui.goal_text.caption = message
-			flow.visible = button
+			gui.visible = true
+			gui.content.goal_text.caption = message
+			gui.content.continue_button_flow.visible = button
 			player.play_sound{path = "utility/new_objective"}
 		end
 	end
@@ -124,7 +129,7 @@ local function onSecond(event)
 			setMessage("")
 			script_data.step = 999
 		else
-			setMessage({"story-message."..messages[script_data.step]}, script_data.step < 4 or script_data.step == 7 or script_data.step >= 14)
+			setMessage({"story-message."..messages[script_data.step]}, isContinuable(script_data.step))
 			script_data.wait_until = 0 -- "pause"
 
 			if script_data.step == 4 then
@@ -141,7 +146,7 @@ end
 local function onGuiClick(event)
 	if event.element and event.element.valid and event.element.name == "story-continue-button" and script_data.wait_until == 0 then
 		-- double-check it's a continuable step
-		if script_data.step < 4 or script_data.step == 7 or script_data.step >= 14 then
+		if isContinuable(script_data.step) then
 			script_data.wait_until = event.tick
 			onSecond(event) -- process it immediately
 		end

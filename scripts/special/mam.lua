@@ -181,9 +181,9 @@ local function manageMamGUI(player)
 				}
 				frame.style.horizontally_stretchable = false
 				frame.style.use_header_filler = false
-				local button = frame.add{
+				frame.add{
 					type = "button",
-					style = "confirm_button",
+					style = "submit_button",
 					name = "mam-submit",
 					caption = {"gui.mam-submit-caption"}
 				}
@@ -416,7 +416,7 @@ local function onGuiOpened(event)
 			pusher.style.vertically_stretchable = true
 			list.add{
 				type = "button",
-				style = "confirm_button",
+				style = "submit_button",
 				name = "hard-drive-reward-select",
 				caption = {"gui.hard-drive-reward-select"}
 			}

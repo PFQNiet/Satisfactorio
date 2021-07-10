@@ -182,7 +182,7 @@ local function updateElevatorGUI(force)
 			frame.style.use_header_filler = false
 			frame.add{
 				type = "button",
-				style = "confirm_button",
+				style = "submit_button",
 				name = "space-elevator-submit",
 				caption = {"gui.space-elevator-submit-caption"}
 			}

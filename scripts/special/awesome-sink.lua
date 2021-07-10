@@ -188,7 +188,7 @@ local function onGuiOpened(event)
 			bottom.add{type="empty-widget"}.style.horizontally_stretchable = true
 			local button = bottom.add{
 				type = "button",
-				style = "confirm_button",
+				style = "submit_button",
 				name = "awesome-sink-print",
 				caption = {"gui.awesome-sink-print"}
 			}

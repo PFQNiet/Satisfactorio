@@ -380,7 +380,7 @@ local function updateMilestoneGUI(force)
 			frame.style.use_header_filler = false
 			frame.add{
 				type = "button",
-				style = "confirm_button",
+				style = "submit_button",
 				name = "hub-milestone-submit",
 				caption = {"gui.hub-milestone-submit-caption"}
 			}

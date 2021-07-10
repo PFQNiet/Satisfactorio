@@ -83,7 +83,7 @@ for _,key in pairs({"logistics","production","intermediate-products","combat"}) 
 	igroup.icon_mipmaps = 1
 end
 
-require("prototypes.fonts")
+require("prototypes.fonts-and-styles")
 require("prototypes.character")
 require("prototypes.creatures")
 require("prototypes.resources")

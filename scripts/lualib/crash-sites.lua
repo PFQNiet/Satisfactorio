@@ -224,7 +224,7 @@ local function onGuiOpened(event)
 		pusher.style.horizontally_stretchable = true
 		bottom.add{
 			type = "button",
-			style = "confirm_button",
+			style = "submit_button",
 			name = "crash-site-repair-submit",
 			caption = {"gui.crash-site-open"}
 		}
