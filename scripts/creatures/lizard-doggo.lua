@@ -174,7 +174,7 @@ local function eatFood(struct, berry)
 		-- go to the berry
 		unit.set_command{
 			type = defines.command.go_to_location,
-			destination_entity = position,
+			destination_entity = target,
 			radius = 2,
 			distraction = defines.distraction.none
 		}

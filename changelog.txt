@@ -405,6 +405,7 @@ Date: 2021.07.07
   Bugfixes:
     - Fixed resource wells spawning off-centre
     - Fixed that generators running out of fuel (but not water) would generate free energy (#74)
+    - Taming lizard doggos was broken due to an error in refactoring (#75)
   Gui:
     - Improvements to Resource/Object/Beacon Scanner GUIs
     - Tidying up of Milestone GUI
