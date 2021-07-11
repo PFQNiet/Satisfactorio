@@ -11,8 +11,7 @@ local function onPlayerCreated(event)
 			gui = defines.relative_gui_type.controller_gui,
 			position = defines.relative_gui_position.bottom
 		},
-		direction = "horizontal",
-		style = "inset_frame_container_frame"
+		style = "frame_with_even_paddings"
 	}
 	local slot = frame.add{
 		type = "sprite-button",
@@ -21,6 +20,7 @@ local function onPlayerCreated(event)
 		name = "player-trash-slot",
 		tooltip = {"gui.trash-slot-tooltip"}
 	}
+	-- ensure icon is a reasonable size inside the slot
 	slot.style.padding = 6
 end
 
@@ -39,15 +39,11 @@ local function onGuiOpened(event)
 			},
 			direction = "horizontal"
 		}
-		flow.add{type="empty-widget"}.style.horizontally_stretchable = true
+		flow.add{type="empty-widget", style="filler_widget"}
 		local frame = flow.add{
 			type = "frame",
-			name = "sort-storage-frame",
-			direction = "horizontal",
-			style = "inset_frame_container_frame"
+			style = "frame_with_even_paddings"
 		}
-		frame.style.horizontally_stretchable = false
-		frame.style.use_header_filler = false
 		frame.add{
 			type = "button",
 			style = "dialog_button",

@@ -94,6 +94,18 @@ local function checkRangeForTabs(player, gui, fuel, cargo)
 	end
 end
 
+---@param cols LuaGuiElement
+---@param unload boolean
+local function toggleModeButtons(cols, unload)
+	local col = cols['load']
+	col.children[1].style = "station_mode_button"..(unload and "" or "_pressed")
+	col.label.style = unload and "label" or "caption_label"
+
+	col = cols['unload']
+	col.children[1].style = "station_mode_button"..(unload and "_pressed" or "")
+	col.label.style = unload and "caption_label" or "label"
+end
+
 ---@param event on_gui_opened
 local function onGuiOpened(event)
 	local player = game.players[event.player_index]
@@ -132,37 +144,33 @@ local function onGuiOpened(event)
 					name = storage
 				},
 				direction = "vertical",
-				caption = {"gui.truck-station-gui-title"},
-				style = "inset_frame_container_frame"
+				caption = {"gui.truck-station-gui-title"}
 			}
-			frame.style.horizontally_stretchable = false
 			local inner = frame.add{
 				type = "frame",
 				name = "content",
 				style = "inside_shallow_frame_with_padding",
 				direction = "vertical"
 			}
-			inner.style.horizontally_stretchable = true
 
 			local cols = inner.add{
 				type = "flow",
 				name = "mode-select",
-				direction = "horizontal"
+				direction = "horizontal",
+				style = "horizontal_flow_with_extra_spacing"
 			}
 			local col = cols.add{
 				type = "flow",
 				name = "load",
-				direction = "vertical"
+				direction = "vertical",
+				style = "horizontally_aligned_flow"
 			}
-			col.style.horizontal_align = "center"
-			local button = col.add{
+			col.add{
 				type = "sprite-button",
 				name = "truck-station-mode-load",
 				sprite = "utility/import",
-				style = "slot_sized_button"..(unloading and "" or "_pressed")
+				style = "station_mode_button"..(unloading and "" or "_pressed")
 			}
-			button.style.size = 80
-			button.style.padding = 8
 			col.add{
 				type = "label",
 				name = "label",
@@ -173,17 +181,15 @@ local function onGuiOpened(event)
 			col = cols.add{
 				type = "flow",
 				name = "unload",
-				direction = "vertical"
+				direction = "vertical",
+				style = "horizontally_aligned_flow"
 			}
-			col.style.horizontal_align = "center"
-			button = col.add{
+			col.add{
 				type = "sprite-button",
 				name = "truck-station-mode-unload",
 				sprite = "utility/export",
-				style = "slot_sized_button"..(unloading and "_pressed" or "")
+				style = "station_mode_button"..(unloading and "_pressed" or "")
 			}
-			button.style.size = 80
-			button.style.padding = 8
 			col.add{
 				type = "label",
 				name = "label",
@@ -198,17 +204,7 @@ local function onGuiOpened(event)
 		else
 			gui['truck-station-gui'].visible = true
 			local cols = gui['truck-station-gui'].content['mode-select']
-			local button = cols.load['truck-station-mode-load']
-			button.style = unloading and "slot_sized_button" or "slot_sized_button_pressed"
-			button.style.size = 80
-			button.style.padding = 8
-			cols.load.label.style = unloading and "label" or "caption_label"
-
-			button = cols.unload['truck-station-mode-unload']
-			button.style = unloading and "slot_sized_button_pressed" or "slot_sized_button"
-			button.style.size = 80
-			button.style.padding = 8
-			cols.unload.label.style = unloading and "caption_label" or "label"
+			toggleModeButtons(cols, unloading)
 		end
 	end
 
@@ -269,17 +265,7 @@ local function onGuiClick(event)
 		for _,p in pairs(game.players) do
 			if p.opened == player.opened then
 				local cols = p.gui.relative['truck-station-gui'].content['mode-select']
-				local button = cols.load['truck-station-mode-load']
-				button.style = "slot_sized_button_pressed"
-				button.style.size = 80
-				button.style.padding = 8
-				cols.load.label.style = "caption_label"
-
-				button = cols.unload['truck-station-mode-unload']
-				button.style = "slot_sized_button"
-				button.style.size = 80
-				button.style.padding = 8
-				cols.unload.label.style = "label"
+				toggleModeButtons(cols, false)
 			end
 		end
 	else
@@ -287,17 +273,7 @@ local function onGuiClick(event)
 		for _,p in pairs(game.players) do
 			if p.opened == player.opened then
 				local cols = p.gui.relative['truck-station-gui'].content['mode-select']
-				local button = cols.load['truck-station-mode-load']
-				button.style = "slot_sized_button"
-				button.style.size = 80
-				button.style.padding = 8
-				cols.load.label.style = "label"
-
-				button = cols.unload['truck-station-mode-unload']
-				button.style = "slot_sized_button_pressed"
-				button.style.size = 80
-				button.style.padding = 8
-				cols.unload.label.style = "caption_label"
+				toggleModeButtons(cols, true)
 			end
 		end
 	end

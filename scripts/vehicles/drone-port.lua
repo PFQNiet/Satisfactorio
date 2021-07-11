@@ -457,21 +457,21 @@ local function onGuiOpened(event)
 					tooltip = {"gui.dear-wube-cancel-means-cancel-not-back-thank-you-very-much"},
 					sprite = "utility/close_black"
 				}
-				local pusher = title_flow.add{type = "empty-widget", style = "draggable_space_header"}
-				pusher.style.height = 24
-				pusher.style.horizontally_stretchable = true
+				local pusher = title_flow.add{type = "empty-widget", style = "draggable_space_in_window_title"}
 				pusher.drag_target = secret_flow
 				title_flow.add{type = "sprite-button", style = "frame_action_button", sprite = "utility/close_white", name = "drone-port-close"}
 
 				local inner = frame.add{
 					type = "frame",
 					name = "content",
-					style = "inside_shallow_frame_with_padding",
+					style = "inside_shallow_frame_with_padding_and_spacing",
 					direction = "vertical"
 				}
-				local status_flow = inner.add{type = "flow", style = "status_flow", name = "status_flow"}
-				status_flow.style.vertical_align = "center"
-				status_flow.style.bottom_margin = 12
+				local status_flow = inner.add{
+					type = "flow",
+					style = "status_flow",
+					name = "status_flow"
+				}
 				status_flow.add{
 					type = "sprite",
 					style = "status_image",
@@ -483,7 +483,7 @@ local function onGuiOpened(event)
 				}
 
 				local minimap_flow = inner.add{type = "flow", direction = "horizontal", name = "minimap_flow"}
-				minimap_flow.add{type = "empty-widget"}.style.horizontally_stretchable = true
+				minimap_flow.add{type="empty-widget", style="filler_widget"}
 				local minimap_frame = minimap_flow.add{
 					type = "frame",
 					name = "minimap_frame",
@@ -496,18 +496,19 @@ local function onGuiOpened(event)
 					surface_index = data.base.surface.index,
 					tooltip = {"gui-train.open-in-map"}
 				}
-				minimap_flow.add{type = "empty-widget"}.style.horizontally_stretchable = true
+				minimap_flow.add{type="empty-widget", style="filler_widget"}
 				minimap_flow.visible = player.minimap_enabled
 
-				local destination_flow = inner.add{type = "flow", name = "destination_flow"}
-				destination_flow.style.top_margin = 12
-				destination_flow.style.bottom_margin = 12
+				local destination_flow = inner.add{
+					type = "flow",
+					name = "destination_flow",
+					style = "vertically_aligned_flow"
+				}
 				destination_flow.add{
 					type = "label",
 					style = "caption_label",
 					caption = {"gui.drone-destination"}
 				}
-				destination_flow.style.vertical_align = "center"
 				destination_flow.add{
 					type = "label",
 					name = "destination_name",
@@ -531,26 +532,25 @@ local function onGuiOpened(event)
 				end
 
 				local search_flow = inner.add{type = "flow", direction = "vertical", name = "search_flow", visible = false}
-				local s = search_flow.add{
+				search_flow.add{
 					type = "textfield",
 					name = "drone-port-destination-search",
+					style = "stretched_textbox",
 					lose_focus_on_confirm = true
 				}
-				s.style.maximal_width = 0
-				s.style.horizontally_stretchable = true
-				s = search_flow.add{
+				search_flow.add{
 					type = "list-box",
 					name = "drone-port-destination-selection",
-					style = "list_box_in_shallow_frame"
+					style = "drone_port_destination_list_box",
+					tags = {
+						['search-ids'] = {}
+					}
 				}
-				s.tags = {['search-ids'] = {}}
-				s.style.height = 120
-				s.style.horizontally_stretchable = true
-				s = search_flow.add{
+				search_flow.add{
 					type = "label",
+					style = "multiline_label",
 					caption = {"gui.drone-destination-update-on-takeoff"}
 				}
-				s.style.single_line = false
 
 				local stats_table = inner.add{type = "flow", direction = "vertical", name = "stats_table"}
 				local flow = stats_table.add{type = "flow", direction = "horizontal", name = "stat_distance"}

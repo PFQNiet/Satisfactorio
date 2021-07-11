@@ -38,15 +38,14 @@ local function onGuiOpened(event)
 					name = battery
 				},
 				direction = "vertical",
-				style = "inset_frame_container_frame"
+				style = "frame_with_even_paddings"
 			}
-			frame.style.use_header_filler = false
 
 			local inner = frame.add{
 				type = "frame",
 				name = "inner",
 				direction = "vertical",
-				style = "inside_shallow_frame_with_padding"
+				style = "inside_shallow_frame_with_padding_and_spacing"
 			}
 			inner.add{
 				type = "label",
@@ -56,11 +55,9 @@ local function onGuiOpened(event)
 			local flow = inner.add{
 				type = "flow",
 				direction = "horizontal",
-				name = "content"
+				name = "content",
+				style = "horizontal_flow_with_extra_spacing"
 			}
-			flow.style.top_margin = 4
-			flow.style.bottom_margin = 12
-			flow.style.horizontal_spacing = 12
 			flow.add{
 				type = "sprite-button",
 				sprite = "recipe/coal-generator-steam",
@@ -78,9 +75,9 @@ local function onGuiOpened(event)
 			}
 			local bar = flow2.add{
 				type = "progressbar",
+				style = "stretched_progressbar",
 				name = "bar"
 			}
-			bar.style.horizontally_stretchable = true
 		end
 
 		script_data[event.entity.unit_number].opened_by[player.index] = gui['battery-flow'].inner.content.details

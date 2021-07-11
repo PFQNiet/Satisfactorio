@@ -110,11 +110,3 @@ data:extend{
 		size = 64
 	}
 }
-
-local gui = data.raw["gui-style"].default
-gui['resource_scanner_button'] = {
-	type = "button_style",
-	size = 100,
-	draw_shadow_under_picture = true,
-	left_click_sound = gui['confirm_button'].left_click_sound
-}

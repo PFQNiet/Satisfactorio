@@ -172,15 +172,13 @@ local function manageMamGUI(player)
 					},
 					direction = "horizontal"
 				}
-				flow.add{type="empty-widget"}.style.horizontally_stretchable = true
+				flow.add{type="empty-widget", style="filler_widget"}
 				local frame = flow.add{
 					type = "frame",
 					name = "mam-frame",
 					direction = "horizontal",
-					style = "inset_frame_container_frame"
+					style = "frame_with_even_paddings"
 				}
-				frame.style.horizontally_stretchable = false
-				frame.style.use_header_filler = false
 				frame.add{
 					type = "button",
 					style = "submit_button",
@@ -305,74 +303,63 @@ local function onGuiOpened(event)
 		local title_flow = gui.add{type = "flow", name = "title_flow"}
 		local title = title_flow.add{type = "label", caption = {"gui.hard-drive-reward-title"}, style = "frame_title"}
 		title.drag_target = gui
-		local pusher = title_flow.add{type = "empty-widget", style = "draggable_space_header"}
-		pusher.style.height = 24
-		pusher.style.horizontally_stretchable = true
+		local pusher = title_flow.add{type = "empty-widget", style = "draggable_space_in_window_title"}
 		pusher.drag_target = gui
 		title_flow.add{type = "sprite-button", style = "frame_action_button", sprite = "utility/close_white", name = "hard-drive-reward-close"}
 
 		local columns = gui.add{
 			type = "flow",
-			name = "columns"
+			name = "columns",
+			style = "horizontal_flow_with_extra_spacing"
 		}
-		columns.style.horizontal_spacing = 12
 		for _,name in pairs(struct.options) do
 			local effect = game.technology_prototypes[name].effects[1]
-			local title, image, recipe, text
+			local subtitle, image, recipe, text
 			if effect.type == "unlock-recipe" then
-				title = {"recipe-name."..effect.recipe}
+				subtitle = {"recipe-name."..effect.recipe}
 				image = "recipe/"..effect.recipe
 				recipe = game.recipe_prototypes[effect.recipe]
 			else
-				title = {"technology-name."..name}
+				subtitle = {"technology-name."..name}
 				image = "utility/character_inventory_slots_bonus_modifier_icon"
 				text = {"modifier-description.character-inventory-slots-bonus",effect.modifier}
 			end
 			local col = columns.add{
 				type = "frame",
-				style = "inside_shallow_frame",
+				style = "inside_shallow_frame_with_padding_and_spacing",
 				direction = "vertical",
 				name = name
 			}
 			local head = col.add{
 				type = "frame",
-				style = "subheader_frame"
+				style = "full_subheader_frame_in_padded_frame"
 			}
-			head.style.horizontally_stretchable = true
 			head.add{
 				type = "label",
 				style = "heading_2_label",
-				caption = title
+				caption = subtitle
 			}
 			local list = col.add{
 				type = "flow",
 				direction = "vertical",
+				style = "hard_drive_column_flow",
 				name = "details"
 			}
-			list.style.padding = 12
-			list.style.horizontally_stretchable = true
-			list.style.minimal_width = 240
-			list.style.horizontal_align = "center"
 			local spritebox = list.add{
 				type = "frame",
 				style = "deep_frame_in_shallow_frame"
 			}
-			spritebox.style.padding = 4
-			local sprite = spritebox.add{
+			spritebox.add{
 				type = "sprite",
-				sprite = image
+				sprite = image,
+				style = "hard_drive_recipe_sprite"
 			}
-			sprite.style.width = 64
-			sprite.style.height = 64
-			sprite.style.stretch_image_to_widget_size = true
 			if recipe then
 				local craft = list.add{
 					type = "table",
 					style = "bordered_table",
 					column_count = 2
 				}
-				craft.style.top_margin = 8
-				craft.style.bottom_margin = 8
 				local getname = function(what)
 					return game[what.type.."_prototypes"][what.name].localised_name
 				end
@@ -404,16 +391,13 @@ local function onGuiOpened(event)
 					}
 				end
 			else
-				local desc = list.add{
+				list.add{
 					type = "label",
 					style = "description_label",
 					caption = text
 				}
-				desc.style.top_margin = 8
-				desc.style.bottom_margin = 8
 			end
-			local pusher = list.add{type = "empty-widget"}
-			pusher.style.vertically_stretchable = true
+			list.add{type="empty-widget", style="vertical_filler_widget"}
 			list.add{
 				type = "button",
 				style = "submit_button",

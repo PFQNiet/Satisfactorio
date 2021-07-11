@@ -36,24 +36,21 @@ local function updateGUI(player, buffer)
 			name = "buildgun",
 			direction = "vertical",
 			ignored_by_interaction = true,
-			style = "blurry_frame"
+			style = "build_gun_frame"
 		}
-		frame.style.horizontally_stretchable = false
-		frame.style.use_header_filler = false
-		frame.style.width = 540
 		local flow = frame.add{
 			type = "flow",
 			direction = "horizontal",
 			name = "content"
 		}
-		flow.add{type="empty-widget"}.style.horizontally_stretchable = true
-		local mats = flow.add{
+		flow.add{type="empty-widget", style="filler_widget"}
+		flow.add{
 			type = "flow",
 			direction = "horizontal",
-			name = "materials"
+			name = "materials",
+			style = "horizontal_flow_with_extra_spacing"
 		}
-		mats.style.horizontal_spacing = 12
-		flow.add{type="empty-widget"}.style.horizontally_stretchable = true
+		flow.add{type="empty-widget", style="filler_widget"}
 	end
 	local frame = gui['buildgun']
 	frame.visible = false
@@ -82,28 +79,25 @@ local function updateGUI(player, buffer)
 			end
 		end
 
-		local icon = col.add{
+		col.add{
 			type = "sprite-button",
-			style = "transparent_slot",
+			style = "build_gun_slot",
 			sprite = "item/"..product.name,
 			number = number,
 			tooltip = game.item_prototypes[product.name].localised_name
 		}
-		icon.style.width = 64
-		icon.style.height = 64
 
 		local satisfaction = player.cheat_mode and product.amount or ((inventory[product.name] or 0) + (buffer[product.name] or 0))
-		local bar = col.add{
+		col.add{
 			type = "progressbar",
 			value = satisfaction / product.amount,
-			style = "electric_satisfaction_statistics_progressbar",
+			style = "build_gun_progressbar",
 			caption = player.cheat_mode and {"infinity"} or util.format_number(satisfaction)
 		}
-		bar.style.width = 64
 	end
 
 	frame.visible = true
-	frame.location = {(player.display_resolution.width-540*player.display_scale)/2, player.display_resolution.height-300*player.display_scale}
+	frame.location = {(player.display_resolution.width-540*player.display_scale)/2, player.display_resolution.height-320*player.display_scale}
 end
 
 -- if the item to craft is a building, cancel the craft and put the item in the cursor

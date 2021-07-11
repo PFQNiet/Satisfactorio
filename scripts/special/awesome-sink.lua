@@ -72,9 +72,9 @@ local function updatePlayerGui(player)
 		local gui = player.gui.relative['awesome-sink'].content
 		local table = gui.table
 		local coupons = script_data.coupons[player.force.index] or {0,0,0,0}
-		table.tickets.count.caption = util.format_number(coupons[2])
-		table.gain.count.caption = util.format_number(coupons[4])
-		table.tonext.count.caption = util.format_number(pointsToNext(coupons[1]) - coupons[3])
+		table.tickets.caption = util.format_number(coupons[2])
+		table.gain.caption = util.format_number(coupons[4])
+		table.tonext.caption = util.format_number(pointsToNext(coupons[1]) - coupons[3])
 		gui.bottom['awesome-sink-print'].enabled = coupons[2] > 0
 	end
 end
@@ -102,80 +102,48 @@ local function onGuiOpened(event)
 					name = base
 				},
 				direction = "vertical",
-				caption = {"gui.awesome-sink-gui-title"},
-				style = "inset_frame_container_frame"
+				caption = {"gui.awesome-sink-gui-title"}
 			}
-			frame.style.horizontally_stretchable = false
 			local inner = frame.add{
 				type = "frame",
 				name = "content",
-				style = "inside_shallow_frame_with_padding",
+				style = "inside_shallow_frame_with_padding_and_spacing",
 				direction = "vertical"
 			}
-			inner.style.horizontally_stretchable = true
 			local table = inner.add{
 				type = "table",
 				name = "table",
-				style = "bordered_table",
-				column_count = 3
+				style = "awesome_sink_table",
+				column_count = 2
 			}
-			local sprite = table.add{
-				type = "sprite-button",
-				sprite = "item/coin",
-				style = "transparent_slot"
-			}
-			sprite.style.width = 20
-			sprite.style.height = 20
 			table.add{
 				type = "label",
-				caption = {"item-name.coin"},
+				caption = {"gui.awesome-sink-printable-coupons"},
 				style = "bold_label"
 			}
-			local count_flow = table.add{
-				type = "flow",
-				name = "tickets"
-			}
-			local pusher = count_flow.add{type="empty-widget"}
-			pusher.style.horizontally_stretchable = true
-			count_flow.add{
+			table.add{
 				type = "label",
-				name = "count",
+				name = "tickets",
 				caption = util.format_number(coupons[2])
 			}
 
-			table.add{type="empty-widget"}
 			table.add{
 				type = "label",
 				caption = {"gui.awesome-sink-gain"}
 			}
-			count_flow = table.add{
-				type = "flow",
-				name = "gain"
-			}
-			count_flow.style.minimal_width = 80
-			pusher = count_flow.add{type="empty-widget"}
-			pusher.style.horizontally_stretchable = true
-			count_flow.add{
+			table.add{
 				type = "label",
-				name = "count",
+				name = "gain",
 				caption = util.format_number(coupons[4] or 0)
 			}
 
-			table.add{type="empty-widget"}
 			table.add{
 				type = "label",
 				caption = {"gui.awesome-sink-to-next"}
 			}
-			count_flow = table.add{
-				type = "flow",
-				name = "tonext"
-			}
-			count_flow.style.minimal_width = 80
-			pusher = count_flow.add{type="empty-widget"}
-			pusher.style.horizontally_stretchable = true
-			count_flow.add{
+			table.add{
 				type = "label",
-				name = "count",
+				name = "tonext",
 				caption = util.format_number(pointsToNext(coupons[1]) - coupons[3])
 			}
 
@@ -183,9 +151,7 @@ local function onGuiOpened(event)
 				type = "flow",
 				name = "bottom"
 			}
-			bottom.style.top_margin = 12
-			bottom.style.bottom_margin = 12
-			bottom.add{type="empty-widget"}.style.horizontally_stretchable = true
+			bottom.add{type="empty-widget", style="filler_widget"}
 			local button = bottom.add{
 				type = "button",
 				style = "submit_button",

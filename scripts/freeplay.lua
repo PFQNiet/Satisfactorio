@@ -80,7 +80,7 @@ local function onPlayerCreated(event)
 		type = "frame",
 		name = "content",
 		direction = "vertical",
-		style = "goal_inner_frame"
+		style = "goal_inner_frame_with_spacing"
 	}
 	frame.add{
 		type = "label",
@@ -93,10 +93,10 @@ local function onPlayerCreated(event)
 		name = "continue_button_flow",
 		direction = "horizontal"
 	}
-	flow.style.top_margin = 8
 	flow.add{
-		type = "empty-widget"
-	}.style.horizontally_stretchable = true
+		type = "empty-widget",
+		style = "filler_widget"
+	}
 	flow.add{
 		type = "button",
 		style = "submit_button",

@@ -586,23 +586,19 @@ local function onTick(event)
 					name = "resources-loading",
 					direction = "vertical",
 					caption = {"gui.map-generator-working-title"},
-					style = "inner_frame_in_outer_frame"
+					style = "resource_loading_frame"
 				}
-				frame.style.horizontally_stretchable = false
-				frame.style.use_header_filler = false
-				frame.style.width = 300
 				local flow = frame.add{
 					type = "frame",
 					direction = "vertical",
 					name = "content",
-					style = "inside_shallow_frame_with_padding"
+					style = "inside_shallow_frame_with_padding_and_spacing"
 				}
-				flow.style.horizontally_stretchable = true
 				flow.add{
 					type = "label",
 					style = "heading_2_label",
 					caption = {"gui.map-generator-working-label"}
-				}.style.bottom_margin = 12
+				}
 				flow.add{
 					type = "label",
 					name = "count"

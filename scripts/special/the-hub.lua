@@ -313,15 +313,13 @@ local function updateMilestoneGUI(force)
 				name = "hub-milestone",
 				direction = "vertical",
 				caption = {"gui.hub-milestone-tracking-caption"},
-				style = "inner_frame_in_outer_frame"
+				style = "hub_milestone_frame"
 			}
-			frame.style.horizontally_stretchable = false
-			frame.style.use_header_filler = false
 
 			local content = frame.add{
 				type = "frame",
 				name = "content",
-				style = "inside_shallow_frame",
+				style = "inside_shallow_frame_with_padding_and_spacing",
 				direction = "vertical",
 				tags = {
 					milestone = "none"
@@ -330,9 +328,8 @@ local function updateMilestoneGUI(force)
 			local head = content.add{
 				type = "frame",
 				name = "head",
-				style = "subheader_frame"
+				style = "full_subheader_frame_in_padded_frame"
 			}
-			head.style.horizontally_stretchable = true
 			head.add{
 				type = "label",
 				name = "milestone",
@@ -346,15 +343,12 @@ local function updateMilestoneGUI(force)
 				style = "bordered_table",
 				column_count = 3
 			}
-			table.style.margin = 12
 			table.visible = false
 
 			local cooldown = content.add{
 				type = "label",
 				name = "cooldown"
 			}
-			cooldown.style.margin = 12
-			cooldown.style.top_margin = 0
 			cooldown.visible = false
 		end
 		local relative = player.gui.relative
@@ -369,15 +363,13 @@ local function updateMilestoneGUI(force)
 				},
 				direction = "horizontal"
 			}
-			flow.add{type="empty-widget"}.style.horizontally_stretchable = true
+			flow.add{type="empty-widget", style="filler_widget"}
 			local frame = flow.add{
 				type = "frame",
 				name = "hub-milestone-frame",
 				direction = "horizontal",
-				style = "inset_frame_container_frame"
+				style = "frame_with_even_paddings"
 			}
-			frame.style.horizontally_stretchable = false
-			frame.style.use_header_filler = false
 			frame.add{
 				type = "button",
 				style = "submit_button",
@@ -408,13 +400,11 @@ local function updateMilestoneGUI(force)
 					-- if milestone is actually set then we know this is valid
 					name.caption = {"","[img=recipe/"..milestone.name.."] ",milestone.localised_name}
 					for _,ingredient in ipairs(recipe.ingredients) do
-						local sprite = table.add{
+						table.add{
 							type = "sprite-button",
 							sprite = "item/"..ingredient.name,
-							style = "transparent_slot"
+							style = "text_sized_transparent_slot"
 						}
-						sprite.style.width = 20
-						sprite.style.height = 20
 						table.add{
 							type = "label",
 							caption = game.item_prototypes[ingredient.name].localised_name,
@@ -424,8 +414,7 @@ local function updateMilestoneGUI(force)
 							type = "flow",
 							name = ingredient.name
 						}
-						local pusher = count_flow.add{type="empty-widget"}
-						pusher.style.horizontally_stretchable = true
+						count_flow.add{type="empty-widget", style="filler_widget"}
 						count_flow.add{
 							type = "label",
 							name = "count",

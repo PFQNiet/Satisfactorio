@@ -65,23 +65,20 @@ local function openResourceScanner(player)
 		local title_flow = frame.add{type = "flow", name = "title_flow"}
 		local title = title_flow.add{type = "label", caption = {"gui.resource-scanner-title"}, style = "frame_title"}
 		title.drag_target = frame
-		local pusher = title_flow.add{type = "empty-widget", style = "draggable_space_header"}
-		pusher.style.height = 24
-		pusher.style.horizontally_stretchable = true
+		local pusher = title_flow.add{type = "empty-widget", style = "draggable_space_in_window_title"}
 		pusher.drag_target = frame
 		title_flow.add{type = "sprite-button", style = "frame_action_button", sprite = "utility/close_white", name = "resource-scanner-close"}
 
 		local content = frame.add{
 			type = "frame",
 			name = "content",
-			style = "inside_shallow_frame",
+			style = "inside_shallow_frame_with_padding_and_spacing",
 			direction = "vertical"
 		}
 		local head = content.add{
 			type = "frame",
-			style = "subheader_frame"
+			style = "full_subheader_frame_in_padded_frame"
 		}
-		head.style.horizontally_stretchable = true
 		head.add{
 			type = "label",
 			style = "heading_2_label",
@@ -91,11 +88,9 @@ local function openResourceScanner(player)
 		local list = content.add{
 			type = "table",
 			name = "list",
+			style = "scanner_table",
 			column_count = 5
 		}
-		list.style.margin = 12
-		list.style.horizontal_spacing = 12
-		list.style.vertical_spacing = 18
 
 		for _,recipe in pairs(getAllScans()) do
 			local product = recipe.products[1]
@@ -107,6 +102,7 @@ local function openResourceScanner(player)
 			local flow = list.add{
 				type = "flow",
 				direction = "vertical",
+				style = "scanner_flow",
 				tags = {
 					scan = {
 						recipe = recipe.name,
@@ -116,14 +112,12 @@ local function openResourceScanner(player)
 					}
 				}
 			}
-			flow.style.horizontal_align = "center"
-			flow.style.vertical_spacing = 6
 
 			flow.add{
 				type = "sprite-button",
 				name = "resource-scanner-scan",
 				sprite = sprite,
-				style = "resource_scanner_button"
+				style = "scanner_button"
 			}
 
 			flow.add{

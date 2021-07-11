@@ -136,12 +136,15 @@ local function updateSplitter(struct, gui)
 	end
 end
 local function addFilterEntry(list, struct, dir, index)
-	local flow = list.add{type = "flow", name = "flow-"..index}
-	flow.style.vertical_align = "center"
-	flow.style.minimal_height = 40
+	local flow = list.add{
+		type = "flow",
+		name = "flow-"..index,
+		style = "smart_splitter_filter_flow"
+	}
 	local menu = flow.add{
 		type = "drop-down",
 		name = "programmable-splitter-"..dir.."-selection",
+		style = "smart_splitter_filter_dropdown",
 		items = {
 			"None",
 			{"","[img=virtual-signal.signal-any] ",{"gui.smart-splitter-any"}},
@@ -155,7 +158,6 @@ local function addFilterEntry(list, struct, dir, index)
 			["overflow"] = 4
 		})[struct.filters[dir][index]] or 5) or 1
 	}
-	menu.style.horizontally_stretchable = true
 	local item = flow.add{
 		type = "choose-elem-button",
 		name = "programmable-splitter-"..dir.."-item",
@@ -244,17 +246,15 @@ local function onGuiOpened(event)
 			local title_flow = frame.add{type = "flow", name = "title_flow"}
 			local title = title_flow.add{type = "label", caption = event.entity.localised_name, style = "frame_title"}
 			title.drag_target = frame
-			local pusher = title_flow.add{type = "empty-widget", style = "draggable_space_header"}
-			pusher.style.height = 24
-			pusher.style.horizontally_stretchable = true
+			local pusher = title_flow.add{type = "empty-widget", style = "draggable_space_in_window_title"}
 			pusher.drag_target = frame
 			title_flow.add{type = "sprite-button", style = "frame_action_button", sprite = "utility/close_white", name = "programmable-splitter-close"}
 
 			local columns = frame.add{
 				type = "flow",
-				name = "columns"
+				name = "columns",
+				style = "horizontal_flow_with_extra_spacing"
 			}
-			columns.style.horizontal_spacing = 12
 			for _,dir in pairs({"left","forward","right"}) do
 				local col = columns.add{
 					type = "frame",
@@ -265,31 +265,24 @@ local function onGuiOpened(event)
 				local subtitle = col.add{
 					type = "frame",
 					name = "title",
-					style = "subheader_frame"
+					style = "full_subheader_frame"
 				}
-				subtitle.style.horizontally_stretchable = true
 				subtitle.add{
 					type = "label",
 					name = "label",
 					style = "heading_2_label",
 					caption = {"gui.programmable-splitter-"..dir,1}
 				}
-				local list = col.add{
+				col.add{
 					type = "scroll-pane",
 					direction = "vertical",
 					horizontal_scroll_policy = "never",
-					vertical_scroll_policy = "auto-and-reserve-space",
-					name = "filters"
+					vertical_scroll_policy = "always",
+					name = "filters",
+					style = "smart_splitter_scroll_pane"
 				}
-				list.style.padding = 12
-				list.style.horizontally_stretchable = true
-				list.style.minimal_height = 400
-				list.style.maximal_height = 400
-				list.style.minimal_width = 240
 
-				subtitle.add{
-					type = "empty-widget"
-				}.style.horizontally_stretchable = true
+				subtitle.add{type="empty-widget", style="filler_widget"}
 				subtitle.add{
 					type = "sprite-button",
 					name = "programmable-splitter-"..dir.."-add",

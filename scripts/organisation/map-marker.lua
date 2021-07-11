@@ -21,7 +21,7 @@ local function openBeaconGUI(beacon, player)
 		name = "beacon-naming",
 		direction = "vertical",
 		caption = {"gui.beacon-title"},
-		style = "inner_frame_in_outer_frame"
+		style = "frame_with_vertical_spacing"
 	}
 	local inner = gui.add{
 		type = "frame",
@@ -59,9 +59,7 @@ local function openBeaconGUI(beacon, player)
 		type = "flow",
 		direction = "horizontal"
 	}
-	bottom.style.top_margin = 4
-	local pusher = bottom.add{type = "empty-widget"}
-	pusher.style.horizontally_stretchable = true
+	bottom.add{type="empty-widget", style="filler_widget"}
 	bottom.add{
 		type = "button",
 		name = "beacon-naming-confirm",

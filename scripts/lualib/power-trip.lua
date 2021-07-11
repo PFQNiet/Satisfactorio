@@ -81,18 +81,10 @@ local function createFusebox(player)
 				gui = defines.relative_gui_type.entity_with_energy_source_gui,
 				position = defines.relative_gui_position.bottom
 			},
-			direction = "horizontal"
+			style = "frame_with_even_paddings"
 		}
-		flow.add{type="empty-widget"}.style.horizontally_stretchable = true
-		local frame = flow.add{
-			type = "frame",
-			name = "content",
-			direction = "vertical",
-			caption = {"gui.power-trip-reset-fuse-title"},
-			style = "inset_frame_container_frame"
-		}
-		frame.style.horizontally_stretchable = false
-		frame.style.use_header_filler = false
+		flow.add{type="empty-widget", style="filler_widget"}
+		local frame = flow.add{type = "frame"}
 		frame.add{
 			type = "button",
 			style = "submit_button",

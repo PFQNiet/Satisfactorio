@@ -171,15 +171,13 @@ local function updateElevatorGUI(force)
 				},
 				direction = "horizontal"
 			}
-			flow.add{type="empty-widget"}.style.horizontally_stretchable = true
+			flow.add{type="empty-widget", style="filler_widget"}
 			local frame = flow.add{
 				type = "frame",
 				name = "space-elevator-frame",
 				direction = "horizontal",
-				style = "inset_frame_container_frame"
+				style = "frame_with_even_paddings"
 			}
-			frame.style.horizontally_stretchable = false
-			frame.style.use_header_filler = false
 			frame.add{
 				type = "button",
 				style = "submit_button",

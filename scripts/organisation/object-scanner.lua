@@ -93,23 +93,20 @@ local function openObjectScanner(player)
 		local title_flow = frame.add{type = "flow", name = "title_flow"}
 		local title = title_flow.add{type = "label", caption = {"gui.object-scanner-title"}, style = "frame_title"}
 		title.drag_target = frame
-		local pusher = title_flow.add{type = "empty-widget", style = "draggable_space_header"}
-		pusher.style.height = 24
-		pusher.style.horizontally_stretchable = true
+		local pusher = title_flow.add{type = "empty-widget", style = "draggable_space_in_window_title"}
 		pusher.drag_target = frame
 		title_flow.add{type = "sprite-button", style = "frame_action_button", sprite = "utility/close_white", name = "object-scanner-close"}
 
 		local content = frame.add{
 			type = "frame",
 			name = "content",
-			style = "inside_shallow_frame",
+			style = "inside_shallow_frame_with_padding_and_spacing",
 			direction = "vertical"
 		}
 		local head = content.add{
 			type = "frame",
-			style = "subheader_frame"
+			style = "full_subheader_frame_in_padded_frame"
 		}
-		head.style.horizontally_stretchable = true
 		head.add{
 			type = "label",
 			style = "heading_2_label",
@@ -119,11 +116,9 @@ local function openObjectScanner(player)
 		local list = content.add{
 			type = "table",
 			name = "list",
+			style = "scanner_table",
 			column_count = 4
 		}
-		list.style.margin = 12
-		list.style.horizontal_spacing = 12
-		list.style.vertical_spacing = 18
 
 		for _,recipe in pairs(getAllScans()) do
 			local product = recipe.products[1]
@@ -136,6 +131,7 @@ local function openObjectScanner(player)
 			local flow = list.add{
 				type = "flow",
 				direction = "vertical",
+				style = "scanner_flow",
 				tags = {
 					scan = {
 						recipe = recipe.name,
@@ -145,14 +141,12 @@ local function openObjectScanner(player)
 					}
 				}
 			}
-			flow.style.horizontal_align = "center"
-			flow.style.vertical_spacing = 6
 
 			flow.add{
 				type = "sprite-button",
 				name = "object-scanner-select",
 				sprite = sprite,
-				style = "resource_scanner_button"
+				style = "scanner_button"
 			}
 
 			flow.add{
@@ -219,9 +213,7 @@ local function openBeaconScanner(player)
 		local title_flow = frame.add{type = "flow", name = "title_flow"}
 		local title = title_flow.add{type = "label", caption = {"gui.beacon-scanner-title"}, style = "frame_title"}
 		title.drag_target = frame
-		local pusher = title_flow.add{type = "empty-widget", style = "draggable_space_header"}
-		pusher.style.height = 24
-		pusher.style.horizontally_stretchable = true
+		local pusher = title_flow.add{type = "empty-widget", style = "draggable_space_in_window_title"}
 		pusher.drag_target = frame
 		title_flow.add{type = "sprite-button", style = "frame_action_button", sprite = "utility/close_white", name = "beacon-scanner-close"}
 
@@ -233,9 +225,8 @@ local function openBeaconScanner(player)
 		}
 		local head = content.add{
 			type = "frame",
-			style = "subheader_frame"
+			style = "full_subheader_frame"
 		}
-		head.style.horizontally_stretchable = true
 		head.add{
 			type = "label",
 			style = "heading_2_label",
@@ -244,18 +235,16 @@ local function openBeaconScanner(player)
 
 		local body = content.add{
 			type = "scroll-pane",
-			name = "body"
+			name = "body",
+			style = "scanner_scroll_pane"
 		}
-		body.style.maximal_height = 500
 
 		local list = body.add{
 			type = "table",
 			name = "list",
+			style = "scanner_table",
 			column_count = 6
 		}
-		list.style.margin = 12
-		list.style.horizontal_spacing = 12
-		list.style.vertical_spacing = 18
 	end
 
 	local frame = gui['beacon-scanner']
@@ -291,6 +280,7 @@ local function openBeaconScanner(player)
 		local flow = menu.add{
 			type = "flow",
 			direction = "vertical",
+			style = "scanner_flow",
 			tags = {
 				scan = {
 					icon = icon,
@@ -299,8 +289,6 @@ local function openBeaconScanner(player)
 				}
 			}
 		}
-		flow.style.horizontal_align = "center"
-		flow.style.vertical_spacing = 6
 
 		if use_minimap then
 			local mapframe = flow.add{
@@ -310,17 +298,16 @@ local function openBeaconScanner(player)
 			local map = mapframe.add{
 				type = "minimap",
 				name = "beacon-scanner-select",
+				style = "scanner_minimap",
 				position = beacon.position,
 				surface_index = beacon.surface.index
 			}
-			map.style.width = 100
-			map.style.height = 100
 		else
 			flow.add{
 				type = "sprite-button",
 				name = "beacon-scanner-select",
 				sprite = icon,
-				style = "resource_scanner_button"
+				style = "scanner_button"
 			}
 		end
 

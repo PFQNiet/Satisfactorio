@@ -308,9 +308,7 @@ local function onInteract(event)
 					local title_flow = frame.add{type = "flow", name = "title_flow"}
 					local title = title_flow.add{type = "label", caption = {"entity-name.small-biter"}, style = "frame_title"}
 					title.drag_target = frame
-					local pusher = title_flow.add{type = "empty-widget", style = "draggable_space_header"}
-					pusher.style.height = 24
-					pusher.style.horizontally_stretchable = true
+					local pusher = title_flow.add{type = "empty-widget", style = "draggable_space_in_window_title"}
 					pusher.drag_target = frame
 					title_flow.add{type = "sprite-button", style = "frame_action_button", sprite = "utility/close_white", name = "lizard-doggo-close"}
 
@@ -323,9 +321,9 @@ local function onInteract(event)
 					local columns = content.add{
 						type = "flow",
 						direction = "horizontal",
-						name = "table"
+						name = "table",
+						style = "horizontal_flow_with_extra_spacing"
 					}
-					columns.style.horizontal_spacing = 12
 					local col1 = columns.add{
 						type = "frame",
 						direction = "vertical",
@@ -350,9 +348,9 @@ local function onInteract(event)
 					local lootbox = col2.add{
 						type = "flow",
 						direction = "horizontal",
-						name = "loot"
+						name = "loot",
+						style = "vertically_aligned_flow"
 					}
-					lootbox.style.vertical_align = "center"
 					lootbox.add{
 						type = "sprite-button",
 						style = "slot_button_in_shallow_frame",

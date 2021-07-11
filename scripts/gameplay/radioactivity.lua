@@ -215,7 +215,10 @@ local function onResolutionChanged(event)
 	local player = game.players[event.player_index]
 	local gui = player.gui.screen['radiation']
 	if gui then
-		gui.location = {(player.display_resolution.width-250*player.display_scale)/2, 160*player.display_scale}
+		gui.location = {
+			(player.display_resolution.width-246*player.display_scale)/2,
+			200*player.display_scale
+		}
 	end
 end
 
@@ -291,20 +294,17 @@ local function updateGui(player, radiation)
 		local gui = player.gui.screen.add{
 			type = "frame",
 			name = "radiation",
+			ignored_by_interaction = true,
 			direction = "vertical",
 			caption = {"gui.radiation"},
-			style = "inner_frame_in_outer_frame"
+			style = "radioactivity_frame"
 		}
-		gui.style.horizontally_stretchable = false
-		gui.style.use_header_filler = false
-		gui.style.width = 250
 		local flow = gui.add{
 			type = "flow",
+			name = "content",
 			direction = "horizontal",
-			name = "content"
+			style = "vertically_aligned_flow"
 		}
-		flow.style.horizontally_stretchable = true
-		flow.style.vertical_align = "center"
 		flow.add{
 			type = "sprite",
 			sprite = "tooltip-category-nuclear"
@@ -312,7 +312,7 @@ local function updateGui(player, radiation)
 		flow.add{
 			type = "progressbar",
 			name = "bar",
-			style = "radioactivity-progressbar"
+			style = "radioactivity_progressbar"
 		}
 		gui.visible = false
 	end

@@ -227,12 +227,14 @@ local function fullGuiUpdate(struct, columns)
 	for _,dir in pairs({"left","forward","right"}) do
 		local list = columns["filter-"..dir].filters
 		list.clear()
-		local flow = list.add{type = "flow"}
-		flow.style.vertical_align = "center"
-		flow.style.minimal_height = 40
+		local flow = list.add{
+			type = "flow",
+			style = "smart_splitter_filter_flow"
+		}
 		local menu = flow.add{
 			type = "drop-down",
 			name = "smart-splitter-"..dir.."-selection",
+			style = "smart_splitter_filter_dropdown",
 			items = {
 				"None",
 				{"","[img=virtual-signal.signal-any] ",{"gui.smart-splitter-any"}},
@@ -246,7 +248,6 @@ local function fullGuiUpdate(struct, columns)
 				["overflow"] = 4
 			})[struct.filters[dir]] or 5) or 1
 		}
-		menu.style.horizontally_stretchable = true
 		local item = flow.add{
 			type = "choose-elem-button",
 			name = "smart-splitter-"..dir.."-item",
@@ -302,7 +303,7 @@ local function onPaste(event)
 		end
 		for pid,other in pairs(script_data.gui) do
 			if other.base == struct.base then
-				fullGuiUpdate(other, players[pid].gui.screen['programmable-splitter'].columns)
+				fullGuiUpdate(other, players[pid].gui.screen['smart-splitter'].columns)
 			end
 		end
 	end
@@ -338,17 +339,15 @@ local function onGuiOpened(event)
 			local title_flow = frame.add{type = "flow", name = "title_flow"}
 			local title = title_flow.add{type = "label", caption = event.entity.localised_name, style = "frame_title"}
 			title.drag_target = frame
-			local pusher = title_flow.add{type = "empty-widget", style = "draggable_space_header"}
-			pusher.style.height = 24
-			pusher.style.horizontally_stretchable = true
+			local pusher = title_flow.add{type = "empty-widget", style = "draggable_space_in_window_title"}
 			pusher.drag_target = frame
 			title_flow.add{type = "sprite-button", style = "frame_action_button", sprite = "utility/close_white", name = "smart-splitter-close"}
 
 			local columns = frame.add{
 				type = "flow",
-				name = "columns"
+				name = "columns",
+				style = "horizontal_flow_with_extra_spacing"
 			}
-			columns.style.horizontal_spacing = 12
 			for _,dir in pairs({"left","forward","right"}) do
 				local col = columns.add{
 					type = "frame",
@@ -356,27 +355,24 @@ local function onGuiOpened(event)
 					direction = "vertical",
 					name = "filter-"..dir
 				}
-				local title = col.add{
+				local subtitle = col.add{
 					type = "frame",
-					style = "subheader_frame"
+					style = "full_subheader_frame"
 				}
-				title.style.horizontally_stretchable = true
-				title.add{
+				subtitle.add{
 					type = "label",
 					style = "heading_2_label",
 					caption = {"gui.smart-splitter-"..dir}
 				}
-				local list = col.add{
+				col.add{
 					type = "flow",
+					style = "smart_splitter_filter_container_flow",
 					direction = "vertical",
 					name = "filters"
 				}
-				list.style.padding = 12
-				list.style.horizontally_stretchable = true
-				list.style.minimal_width = 240
 			end
 		end
-		local frame = gui['programmable-splitter']
+		local frame = gui['smart-splitter']
 		local columns = frame.columns
 
 		local struct = findStruct(event.entity)

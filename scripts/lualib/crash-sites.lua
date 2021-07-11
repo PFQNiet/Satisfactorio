@@ -140,9 +140,7 @@ local function onGuiOpened(event)
 		local title_flow = frame.add{type = "flow", name = "title_flow"}
 		local title = title_flow.add{type = "label", caption = {"gui.crash-site-title"}, style = "frame_title"}
 		title.drag_target = frame
-		local pusher = title_flow.add{type = "empty-widget", style = "draggable_space_header"}
-		pusher.style.height = 24
-		pusher.style.horizontally_stretchable = true
+		local pusher = title_flow.add{type = "empty-widget", style = "draggable_space_in_window_title"}
 		pusher.drag_target = frame
 		title_flow.add{type = "sprite-button", style = "frame_action_button", sprite = "utility/close_white", name = "crash-site-close"}
 
@@ -155,9 +153,9 @@ local function onGuiOpened(event)
 		local columns = content.add{
 			type = "flow",
 			direction = "horizontal",
+			style = "horizontal_flow_with_extra_spacing",
 			name = "table"
 		}
-		columns.style.horizontal_spacing = 12
 		local col1 = columns.add{
 			type = "frame",
 			direction = "vertical",
@@ -185,7 +183,6 @@ local function onGuiOpened(event)
 			style = "bordered_table",
 			name = "repairs"
 		}
-		repairs.style.horizontally_stretchable = true
 		repairs.add{
 			type = "label",
 			style = "caption_label",
@@ -220,8 +217,7 @@ local function onGuiOpened(event)
 			type = "flow",
 			name = "button"
 		}
-		local pusher = bottom.add{type="empty-widget"}
-		pusher.style.horizontally_stretchable = true
+		bottom.add{type="empty-widget", style="filler_widget"}
 		bottom.add{
 			type = "button",
 			style = "submit_button",

@@ -33,9 +33,3 @@ data:extend({
 		name = "radiation"
 	}
 })
-data.raw['gui-style'].default['radioactivity-progressbar'] = {
-	color = {1,0,0},
-	bar_width = 13,
-	horizontally_stretchable = "on",
-	type = "progressbar_style"
-}

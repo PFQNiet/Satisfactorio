@@ -85,29 +85,26 @@ local function onGuiOpened(event)
 					names = entity_names
 				},
 				direction = "vertical",
-				style = "inset_frame_container_frame"
+				style = "frame_with_even_paddings"
 			}
-			frame.style.use_header_filler = false
 
 			local inner = frame.add{
 				type = "frame",
 				name = "inner",
 				direction = "vertical",
-				style = "inside_shallow_frame_with_padding"
+				style = "inside_shallow_frame_with_padding_and_spacing"
 			}
 			inner.add{
 				type = "label",
 				caption = {"gui.pipe-flow-title"},
-				style = "heading_3_label"
+				style = "caption_label"
 			}
 			local flow = inner.add{
 				type = "flow",
 				direction = "horizontal",
-				name = "content"
+				name = "content",
+				style = "horizontal_flow_with_extra_spacing"
 			}
-			flow.style.top_margin = 4
-			flow.style.bottom_margin = 12
-			flow.style.horizontal_spacing = 12
 			flow.add{
 				type = "sprite-button",
 				name = "fluid",
@@ -123,11 +120,11 @@ local function onGuiOpened(event)
 				caption = {"gui.pipe-flow-calculating"},
 				name = "flowtext"
 			}
-			local bar = flow2.add{
+			flow2.add{
 				type = "progressbar",
+				style = "stretched_progressbar",
 				name = "bar"
 			}
-			bar.style.horizontally_stretchable = true
 
 			inner.add{
 				type = "label",

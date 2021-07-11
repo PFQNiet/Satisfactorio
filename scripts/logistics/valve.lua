@@ -133,9 +133,8 @@ local function onGuiOpened(event)
 					name = valve
 				},
 				direction = "vertical",
-				style = "inner_frame_in_outer_frame"
+				style = "frame_with_even_paddings"
 			}
-			frame.style.use_header_filler = false
 
 			local inner = frame.add{
 				type = "frame",
@@ -145,9 +144,9 @@ local function onGuiOpened(event)
 			local content = inner.add{
 				type = "flow",
 				direction = "vertical",
+				style = "vertical_flow_with_extra_spacing",
 				name = "content"
 			}
-			content.style.vertical_spacing = 12
 			content.add{
 				type = "label",
 				style = "heading_2_label",
@@ -164,18 +163,18 @@ local function onGuiOpened(event)
 			local bottom = content.add{
 				type = "flow",
 				direction = "horizontal",
+				style = "vertically_aligned_flow",
 				name = "bottom"
 			}
-			bottom.style.vertical_align = "center"
-			local input = bottom.add{
+			bottom.add{
 				type = "textfield",
 				numeric = true,
 				allow_decimal = true,
 				allow_negative = false,
 				lose_focus_on_confirm = true,
-				name = "valve-flow-input"
+				name = "valve-flow-input",
+				style = "short_number_textfield"
 			}
-			input.style.width = 80
 			bottom.add{
 				type = "label",
 				caption = {"gui.valve-flow-rate-unit-and-max",{"per-minute-suffix"},600}

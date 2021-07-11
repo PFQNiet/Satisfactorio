@@ -220,60 +220,54 @@ local function getOrCreateGui(player)
 				names = {"truck", "tractor", "explorer"}
 			},
 			direction = "vertical",
-			caption = {"gui.self-driving-title"},
-			style = "inset_frame_container_frame"
+			caption = {"gui.self-driving-title"}
 		}
-		frame.style.horizontally_stretchable = false
 
 		local inner = frame.add{
 			type = "frame",
 			name = "content",
-			style = "inside_shallow_frame_with_padding",
+			style = "inside_shallow_frame_with_padding_and_spacing",
 			direction = "vertical"
 		}
-		inner.style.horizontally_stretchable = true
-		local flow = inner.add{
-			type = "flow",
-			name = "flow",
-			direction = "vertical"
-		}
-		flow.style.vertical_spacing = 12
 
-		flow.add{
+		local top = inner.add{
+			type = "flow",
+			name = "top",
+			direction = "horizontal",
+			style = "vertically_aligned_flow"
+		}
+		top.add{
 			type = "switch",
 			name = "self-driving-mode-toggle",
 			left_label_caption = {"gui.self-driving-mode-manual"},
 			right_label_caption = {"gui.self-driving-mode-auto"}
 		}
-		flow.add{
+		top.add{type="empty-widget", style="filler_widget"}
+		top.add{
 			type = "button",
 			name = "self-driving-record",
 			caption = {"gui.self-driving-record"}
 		}
 
-		local menu = flow.add{
+		inner.add{
 			type = "list-box",
 			name = "self-driving-waypoints",
-			style = "list_box_in_shallow_frame",
-			ignored_by_interaction = true
+			style = "self_driving_list_box"
 		}
-		menu.style.horizontally_stretchable = true
-		menu.style.width = 300
-		menu.style.height = 200
 
-		local editor = flow.add{
+		local editor = inner.add{
 			type = "flow",
 			name = "self-driving-edit",
+			style = "vertical_flow_with_extra_spacing",
 			direction = "vertical"
 		}
-		editor.style.vertical_spacing = 6
 
 		local name = editor.add{
 			type = "flow",
 			name = "edit-name",
-			direction = "horizontal"
+			direction = "horizontal",
+			style = "vertically_aligned_flow"
 		}
-		name.style.vertical_align = "center"
 		name.add{
 			type = "label",
 			caption = {"gui.self-driving-waypoint-name"}
@@ -286,35 +280,36 @@ local function getOrCreateGui(player)
 		local time = editor.add{
 			type = "flow",
 			name = "edit-time",
-			direction = "horizontal"
+			direction = "horizontal",
+			style = "vertically_aligned_flow"
 		}
-		time.style.vertical_align = "center"
 		time.add{
 			type = "label",
 			caption = {"gui.self-driving-waypoint-wait"}
 		}
-		local input = time.add{
+		time.add{
 			type = "textfield",
 			name = "self-driving-time",
 			numeric = true,
 			text = 25,
 			allow_decimal = false,
-			allow_negative = false
+			allow_negative = false,
+			style = "short_number_textfield"
 		}
-		input.style.width = 50
 		time.add{
 			type = "label",
 			caption = {"gui.self-driving-waypoint-seconds"}
 		}
 
-		editor.add{
+		time.add{type="empty-widget", style="filler_widget"}
+		time.add{
 			type = "button",
 			name = "self-driving-add",
 			style = "green_button",
 			caption = {"gui.self-driving-waypoint-add"}
 		}
 
-		flow.add{
+		inner.add{
 			type = "empty-widget",
 			style = "vertical_lines_slots_filler"
 		}
@@ -325,11 +320,11 @@ end
 ---@param car SelfDrivingCarData
 local function updateGui(player, car)
 	local frame = getOrCreateGui(player)
-	local content = frame['content']['flow']
-	content['self-driving-mode-toggle'].switch_state = car.autopilot and "right" or "left"
+	local content = frame['content']
+	content.top['self-driving-mode-toggle'].switch_state = car.autopilot and "right" or "left"
 	refreshStopList(car, content['self-driving-waypoints'])
 
-	local rec = content['self-driving-record']
+	local rec = content.top['self-driving-record']
 	local driving = game.players[frame.player_index].vehicle == car.car
 	if not driving then
 		rec.enabled = false
@@ -343,12 +338,12 @@ local function updateGui(player, car)
 	end
 
 	if car.recording then
-		content['self-driving-mode-toggle'].enabled = false
-		content['self-driving-record'].caption = {"gui.self-driving-stop"}
+		content.top['self-driving-mode-toggle'].enabled = false
+		content.top['self-driving-record'].caption = {"gui.self-driving-stop"}
 		content['self-driving-edit'].visible = true
 	else
-		content['self-driving-mode-toggle'].enabled = true
-		content['self-driving-record'].caption = {"gui.self-driving-record"}
+		content.top['self-driving-mode-toggle'].enabled = true
+		content.top['self-driving-record'].caption = {"gui.self-driving-record"}
 		content['self-driving-edit'].visible = false
 	end
 end
@@ -463,14 +458,12 @@ end
 ---@param event on_gui_opened
 local function onGuiOpen(event)
 	local player = game.players[event.player_index]
-	if isSelfDrivingCar(player.vehicle) then
-		if player.opened_self then
-			player.opened = player.vehicle
-		end
-		if player.opened == player.vehicle then
-			local car = getCar(player.vehicle)
-			updateGui(player, car)
-		end
+	if isSelfDrivingCar(player.vehicle) and player.opened_self then
+		player.opened = player.vehicle
+	end
+	if player.opened_gui_type == defines.gui_type.entity and isSelfDrivingCar(player.opened) then
+		local car = getCar(player.opened)
+		updateGui(player, car)
 	end
 end
 ---@param event on_gui_click
@@ -510,7 +503,7 @@ local function onGuiClick(event)
 	if event.element.valid and event.element.name == "self-driving-add" then
 		local car = getCar(player.vehicle)
 		if not car.recording then return end
-		local editor = event.element.parent
+		local editor = player.gui.relative['self-driving'].content['self-driving-edit']
 		local namebox = editor['edit-name']['self-driving-name']
 		local name = namebox.text
 		local time = tonumber(editor['edit-time']['self-driving-time'].text)

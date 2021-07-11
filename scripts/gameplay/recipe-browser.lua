@@ -23,9 +23,7 @@ local function openRecipeGui(player)
 		local title_flow = frame.add{type = "flow", name = "title_flow"}
 		local title = title_flow.add{type = "label", caption = {"gui.recipe-browser-title"}, style = "frame_title"}
 		title.drag_target = frame
-		local pusher = title_flow.add{type = "empty-widget", style = "draggable_space_header"}
-		pusher.style.height = 24
-		pusher.style.horizontally_stretchable = true
+		local pusher = title_flow.add{type = "empty-widget", style = "draggable_space_in_window_title"}
 		pusher.drag_target = frame
 		title_flow.add{type = "sprite-button", style = "frame_action_button", sprite = "utility/close_white", name = "recipe-browser-close"}
 
@@ -37,11 +35,10 @@ local function openRecipeGui(player)
 		}
 		local heading = content.add{
 			type = "frame",
-			style = "subheader_frame",
+			style = "full_subheader_frame",
 			direction = "horizontal",
 			name = "header"
 		}
-		heading.style.horizontally_stretchable = true
 		heading.add{
 			type = "choose-elem-button",
 			elem_type = "item",
@@ -58,24 +55,13 @@ local function openRecipeGui(player)
 			style = "heading_2_label"
 		}
 
-		local scroll = content.add{
+		content.add{
 			type = "scroll-pane",
-			name = "recipe-container",
-			style = "scroll_pane_under_subheader",
+			name = "recipes",
+			style = "recipe_browser_scroll_pane",
 			horizontal_scroll_policy = "never",
 			vertical_scroll_policy = "always"
 		}
-		scroll.style.width = 560
-		scroll.style.height = 400
-		local recipes = scroll.add{
-			type = "table",
-			column_count = 1,
-			style = "bordered_table",
-			name = "recipes"
-		}
-		recipes.style.margin = 12
-		recipes.style.vertical_spacing = 12
-		recipes.style.horizontally_stretchable = true
 		frame.visible = false
 	end
 	local frame = gui['recipe-browser']
@@ -101,12 +87,10 @@ local function updateWantedList(player)
 			style = "inner_frame_in_outer_frame"
 		}
 		local title_flow = frame.add{type = "flow", name = "title_flow"}
-		title_flow.add{type = "sprite-button", style = "frame_action_button", sprite = "utility/collapse", name = "to-do-list-toggle"}.style.right_margin = 6
+		title_flow.add{type = "sprite-button", style = "frame_action_button", sprite = "utility/collapse", name = "to-do-list-toggle"}
 		local title = title_flow.add{type = "label", caption = {"gui.to-do-title"}, style = "frame_title"}
 		title.drag_target = frame
-		local pusher = title_flow.add{type = "empty-widget", style = "draggable_space_header"}
-		pusher.style.height = 24
-		pusher.style.horizontally_stretchable = true
+		local pusher = title_flow.add{type = "empty-widget", style = "draggable_space_in_window_title"}
 		pusher.drag_target = frame
 		title_flow.add{type = "sprite-button", style = "frame_action_button", sprite = "utility/close_white", name = "to-do-list-close"}
 
@@ -118,35 +102,22 @@ local function updateWantedList(player)
 		}
 		local wanted = content.add{
 			type = "frame",
-			style = "slot_button_deep_frame",
+			style = "todolist_recipe_frame",
 			name = "wanted"
 		}
-		wanted.style.minimal_height = 40
-		wanted.style.width = 200
-		wanted.style.margin = 12
 		wanted.add{
 			type = "table",
 			style = "filter_slot_table",
 			column_count = 5,
 			name = "to-do-list-wanted"
 		}
-		local list = content.add{
+		content.add{
 			type = "scroll-pane",
 			name = "list",
-			style = "scroll_pane_in_shallow_frame",
+			style = "todolist_scroll_pane",
 			horizontal_scroll_policy = "never",
 			vertical_scroll_policy = "always"
 		}
-		list.style.width = 224
-		list.style.padding = 12
-		list.style.maximal_height = 400
-		local table = list.add{
-			type = "flow",
-			name = "to-do-list-ingredients",
-			direction = "vertical"
-		}
-		table.style.vertical_spacing = 12
-		table.style.horizontally_stretchable = true
 
 		frame.location = {player.display_resolution.width-512*player.display_scale, 40*player.display_scale}
 	end
@@ -158,7 +129,7 @@ local function updateWantedList(player)
 	frame.visible = true
 
 	local wanted = frame.content.wanted['to-do-list-wanted']
-	local list = frame.content.list['to-do-list-ingredients']
+	local list = frame.content.list
 	local ingredients = {}
 
 	wanted.clear()
@@ -203,36 +174,36 @@ local function updateWantedList(player)
 		end
 		local entry = list.add{
 			type = "flow",
-			direction = "horizontal"
+			direction = "horizontal",
+			style = "todolist_ingredient_flow"
 		}
-		entry.style.vertical_align = "center"
 		local left = entry.add{
 			type = "flow",
 			direction = "vertical"
 		}
-		left.style.horizontally_stretchable = true
 		local top = left.add{
 			type = "flow",
 			direction = "horizontal"
 		}
 		top.add{
 			type = "label",
-			caption = ingredient.localised_name
-		}.style.horizontally_squashable = true
-		top.add{type="empty-widget"}.style.horizontally_stretchable = true
+			caption = ingredient.localised_name,
+			style = "todolist_ingredient_label"
+		}
+		top.add{type="empty-widget", style="filler_widget"}
 		top.add{
 			type = "label",
 			caption = {"gui.fraction",util.format_number(inventory[item] or 0),util.format_number(ingredient.amount)}
 		}
 		local bar = left.add{
 			type = "progressbar",
+			style = "stretched_progressbar",
 			value = (inventory[item] or 0) / ingredient.amount
 		}
-		bar.style.horizontally_stretchable = true
 
 		entry.add{
 			type = "sprite-button",
-			style = "slot_button_in_shallow_frame",
+			style = "transparent_slot",
 			sprite = ingredient.type.."/"..ingredient.name,
 			tooltip = ingredient.localised_name
 		}
@@ -265,22 +236,22 @@ local function editItemRequestCount(player,source)
 		style = "inner_frame_in_outer_frame",
 		tags = {name = name}
 	}
-	gui.style.vertical_align = "center"
 	local flow = gui.add{
 		type = "flow",
-		direction = "horizontal"
+		direction = "horizontal",
+		style = "vertically_aligned_flow"
 	}
 
-	local input = flow.add{
+	flow.add{
 		type = "textfield",
 		name = "to-do-request-number-input",
 		numeric = true,
 		text = number,
 		allow_decimal = false,
 		allow_negative = false,
-		lose_focus_on_confirm = true
+		lose_focus_on_confirm = true,
+		style = "short_number_textfield"
 	}
-	input.style.width = 50
 	flow.add{
 		type = "sprite-button",
 		name = "to-do-request-confirm",
@@ -298,7 +269,7 @@ local function editItemRequestCount(player,source)
 
 	local loc = player.gui.screen['to-do-list'].location
 	gui.location = {
-		loc.x + 24 + ((index-1)%5)/4*62,
+		loc.x + 24 + ((index-1)%5)/4*32,
 		loc.y + 92 + math.floor((index-1)/5)*40
 	}
 end
@@ -349,7 +320,7 @@ local function onGuiElemChanged(event)
 			type = event.element.name == "recipe-browser-choose-item" and "item" or "fluid",
 			name = event.element.elem_value
 		}
-		local gui = player.gui.screen['recipe-browser'].content['recipe-container'].recipes
+		local gui = player.gui.screen['recipe-browser'].content.recipes
 		gui.clear()
 		if search.name then
 			local matching_recipes = {}
@@ -379,7 +350,6 @@ local function onGuiElemChanged(event)
 					style = "heading_2_label",
 					caption = {"gui.recipe-browser-no-recipe",game[search.type.."_prototypes"][search.name].localised_name}
 				}
-				nomatch.style.horizontally_stretchable = true
 				-- find tech(s) that unlock this, but exclude alt-recipe techs, except alt-exclusive recipes
 				local techs = {}
 				local alt_only = {
@@ -418,9 +388,11 @@ local function onGuiElemChanged(event)
 						local entry = techlist.add{
 							type = "flow",
 							direction = "horizontal",
-							name = tech.name -- stash some data here!
+							style = "vertically_aligned_flow",
+							tags = {
+								technology = tech.name
+							}
 						}
-						entry.style.vertical_align = "center"
 						entry.add{
 							type = "sprite-button",
 							style = "slot_button_in_shallow_frame",
@@ -448,33 +420,30 @@ local function onGuiElemChanged(event)
 						return a.prototype.order < b.prototype.order
 					end
 				end)
+				---@typelist number, LuaRecipe
 				for _,recipe in pairs(matching_recipes) do
 					local frame = gui.add{
 						type = "flow",
 						direction = "horizontal",
-						name = recipe.name
+						name = recipe.name,
+						style = "horizontal_flow_with_extra_spacing"
 					}
-					frame.style.horizontal_spacing = 12
 
 					local spritebox = frame.add{
 						type = "frame",
 						style = "deep_frame_in_shallow_frame"
 					}
-					spritebox.style.padding = 4
-					local sprite = spritebox.add{
+					spritebox.add{
 						type = "sprite",
-						sprite = "recipe/"..recipe.name
+						sprite = "recipe/"..recipe.name,
+						style = "recipe_browser_item_sprite"
 					}
-					sprite.style.width = 64
-					sprite.style.height = 64
-					sprite.style.stretch_image_to_widget_size = true
 
 					local details = frame.add{
 						type = "flow",
-						direction = "vertical"
+						direction = "vertical",
+						style = "vertical_flow_with_extra_spacing"
 					}
-					details.style.vertical_spacing = 12
-					details.style.horizontally_stretchable = true
 					details.add{
 						type = "label",
 						style = "caption_label",
@@ -483,8 +452,8 @@ local function onGuiElemChanged(event)
 					local production = details.add{
 						type = "flow",
 						direction = "horizontal",
+						style = "vertically_aligned_flow"
 					}
-					production.style.vertical_align = "center"
 					local ingredients = production.add{
 						type = "frame",
 						style = "slot_button_deep_frame",
@@ -499,13 +468,15 @@ local function onGuiElemChanged(event)
 							number = ingredient.amount
 						}
 					end
-					ingredients.add{
-						type = "sprite-button",
-						style = "slot_button",
-						sprite = "utility/clock",
-						tooltip = {"description.crafting-time"},
-						number = recipe.energy
-					}
+					if recipe.category ~= "building" then
+						ingredients.add{
+							type = "sprite-button",
+							style = "slot_button",
+							sprite = "utility/clock",
+							tooltip = {"description.crafting-time"},
+							number = recipe.energy
+						}
+					end
 					production.add{
 						type = "label",
 						caption = {"gui.recipe-browser-craft"}
@@ -524,8 +495,7 @@ local function onGuiElemChanged(event)
 							number = (product.amount or (product.amount_min+product.amount_max)/2) * (product.probability or 1)
 						}
 					end
-					local spacer = production.add{type = "empty-widget"}
-					spacer.style.horizontally_stretchable = true
+					production.add{type="empty-widget", style="filler_widget"}
 					local button = production.add{
 						type = "sprite-button",
 						name = "recipe-browser-add-to-list",
