@@ -388,16 +388,16 @@ local function onGuiElemChanged(event)
 						local entry = techlist.add{
 							type = "flow",
 							direction = "horizontal",
-							style = "vertically_aligned_flow",
-							tags = {
-								technology = tech.name
-							}
+							style = "vertically_aligned_flow"
 						}
 						entry.add{
 							type = "sprite-button",
 							style = "slot_button_in_shallow_frame",
 							name = "recipe-browser-open-tech-tree",
-							sprite = "technology/"..tech.name
+							sprite = "technology/"..tech.name,
+							tags = {
+								technology = tech.name
+							}
 						}
 						entry.add{
 							type = "label",
@@ -528,7 +528,7 @@ local function onGuiClick(event)
 		player.opened = nil
 
 	elseif event.element.name == "recipe-browser-open-tech-tree" then
-		player.open_technology_gui(event.element.parent.name)
+		player.open_technology_gui(event.element.tags['technology'])
 
 	elseif event.element.name == "recipe-browser-add-to-list" then
 		local recipe = game.recipe_prototypes[event.element.parent.parent.parent.name]
