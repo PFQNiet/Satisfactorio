@@ -36,10 +36,25 @@ local function onDamaged(event)
 		if not filter then
 			entity.damage(event.original_damage_amount, event.force, "radiation-no-filter")
 		else
+			local filterproto = game.item_prototypes["iodine-infused-filter"]
+
+			local before = filter.count
 			filter.drain_durability(event.original_damage_amount/20) -- durability is in seconds, and base damage is 20/s
+			local after = filter.valid_for_read and filter.count or 0
+			if before ~= after then
+				local remain = inventory.get_item_count("iodine-infused-filter")
+				entity.surface.create_entity{
+					name = "flying-text",
+					position = {entity.position.x, entity.position.y - 0.5},
+					text = {"", after-before," ",filterproto.localised_name," (",remain,")"},
+					render_player_index = entity.player.index
+				}
+				entity.player.play_sound{path = "utility/inventory_move"}
+			end
+
 			-- update hazmat "equipment" energy - if we got this far, ie resisted radiation damage with filter, then we can assume it's all valid
 			local equipment = mask.grid.equipment[1]
-			local max_durability = game.item_prototypes["iodine-infused-filter"].durability
+			local max_durability = filterproto.durability
 			equipment.energy = filter.valid_for_read and (filter.durability / max_durability * equipment.max_energy) or 0
 		end
 	end
