@@ -24,9 +24,9 @@ local sqrt2 = math.sqrt(2)
 
 local function onJump(event)
 	local player = game.players[event.player_index]
-	local inventory = player.get_inventory(defines.inventory.character_armor)
-	if not inventory then return end
-	local armour = inventory[1]
+	local armourslot = player.get_inventory(defines.inventory.character_armor)
+	if not armourslot then return end
+	local armour = armourslot[1]
 	if armour.valid_for_read and armour.name == item and not player.driving then
 		-- check for fuel
 		local inventory = player.get_main_inventory()
@@ -42,6 +42,13 @@ local function onJump(event)
 			}
 		else
 			inventory.remove{name=fuel,count=2}
+			local remain = inventory.get_item_count(fuel)
+			player.surface.create_entity{
+				name = "flying-text",
+				position = {player.position.x, player.position.y - 0.5},
+				text = {"", "-2 ",game.item_prototypes[fuel].localised_name," (",remain,")"},
+				render_player_index = player.index
+			}
 			-- spawn a car and get into it
 			local car = player.surface.create_entity{
 				name = vehicle,
