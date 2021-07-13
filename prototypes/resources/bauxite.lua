@@ -33,7 +33,7 @@ data:extend(
 				height = 64,
 				frame_count = 8,
 				variation_count = 8,
-				tint = {0.8,0.2,0.2},
+				tint = {0.8,0.6,0.4},
 				scale = 3,
 				hr_version =
 				{
@@ -43,7 +43,7 @@ data:extend(
 					height = 128,
 					frame_count = 8,
 					variation_count = 8,
-					tint = {0.8,0.2,0.2},
+					tint = {0.8,0.6,0.4},
 					scale = 1.5
 				}
 			}
@@ -54,6 +54,8 @@ data:extend(
 		minimum = 1,
 		normal = 60,
 		map_grid = false,
+		tile_width = 3,
+		tile_height = 3,
 		resource_patch_search_radius = 10
 	},
 	{

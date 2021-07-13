@@ -41,6 +41,8 @@ local template = {
 	minimum = 1,
 	normal = 3000,
 	map_grid = false,
+	tile_width = 10,
+	tile_height = 10,
 	resource_patch_search_radius = 10
 }
 
@@ -92,6 +94,8 @@ template = {
 	minimum = 1,
 	normal = 3000,
 	map_grid = false,
+	tile_width = 3,
+	tile_height = 3,
 	resource_patch_search_radius = 10
 }
 

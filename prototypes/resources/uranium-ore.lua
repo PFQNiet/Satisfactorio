@@ -11,7 +11,6 @@ ore.infinite_depletion_amount = 0
 ore.minimum = 1
 ore.normal = 60
 ore.map_grid = false
-ore.resource_patch_search_radius = 1
 local mining = ore.minable
 mining.required_fluid = nil
 mining.fluid_amount = 0
@@ -25,6 +24,8 @@ ore.selection_box = {{-1.5,-1.5},{1.5,1.5}}
 ore.stages.sheet.scale = 3
 ore.stages.sheet.hr_version.scale = 1.5
 ore.emissions_per_second = 150/60
+ore.tile_width = 3
+ore.tile_height = 3
 
 local item = data.raw.item[name]
 item.localised_description = {"item-description.radioactivity",{"item-description.radioactivity-average"}}

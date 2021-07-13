@@ -9,7 +9,6 @@ ore.infinite_depletion_amount = 0
 ore.minimum = 1
 ore.normal = 60
 ore.map_grid = false
-ore.resource_patch_search_radius = 1
 ore.minable.results = {{
 	type = "fluid",
 	name = name,
@@ -26,6 +25,8 @@ ore.collision_box = {{-1.6, -1.6}, {1.6, 1.6}}
 ore.selection_box = {{-1.5,-1.5},{1.5,1.5}}
 ore.stages.sheet.scale = 1.5 -- crude oil was already meant to be 3x3
 ore.stages.sheet.hr_version.scale = 0.75
+ore.tile_width = 3
+ore.tile_height = 3
 
 local fluid = data.raw.fluid[name]
 fluid.icon = ore.icon

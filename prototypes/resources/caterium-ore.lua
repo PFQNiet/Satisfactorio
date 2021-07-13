@@ -54,6 +54,8 @@ data:extend(
 		minimum = 1,
 		normal = 60,
 		map_grid = false,
+		tile_width = 3,
+		tile_height = 3,
 		resource_patch_search_radius = 10
 	},
 	{

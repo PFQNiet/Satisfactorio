@@ -10,7 +10,6 @@ ore.infinite_depletion_amount = 0
 ore.minimum = 1
 ore.normal = 60
 ore.map_grid = false
-ore.resource_patch_search_radius = 1
 ore.category = "solid"
 ore.resource_patch_search_radius = 10
 ore.order = "e"
@@ -19,6 +18,8 @@ ore.collision_box = {{-1.6, -1.6}, {1.6, 1.6}}
 ore.selection_box = {{-1.5,-1.5},{1.5,1.5}}
 ore.stages.sheet.scale = 3
 ore.stages.sheet.hr_version.scale = 1.5
+ore.tile_width = 3
+ore.tile_height = 3
 
 local item = data.raw.item[name]
 item.icon = ore.icon

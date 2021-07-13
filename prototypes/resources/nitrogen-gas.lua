@@ -1,5 +1,4 @@
 local name = "nitrogen-gas"
--- TODO Add resource well
 
 local fluid = {
 	type = "fluid",
