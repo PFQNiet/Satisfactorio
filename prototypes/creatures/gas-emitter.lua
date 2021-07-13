@@ -57,3 +57,17 @@ cloud2.name = "toxic-cloud-visual-dummy"
 cloud2.color = {0.014/2,0.395/2,0.128/2,0.322/2}
 
 data:extend{worm, cloud, cloud2} -- keep same corpse/animations for now
+
+data:extend{
+	{
+		type = "autoplace-control",
+		name = "gas-emitter",
+		order = "d",
+		richness = false,
+		category = "enemy"
+	},
+	{
+		type = "noise-layer",
+		name = "gas-emittter"
+	}
+}

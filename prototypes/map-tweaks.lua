@@ -36,7 +36,8 @@ data.raw['map-gen-presets'].default.blank = {
 			["x-powerslug"] = {size="none"},
 			["x-crashsite"] = {size="none"},
 			["geyser"] = {size="none"},
-			["enemy-base"] = {size="none"}
+			["enemy-base"] = {size="none"},
+			["gas-emitter"] = {size="none"}
 		},
 		cliff_settings = {
 			name = "cliff",

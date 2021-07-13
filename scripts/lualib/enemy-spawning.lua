@@ -64,48 +64,52 @@ local function _guardSpawn(struct)
 end
 
 local function getRandomOffset(position)
-	local r = (math.random()*100)^0.5
+	-- random radius in ring 5-15 tiles in radius
+	local r = (math.random()*100)^0.5 + 5
 	local theta = math.random()*math.pi*2
 	return {position[1]+math.cos(theta)*r, position[2]-math.sin(theta)*r}
 end
 
+---@param surface LuaSurface
+---@param position Position
+---@param value number
+---@param basedist number
 local function spawnGroup(surface,position,value,basedist)
-	local settings = game.default_map_gen_settings.autoplace_controls["enemy-base"] or {frequency=1,richness=1,size=1}
-	if settings.size == 0 then return end
+	local enemies = game.default_map_gen_settings.autoplace_controls["enemy-base"] or {frequency=1,richness=1,size=1}
+	if enemies.size == 0 then return end
 	-- size = strength, frequency = number
 	local saferange = 240 * game.default_map_gen_settings.starting_area
 
 	-- scale value based on distance from spawn
-	local random = math.random
 	local realdist = math.sqrt(position[1]*position[1] + position[2]*position[2])
 	local distance = math.ceil(realdist/basedist + 0.5)
+	local safezone_ratio = realdist / saferange
 	-- sometimes shift up or down a tier
-	if random()<0.25 then
+	if math.random()<0.25 then
 		value = value - 1
-	elseif random()<0.25 then
+	elseif math.random()<0.25 then
 		value = value + 1
 	end
-	value = math.min(6,math.max(1,math.floor(value*settings.size+0.5))) -- minimum setting always yields 1, maximum setting always yields 6
-	if realdist < saferange then
+	value = math.min(6,math.max(1,math.floor(value*enemies.size+0.5))) -- minimum setting always yields 1, maximum setting always yields 6
+	if safezone_ratio < 1/2 and math.random()<0.5 then
+		-- *very* early spawns may be undefended
+		return
+	elseif safezone_ratio < 1 then
 		-- early spawns should be super easy since you only have the Xeno-Zapper
 		value = 1
-		if realdist < saferange/2 and random()<0.5 then
-			-- *very* early spawns may even be undefended
-			return
-		end
-	elseif realdist < saferange*2 then
+	elseif safezone_ratio < 2 then
 		-- prevent Alphas from spawning within 2x the starting area
 		value = math.min(value, 2)
-	elseif realdist < saferange*4 then
+	elseif safezone_ratio < 4 then
 		-- prevent big groups within 4x the starting area
 		value = math.min(value, 4)
 	end
 
 	for name,count in pairs(spawndata[value]) do
-		count = count*(distance^(1/3)) * settings.frequency
-		if random()<count%1 then count = math.ceil(count) else count = math.floor(count) end
-		if realdist < saferange then count = 1 end
-		for i=1,count do
+		count = count*(distance^(1/3)) * enemies.frequency
+		if math.random()<count%1 then count = math.ceil(count) else count = math.floor(count) end
+		if safezone_ratio < 1 then count = 1 end
+		for _=1,count do
 			local offset = getRandomOffset(position)
 			local pos = surface.find_non_colliding_position(name, offset, 10, 0.1)
 			if pos then
@@ -116,7 +120,7 @@ local function spawnGroup(surface,position,value,basedist)
 				}
 				local struct = {
 					id = entity.unit_number,
-					spawn = position,
+					spawn = pos,
 					entity = entity
 				}
 				registerStruct(entity.unit_number, struct)
@@ -130,17 +134,20 @@ local function spawnGroup(surface,position,value,basedist)
 			end
 		end
 	end
-	if realdist > saferange and random()<math.min(10,value*distance)/20 then
-		-- add some gas clouds
-		local name
-		if game.default_map_gen_settings.autoplace_controls['x-deposit'].size > 0 then
-			name = random() < 0.85 and "spore-flower" or "gas-emitter"
-		else
-			name = "spore-flower" -- don't allow Behemoth Worms (indestructible) if resource deposits are turned off - TODO make it a separate option
-		end
-		for i=1,4 do
+
+	-- add some gas clouds
+	local emitters = game.default_map_gen_settings.autoplace_controls["gas-emitter"] or {frequency=1,richness=1,size=1}
+	if emitters.size > 0 and safezone_ratio > 1 and math.random() < value*math.min(distance,3)*emitters.frequency/20 then
+		local name = math.random() < 0.85 and "spore-flower" or "gas-emitter"
+		-- rescale range from 1/6-6 to 1/3-3
+		local scaled_size = (emitters.size-1)/2 + 1
+		local min = math.ceil(3*scaled_size)
+		local max = math.ceil(8*scaled_size)
+		local count = math.random(min,max)
+		for _=1,count do
 			-- find_non_colliding_position doesn't support the map gen box, which is needed for worm turrets to give ore nodes some space
-			for _=1,10 do
+			-- instead, attempt up to 5 times with random offsets
+			for _=1,5 do
 				local pos = getRandomOffset(position)
 				if not surface.entity_prototype_collides(name, pos, true) then
 					surface.create_entity{
@@ -154,9 +161,11 @@ local function spawnGroup(surface,position,value,basedist)
 			end
 		end
 	end
+
 	-- and very rarely some uranium deposits
-	if value*distance > 5 and random() < 0.02 then
-		for i=1,4 do
+	local deposits = game.default_map_gen_settings.autoplace_controls["x-deposit"] or {frequency=1,richness=1,size=1}
+	if deposits.size > 0 and value*distance > 5 and math.random() < 0.02/deposits.frequency then
+		for _=1,4 do
 			local pos = surface.find_non_colliding_position("rock-big-uranium-ore", getRandomOffset(position), 10, 0.1)
 			if pos then
 				surface.create_entity{
