@@ -1,5 +1,6 @@
 local cache = {}
 ---@param name string
+---@return LuaRecipePrototype|nil
 local function getBuildingRecipe(name)
 	local cached = cache[name]
 	if cached == "NONE" then return nil end

@@ -54,6 +54,7 @@ style['vertical_flow_with_extra_spacing'] = {
 style['horizontally_aligned_flow'] = {
 	type = "vertical_flow_style",
 	parent = "vertical_flow",
+	horizontally_stretchable = "on",
 	horizontal_align = "center"
 }
 style['vertically_aligned_flow'] = {
@@ -116,7 +117,8 @@ style['build_gun_frame'] = {
 	parent = "blurry_frame",
 	width = 540,
 	use_header_filler = false,
-	horizontally_stretchable = "off"
+	horizontally_stretchable = "off",
+	vertical_flow_style = style['horizontally_aligned_flow']
 }
 style['build_gun_slot'] = {
 	type = "button_style",
