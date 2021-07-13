@@ -50,6 +50,15 @@ local script_data = {
 	queued = {}
 }
 
+-- "terrain"-type autoplace controls invert the scale parameter
+local inverted_frequency_controls = {
+	["x-plant"] = true,
+	["x-deposit"] = true,
+	["x-powerslug"] = true,
+	["x-crashsite"] = true,
+	["geyser"] = true
+}
+
 local function registerResource(name, radius, min, max, value)
 	if script_data.resources[name] then return end
 	local settings = game.default_map_gen_settings.autoplace_controls[name] or {frequency=1,richness=1,size=1}
@@ -58,8 +67,7 @@ local function registerResource(name, radius, min, max, value)
 	-- settings are supposed to be in the range 1/6 to 6
 	-- frequency affects the radius at which things spawn
 	-- example: to make things 6x more common, divide the radius by sqrt(6)
-	if name == "x-plant" or name == "x-deposit" or name == "geyser" then
-		-- plants and deposits use the inverse for... some reason
+	if inverted_frequency_controls[name] then
 		radius = radius * math.sqrt(settings.frequency)
 		-- "size" should also affect "richness" - although richness isn't used for deposits
 		min = math.ceil(min * settings.size)

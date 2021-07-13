@@ -1,6 +1,7 @@
 -- uses global.crash_site.sites to track requirements for unlocking the spaceship
 -- uses global.crash_site.opened to track last opened crash site GUI
 local link = require(modpath.."scripts.lualib.linked-entity")
+local getitems = require(modpath.."scripts.lualib.get-items-from")
 
 local data = require(modpath.."constants.crash-sites")
 local loot_table = data.loot
@@ -20,19 +21,9 @@ local spaceship = "crash-site-spaceship"
 
 ---@class global.crash_site
 ---@field sites table<uint, CrashSiteData>
----@field opened table<uint, uint> Map player index to opened ship number
 local script_data = {
-	sites = {},
-	opened = {}
+	sites = {}
 }
-
----@param player LuaPlayer
-local function closeGui(player)
-	local gui = player.gui.screen['crash-site-locked']
-	if gui then gui.visible = false end
-	script_data.opened[player.index] = nil
-	player.opened = nil
-end
 
 ---@return table<string, uint8>
 local function generateLoot()
@@ -122,98 +113,67 @@ local function onGuiOpened(event)
 	local player = game.players[event.player_index]
 	if event.gui_type ~= defines.gui_type.entity then return end
 	if event.entity.name ~= spaceship then return end
+
+	local gui = player.gui.relative
 	local struct = script_data.sites[event.entity.unit_number]
 	if not struct then
+		if gui['crash-site-locked'] then gui['crash-site-locked'].visible = false end
 		event.entity.minable = true -- ensure entity can be mined
 		return
 	end
-	script_data.opened[player.index] = event.entity.unit_number
 
-	local gui = player.gui.screen
 	if not gui['crash-site-locked'] then
-		local frame = player.gui.screen.add{
+		local frame = gui.add{
 			type = "frame",
 			name = "crash-site-locked",
 			direction = "vertical",
-			style = "inner_frame_in_outer_frame"
+			anchor = {
+				gui = defines.relative_gui_type.container_gui,
+				position = defines.relative_gui_position.right,
+				name = spaceship
+			},
+			caption = {"gui.crash-site-repairs-required"}
 		}
-		local title_flow = frame.add{type = "flow", name = "title_flow"}
-		local title = title_flow.add{type = "label", caption = {"gui.crash-site-title"}, style = "frame_title"}
-		title.drag_target = frame
-		local pusher = title_flow.add{type = "empty-widget", style = "draggable_space_in_window_title"}
-		pusher.drag_target = frame
-		title_flow.add{type = "sprite-button", style = "frame_action_button", sprite = "utility/close_white", name = "crash-site-close"}
 
 		local content = frame.add{
 			type = "frame",
-			style = "inside_shallow_frame_with_padding",
+			style = "inside_shallow_frame_with_padding_and_spacing",
 			direction = "vertical",
 			name = "content"
 		}
-		local columns = content.add{
+		content.style.minimal_width = 200
+		local parts = content.add{
 			type = "flow",
 			direction = "horizontal",
-			style = "horizontal_flow_with_extra_spacing",
-			name = "table"
+			name = "parts-needed"
 		}
-		local col1 = columns.add{
-			type = "frame",
-			direction = "vertical",
-			name = "left",
-			style = "deep_frame_in_shallow_frame"
-		}
-		col1.add{
-			type = "entity-preview",
-			name = "preview",
-			style = "entity_button_base"
-		}
-		local col2 = columns.add{
-			type = "flow",
-			direction = "vertical",
-			name = "right"
-		}
-		col2.add{
-			type = "label",
-			style = "heading_2_label",
-			caption = {"gui.crash-site-repairs-required"}
-		}
-		local repairs = col2.add{
-			type = "table",
-			column_count = 3,
-			style = "bordered_table",
-			name = "repairs"
-		}
-		repairs.add{
+		parts.add{
 			type = "label",
 			style = "caption_label",
 			caption = {"gui.crash-site-parts-label"}
 		}
-		repairs.add{
+		parts.add{
 			type = "label",
-			name = "parts-needed",
+			name = "requirement",
 			caption = {"gui.crash-site-not-needed"}
 		}
-		repairs.add{
-			type = "sprite",
-			name = "parts-complete",
-			sprite = "utility/check_mark_white"
+
+		local power = content.add{
+			type = "flow",
+			direction = "horizontal",
+			name = "power-needed"
 		}
-		repairs.add{
+		power.add{
 			type = "label",
 			style = "caption_label",
 			caption = {"gui.crash-site-power-label"}
 		}
-		repairs.add{
+		power.add{
 			type = "label",
-			name = "power-needed",
+			name = "requirement",
 			caption = {"gui.crash-site-not-needed"}
 		}
-		repairs.add{
-			type = "sprite",
-			name = "power-complete",
-			sprite = "utility/check_mark_white"
-		}
-		local bottom = col2.add{
+		local bottom = content.add{
 			type = "flow",
 			name = "button"
 		}
@@ -224,91 +184,86 @@ local function onGuiOpened(event)
 			name = "crash-site-repair-submit",
 			caption = {"gui.crash-site-open"}
 		}
+
+		content.add{
+			type = "empty-widget",
+			style = "vertical_lines_slots_filler"
+		}
 	end
 	local frame = gui['crash-site-locked']
-	local content_table = frame.content.table
+	local content = frame.content
 
-	content_table.left.preview.entity = struct.ship
-	local repairs = content_table.right.repairs
-	local ready = true
 	if struct.requirements.item then
-		repairs['parts-needed'].caption = {"gui.crash-site-parts",struct.requirements.count,struct.requirements.item,game.item_prototypes[struct.requirements.item].localised_name}
-		local has_item = player.get_main_inventory().get_item_count(struct.requirements.item) >= struct.requirements.count
-		repairs['parts-complete'].sprite = has_item and "utility/check_mark_white" or "utility/close_white"
-		if not has_item then ready = false end
+		content['parts-needed'].requirement.caption = {
+			"gui.crash-site-parts",
+			struct.requirements.count,
+			struct.requirements.item,
+			game.item_prototypes[struct.requirements.item].localised_name
+		}
 	else
-		repairs['parts-needed'].caption = {"gui.crash-site-not-needed"}
-		repairs['parts-complete'].sprite = "utility/check_mark_white"
+		content['parts-needed'].requirement.caption = {"gui.crash-site-not-needed"}
 	end
+
 	if struct.requirements.power > 0 then
-		repairs['power-needed'].caption = {"gui.crash-site-power",struct.requirements.power}
-		local has_power = struct.eei.energy > 0
-		repairs['power-complete'].sprite = has_power and "utility/check_mark_white" or "utility/close_white"
-		if not has_power then ready = false end
+		content['power-needed'].requirement.caption = {
+			"gui.crash-site-power",
+			struct.requirements.power
+		}
 	else
-		repairs['power-needed'].caption = {"gui.crash-site-not-needed"}
-		repairs['power-complete'].sprite = "utility/check_mark_white"
+		content['power-needed'].requirement.caption = {"gui.crash-site-not-needed"}
 	end
-	repairs.parent.button['crash-site-repair-submit'].enabled = ready
 
 	frame.visible = true
-	player.opened = frame
-	frame.force_auto_center()
-end
----@param event on_gui_closed
-local function onGuiClosed(event)
-	if event.element and event.element.valid and event.element.name == "crash-site-locked" then
-		closeGui(game.players[event.player_index])
-	end
 end
 
 ---@param event on_gui_click
 local function onGuiClick(event)
 	if not (event.element and event.element.valid) then return end
 	local player = game.players[event.player_index]
-	if event.element.name == "crash-site-close" then
-		closeGui(player)
-	end
 	if event.element.name == "crash-site-repair-submit" then
-		local struct = script_data.sites[script_data.opened[player.index]]
+		local struct = script_data.sites[player.opened.unit_number]
 		if struct then
 			-- struct may be gone if say another player completed it for you, but if it's still here then it's mine
-			local ready = true
 			if struct.requirements.item then
-				local has_item = player.get_main_inventory().get_item_count(struct.requirements.item) >= struct.requirements.count
-				if not has_item then ready = false end
+				local has_item = struct.ship.get_item_count(struct.requirements.item) >= struct.requirements.count
+				if not has_item then
+					player.create_local_flying_text{
+						text = {"message.crash-site-missing-items"},
+						create_at_cursor = true
+					}
+					player.play_sound{
+						path = "utility/cannot_build"
+					}
+					return
+				end
 			end
 			if struct.requirements.power > 0 then
 				local has_power = struct.eei.energy > 0
-				if not has_power then ready = false end
-			end
-			if ready then
-				if struct.requirements.item then
-					player.get_main_inventory().remove{name=struct.requirements.item,count=struct.requirements.count}
+				if not has_power then
+					player.create_local_flying_text{
+						text = {"message.crash-site-missing-power"},
+						create_at_cursor = true
+					}
+					player.play_sound{
+						path = "utility/cannot_build"
+					}
+					return
 				end
-				-- insert hard drive into spaceship (ejecting anything the player may have fast-inserted into it)
-				local inventory = struct.ship.get_inventory(defines.inventory.chest)
-				if inventory[1].valid_for_read then
-					struct.ship.surface.spill_item_stack(struct.ship.position, inventory[1], true, player.force, false)
-					inventory.remove(inventory[1])
-				end
-				inventory.insert{name="hard-drive",count=1}
-				-- delete entry from global table to mark it as unlocked
-				script_data.sites[script_data.opened[player.index]] = nil
-				player.opened = struct.ship
 			end
-		end
-	end
-end
 
--- if the player moves and has a site open, check that the site can still be reached
----@param event on_player_changed_position
-local function onMove(event)
-	local player = game.players[event.player_index]
-	local site = script_data.opened[player.index]
-	if site and script_data.sites[site] then
-		if not player.can_reach_entity(script_data.sites[site].ship) then
-			closeGui(player)
+			if struct.requirements.item then
+				struct.ship.remove_item{name=struct.requirements.item,count=struct.requirements.count}
+			end
+			-- insert hard drive into spaceship
+			getitems.storage(struct.ship, player.get_main_inventory())
+			struct.ship.insert{name="hard-drive",count=1}
+			-- delete entry from global table to mark it as unlocked
+			script_data.sites[player.opened.unit_number] = nil
+			-- close gui for any players that have this ship open
+			for _,p in pairs(game.players) do
+				local frame = p.gui.relative['crash-site-locked']
+				if frame then frame.visible = false end
+			end
 		end
 	end
 end
@@ -335,10 +290,8 @@ return {
 		end,
 		events = {
 			[defines.events.on_gui_opened] = onGuiOpened,
-			[defines.events.on_gui_closed] = onGuiClosed,
 			[defines.events.on_gui_click] = onGuiClick,
 
-			[defines.events.on_player_changed_position] = onMove,
 			[defines.events.on_force_created] = alternativeHardDrives
 		}
 	}
