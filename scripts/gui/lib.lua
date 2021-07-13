@@ -5,5 +5,7 @@ return {
 		end
 	},
 	require(modpath.."scripts.gui.build-gun").lib,
+	require(modpath.."scripts.gui.trash-slot").lib,
+	require(modpath.."scripts.gui.sort-container").lib,
 	require(modpath.."scripts.gui.lizard-doggo").lib
 }

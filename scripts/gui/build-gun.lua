@@ -26,6 +26,7 @@ end
 ---@param player LuaPlayer
 ---@return BuildGunGui
 local function createGui(player)
+	if script_data[player.index] then return script_data[player.index] end
 	local gui = player.gui.screen
 	local frame = gui.add{
 		type = "frame",

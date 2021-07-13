@@ -34,6 +34,7 @@ end
 ---@param player LuaPlayer
 ---@return LizardDoggoGui
 local function createGui(player)
+	if script_data[player.index] then return script_data[player.index] end
 	local gui = player.gui.screen
 	local frame = gui.add{
 		type = "frame",
@@ -114,7 +115,7 @@ end
 ---@param player LuaPlayer
 ---@param doggo DoggoData
 local function updateGui(player, doggo)
-	local data = script_data[player.index]
+	local data = getGui(player)
 	data.doggo = doggo
 
 	local components = data.components
@@ -163,7 +164,7 @@ end
 
 ---@param player LuaPlayer
 local function closeGui(player)
-	local data = script_data[player.index]
+	local data = getGui(player)
 	if not data then return end
 	if player.opened == data.components.frame then
 		player.opened = nil
@@ -193,7 +194,7 @@ end
 local function onGuiClick(event)
 	if not (event.element and event.element.valid) then return end
 	local player = game.players[event.player_index]
-	local data = script_data[player.index]
+	local data = getGui(player)
 	if not data then return end
 	local components = data.components
 
