@@ -18,6 +18,15 @@
 local script_data = {}
 
 ---@param player LuaPlayer
+---@param frame LuaGuiElement
+local function setFramePosition(player, frame)
+	frame.location = {
+		(player.display_resolution.width-540*player.display_scale)/2,
+		player.display_resolution.height-320*player.display_scale
+	}
+end
+
+---@param player LuaPlayer
 ---@return BuildGunGui|nil
 local function getGui(player)
 	return script_data[player.index]
@@ -39,6 +48,7 @@ local function createGui(player)
 		direction = "horizontal",
 		style = "horizontal_flow_with_extra_spacing"
 	}
+	setFramePosition(player, frame)
 
 	script_data[player.index] = {
 		player = player,
@@ -105,7 +115,6 @@ local function updateGUI(player, recipe, buffer)
 		end
 
 		frame.visible = true
-		frame.location = {(player.display_resolution.width-540*player.display_scale)/2, player.display_resolution.height-320*player.display_scale}
 	end
 
 	for _,ingredient in pairs(recipe.ingredients) do
@@ -113,6 +122,14 @@ local function updateGUI(player, recipe, buffer)
 		local satisfaction = player.cheat_mode and ingredient.amount or inventory[ingredient.name] or 0
 		parts.bar.value = satisfaction / ingredient.amount
 		parts.bar.caption = player.cheat_mode and {"infinity"} or util.format_number(satisfaction)
+	end
+end
+
+local function onResolutionChanged(event)
+	local player = game.players[event.player_index]
+	local data = getGui(player)
+	if data then
+		setFramePosition(player, data.components.frame)
 	end
 end
 
@@ -124,6 +141,10 @@ return {
 		end,
 		on_load = function()
 			script_data = global.gui and global.gui.build_gun or script_data
-		end
+		end,
+		events = {
+			[defines.events.on_player_display_resolution_changed] = onResolutionChanged,
+			[defines.events.on_player_display_scale_changed] = onResolutionChanged
+		}
 	}
 }

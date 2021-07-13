@@ -134,7 +134,8 @@ style['build_gun_progressbar'] = {
 style['radioactivity_frame'] = {
 	type = "frame_style",
 	parent = "blurry_frame",
-	use_header_filler = false
+	use_header_filler = false,
+	horizontal_flow_style = style['vertically_aligned_flow']
 }
 style['radioactivity_progressbar'] = {
 	type = "progressbar_style",
