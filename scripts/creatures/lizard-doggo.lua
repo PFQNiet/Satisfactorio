@@ -296,7 +296,7 @@ local function onInteract(event)
 	if player.selected and player.selected.valid and player.selected.name == doggo then
 		if player.can_reach_entity(player.selected) then
 			local struct = script_data.lizard_doggos[player.selected.unit_number]
-			if struct and struct.owner == player then
+			if struct and struct.owner.force == player.force then
 				local gui = player.gui.screen
 				if not gui['lizard-doggo'] then
 					local frame = gui.add{
