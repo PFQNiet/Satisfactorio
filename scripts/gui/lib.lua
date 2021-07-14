@@ -11,5 +11,6 @@ return {
 	require(modpath.."scripts.gui.trash-slot").lib,
 	require(modpath.."scripts.gui.sort-container").lib,
 	require(modpath.."scripts.gui.radioactivity").lib,
-	require(modpath.."scripts.gui.lizard-doggo").lib
+	require(modpath.."scripts.gui.lizard-doggo").lib,
+	require(modpath.."scripts.gui.self-driving").lib
 }
