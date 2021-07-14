@@ -145,15 +145,17 @@ end
 local function onRemoved(event)
 	local player = event.player_index and game.players[event.player_index]
 	local cheater = player and player.cheat_mode
-	if event.buffer and not cheater then
+	if event.buffer then
 		for item,count in pairs(event.buffer.get_contents()) do
 			-- if a building recipe exists for this item, replace it with the ingredients
 			local recipe = bm.getBuildingRecipe(item)
 			if recipe then
 				event.buffer.remove{name=item, count=count}
-				for _,product in pairs(recipe.ingredients) do
-					-- building recipes are always solids
-					event.buffer.insert{name=product.name, count=product.amount*count}
+				if not cheater then
+					for _,product in pairs(recipe.ingredients) do
+						-- building recipes are always solids
+						event.buffer.insert{name=product.name, count=product.amount*count}
+					end
 				end
 			end
 		end
