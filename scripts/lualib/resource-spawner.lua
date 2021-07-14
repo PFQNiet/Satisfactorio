@@ -361,9 +361,11 @@ local function addNode(resource, surface, x, y)
 	spawnNode(resource, surface, x, y)
 end
 
+-- Get nodes in and around the given position
 ---@param name string
 ---@param surface LuaSurface
 ---@param position Position
+---@return Position[]
 local function getNodes(name, surface, position)
 	local data = script_data.resources[name]
 	if not data then return {} end

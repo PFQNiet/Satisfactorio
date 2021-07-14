@@ -5,6 +5,7 @@ return {
 		end
 	},
 	require(modpath.."scripts.gui.build-gun").lib,
+	require(modpath.."scripts.gui.resource-scanner").lib,
 	require(modpath.."scripts.gui.recipe-browser").lib,
 	require(modpath.."scripts.gui.to-do-list").lib,
 	require(modpath.."scripts.gui.trash-slot").lib,
