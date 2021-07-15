@@ -1,10 +1,12 @@
+local gui = require(modpath.."scripts.gui.pipe-flow")
+
 -- uses global.pipe_flow to track rolling average flow
 -- opening a pipe's GUI adds it to the tracking list, closing it (provided no other player has it open) removes it
 
 ---@class PipeFlowData
 ---@field entity LuaEntity Pipe or PipeToGround
----@field opened_by table<uint, LuaGuiElement> Map of players who have this pipe open, to the GUI element showing pipe flow
----@field rolling_average number[] Flow rate over the last 60 ticks
+---@field opened_by table<uint, boolean> Map of players who have this pipe open
+---@field rolling_average number Flow rate over the last 60 ticks
 
 ---@alias global.pipe_flow table<uint, PipeFlowData>
 ---@type global.pipe_flow
@@ -15,13 +17,9 @@ local tier2 = {flow = 600, distance = 50}
 local entities = {
 	["pipeline"] = tier1,
 	["underground-pipeline"] = tier1,
-	-- ["pump"] = tier1,
 	["pipeline-mk-2"] = tier2,
-	["underground-pipeline-mk-2"] = tier2,
-	-- ["pipeline-pump-mk-2"] = tier2
+	["underground-pipeline-mk-2"] = tier2
 }
-local entity_names = {}
-for k,_ in pairs(entities) do table.insert(entity_names,k) end
 
 ---@param root LuaEntity
 ---@return number|LocalisedString
@@ -29,13 +27,15 @@ local function measurePipeSection(root)
 	local visited = {[root.unit_number] = true}
 	local bailout = 200 -- entities[root.name].distance * 1.5
 	local addself = root.type == "pump" and 0 or 1 -- add self if self is a pipe or pipe-to-ground
+	---@param node LuaEntity
+	---@param length number
 	local function recurse(node, length)
 		visited[node.unit_number] = true
 		if length > bailout then return bailout end
 		local max = length
-		for _,next in pairs(node.neighbours[1]) do
-			if (next.type == "pipe" or next.type == "pipe-to-ground") and not visited[next.unit_number] then
-				local upstream = recurse(next, length+1)
+		for _,neighbour in pairs(node.neighbours[1]) do
+			if entities[neighbour.name] and not visited[neighbour.unit_number] then
+				local upstream = recurse(neighbour, length+1)
 				if upstream > max then max = upstream end
 			end
 		end
@@ -43,9 +43,9 @@ local function measurePipeSection(root)
 	end
 
 	local lengths = {}
-	for _,next in pairs(root.neighbours[1]) do
-		if (next.type == "pipe" or next.type == "pipe-to-ground") and not visited[next.unit_number] then
-			table.insert(lengths, recurse(next,1))
+	for _,neighbour in pairs(root.neighbours[1]) do
+		if entities[neighbour.name] and not visited[neighbour.unit_number] then
+			table.insert(lengths, recurse(neighbour,1))
 		end
 	end
 	local count = #lengths
@@ -70,73 +70,18 @@ local function onGuiOpened(event)
 			script_data[event.entity.unit_number] = {
 				entity = event.entity,
 				opened_by = {},
-				rolling_average = {}
+				rolling_average = nil
 			}
 		end
 		local player = game.players[event.player_index]
-		local gui = player.gui.relative
-		if not gui['pipe-flow'] then
-			local frame = player.gui.relative.add{
-				type = "frame",
-				name = "pipe-flow",
-				anchor = {
-					gui = defines.relative_gui_type.pipe_gui,
-					position = defines.relative_gui_position.bottom,
-					names = entity_names
-				},
-				direction = "vertical",
-				style = "frame_with_even_paddings"
-			}
 
-			local inner = frame.add{
-				type = "frame",
-				name = "inner",
-				direction = "vertical",
-				style = "inside_shallow_frame_with_padding_and_spacing"
-			}
-			inner.add{
-				type = "label",
-				caption = {"gui.pipe-flow-title"},
-				style = "caption_label"
-			}
-			local flow = inner.add{
-				type = "flow",
-				direction = "horizontal",
-				name = "content",
-				style = "horizontal_flow_with_extra_spacing"
-			}
-			flow.add{
-				type = "sprite-button",
-				name = "fluid",
-				style = "transparent_slot"
-			}
-			local flow2 = flow.add{
-				type = "flow",
-				direction = "vertical",
-				name = "details"
-			}
-			flow2.add{
-				type = "label",
-				caption = {"gui.pipe-flow-calculating"},
-				name = "flowtext"
-			}
-			flow2.add{
-				type = "progressbar",
-				style = "stretched_progressbar",
-				name = "bar"
-			}
+		local length_string = {"gui.pipe-length",measurePipeSection(event.entity),entities[event.entity.name].distance}
+		gui.open_gui(player, event.entity, length_string)
 
-			inner.add{
-				type = "label",
-				name = "pipe-length"
-			}
-		end
-
-		gui['pipe-flow'].inner['pipe-length'].caption = {"gui.pipe-length",measurePipeSection(event.entity),entities[event.entity.name].distance}
-
-		script_data[event.entity.unit_number].opened_by[player.index] = gui['pipe-flow'].inner.content
+		script_data[event.entity.unit_number].opened_by[player.index] = true
 	end
 end
+
 ---@param event on_gui_closed
 local function onGuiClosed(event)
 	if not (event.entity and event.entity.valid) then return end
@@ -157,30 +102,17 @@ local function onTick()
 		else
 			local fluidbox = struct.entity.fluidbox
 			local fluid = fluidbox[1]
-			local sprite = "fluid/"..(fluid and fluid.name or "fluid-unknown")
-			local caption
-			local bar = 0
 			local max = entities[struct.entity.name].flow
 			if fluid then
-				table.insert(struct.rolling_average, fluidbox.get_flow(1))
-				if #struct.rolling_average > 60 then
-					table.remove(struct.rolling_average,1)
-					local avg = 0
-					for _,val in pairs(struct.rolling_average) do
-						avg = avg + val*60 -- /60 values * 60t/s * 60s/m
-					end
-					caption = {"gui.pipe-flow-details",{"fluid-name."..fluid.name},string.format("%.1f",avg),max,{"per-minute-suffix"}}
-					bar = avg / max
-				else
-					caption = {"gui.pipe-flow-calculating"}
+				local flow = fluidbox.get_flow(1)
+				struct.rolling_average = ((struct.rolling_average or flow) * 59 + flow) / 60
+				for pid in pairs(struct.opened_by) do
+					gui.update_flow(game.players[pid], fluid, struct.rolling_average * 3600, max)
 				end
 			else
-				caption = {"gui.pipe-flow-details",{"gui.pipe-flow-no-fluid"},"---.-",max,{"per-minute-suffix"}}
-			end
-			for _,gui in pairs(struct.opened_by) do
-				gui['fluid'].sprite = sprite
-				gui['details'].flowtext.caption = caption
-				gui['details'].bar.value = bar
+				for pid in pairs(struct.opened_by) do
+					gui.update_flow(game.players[pid], nil, 0, max)
+				end
 			end
 		end
 	end
