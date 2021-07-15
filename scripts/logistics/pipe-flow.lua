@@ -105,7 +105,7 @@ local function onTick()
 			local max = entities[struct.entity.name].flow
 			if fluid then
 				local flow = fluidbox.get_flow(1)
-				struct.rolling_average = ((struct.rolling_average or flow) * 59 + flow) / 60
+				struct.rolling_average = ((struct.rolling_average or flow) * 299 + flow) / 300
 				for pid in pairs(struct.opened_by) do
 					gui.update_flow(game.players[pid], fluid, struct.rolling_average * 3600, max)
 				end
