@@ -14,16 +14,10 @@ local valveout = valve.."-output"
 ---@field output LuaEntity
 ---@field arrow uint64
 
----@alias ValveBucket table<uint, ValveData>
-
-local buckets = 30
----@alias global.valves ValveBucket[]
+---@alias global.valves table<uint, ValveData>
 ---@type global.valves
 local script_data = {}
-for i=0,buckets-1 do script_data[i] = {} end
-local function getBucket(tick)
-	return script_data[tick%buckets]
-end
+
 ---@param entity LuaEntity
 local function createStruct(entity)
 	local struct = {
@@ -55,15 +49,15 @@ local function createStruct(entity)
 	}
 	link.register(struct.base, struct.input)
 	link.register(struct.base, struct.output)
-	script_data[entity.unit_number%buckets][entity.unit_number] = struct
+	script_data[entity.unit_number] = struct
 end
 ---@param entity LuaEntity
 local function getStruct(entity)
-	return script_data[entity.unit_number%buckets][entity.unit_number]
+	return script_data[entity.unit_number]
 end
 ---@param entity LuaEntity
 local function deleteStruct(entity)
-	script_data[entity.unit_number%buckets][entity.unit_number] = nil
+	script_data[entity.unit_number] = nil
 end
 
 ---@param event on_build
@@ -99,20 +93,24 @@ local function onRotated(event)
 	end
 end
 
+-- transfer half the difference between input and output in the forward direction, if fluids match
 ---@param event on_tick
 local function onTick(event)
-	for _,struct in pairs(getBucket(event.tick)) do
-		-- transfer half the difference between input and output in the forward direction, if fluids match
-		local input_name, input_count = next(struct.input.get_fluid_contents())
-		local output_name, output_count = next(struct.output.get_fluid_contents())
-		if input_name and (not output_name or input_name == output_name) and input_count > (output_count or 0) then
-			local transfer = (input_count - (output_count or 0)) / 2
-			-- set max flow rate... (flow/minute / 60seconds/minute / 60ticks/second * ticks/update = flow/update)
-			if transfer > struct.flow/60/60*buckets then transfer = struct.flow/60/60*buckets end
-			struct.input.remove_fluid{name=input_name, amount=transfer}
-			struct.output.insert_fluid{name=input_name, amount=transfer}
-			-- for rendering purposes, show fluid being transferred per minute in the base
-			struct.base.fluidbox[1] = {name=input_name, amount=transfer*60/buckets*60}
+	for _,struct in pairs(script_data) do
+		---@type Fluid
+		local input = struct.input.fluidbox[1]
+		if input then
+			---@type Fluid
+			local output = struct.output.fluidbox[1] or {name=input.name, amount=0}
+			if input.name == output.name and input.amount > output.amount then
+				local transfer = (input.amount - output.amount) / 2
+				-- set max flow rate... (flow/minute / 60seconds/minute / 60ticks/second = flow/tick)
+				if transfer > struct.flow/60/60 then transfer = struct.flow/60/60 end
+				struct.input.remove_fluid{name=input.name, amount=transfer}
+				struct.output.insert_fluid{name=input.name, amount=transfer}
+				-- for rendering purposes, show fluid being transferred per minute in the base
+				struct.base.fluidbox[1] = {name=input.name, amount=transfer*60*60}
+			end
 		end
 	end
 end
@@ -234,6 +232,15 @@ return bev.applyBuildEvents{
 	end,
 	on_load = function()
 		script_data = global.valves or script_data
+	end,
+	on_configuration_changed = function()
+		if script_data[0] then
+			local copy = table.deepcopy(script_data)
+			for i in pairs(script_data) do script_data[i] = nil end
+			for _,row in pairs(copy) do
+				for n,s in pairs(row) do script_data[n] = s end
+			end
+		end
 	end,
 	on_build = onBuilt,
 	on_destroy = onRemoved,

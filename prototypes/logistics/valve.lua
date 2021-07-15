@@ -14,7 +14,7 @@ local tank = {
 	},
 	fluid_box = {
 		height = pipe_height_2,
-		base_area = 0.1/pipe_height_2, -- 10 capacity - should be sufficient for sending 600/m through if polled every 30 ticks
+		base_area = 0.01/pipe_height_2, -- 1 capacity
 		pipe_connections = {},
 		pipe_covers = pipecoverspictures()
 	},
