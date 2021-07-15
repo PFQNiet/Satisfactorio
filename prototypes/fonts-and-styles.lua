@@ -295,6 +295,11 @@ style['stretched_textbox'] = {
 	maximal_width = 0,
 	horizontally_stretchable = "on"
 }
+style['stretched_slider'] = {
+	type = "slider_style",
+	parent = "slider",
+	horizontally_stretchable = "on"
+}
 style['multiline_label'] = {
 	type = "label_style",
 	parent = "label",

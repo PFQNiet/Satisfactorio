@@ -25,7 +25,7 @@ end
 local function createGui(player)
 	if script_data[player.index] then return script_data[player.index] end
 	local gui = player.gui.relative
-	local frame = player.gui.relative.add{
+	local frame = gui.add{
 		type = "frame",
 		anchor = {
 			gui = defines.relative_gui_type.pipe_gui,

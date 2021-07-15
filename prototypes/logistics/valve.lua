@@ -1,16 +1,45 @@
 local name = "valve"
-local tank = {
-	-- placeholder entity that contains both input and output for visualisation purposes - these will then be split to separate entities by script
-	type = "storage-tank",
+local valve = {
+	type = "constant-combinator",
 	name = name,
 	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
 	open_sound = basesounds.machine_open,
 	close_sound = basesounds.machine_close,
+	activity_led_light_offsets = {{0,0},{0,0},{0,0},{0,0}},
+	activity_led_sprites = empty_graphic,
+	circuit_wire_connection_points = data.raw['constant-combinator']['constant-combinator'].circuit_wire_connection_points,
+	item_slot_count = 2,
+	sprites = makeRotatedSprite(name, 32, 64),
+	max_health = 1,
 	collision_box = {{-0.4,-0.9},{0.4,0.9}},
 	flags = {
 		"placeable-player",
-		"player-creation"
+		"player-creation",
+		"hide-alt-info"
+	},
+	friendly_map_color = data.raw['utility-constants'].default.chart.default_friendly_color_by_type['storage-tank'],
+	minable = {
+		mining_time = 0.5,
+		result = name
+	},
+	selection_box = {{-0.5,-1},{0.5,1}}
+}
+
+local tank_template = {
+	type = "storage-tank",
+	-- name = name,
+	localised_name = {"entity-name."..name},
+	icon = graphics.."icons/"..name..".png",
+	icon_size = 64,
+	open_sound = basesounds.machine_open,
+	close_sound = basesounds.machine_close,
+	collision_box = {{-0.4,-0.4},{0.4,0.4}},
+	collision_mask = {},
+	flags = {
+		"placeable-player",
+		"player-creation",
+		"hide-alt-info"
 	},
 	fluid_box = {
 		height = pipe_height_2,
@@ -19,40 +48,26 @@ local tank = {
 		pipe_covers = pipecoverspictures()
 	},
 	max_health = 1,
-	minable = {
-		mining_time = 0.5,
-		result = name
-	},
 	flow_length_in_ticks = 360,
 	pictures = {
 		window_background = empty_graphic,
 		fluid_background = empty_graphic,
 		flow_sprite = empty_graphic,
 		gas_flow = empty_graphic,
-		picture = makeRotatedSprite(name, 32, 64)
+		picture = empty_graphic
 	},
-	selection_box = {{-0.5,-1},{0.5,1}},
+	selection_box = {{-0.5,-0.5},{0.5,0.5}},
+	selectable_in_game = false,
 	window_bounding_box = {{-0.125,0.0875},{0.1875,0.4875}},
 	working_sound = data.raw['storage-tank']['storage-tank'].working_sound
 }
-local tankin = table.deepcopy(tank)
+local tankin = table.deepcopy(tank_template)
 tankin.name = name.."-input"
-tankin.localised_name = {"entity-name."..name}
-tankin.minable = nil
 tankin.fluid_box.pipe_connections = {{type="input",position={0,1}}}
-tankin.pictures.picture = empty_graphic
-table.insert(tankin.flags,"hide-alt-info")
-tankin.collision_box = {{-0.4,-0.4},{0.4,0.4}}
-tankin.collision_mask = {}
-tankin.selection_box = {{-0.5,-0.5},{0.5,0.5}}
-tankin.selectable_in_game = false
 
 local tankout = table.deepcopy(tankin)
 tankout.name = name.."-output"
 tankout.fluid_box.pipe_connections = {{type="output",position={0,-1}}}
-
-tank.fast_replaceable_group = "pipe"
-tank.fluid_box.base_area = 6/pipe_height_2 -- 600 capacity - for visualisation purposes only
 
 local tankitem = {
 	type = "item",
@@ -74,4 +89,4 @@ local tankrecipe = makeBuildingRecipe{
 	result = name
 }
 
-data:extend{tank,tankin,tankout,tankitem,tankrecipe}
+data:extend{valve,tankin,tankout,tankitem,tankrecipe}
