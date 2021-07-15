@@ -72,7 +72,7 @@ local function openGui(player, container)
 		local data = getGui(player)
 		if not data then data = createGui(player) end
 
-		data.components.anchor = {
+		data.components.flow.anchor = {
 			gui = anchortype,
 			position = defines.relative_gui_position.bottom,
 			name = container.name
