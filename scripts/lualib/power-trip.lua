@@ -1,3 +1,5 @@
+local gui = require(modpath.."scripts.gui.fuse-box")
+
 -- track built generators and place a 1W drain on top of them
 -- if the drain ever runs low on power, then the network is overdrawn and should be shut down
 -- generators on the network are disabled, and a GUI allows re-enabling them
@@ -140,7 +142,7 @@ local function on60thTick(event)
 				-- see if any player on this entity's force has this generator opened
 				for _,player in pairs(force.players) do
 					if player.opened and (player.opened == entry.burner or player.opened == entry.generator) then
-						createFusebox(player)
+						gui.open_gui(player, player.opened)
 					end
 				end
 			end
@@ -155,37 +157,43 @@ local function onGuiOpened(event)
 	if not entry then return end
 	if entry.active then return end
 	local player = game.players[event.player_index]
-	createFusebox(player)
+	gui.open_gui(player, player.opened)
 end
 ---@param event on_gui_closed
 local function onGuiClosed(event)
 	local player = game.players[event.player_index]
-	local gui = player.gui.relative
-	if gui['fusebox'] then
-		gui['fusebox'].destroy()
-	end
+	gui.close_gui(player)
 end
----@param event on_gui_click
-local function onGuiClick(event)
-	local player = game.players[event.player_index]
-	if event.element and event.element.valid and event.element.name == "fusebox-reset-fuse" then
-		-- get electric network ID of opened GUI
-		if not player.opened then return end
-		local entry = findRegistration(player.opened)
-		if not entry then return end
-		local force = entry.generator.force
-		local network = entry.generator.electric_network_id
-		-- seek out all generators with this network ID and re-enable them
-		for _,other in pairs(script_data.accumulators) do
-			if other.generator.force == force and other.generator.electric_network_id == network then
-				toggle(other, true)
-				other.accumulator.energy = other.accumulator.electric_buffer_size
+
+---@param player LuaPlayer
+---@param generator LuaEntity
+gui.callbacks.reset = function(player, generator)
+	-- determine network ID
+	local entry = findRegistration(generator)
+	if not entry then return end
+	local force = entry.generator.force
+	local network = entry.generator.electric_network_id
+
+	-- seek out all generators with this network ID and re-enable them
+	for _,other in pairs(script_data.accumulators) do
+		if other.generator.force == force and other.generator.electric_network_id == network then
+			toggle(other, true)
+			other.accumulator.energy = other.accumulator.electric_buffer_size
+		end
+	end
+
+	-- set last power outage time to a short moment in the past, so that the sound effect can still play if it insta-trips again but the console message won't appear
+	script_data.last_outage[force.index] = game.tick-600
+	force.play_sound{path="power-startup"}
+
+	-- see if any player on this entity's force has this generator opened
+	for _,other in pairs(force.players) do
+		if other.opened_gui_type == defines.gui_type.entity then
+			local reg = findRegistration(other.opened)
+			if reg and reg.generator.electric_network_id == network then
+				gui.close_gui(other)
 			end
 		end
-		-- set last power outage time to a short moment in the past, so that the sound effect can still play if it insta-trips again but the console message won't appear
-		script_data.last_outage[player.force.index] = event.tick-600
-		player.force.play_sound{path="power-startup"}
-		onGuiClosed(event)
 	end
 end
 
@@ -205,8 +213,7 @@ return {
 		on_destroy = onRemoved,
 		events = {
 			[defines.events.on_gui_opened] = onGuiOpened,
-			[defines.events.on_gui_closed] = onGuiClosed,
-			[defines.events.on_gui_click] = onGuiClick
+			[defines.events.on_gui_closed] = onGuiClosed
 		}
 	}
 }

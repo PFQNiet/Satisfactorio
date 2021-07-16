@@ -9,6 +9,7 @@ return {
 	require(modpath.."scripts.gui.recipe-browser").lib,
 	require(modpath.."scripts.gui.to-do-list").lib,
 	require(modpath.."scripts.gui.trash-slot").lib,
+	require(modpath.."scripts.gui.fuse-box").lib,
 	require(modpath.."scripts.gui.sort-container").lib,
 	require(modpath.."scripts.gui.pipe-flow").lib,
 	require(modpath.."scripts.gui.valve").lib,
