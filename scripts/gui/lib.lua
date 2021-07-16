@@ -16,6 +16,7 @@ return {
 	require(modpath.."scripts.gui.map-marker").lib,
 	require(modpath.."scripts.gui.pipe-flow").lib,
 	require(modpath.."scripts.gui.valve").lib,
+	require(modpath.."scripts.gui.power-storage").lib,
 	require(modpath.."scripts.gui.radioactivity").lib,
 	require(modpath.."scripts.gui.lizard-doggo").lib,
 	require(modpath.."scripts.gui.self-driving").lib,

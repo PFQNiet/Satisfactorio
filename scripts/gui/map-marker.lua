@@ -148,12 +148,11 @@ end
 local function onRemoved(event)
 	local entity = event.entity
 	if not (entity and entity.valid) then return end
-	local player = game.players[event.player_index]
-	local data = getGui(player)
-	if not data then return end
-
-	if entity == data.marker then
-		closeGui(player)
+	for _,player in pairs(game.players) do
+		local data = getGui(player)
+		if data and data.marker == entity then
+			closeGui(player)
+		end
 	end
 end
 

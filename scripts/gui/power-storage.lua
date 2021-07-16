@@ -1,39 +1,34 @@
----@class PipeFlowGui
+---@class PowerStorageGui
 ---@field player LuaPlayer
----@field pipe LuaEntity
----@field components PipeFlowGuiComponents
+---@field battery LuaEntity
+---@field components PowerStorageGuiComponents
 
----@class PipeFlowGuiComponents
+---@class PowerStorageGuiComponents
 ---@field frame LuaGuiElement
----@field sprite LuaGuiElement
 ---@field label LuaGuiElement
 ---@field bar LuaGuiElement
----@field length LuaGuiElement
 
----@alias global.gui.pipe_flow table<uint, PipeFlowGui>
----@type global.gui.pipe_flow
+---@alias global.gui.power_storage table<uint, PowerStorageGui>
+---@type global.gui.power_storage
 local script_data = {}
 
 ---@param player LuaPlayer
----@return PipeFlowGui|nil
+---@return PowerStorageGui|nil
 local function getGui(player)
 	return script_data[player.index]
 end
 
 ---@param player LuaPlayer
----@return PipeFlowGui
+---@return PowerStorageGui
 local function createGui(player)
 	if script_data[player.index] then return script_data[player.index] end
 	local gui = player.gui.relative
 	local frame = gui.add{
 		type = "frame",
 		anchor = {
-			gui = defines.relative_gui_type.pipe_gui,
+			gui = defines.relative_gui_type.accumulator_gui,
 			position = defines.relative_gui_position.bottom,
-			names = {
-				"pipeline", "underground-pipeline",
-				"pipeline-mk-2", "underground-pipeline-mk-2"
-			}
+			name = "power-storage"
 		},
 		direction = "vertical",
 		style = "frame_with_even_paddings"
@@ -46,7 +41,7 @@ local function createGui(player)
 	}
 	inner.add{
 		type = "label",
-		caption = {"gui.pipe-flow-title"},
+		caption = {"gui.battery-flow-title"},
 		style = "caption_label"
 	}
 	local flow = inner.add{
@@ -54,8 +49,9 @@ local function createGui(player)
 		direction = "horizontal",
 		style = "horizontal_flow_with_extra_spacing"
 	}
-	local sprite = flow.add{
+	flow.add{
 		type = "sprite-button",
+		sprite = "item/train-power",
 		style = "transparent_slot"
 	}
 	local flow2 = flow.add{
@@ -64,56 +60,64 @@ local function createGui(player)
 	}
 	local label = flow2.add{
 		type = "label",
-		caption = {"gui.pipe-flow-calculating"}
+		caption = {"gui.battery-flow-calculating"}
 	}
 	local bar = flow2.add{
 		type = "progressbar",
 		style = "stretched_progressbar"
 	}
 
-	local length = inner.add{type = "label"}
-
 	script_data[player.index] = {
 		player = player,
-		pipe = nil,
+		battery = nil,
 		components = {
 			frame = frame,
-			sprite = sprite,
 			label = label,
-			bar = bar,
-			length = length
+			bar = bar
 		}
 	}
 	return script_data[player.index]
 end
 
 ---@param player LuaPlayer
----@param pipe LuaEntity
----@param length LocalisedString
-local function openGui(player, pipe, length)
+---@param battery LuaEntity
+local function openGui(player, battery)
 	local data = getGui(player)
 	if not data then data = createGui(player) end
 
-	data.pipe = pipe
-	data.components.length.caption = length
-	data.components.label.caption = {"gui.pipe-flow-calculating"}
+	data.battery = battery
+	data.components.label.caption = {"gui.battery-flow-calculating"}
 end
 
 ---@param player LuaPlayer
----@param fluid Fluid
 ---@param flow number
----@param max number
-local function updateFlow(player, fluid, flow, max)
+---@param capacity number
+local function updateFlow(player, flow, capacity)
 	local data = getGui(player)
-	local sprite = "fluid/"..(fluid and fluid.name or "fluid-unknown")
-	local name = fluid and game.fluid_prototypes[fluid.name].localised_name or {"gui.pipe-flow-no-fluid"}
-	local rate = fluid and ("%.1f"):format(flow) or "---.-"
-	local bar = fluid and flow/max or 0
-	local caption = {"gui.pipe-flow-details", name, rate, max, {"per-minute-suffix"}}
+	local colours = {
+		["red"] = {218,69,53},
+		["green"] = {43,227,39}
+	}
+	local colour = colours[flow < 0 and "red" or "green"]
+	local caption
+	if flow == 0 then
+		caption = data.battery.energy > 0 and {"gui.battery-flow-full"} or {"gui.battery-flow-empty"}
+	else
+		local time = flow > 0 and math.ceil((capacity - data.battery.energy) / flow) or math.ceil(data.battery.energy / -flow)
+		caption = {
+			"gui.battery-flow-charge",
+			("%.1f"):format(math.abs(flow)/1000000),
+			math.floor(time/3600),
+			math.floor(time/60)%60 < 10 and "0" or "",
+			math.floor(time/60)%60,
+			time%60 < 10 and "0" or "",
+			time%60
+		}
+	end
 
-	data.components.sprite.sprite = sprite
 	data.components.label.caption = caption
-	data.components.bar.value = bar
+	data.components.bar.style.color = colour
+	data.components.bar.value = data.battery.energy / capacity
 end
 
 return {
@@ -121,10 +125,10 @@ return {
 	update_flow = updateFlow,
 	lib = {
 		on_init = function()
-			global.gui.pipe_flow = global.gui.pipe_flow or script_data
+			global.gui.power_storage = global.gui.power_storage or script_data
 		end,
 		on_load = function()
-			script_data = global.gui and global.gui.pipe_flow or script_data
+			script_data = global.gui and global.gui.power_storage or script_data
 		end
 	}
 }

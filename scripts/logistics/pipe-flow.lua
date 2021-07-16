@@ -1,6 +1,5 @@
 local gui = require(modpath.."scripts.gui.pipe-flow")
 
--- uses global.pipe_flow to track rolling average flow
 -- opening a pipe's GUI adds it to the tracking list, closing it (provided no other player has it open) removes it
 
 ---@class PipeFlowData
