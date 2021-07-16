@@ -11,6 +11,7 @@ return {
 	require(modpath.."scripts.gui.trash-slot").lib,
 	require(modpath.."scripts.gui.fuse-box").lib,
 	require(modpath.."scripts.gui.sort-container").lib,
+	require(modpath.."scripts.gui.map-marker").lib,
 	require(modpath.."scripts.gui.pipe-flow").lib,
 	require(modpath.."scripts.gui.valve").lib,
 	require(modpath.."scripts.gui.radioactivity").lib,

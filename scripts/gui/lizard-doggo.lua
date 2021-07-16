@@ -153,12 +153,13 @@ local function openGui(player, doggo)
 	local data = getGui(player)
 	if not data then data = createGui(player) end
 
-	updateGui(player, doggo)
-
 	local frame = data.components.frame
 	frame.visible = true
 	player.opened = frame
 	frame.force_auto_center()
+
+	updateGui(player, doggo)
+
 	return data
 end
 
@@ -166,11 +167,11 @@ end
 local function closeGui(player)
 	local data = getGui(player)
 	if not data then return end
+	data.doggo = nil
 	if player.opened == data.components.frame then
 		player.opened = nil
 	end
 	data.components.frame.visible = false
-	data.doggo = nil
 end
 
 -- Close gui for all players that have this Doggo open
@@ -187,7 +188,10 @@ end
 ---@param event on_gui_closed
 local function onGuiClosed(event)
 	local player = game.players[event.player_index]
-	closeGui(player)
+	local data = getGui(player)
+	if data and data.doggo then
+		closeGui(player)
+	end
 end
 
 ---@param event on_gui_click
