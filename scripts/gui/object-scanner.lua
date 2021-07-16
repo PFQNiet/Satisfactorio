@@ -1,31 +1,24 @@
----@class ResourceScannerGui
+---@class ObjectScannerGui
 ---@field player LuaPlayer
----@field components ResourceScannerGuiComponents
+---@field components ObjectScannerGuiComponents
 
----@class ResourceScannerGuiComponents
+---@class ObjectScannerGuiComponents
 ---@field frame LuaGuiElement
 ---@field close LuaGuiElement
 ---@field scan_list LuaGuiElement
----@field scans table<string,ResourceScannerGuiScan>
+---@field scans table<string,ObjectScannerGuiScan>
 
----@class ResourceScannerGuiScan
+---@class ObjectScannerGuiScan
 ---@field flow LuaGuiElement
 ---@field button LuaGuiElement
 ---@field label LuaGuiElement
 
----@class ResourceScannerEntryTags
----@field recipe string
----@field type string
----@field name string
----@field localised_name LocalisedString
----@field sprite SpritePath
-
----@alias global.gui.resource_scanner table<uint, ResourceScannerGui>
----@type global.gui.resource_scanner
+---@alias global.gui.object_scanner table<uint, ObjectScannerGui>
+---@type global.gui.object_scanner
 local script_data = {}
 
----@class ResourceScannerGuiCallbacks
----@field scan fun(player:LuaPlayer, scan:string)
+---@class ObjectScannerGuiCallbacks
+---@field scan fun(player:LuaPlayer, scan:ObjectScannerEntryTags)
 local callbacks = {
 	scan = function() end
 }
@@ -37,7 +30,7 @@ local function getAllScans()
 	if getAllScans_cache then return getAllScans_cache end
 	local recipes = {}
 	for _,recipe in pairs(game.recipe_prototypes) do
-		if recipe.category == "resource-scanner" then
+		if recipe.category == "object-scanner" then
 			table.insert(recipes, recipe)
 		end
 	end
@@ -47,13 +40,13 @@ local function getAllScans()
 end
 
 ---@param player LuaPlayer
----@return ResourceScannerGui|nil
+---@return ObjectScannerGui|nil
 local function getGui(player)
 	return script_data[player.index]
 end
 
 ---@param player LuaPlayer
----@return ResourceScannerGui
+---@return ObjectScannerGui
 local function createGui(player)
 	if script_data[player.index] then return script_data[player.index] end
 	local gui = player.gui.screen
@@ -62,7 +55,7 @@ local function createGui(player)
 		direction = "vertical"
 	}
 	local title_flow = frame.add{type = "flow"}
-	local title = title_flow.add{type = "label", caption = {"gui.resource-scanner-title"}, style = "frame_title"}
+	local title = title_flow.add{type = "label", caption = {"gui.object-scanner-title"}, style = "frame_title"}
 	title.drag_target = frame
 	local pusher = title_flow.add{type = "empty-widget", style = "draggable_space_in_window_title"}
 	pusher.drag_target = frame
@@ -80,13 +73,13 @@ local function createGui(player)
 	head.add{
 		type = "label",
 		style = "heading_2_label",
-		caption = {"gui.resource-scanner-scan-for"}
+		caption = {"gui.object-scanner-scan-for"}
 	}
 
 	local list = content.add{
 		type = "table",
 		style = "scanner_table",
-		column_count = 5
+		column_count = 4
 	}
 
 	local scans = {}
@@ -96,6 +89,7 @@ local function createGui(player)
 		local proto = game[product.type.."_prototypes"][product.name]
 		local sprite = product.type.."/"..product.name
 		local name = proto.localised_name
+		if product.name == "green-power-slug" then name = {"gui.object-scanner-power-slugs"} end
 
 		local flow = list.add{
 			type = "flow",
@@ -114,7 +108,7 @@ local function createGui(player)
 
 		local button = flow.add{
 			type = "sprite-button",
-			name = "resource-scanner-scan",
+			name = "object-scanner-select",
 			sprite = "item/item-unknown",
 			style = "scanner_button",
 			enabled = false
@@ -123,7 +117,7 @@ local function createGui(player)
 		local label = flow.add{
 			type = "label",
 			name = "label",
-			caption = {"gui.resource-scanner-unknown"}
+			caption = {"gui.object-scanner-unknown"}
 		}
 
 		scans[recipe.name] = {
@@ -153,7 +147,7 @@ local function openGui(player)
 	for _,entry in pairs(data.components.scans) do
 		local button = entry.button
 		local label = entry.label
-		---@type ResourceScannerEntryTags
+		---@type ObjectScannerEntryTags
 		local tags = entry.flow.tags['scan']
 
 		local recipe = player.force.recipes[tags.recipe]
@@ -164,7 +158,7 @@ local function openGui(player)
 		else
 			button.sprite = "item/item-unknown"
 			button.enabled = false
-			label.caption = {"gui.resource-scanner-unknown"}
+			label.caption = {"gui.object-scanner-unknown"}
 		end
 	end
 
@@ -210,9 +204,9 @@ local function onGuiClick(event)
 	if event.element == components.close then
 		closeGui(player)
 	end
-	if event.element.name == "resource-scanner-scan" then
+	if event.element.name == "object-scanner-select" then
 		closeGui(player)
-		---@type ResourceScannerEntryTags
+		---@type ObjectScannerEntryTags
 		local tags = event.element.parent.tags['scan']
 		callbacks.scan(player, tags)
 	end
@@ -224,10 +218,10 @@ return {
 	callbacks = callbacks,
 	lib = {
 		on_init = function()
-			global.gui.resource_scanner = global.gui.resource_scanner or script_data
+			global.gui.object_scanner = global.gui.object_scanner or script_data
 		end,
 		on_load = function()
-			script_data = global.gui and global.gui.resource_scanner or script_data
+			script_data = global.gui and global.gui.object_scanner or script_data
 		end,
 		events = {
 			[defines.events.on_gui_closed] = onGuiClosed,
