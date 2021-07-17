@@ -297,7 +297,7 @@ return bev.applyBuildEvents{
 		script_data = global.mam or script_data
 	end,
 	on_nth_tick = {
-		[6] = function() updateAllPlayers() end
+		[6] = updateAllPlayers
 	},
 	on_build = onBuilt,
 	events = {

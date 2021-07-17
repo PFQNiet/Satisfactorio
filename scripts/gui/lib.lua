@@ -13,6 +13,7 @@ return {
 	require(modpath.."scripts.gui.trash-slot").lib,
 	require(modpath.."scripts.gui.fuse-box").lib,
 	require(modpath.."scripts.gui.sort-container").lib,
+	require(modpath.."scripts.gui.space-elevator").lib,
 	require(modpath.."scripts.gui.mam").lib,
 	require(modpath.."scripts.gui.hard-drive").lib,
 	require(modpath.."scripts.gui.map-marker").lib,
