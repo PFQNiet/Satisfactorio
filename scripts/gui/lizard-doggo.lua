@@ -154,8 +154,8 @@ local function openGui(player, doggo)
 	if not data then data = createGui(player) end
 
 	local frame = data.components.frame
-	frame.visible = true
 	player.opened = frame
+	frame.visible = true
 	frame.force_auto_center()
 
 	updateGui(player, doggo)

@@ -298,9 +298,9 @@ local function onGuiOpened(event)
 		local struct = findStruct(event.entity)
 		fullGuiUpdate(struct, columns)
 
-		frame.visible = true
-		player.opened = frame
 		script_data.gui[player.index] = struct
+		player.opened = frame
+		frame.visible = true
 		frame.force_auto_center()
 	end
 end

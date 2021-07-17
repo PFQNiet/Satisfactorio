@@ -182,8 +182,8 @@ local function openGui(player)
 		frame.visible = false
 		return false
 	else
-		frame.visible = true
 		player.opened = frame
+		frame.visible = true
 		frame.force_auto_center()
 		return true
 	end

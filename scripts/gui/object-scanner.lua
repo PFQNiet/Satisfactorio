@@ -163,8 +163,8 @@ local function openGui(player)
 	end
 
 	local frame = data.components.frame
-	frame.visible = true
 	player.opened = frame
+	frame.visible = true
 	frame.force_auto_center()
 	return data
 end

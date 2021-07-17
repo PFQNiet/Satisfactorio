@@ -97,8 +97,8 @@ local function openGui(player, marker, tag)
 	local components = data.components
 
 	local frame = components.frame
-	frame.visible = true
 	player.opened = frame
+	frame.visible = true
 	frame.force_auto_center()
 
 	components.name.text = tag.text
