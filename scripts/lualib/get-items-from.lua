@@ -44,15 +44,10 @@ local function retrieveItemsFromAssembler(entity, target)
 	for _, k in pairs(inventories) do
 		retrieveItemsFromInventory(entity, entity.get_inventory(k), target)
 	end
-	if entity.is_crafting() then
-		-- a craft was left in progress, get the ingredients and give those back too
-		local recipe = entity.get_recipe()
-		for i = 1, #recipe.ingredients do
-			local entry = recipe.ingredients[i]
-			if entry.type == "item" then
-				retrieveItemStack(entity, {name=entry.name, count=entry.amount}, target)
-			end
-		end
+	-- if a craft was left in progress, clear the recipe and refund any items that come from doing that too
+	local refund = entity.set_recipe(nil)
+	for name,count in pairs(refund) do
+		retrieveItemStack(entity, {name=name, count=count}, target)
 	end
 end
 
