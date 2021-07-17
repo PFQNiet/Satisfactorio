@@ -1,4 +1,10 @@
+local gui = {
+	mam = require(modpath.."scripts.gui.mam"),
+	hard_drive = require(modpath.."scripts.gui.hard-drive")
+}
+
 local bev = require(modpath.."scripts.lualib.build-events")
+local getitems = require(modpath.."scripts.lualib.get-items-from")
 local string = require(modpath.."scripts.lualib.string")
 
 local mam = "mam"
@@ -6,7 +12,7 @@ local lab = "omnilab"
 
 ---@class HardDriveData
 ---@field done boolean
----@field options string Chosen hard drive techs to unlock
+---@field options LuaTechnologyPrototype[] Chosen hard drive techs to unlock
 
 ---@class global.mam
 ---@field lab table<uint, LuaEntity> Force index => Omnilab
@@ -31,6 +37,7 @@ local function getOmnilab(force)
 	end
 	return omnilab
 end
+
 -- check hard drive techs that have been unlocked but not completed
 ---@param force LuaForce
 local function prepareHardDriveTech(force)
@@ -45,7 +52,7 @@ local function prepareHardDriveTech(force)
 				end
 			end
 			if unlocked then
-				table.insert(valid, tech.name)
+				table.insert(valid, tech.prototype)
 			end
 		end
 	end
@@ -65,8 +72,10 @@ local function prepareHardDriveTech(force)
 end
 ---@param force LuaForce
 local function completeHardDriveTech(force)
-	if script_data.hard_drive[force.index] then
-		script_data.hard_drive[force.index].done = true
+	local struct = script_data.hard_drive[force.index]
+	if struct then
+		struct.done = true
+		gui.hard_drive.force_gui(force, struct.options)
 	end
 end
 ---@param force LuaForce
@@ -75,10 +84,24 @@ local function clearHardDriveTech(force)
 	force.recipes["mam-hard-drive"].enabled = true
 	force.recipes["mam-hard-drive-done"].enabled = false
 end
----@param force LuaForce
----@param tech string
-local function selectHardDriveReward(force,tech)
-	local technology = force.technologies[tech]
+
+---@param player LuaPlayer
+---@param tech LuaTechnologyPrototype
+gui.hard_drive.callbacks.select = function(player, tech)
+	local force = player.force
+	-- ensure selected option is in the list of presented options
+	local valid = false
+	local options = {}
+	for i,test in pairs(script_data.hard_drive[force.index].options) do
+		options[i] = tech.name
+		if test == tech then
+			valid = true
+			break
+		end
+	end
+	assert(valid, "Attempted to complete "..tech.name.." but options are "..table.concat(options, ", "))
+
+	local technology = force.technologies[tech.name]
 	technology.researched = true
 	local message = {"", {"message.hard-drive-research-complete","hard-drive",{"item-name.hard-drive"}}}
 	-- use technology effects for console message
@@ -128,19 +151,12 @@ local function completeMam(technology)
 		completeHardDriveTech(technology.force)
 	end
 end
+
 ---@param player LuaPlayer
-local function manageMamGUI(player)
-	if not player then
-		for _,p in pairs(game.players) do
-			manageMamGUI(p)
-		end
-		return
-	end
+local function updateMam(player)
 	if player.opened_gui_type ~= defines.gui_type.entity then return end
 	local entity = player.opened
 	if not (entity and entity.valid and entity.name == mam) then return end
-	local gui = player.gui.relative
-	local flow = gui['mam']
 
 	-- check its recipe and inventory
 	local recipe = entity.get_recipe()
@@ -151,42 +167,14 @@ local function manageMamGUI(player)
 		or (force.current_research and force.current_research.name == research.name and force.research_progress > 0)
 		or ((force.get_saved_technology_progress(research.name) or 0) > 0) then
 			-- research already completed, so reject it
-			local spill = entity.set_recipe(nil)
-			for name,count in pairs(spill) do
-				entity.surface.spill_item_stack(entity.position, {name = name, count = count}, true, force, false)
-			end
+			getitems.assembler(entity, player.get_main_inventory())
+			entity.set_recipe(nil)
 			if research.name == recipe.name then
 				force.recipes[recipe.name].enabled = false
 				force.recipes[recipe.name.."-done"].enabled = true
 			end
-			force.print({"message.mam-already-done",research.name,research.localised_name})
+			player.print{"message.mam-already-done",research.name,research.localised_name}
 		else
-			if not flow then
-				flow = gui.add{
-					type = "flow",
-					name = "mam",
-					anchor = {
-						gui = defines.relative_gui_type.assembling_machine_gui,
-						position = defines.relative_gui_position.bottom,
-						name = mam
-					},
-					direction = "horizontal"
-				}
-				flow.add{type="empty-widget", style="filler_widget"}
-				local frame = flow.add{
-					type = "frame",
-					name = "mam-frame",
-					direction = "horizontal",
-					style = "frame_with_even_paddings"
-				}
-				frame.add{
-					type = "button",
-					style = "submit_button",
-					name = "mam-submit",
-					caption = {"gui.mam-submit-caption"}
-				}
-			end
-
 			local inventory = entity.get_inventory(defines.inventory.assembling_machine_input)
 			local submitted = inventory.get_contents()
 			local ready = true
@@ -199,17 +187,21 @@ local function manageMamGUI(player)
 				end
 			end
 			entity.crafting_progress = progress[1] / progress[2]
-			flow['mam-frame']['mam-submit'].enabled = ready
+			gui.mam.set_enabled(player, ready)
 		end
 	end
 end
----@param event on_gui_click
-local function submitMam(event)
-	if not (event.element and event.element.valid and event.element.name == "mam-submit") then return end
-	-- the GUI only exists if the player has a M.A.M. open, but double-check just to be sure
-	local player = game.players[event.player_index]
-	local entity = player.opened
-	if not (entity and entity.valid and entity.name == mam) then return end
+
+local function updateAllPlayers()
+	for _,p in pairs(game.players) do
+		updateMam(p)
+	end
+end
+
+---@param player LuaPlayer
+---@param entity LuaEntity
+gui.mam.callbacks.submit = function(player, entity)
+	if not (entity and entity.valid) then return end
 	local recipe = entity.get_recipe()
 	if not recipe then return end
 	local force = player.force
@@ -232,18 +224,9 @@ local function submitMam(event)
 	local omnilab = getOmnilab(force)
 	omnilab.insert{name=research,count=1}
 	force.research_queue = {research}
-	force.print({"message.mam-research-started",research,game.technology_prototypes[research].localised_name})
+	force.print{"message.mam-research-started",research,game.technology_prototypes[research].localised_name}
 
-	for name,count in pairs(inventory.get_contents()) do
-		count = count - player.insert{name=name,count=count}
-		if count > 0 then
-			player.surface.spill_item_stack(
-				player.position,
-				{name = name, count = count},
-				true, force, false
-			)
-		end
-	end
+	getitems.assembler(entity, player.get_main_inventory())
 	entity.set_recipe(nil)
 
 	-- disable the recipe and enable the "-done" recipe
@@ -266,10 +249,11 @@ end
 local function onGuiOpened(event)
 	local player = game.players[event.player_index]
 	if event.gui_type ~= defines.gui_type.entity then return end
-	if event.entity.name ~= mam then return end
-	if event.entity.get_recipe() == nil then
+	local entity = event.entity
+	if entity.name ~= mam then return end
+	if entity.get_recipe() == nil then
 		-- double-check for, and disable, any recipes that have completed technologies
-		local force = event.entity.force
+		local force = entity.force
 		for _,recipe in pairs(force.recipes) do
 			if force.technologies[recipe.name] and force.recipes[recipe.name.."-done"] and force.technologies[recipe.name].researched then
 				force.recipes[recipe.name].enabled = false
@@ -277,7 +261,8 @@ local function onGuiOpened(event)
 			end
 		end
 	else
-		manageMamGUI(player)
+		gui.mam.open_gui(player, entity)
+		updateMam(player)
 	end
 
 	local struct = script_data.hard_drive[player.force.index]
@@ -286,152 +271,12 @@ local function onGuiOpened(event)
 	if #struct.options == 0 then
 		-- player has unlocked all things, so refund the hard drive
 		clearHardDriveTech(player.force)
-		local spilled = event.entity.set_recipe("mam-hard-drive")
-		event.entity.insert{name="hard-drive",count=1}
-		for item,count in pairs(spilled) do
-			event.entity.surface.spill_item_stack(event.entity.position, {name=item,count=count}, true, player.force, false)
-		end
+		getitems.assembler(entity, player.get_main_inventory())
+		entity.set_recipe("mam-hard-drive")
+		entity.insert{name="hard-drive",count=1}
 		player.force.print{"message.all-alt-recipes-unlocked"}
 	else
-		-- force completed a hard drive research, pop up a window requesting confirmation of what reward is wanted
-		local gui = player.gui.screen.add{
-			type = "frame",
-			name = "hard-drive-reward",
-			direction = "vertical",
-			style = "inner_frame_in_outer_frame"
-		}
-		local title_flow = gui.add{type = "flow", name = "title_flow"}
-		local title = title_flow.add{type = "label", caption = {"gui.hard-drive-reward-title"}, style = "frame_title"}
-		title.drag_target = gui
-		local pusher = title_flow.add{type = "empty-widget", style = "draggable_space_in_window_title"}
-		pusher.drag_target = gui
-		title_flow.add{type = "sprite-button", style = "frame_action_button", sprite = "utility/close_white", name = "hard-drive-reward-close"}
-
-		local columns = gui.add{
-			type = "flow",
-			name = "columns",
-			style = "horizontal_flow_with_extra_spacing"
-		}
-		for _,name in pairs(struct.options) do
-			local effect = game.technology_prototypes[name].effects[1]
-			local subtitle, image, recipe, text
-			if effect.type == "unlock-recipe" then
-				subtitle = {"recipe-name."..effect.recipe}
-				image = "recipe/"..effect.recipe
-				recipe = game.recipe_prototypes[effect.recipe]
-			else
-				subtitle = {"technology-name."..name}
-				image = "utility/character_inventory_slots_bonus_modifier_icon"
-				text = {"modifier-description.character-inventory-slots-bonus",effect.modifier}
-			end
-			local col = columns.add{
-				type = "frame",
-				style = "inside_shallow_frame_with_padding_and_spacing",
-				direction = "vertical",
-				name = name
-			}
-			local head = col.add{
-				type = "frame",
-				style = "full_subheader_frame_in_padded_frame"
-			}
-			head.add{
-				type = "label",
-				style = "heading_2_label",
-				caption = subtitle
-			}
-			local list = col.add{
-				type = "flow",
-				direction = "vertical",
-				style = "hard_drive_column_flow",
-				name = "details"
-			}
-			local spritebox = list.add{
-				type = "frame",
-				style = "deep_frame_in_shallow_frame"
-			}
-			spritebox.add{
-				type = "sprite",
-				sprite = image,
-				style = "hard_drive_recipe_sprite"
-			}
-			if recipe then
-				local craft = list.add{
-					type = "table",
-					style = "bordered_table",
-					column_count = 2
-				}
-				local getname = function(what)
-					return game[what.type.."_prototypes"][what.name].localised_name
-				end
-				for _,ingredient in pairs(recipe.ingredients) do
-					craft.add{
-						type = "sprite",
-						sprite = ingredient.type.."/"..ingredient.name
-					}
-					craft.add{
-						type = "label",
-						caption = {"gui.hard-drive-recipe-ingredient",getname(ingredient),ingredient.amount}
-					}
-				end
-				craft.add{type="empty-widget"}
-				craft.add{
-					type = "label",
-					caption = {"gui.hard-drive-recipe-time",{"time-symbol-seconds-short",recipe.energy},{"description.crafting-time"}}
-				}
-				craft.add{type="empty-widget"}
-				craft.add{type="empty-widget"}
-				for _,product in pairs(recipe.products) do
-					craft.add{
-						type = "sprite",
-						sprite = product.type.."/"..product.name
-					}
-					craft.add{
-						type = "label",
-						caption = {"gui.hard-drive-recipe-ingredient",getname(product),product.amount}
-					}
-				end
-			else
-				list.add{
-					type = "label",
-					style = "description_label",
-					caption = text
-				}
-			end
-			list.add{type="empty-widget", style="vertical_filler_widget"}
-			list.add{
-				type = "button",
-				style = "submit_button",
-				name = "hard-drive-reward-select",
-				caption = {"gui.hard-drive-reward-select"}
-			}
-		end
-		player.opened = gui
-		gui.force_auto_center()
-	end
-end
----@param event on_gui_closed
-local function onGuiClosed(event)
-	if event.element and event.element.valid and event.element.name == "hard-drive-reward" then
-		event.element.destroy()
-	end
-end
----@param event on_gui_click
-local function onGuiClick(event)
-	if event.element and event.element.valid then
-		local player = game.players[event.player_index]
-		if event.element.name == "mam-submit" then
-			submitMam(event)
-		elseif event.element.name == "hard-drive-reward-close" then
-			local gui = player.gui.screen['hard-drive-reward']
-			if gui then gui.destroy() end
-		elseif event.element.name == "hard-drive-reward-select" then
-			-- element grandparent's name is the name of the selected hard drive tech
-			selectHardDriveReward(player.force, event.element.parent.parent.name)
-			for _,player in pairs(player.force.players) do
-				local gui = player.gui.screen['hard-drive-reward']
-				if gui then gui.destroy() end
-			end
-		end
+		gui.hard_drive.open_gui(player, struct.options)
 	end
 end
 
@@ -452,14 +297,12 @@ return bev.applyBuildEvents{
 		script_data = global.mam or script_data
 	end,
 	on_nth_tick = {
-		[6] = function() manageMamGUI() end
+		[6] = function() updateAllPlayers() end
 	},
 	on_build = onBuilt,
 	events = {
 		[defines.events.on_research_finished] = onResearch,
 
-		[defines.events.on_gui_opened] = onGuiOpened,
-		[defines.events.on_gui_closed] = onGuiClosed,
-		[defines.events.on_gui_click] = onGuiClick
+		[defines.events.on_gui_opened] = onGuiOpened
 	}
 }
