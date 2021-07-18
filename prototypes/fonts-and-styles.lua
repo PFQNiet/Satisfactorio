@@ -232,6 +232,16 @@ style['hub_milestone_frame'] = {
 	parent = "frame_without_filler",
 	horizontally_stretchable = "off"
 }
+style['hub_milestone_table'] = {
+	type = "table_style",
+	parent = "bordered_table",
+	column_alignments = {
+		{
+			column = 3,
+			alignment = "right"
+		}
+	}
+}
 
 style['recipe_browser_scroll_pane'] = {
 	type = "scroll_pane_style",

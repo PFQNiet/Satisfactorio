@@ -1,3 +1,8 @@
+local gui = {
+	tracker = require(modpath.."scripts.gui.the-hub-tracker"),
+	terminal = require(modpath.."scripts.gui.the-hub-terminal")
+}
+
 -- uses global.hub.terminal as table of Force index -> HUB terminal
 -- uses global.hub.cooldown as table of Force index -> tick at which the Freighter returns
 local util = require("util")
@@ -335,159 +340,15 @@ local function updateMilestoneGUI(force)
 	end
 
 	for _,player in pairs(force.players) do
-		local left = player.gui.left
-		-- create the GUI if it doesn't exist yet, but only once a HUB has been built for the first time
-		if not left['hub-milestone'] and force.technologies['the-hub'].researched then
-			local frame = left.add{
-				type = "frame",
-				name = "hub-milestone",
-				direction = "vertical",
-				caption = {"gui.hub-milestone-tracking-caption"},
-				style = "hub_milestone_frame"
-			}
-
-			local content = frame.add{
-				type = "frame",
-				name = "content",
-				style = "inside_shallow_frame_with_padding_and_spacing",
-				direction = "vertical",
-				tags = {
-					milestone = "none"
-				}
-			}
-			local head = content.add{
-				type = "frame",
-				name = "head",
-				style = "full_subheader_frame_in_padded_frame"
-			}
-			head.add{
-				type = "label",
-				name = "milestone",
-				style = "heading_2_label",
-				caption = {"gui.hub-milestone-tracking-none-selected"}
-			}
-
-			local table = content.add{
-				type = "table",
-				name = "requirements",
-				style = "bordered_table",
-				column_count = 3
-			}
-			table.visible = false
-
-			local cooldown = content.add{
-				type = "label",
-				name = "cooldown"
-			}
-			cooldown.visible = false
-		end
-		local relative = player.gui.relative
-		if left['hub-milestone'] and not relative['hub-milestone'] then
-			local flow = relative.add{
-				type = "flow",
-				name = "hub-milestone",
-				anchor = {
-					gui = defines.relative_gui_type.assembling_machine_gui,
-					position = defines.relative_gui_position.bottom,
-					name = terminal
-				},
-				direction = "horizontal"
-			}
-			flow.add{type="empty-widget", style="filler_widget"}
-			local frame = flow.add{
-				type = "frame",
-				name = "hub-milestone-frame",
-				direction = "horizontal",
-				style = "frame_with_even_paddings"
-			}
-			frame.add{
-				type = "button",
-				style = "submit_button",
-				name = "hub-milestone-submit",
-				caption = {"gui.hub-milestone-submit-caption"}
-			}
-		end
-
-		local frame = left['hub-milestone']
-		local flow = relative['hub-milestone']
-		if frame then
-			-- gather up GUI element references
-			local content = frame.content
-			local name = content.head.milestone
-			local table = content.requirements
-			local cooldown = content.cooldown
-			local button = flow['hub-milestone-frame']['hub-milestone-submit']
-
-			-- check if the selected milestone has been changed
-			if milestone.name ~= content.tags.milestone then
-				content.tags = {milestone = milestone.name}
-				table.visible = milestone.name ~= "none"
-				button.enabled = false
-				table.clear()
-				if milestone.name == "none" then
-					name.caption = {"gui.hub-milestone-tracking-none-selected"}
-				else
-					-- if milestone is actually set then we know this is valid
-					name.caption = {"","[img=recipe/"..milestone.name.."] ",milestone.localised_name}
-					for _,ingredient in ipairs(recipe.ingredients) do
-						table.add{
-							type = "sprite-button",
-							sprite = "item/"..ingredient.name,
-							style = "text_sized_transparent_slot"
-						}
-						table.add{
-							type = "label",
-							caption = game.item_prototypes[ingredient.name].localised_name,
-							style = "bold_label"
-						}
-						local count_flow = table.add{
-							type = "flow",
-							name = ingredient.name
-						}
-						count_flow.add{type="empty-widget", style="filler_widget"}
-						count_flow.add{
-							type = "label",
-							name = "count",
-							caption = {"gui.fraction", "-", "-"} -- unset by default, will be populated in the next block
-						}
-					end
-				end
-			end
-
-			-- so now we've established the GUI exists, and is populated with a table for the currently selected milestone... if there is one, update the counts now
-			local ready = true
-			local current_cooldown = hub.cooldown
-			if current_cooldown then
-				if current_cooldown > game.tick then
-					ready = false
-					local ticks = current_cooldown - game.tick
-					local tenths = math.floor(ticks/6)%10
-					local seconds = math.floor(ticks/60)
-					local minutes = math.floor(seconds/60)
-					seconds = seconds % 60
-					local seconds_padding = seconds < 10 and "0" or ""
-					cooldown.caption = {"gui.hub-milestone-cooldown", minutes, seconds_padding, seconds, tenths}
-					cooldown.visible = true
-				else
-					cooldown.visible = false
-				end
-			end
-			if milestone.name ~= "none" then
-				for _,ingredient in ipairs(recipe.ingredients) do
-					local label = table[ingredient.name].count
-					label.caption = {"gui.fraction", util.format_number(math.min(submitted[ingredient.name] or 0, ingredient.amount)), util.format_number(ingredient.amount)}
-					if (submitted[ingredient.name] or 0) < ingredient.amount then
-						ready = false
-					end
-				end
-				button.enabled = ready
-			end
-		end
+		local ready = gui.tracker.update_gui(player, recipe and recipe.prototype, hub.cooldown, submitted)
+		gui.terminal.set_enabled(player, ready)
 	end
 end
+
 ---@param player LuaPlayer
----@param hub HubData
-local function submitMilestone(player, hub)
+---@param term LuaEntity
+gui.terminal.callbacks.submit = function(player, term)
+	local hub = findHubForForce(player.force)
 	if not (hub and hub.valid) then return end
 	local recipe = hub.terminal.get_recipe()
 	if not recipe then return end
@@ -576,23 +437,27 @@ local function onResearch(event)
 	if string.starts_with(event.research.name, "hub-tier") then
 		completeMilestone(event.research)
 	end
-end
-local function onGuiOpened(event)
-	if event.entity and event.entity.name == terminal and event.entity.get_recipe() == nil then
-		-- double-check for, and disable, any recipes that have completed technologies
-		local force = event.entity.force
-		for _,recipe in pairs(force.recipes) do
-			if force.technologies[recipe.name] and force.recipes[recipe.name.."-done"] and force.technologies[recipe.name].researched then
-				force.recipes[recipe.name].enabled = false
-				force.recipes[recipe.name.."-done"].enabled = true
-			end
+	if event.research.name == "the-hub" then
+		for _,p in pairs(event.research.force.players) do
+			gui.tracker.create_gui(p)
 		end
 	end
 end
-local function onGuiClick(event)
-	if event.element and event.element.valid and event.element.name == "hub-milestone-submit" then
+local function onGuiOpened(event)
+	local entity = event.entity
+	if entity and entity.valid and entity.name == terminal then
 		local player = game.players[event.player_index]
-		submitMilestone(player, findHubForForce(player.force))
+		gui.terminal.open_gui(player, entity)
+		if entity.get_recipe() == nil then
+			-- double-check for, and disable, any recipes that have completed technologies
+			local force = entity.force
+			for _,recipe in pairs(force.recipes) do
+				if force.technologies[recipe.name] and force.recipes[recipe.name.."-done"] and force.technologies[recipe.name].researched then
+					force.recipes[recipe.name].enabled = false
+					force.recipes[recipe.name.."-done"].enabled = true
+				end
+			end
+		end
 	end
 end
 
@@ -618,7 +483,6 @@ return bev.applyBuildEvents{
 	on_destroy = onRemoved,
 	events = {
 		[defines.events.on_research_finished] = onResearch,
-		[defines.events.on_gui_opened] = onGuiOpened,
-		[defines.events.on_gui_click] = onGuiClick
+		[defines.events.on_gui_opened] = onGuiOpened
 	}
 }
