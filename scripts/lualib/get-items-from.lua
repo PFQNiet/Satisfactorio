@@ -10,7 +10,7 @@ local function retrieveItemStack(entity, stack, target)
 		stack.count = stack.count - inserted
 	end
 	-- no buffer provided, or the buffer overflowed
-	entity.surface.spill_item_stack(entity.position, stack, true, entity.force, false)
+	entity.surface.spill_item_stack(entity.position, stack, true, nil, false)
 end
 
 ---@param entity LuaEntity
