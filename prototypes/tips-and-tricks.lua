@@ -98,7 +98,7 @@ function tipTrickSetup(params)
 			---@param direction defines.direction
 			---@param tier uint8 1-5
 			---@param entity LuaEntity
-			---@param mode "input"|"output"
+			---@param mode '"input"'|'"output"'
 			function createLoader(position, direction, tier, entity, mode)
 				assert(mode == "input" or mode == "output", "Invalid mode "..mode..", expected 'input' or 'output'")
 

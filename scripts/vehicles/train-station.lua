@@ -29,7 +29,7 @@ local collision = "platform-collision"
 ---@field type "platform"
 ---@field platform LuaEntity
 ---@field storage LuaEntity|nil
----@field mode "input"|"output"
+---@field mode StationMode
 ---@field next TrainPlatformData|nil
 ---@field previous TrainPlatformData|TrainStationData
 
@@ -445,7 +445,7 @@ end
 
 ---@param player LuaPlayer
 ---@param platform LuaEntity
----@param mode "input"|"output"
+---@param mode StationMode
 gui.callbacks.toggle_train = function(player, platform, mode)
 	local data = getPlatformOrStation(platform)
 	if not data then return end

@@ -135,7 +135,7 @@ end
 
 -- check if a neighbour exists in the given direction, quick-replace the belt if so and return either the existing or newly replaced belt
 ---@param belt LuaEntity
----@param direction "inputs"|"outputs"
+---@param direction '"inputs"'|'"outputs"'
 ---@return LuaEntity
 local function snapToExistingBelt(belt, direction)
 	-- can assume just one neighbour since only one edge of the belt is exposed to the player
@@ -160,7 +160,7 @@ end
 -- Add an input or output to the given machine
 ---@param entity LuaEntity
 ---@param offset Position Relative to the entity facing North
----@param mode "input"|"output"
+---@param mode '"input"'|'"output"'
 ---@param target LuaEntity|nil Child entity to target
 ---@param direction defines.direction Default to North
 ---@return MachineConnection

@@ -19,7 +19,7 @@ local fuelbox_pos = {-4,2.5}
 ---@field base LuaEntity ElectricEnergyInterface
 ---@field fuel LuaEntity Container
 ---@field cargo LuaEntity Container
----@field mode "input"|"output"
+---@field mode StationMode
 
 ---@alias TruckStationBucket table<uint, TruckStationData>
 
@@ -119,7 +119,7 @@ end
 
 ---@param player LuaPlayer
 ---@param station LuaEntity
----@param mode "input"|"output"
+---@param mode StationMode
 gui.mode.callbacks.toggle_truck = function(player, station, mode)
 	local data = getStruct(station)
 	if not data then return end

@@ -31,7 +31,7 @@
 
 ---@class ToDoListGuiIngredient
 ---@field key string Own index in ingredient list
----@field type "item"|"fluid"
+---@field type '"item"'|'"fluid"'
 ---@field name string
 ---@field localised_name LocalisedString
 ---@field item string For fluids, this is the packaged version of that fluid

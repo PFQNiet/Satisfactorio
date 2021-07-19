@@ -17,9 +17,11 @@
 ---@type global.gui.station_mode
 local script_data = {}
 
+---@alias StationMode '"input"'|'"output"'
+
 ---@class StationModeGuiCallbacks
----@field toggle_truck fun(player:LuaPlayer, station:LuaEntity, mode:"input"|"output")
----@field toggle_train fun(player:LuaPlayer, station:LuaEntity, mode:"input"|"output")
+---@field toggle_truck fun(player:LuaPlayer, station:LuaEntity, mode:StationMode)
+---@field toggle_train fun(player:LuaPlayer, station:LuaEntity, mode:StationMode)
 local callbacks = {
 	toggle_truck = function() end,
 	toggle_train = function() end
@@ -119,7 +121,7 @@ local function createGui(player)
 end
 
 ---@param player LuaPlayer
----@param mode "input"|"output"
+---@param mode StationMode
 local function setMode(player, mode)
 	local data = getGui(player)
 	if not data then return end
@@ -134,7 +136,7 @@ end
 ---@param player LuaPlayer
 ---@param station LuaEntity
 ---@param cargo LuaEntity
----@param mode "input"|"output"
+---@param mode StationMode
 local function openGui(player, station, cargo, mode)
 	local data = getGui(player)
 	if not data then data = createGui(player) end

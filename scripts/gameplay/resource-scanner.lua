@@ -7,7 +7,7 @@ local pings = require(modpath.."scripts.lualib.pings")
 ---@field name LocalisedString
 
 ---@class ResourceScannerQueuedEffect
----@field type "pulse"|"ping"|"unping"|"notfound"
+---@field type '"pulse"'|'"ping"'|'"unping"'|'"notfound"
 ---@field player LuaPlayer
 ---@field surface LuaSurface
 ---@field target PingTarget
