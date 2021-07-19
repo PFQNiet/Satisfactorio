@@ -100,7 +100,8 @@ local function onSelectedArea(event)
 					player.surface.create_entity{
 						name = deconstruct,
 						position = f.position,
-						force = player.force
+						force = player.force,
+						raise_built = true
 					}.order_deconstruction(player.force, player)
 				else
 					blocked = blocked + 1
