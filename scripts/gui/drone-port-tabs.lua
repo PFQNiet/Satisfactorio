@@ -1,23 +1,23 @@
----@class TruckStationTabsGui
+---@class DronePortTabsGui
 ---@field player LuaPlayer
 ---@field entities LuaEntity[]
----@field components TruckStationTabsGuiComponents
+---@field components DronePortTabsGuiComponents
 
----@class TruckStationTabsGuiComponents
+---@class DronePortTabsGuiComponents
 ---@field tabs LuaGuiElement
 
----@alias global.gui.truck_station_tabs table<uint, TruckStationTabsGui>
----@type global.gui.truck_station_tabs
+---@alias global.gui.drone_port_tabs table<uint, DronePortTabsGui>
+---@type global.gui.drone_port_tabs
 local script_data = {}
 
 ---@param player LuaPlayer
----@return TruckStationTabsGui|nil
+---@return DronePortTabsGui|nil
 local function getGui(player)
 	return script_data[player.index]
 end
 
 ---@param player LuaPlayer
----@return TruckStationTabsGui
+---@return DronePortTabsGui
 local function createGui(player)
 	if script_data[player.index] then return script_data[player.index] end
 	local gui = player.gui.relative
@@ -26,22 +26,24 @@ local function createGui(player)
 		anchor = {
 			gui = defines.relative_gui_type.container_gui,
 			position = defines.relative_gui_position.top,
-			names = {"truck-station-box", "truck-station-fuelbox"}
+			names = {"drone-port-box", "drone-port-fuelbox"}
 		},
 		style = "tabbed_pane_with_no_side_padding_and_tabs_hidden"
 	}
 	tabs.add_tab(
-		tabs.add{
-			type = "tab",
-			caption = {"gui.station-fuel-box"}
-		},
+		tabs.add{type = "tab", caption = {"gui.station-drone"}},
 		tabs.add{type="empty-widget"}
 	)
 	tabs.add_tab(
-		tabs.add{
-			type = "tab",
-			caption = {"gui.station-cargo"}
-		},
+		tabs.add{type = "tab", caption = {"gui.station-fuel-box"}},
+		tabs.add{type="empty-widget"}
+	)
+	tabs.add_tab(
+		tabs.add{type = "tab", caption = {"gui.station-export"}},
+		tabs.add{type="empty-widget"}
+	)
+	tabs.add_tab(
+		tabs.add{type = "tab", caption = {"gui.station-import"}},
 		tabs.add{type="empty-widget"}
 	)
 
@@ -70,13 +72,15 @@ local function checkRangeForTabs(player)
 end
 
 ---@param player LuaPlayer
+---@param port LuaEntity
 ---@param fuelbox LuaEntity
----@param cargo LuaEntity
-local function openGui(player, fuelbox, cargo)
+---@param export LuaEntity
+---@param import LuaEntity
+local function openGui(player, port, fuelbox, export, import)
 	local data = getGui(player)
 	if not data then data = createGui(player) end
 
-	data.entities = {fuelbox,cargo}
+	data.entities = {port, fuelbox, export, import}
 	for i,obj in pairs(data.entities) do
 		if player.opened == obj then
 			data.components.tabs.selected_tab_index = i
@@ -109,10 +113,10 @@ return {
 	open_gui = openGui,
 	lib = {
 		on_init = function()
-			global.gui.truck_station_tabs = global.gui.truck_station_tabs or script_data
+			global.gui.drone_port_tabs = global.gui.drone_port_tabs or script_data
 		end,
 		on_load = function()
-			script_data = global.gui and global.gui.truck_station_tabs or script_data
+			script_data = global.gui and global.gui.drone_port_tabs or script_data
 		end,
 		events = {
 			[defines.events.on_gui_selected_tab_changed] = onGuiTabChange,

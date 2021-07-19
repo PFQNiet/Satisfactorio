@@ -28,6 +28,8 @@ return {
 	require(modpath.."scripts.gui.lizard-doggo").lib,
 	require(modpath.."scripts.gui.self-driving").lib,
 	require(modpath.."scripts.gui.truck-station-tabs").lib,
+	require(modpath.."scripts.gui.drone-port").lib,
+	require(modpath.."scripts.gui.drone-port-tabs").lib,
 	require(modpath.."scripts.gui.station-mode").lib,
 	require(modpath.."scripts.gui.awesome-sink").lib,
 	require(modpath.."scripts.gui.crash-sites").lib
