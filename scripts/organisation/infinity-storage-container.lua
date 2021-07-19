@@ -35,9 +35,22 @@ local function onGuiOpened(event)
 	end
 end
 
+---@param event on_entity_settings_pasted
+local function onPaste(event)
+	if event.source and event.source.valid and event.source.name == fakebox then
+		if event.destination and event.destination.valid and event.destination.name == fakebox then
+			event.destination.surface.find_entity(box, event.destination.position).copy_settings(
+				event.source.surface.find_entity(box, event.source.position),
+				game.players[event.player_index]
+			)
+		end
+	end
+end
+
 return bev.applyBuildEvents{
 	on_build = onBuilt,
 	events = {
-		[defines.events.on_gui_opened] = onGuiOpened
+		[defines.events.on_gui_opened] = onGuiOpened,
+		[defines.events.on_entity_settings_pasted] = onPaste
 	}
 }
