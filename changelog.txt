@@ -418,3 +418,4 @@ Date: 2021.07.19
     - Total revamp of GUI systems, which does unfortunately mean incompatibility with the old and busted system.
   Ease of use:
     - Improved handling of Foundation / Deconstruct Foundation so it doesn't spam "Not minable" errors any more.
+    - Fixed ability to copy-paste settings between Infinity Storage Containers
