@@ -32,5 +32,6 @@ return {
 	require(modpath.."scripts.gui.drone-port-tabs").lib,
 	require(modpath.."scripts.gui.station-mode").lib,
 	require(modpath.."scripts.gui.awesome-sink").lib,
-	require(modpath.."scripts.gui.crash-sites").lib
+	require(modpath.."scripts.gui.crash-sites").lib,
+	require(modpath.."scripts.gui.onboarding").lib
 }

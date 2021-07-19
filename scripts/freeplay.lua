@@ -1,3 +1,6 @@
+local event_handler = require "event_handler"
+local gui = require(modpath.."scripts.gui.onboarding")
+
 -- track story progress in freeplay
 ---@class global.onboarding
 ---@field step uint
@@ -68,62 +71,25 @@ local function onInit()
 		global.onboarding = script_data
 	end
 end
+
+---@param event on_player_created
 local function onPlayerCreated(event)
 	local player = game.players[event.player_index]
-	local gui = player.gui.left.add{
-		type = "frame",
-		name = "onboarding",
-		style = "goal_frame",
-		caption = {"story-message.title"}
-	}
-	local frame = gui.add{
-		type = "frame",
-		name = "content",
-		direction = "vertical",
-		style = "goal_inner_frame_with_spacing"
-	}
-	frame.add{
-		type = "label",
-		name = "goal_text",
-		style = "goal_label",
-		caption = script_data.message
-	}
-	local flow = frame.add{
-		type = "flow",
-		name = "continue_button_flow",
-		direction = "horizontal"
-	}
-	flow.add{
-		type = "empty-widget",
-		style = "filler_widget"
-	}
-	flow.add{
-		type = "button",
-		style = "submit_button",
-		name = "story-continue-button",
-		caption = {"story-message.continue"}
-	}
-	flow.visible = isContinuable(script_data.step)
-	gui.visible = script_data.message ~= ""
+	gui.update(player, script_data.message, isContinuable(script_data.step))
 end
 
+---@param message LocalisedString
+---@param button boolean
 local function setMessage(message, button)
 	script_data.message = message
 	for _,player in pairs(game.forces.player.players) do
-		local gui = player.gui.left['onboarding']
-		if message == "" then
-			gui.visible = false
-		else
-			gui.visible = true
-			gui.content.goal_text.caption = message
-			gui.content.continue_button_flow.visible = button
-			player.play_sound{path = "utility/new_objective"}
-		end
+		gui.update(player, message, button)
+		player.force.play_sound{path = "utility/new_objective"}
 	end
 end
 
-local function onSecond(event)
-	if script_data.step < 100 and script_data.wait_until > 0 and script_data.wait_until <= event.tick then
+local function onSecond()
+	if script_data.step < 100 and script_data.wait_until > 0 and script_data.wait_until <= game.tick then
 		script_data.step = script_data.step + 1
 		if script_data.step > #messages then
 			setMessage("")
@@ -143,15 +109,14 @@ local function onSecond(event)
 	end
 end
 
-local function onGuiClick(event)
-	if event.element and event.element.valid and event.element.name == "story-continue-button" and script_data.wait_until == 0 then
-		-- double-check it's a continuable step
-		if isContinuable(script_data.step) then
-			script_data.wait_until = event.tick
-			onSecond(event) -- process it immediately
-		end
+---@param player LuaPlayer
+gui.callbacks.continue = function(player)
+	if isContinuable(script_data.step) and script_data.wait_until == 0 then
+		script_data.wait_until = game.tick
+		onSecond()
 	end
 end
+
 local function onMined(event)
 	if event.entity.name == "drop-pod" and script_data.step == 4 and script_data.wait_until == 0 then
 		script_data.wait_until = event.tick + 120
@@ -160,6 +125,7 @@ local function onMined(event)
 		script_data.wait_until = event.tick + 120
 	end
 end
+
 local function onBuilt(event)
 	if event.created_entity.name == "the-hub" and script_data.step <= 6 then
 		-- if player builds HUB early, skip ahead
@@ -193,7 +159,6 @@ return {
 	},
 	events = {
 		[defines.events.on_player_created] = onPlayerCreated,
-		[defines.events.on_gui_click] = onGuiClick,
 		[defines.events.on_player_mined_entity] = onMined,
 		[defines.events.on_built_entity] = onBuilt,
 		[defines.events.on_research_finished] = onResearch

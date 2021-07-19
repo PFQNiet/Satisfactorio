@@ -83,10 +83,10 @@ return {
 	update = updateGUI,
 	lib = {
 		on_init = function()
-			global.gui.build_gun = global.gui.build_gun or script_data
+			global.gui.radiation = global.gui.radiation or script_data
 		end,
 		on_load = function()
-			script_data = global.gui and global.gui.build_gun or script_data
+			script_data = global.gui and global.gui.radiation or script_data
 		end,
 		events = {
 			[defines.events.on_player_display_resolution_changed] = onResolutionChanged,
