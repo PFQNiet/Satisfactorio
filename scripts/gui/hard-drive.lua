@@ -39,8 +39,7 @@ local function createGui(player)
 	local gui = player.gui.screen
 	local frame = gui.add{
 		type = "frame",
-		direction = "vertical",
-		style = "inner_frame_in_outer_frame"
+		direction = "vertical"
 	}
 	local title_flow = frame.add{type = "flow"}
 	local title = title_flow.add{type = "label", caption = {"gui.hard-drive-reward-title"}, style = "frame_title"}

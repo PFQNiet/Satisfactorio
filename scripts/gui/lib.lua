@@ -18,6 +18,8 @@ return {
 	require(modpath.."scripts.gui.space-elevator").lib,
 	require(modpath.."scripts.gui.mam").lib,
 	require(modpath.."scripts.gui.hard-drive").lib,
+	require(modpath.."scripts.gui.smart-splitter").lib,
+	require(modpath.."scripts.gui.programmable-splitter").lib,
 	require(modpath.."scripts.gui.map-marker").lib,
 	require(modpath.."scripts.gui.pipe-flow").lib,
 	require(modpath.."scripts.gui.valve").lib,
