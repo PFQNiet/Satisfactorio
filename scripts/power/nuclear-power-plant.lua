@@ -115,7 +115,7 @@ return bev.applyBuildEvents{
 		script_data = global.nuclear_generators or script_data
 	end,
 	on_build = onBuilt,
-	on_destrory = onRemoved,
+	on_destroy = onRemoved,
 	events = {
 		[defines.events.on_tick] = onTick
 	}
