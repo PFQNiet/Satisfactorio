@@ -1,9 +1,8 @@
--- uses global.space_elevator.elevator as table of Force index -> elevator
--- uses global.space-elevator.phase as table of Player index -> phase shown in GUI - if different to current selection then GUI needs refresh, otherwise just update counts
--- uses global.player_build_error_debounce to track force -> last error tick to de-duplicate placement errors
+local gui = require(modpath.."scripts.gui.space-elevator")
 local string = require(modpath.."scripts.lualib.string")
 local io = require(modpath.."scripts.lualib.input-output")
 local bev = require(modpath.."scripts.lualib.build-events")
+local getitems = require(modpath.."scripts.lualib.get-items-from")
 local refundEntity = require(modpath.."scripts.lualib.building-management").refundEntity
 local link = require(modpath.."scripts.lualib.linked-entity")
 
@@ -16,10 +15,8 @@ local elevator = "space-elevator"
 
 ---@class global.space_elevator
 ---@field elevator table<uint, SpaceElevator> Force ID => Elevator
----@field phase table<uint, string> Player ID => Last shown phase in GUI
 local script_data = {
-	elevator = {},
-	phase = {}
+	elevator = {}
 }
 local debounce_error = {}
 
@@ -112,108 +109,61 @@ local function completeElevator(technology)
 	end
 	launchFreighter(findElevatorForForce(technology.force), technology.research_unit_ingredients[1].name)
 end
----@param force LuaForce
-local function updateElevatorGUI(force)
-	local struct = findElevatorForForce(force)
-	if not struct then return end
-	local hub = struct.elevator
-	local phase = {name="none"}
-	local recipe
-	local submitted
-	-- if an elevator exists for this force, check its recipe and inventory
-	if hub and hub.valid then
-		recipe = hub.get_recipe()
-		if recipe then
-			phase = game.item_prototypes[recipe.products[1].name]
-			if force.technologies[phase.name].researched then
-				-- phase already completed, so reject it
-				local spill = hub.set_recipe(nil)
-				for name,count in pairs(spill) do
-					hub.surface.spill_item_stack(
-						hub.position,
-						{
-							name = name,
-							count = count,
-						},
-						true, force, false
-					)
-				end
-				if phase.name == recipe.name then
-					force.recipes[recipe.name].enabled = false
-					force.recipes[recipe.name.."-done"].enabled = true
-				end
-				force.print({"message.space-elevator-already-done",phase.name,phase.localised_name})
-				phase = {name="none"}
-			else
-				local inventory = hub.get_inventory(defines.inventory.assembling_machine_input)
-				submitted = inventory.get_contents()
-				local progress = {0,0}
-				for _,ingredient in ipairs(recipe.ingredients) do
-					if submitted[ingredient.name] then progress[1] = progress[1] + math.min(submitted[ingredient.name],ingredient.amount) end
-					progress[2] = progress[2] + ingredient.amount
-				end
-				hub.crafting_progress = progress[1] / progress[2]
+
+---@param player LuaPlayer
+local function updateElevator(player)
+	if player.opened_gui_type ~= defines.gui_type.entity then return end
+	local entity = player.opened
+	if not (entity and entity.valid and entity.name == elevator) then return end
+
+	-- check its recipe and inventory
+	local recipe = entity.get_recipe()
+	if recipe then
+		local phase = game.item_prototypes[recipe.products[1].name]
+		local force = player.force
+		if force.technologies[phase.name].researched then
+			-- phase already completed, so reject it
+			getitems.assembler(entity, player.get_main_inventory())
+			if phase.name == recipe.name then
+				force.recipes[recipe.name].enabled = false
+				force.recipes[recipe.name.."-done"].enabled = true
 			end
-		end
-	end
-
-	for _,player in pairs(force.players) do
-		local gui = player.gui.relative
-		local flow = gui['space-elevator']
-		if not flow then
-			flow = gui.add{
-				type = "flow",
-				name = "space-elevator",
-				anchor = {
-					gui = defines.relative_gui_type.assembling_machine_gui,
-					position = defines.relative_gui_position.bottom,
-					name = elevator
-				},
-				direction = "horizontal"
-			}
-			flow.add{type="empty-widget", style="filler_widget"}
-			local frame = flow.add{
-				type = "frame",
-				name = "space-elevator-frame",
-				direction = "horizontal",
-				style = "frame_with_even_paddings"
-			}
-			frame.add{
-				type = "button",
-				style = "submit_button",
-				name = "space-elevator-submit",
-				caption = {"gui.space-elevator-submit-caption"}
-			}
-			script_data.phase[player.index] = nil -- force gui refresh
-		end
-
-		-- gather up GUI element references
-		local frame = flow['space-elevator-frame']
-		local button = frame['space-elevator-submit']
-
-		-- so now we've established the GUI exists, and is populated with a table for the currently selected phase... if there is one, update the counts now
-		local ready = true
-		if phase.name ~= "none" then
+			player.print{"message.space-elevator-already-done",phase.name,phase.localised_name}
+		else
+			local inventory = entity.get_inventory(defines.inventory.assembling_machine_input)
+			local submitted = inventory.get_contents()
+			local ready = true
+			local progress = {0,0}
 			for _,ingredient in ipairs(recipe.ingredients) do
+				if submitted[ingredient.name] then progress[1] = progress[1] + math.min(submitted[ingredient.name],ingredient.amount) end
+				progress[2] = progress[2] + ingredient.amount
 				if (submitted[ingredient.name] or 0) < ingredient.amount then
 					ready = false
-					break
 				end
 			end
-			button.enabled = ready
+			entity.crafting_progress = progress[1] / progress[2]
+			gui.set_enabled(player, ready)
 		end
 	end
 end
----@param force LuaForce
+
+local function updateAllPlayers()
+	for _,p in pairs(game.players) do
+		updateElevator(p)
+	end
+end
+
 ---@param player LuaPlayer
-local function submitElevator(force, player)
-	local hub = findElevatorForForce(force).elevator
-	if not hub or not hub.valid then return end
-	local recipe = hub.get_recipe()
+---@param entity LuaEntity
+gui.callbacks.submit = function(player, entity)
+	if not (entity and entity.valid) then return end
+	local recipe = entity.get_recipe()
 	if not recipe then return end
+	local force = player.force
+
 	local phase = recipe.products[1].name
 	if force.technologies[phase].researched then return end
-	local inventory = hub.get_inventory(defines.inventory.assembling_machine_input)
+	local inventory = entity.get_inventory(defines.inventory.assembling_machine_input)
 	local submitted = inventory.get_contents()
 	for _,ingredient in pairs(recipe.ingredients) do
 		if not submitted[ingredient.name] or submitted[ingredient.name] < ingredient.amount then return end
@@ -225,28 +175,14 @@ local function submitElevator(force, player)
 			count = ingredient.amount
 		}
 	end
+
 	force.technologies[phase].researched = true
 	force.play_sound{path="utility/research_completed"}
-	for name,count in pairs(inventory.get_contents()) do
-		if player then
-			count = count - player.insert{name=name,count=count}
-		end
-		if count > 0 then
-			(player or hub).surface.spill_item_stack(
-				(player or hub).position,
-				{name = name, count = count},
-				true, force, false
-			)
-		end
-	end
-	hub.set_recipe(nil)
+
+	getitems.assembler(entity, player.get_main_inventory())
+	entity.set_recipe(nil)
 end
 
-local function on10thTick()
-	for _,force in pairs(game.forces) do
-		updateElevatorGUI(force)
-	end
-end
 ---@param event on_research_finished
 local function onResearch(event)
 	if string.starts_with(event.research.name, "space-elevator-") then
@@ -255,26 +191,22 @@ local function onResearch(event)
 end
 ---@param event on_gui_opened
 local function onGuiOpened(event)
-	if event.entity and event.entity.name == elevator then
-		local force = event.entity.force
-		if event.entity.get_recipe() == nil then
-			-- double-check for, and disable, any recipes that have completed technologies
-			for _,recipe in pairs(force.recipes) do
-				if force.technologies[recipe.name] and force.recipes[recipe.name.."-done"] and force.technologies[recipe.name].researched then
-					force.recipes[recipe.name].enabled = false
-					force.recipes[recipe.name.."-done"].enabled = true
-				end
+	local player = game.players[event.player_index]
+	if event.gui_type ~= defines.gui_type.entity then return end
+	local entity = event.entity
+	if entity.name ~= elevator then return end
+	if entity.get_recipe() == nil then
+		-- double-check for, and disable, any recipes that have completed technologies
+		local force = entity.force
+		for _,recipe in pairs(force.recipes) do
+			if force.technologies[recipe.name] and force.recipes[recipe.name.."-done"] and force.technologies[recipe.name].researched then
+				force.recipes[recipe.name].enabled = false
+				force.recipes[recipe.name.."-done"].enabled = true
 			end
-		else
-			updateElevatorGUI(force)
 		end
-	end
-end
----@param event on_gui_click
-local function onGuiClick(event)
-	if event.element and event.element.valid and event.element.name == "space-elevator-submit" then
-		local player = game.players[event.player_index]
-		submitElevator(player.force, player)
+	else
+		gui.open_gui(player, entity)
+		updateElevator(player)
 	end
 end
 
@@ -288,13 +220,12 @@ return bev.applyBuildEvents{
 		debounce_error = global.player_build_error_debounce or debounce_error
 	end,
 	on_nth_tick = {
-		[6] = on10thTick,
+		[6] = updateAllPlayers,
 	},
 	on_build = onBuilt,
 	on_destroy = onRemoved,
 	events = {
 		[defines.events.on_research_finished] = onResearch,
-		[defines.events.on_gui_opened] = onGuiOpened,
-		[defines.events.on_gui_click] = onGuiClick
+		[defines.events.on_gui_opened] = onGuiOpened
 	}
 }

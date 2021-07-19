@@ -105,7 +105,7 @@ makeSplitter{
 }
 makeSplitter{
 	name = "programmable-splitter",
-	signal_slots = 3*32,
+	signal_slots = 64,
 	order = "d",
 	ingredients = {
 		{"heavy-modular-frame",1},

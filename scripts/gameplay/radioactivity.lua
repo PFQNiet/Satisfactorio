@@ -3,6 +3,7 @@
 -- the hazmat suit protects the player from radiation damage, provided the player has filters (similar to the Gas Mask)
 
 local bev = require(modpath.."scripts.lualib.build-events")
+local gui = require(modpath.."scripts.gui.radioactivity")
 
 ---@class RadioactiveChunkData
 ---@field id uint Identifier given to this chunk
@@ -210,18 +211,6 @@ for k in pairs(radioactivity_functions) do
 	table.insert(radioactive_containers, k)
 end
 
----@param event on_player_display_resolution_changed
-local function onResolutionChanged(event)
-	local player = game.players[event.player_index]
-	local gui = player.gui.screen['radiation']
-	if gui then
-		gui.location = {
-			(player.display_resolution.width-246*player.display_scale)/2,
-			200*player.display_scale
-		}
-	end
-end
-
 ---@param entry RadioactiveChunkData
 local function updateChunk(entry)
 	local surface = entry.surface
@@ -287,49 +276,6 @@ local function updateChunk(entry)
 end
 
 ---@param player LuaPlayer
----@param radiation number
-local function updateGui(player, radiation)
-	local screen = player.gui.screen
-	if not screen['radiation'] then
-		local gui = player.gui.screen.add{
-			type = "frame",
-			name = "radiation",
-			ignored_by_interaction = true,
-			direction = "vertical",
-			caption = {"gui.radiation"},
-			style = "radioactivity_frame"
-		}
-		local flow = gui.add{
-			type = "flow",
-			name = "content",
-			direction = "horizontal",
-			style = "vertically_aligned_flow"
-		}
-		flow.add{
-			type = "sprite",
-			sprite = "tooltip-category-nuclear"
-		}
-		flow.add{
-			type = "progressbar",
-			name = "bar",
-			style = "radioactivity_progressbar"
-		}
-		gui.visible = false
-	end
-	local gui = screen['radiation']
-	if radiation < 1 then
-		if gui.visible then
-			gui.visible = false
-		end
-	else
-		if not gui.visible then
-			gui.visible = true
-			onResolutionChanged({player_index=player.index})
-		end
-		gui.content.bar.value = math.min(radiation/145,1)
-	end
-end
----@param player LuaPlayer
 ---@param do_damage boolean
 local function updatePlayerCharacter(player, do_damage)
 	if player.character then
@@ -371,7 +317,7 @@ local function updatePlayerCharacter(player, do_damage)
 			end
 		end
 
-		updateGui(player, radiation)
+		gui.update(player, radiation)
 	end
 end
 
@@ -445,9 +391,6 @@ return bev.applyBuildEvents{
 	-- removing entities will invalidate them, which will be detected when the chunk is scanned
 	events = {
 		[defines.events.on_chunk_generated] = onChunkGenerated,
-		[defines.events.on_tick] = onTick,
-
-		[defines.events.on_player_display_resolution_changed] = onResolutionChanged,
-		[defines.events.on_player_display_scale_changed] = onResolutionChanged
+		[defines.events.on_tick] = onTick
 	}
 }

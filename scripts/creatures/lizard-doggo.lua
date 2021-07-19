@@ -1,15 +1,15 @@
 -- Lizard Doggo - tameable entity
 -- By default it wanders, but it will flee from players that come too close
 -- If a Paleberry is on the ground nearby, it will instead go to it and eat one from the item stack, becoming tamed
--- Once tamed it will follow its owner and gains a GUI. The GUI sometimes gives a free item, and can also be used to give "follow" and "stay" commands
+-- Once tamed it will follow its owner and gains a GUI. The GUI sometimes gives a free item, and can also be used to give a "stay" command
 -- If a tamed doggo gets too far from its owner it will go back to wandering but will be on the lookout for its owner to follow them again
 
 -- uses global.small_biter.lizard-doggos to track all of this, indexed by unit_number
 -- uses global.small_biter.dropped-bait to track dropped berries, as they sadly lack a "last_user"
--- uses global.small_biter.lizard-doggo-gui to track which doggo a player has opened
 
 local bev = require(modpath.."scripts.lualib.build-events")
 local loot = require(modpath.."constants.doggo-loot")
+local gui = require(modpath.."scripts.gui.lizard-doggo")
 
 local doggo = "lizard-doggo"
 local bait = "paleberry"
@@ -31,21 +31,11 @@ local bait = "paleberry"
 
 ---@class global.pets
 ---@field lizard_doggos table<uint, DoggoData> Indexed by unit number of the doggo
----@field lizard_doggo_gui table<uint, uint> Player index => doggo unit number
 ---@field dropped_bait table<uint64, BaitData> Entity destroyed reg number => bait information
 local script_data = {
 	lizard_doggos = {},
-	lizard_doggo_gui = {},
 	dropped_bait = {}
 }
-
----@param player LuaPlayer
-local function closeGui(player)
-	local gui = player.gui.screen['lizard-doggo']
-	if gui then gui.visible = false end
-	player.opened = nil
-	script_data.lizard_doggo_gui[player.index] = nil
-end
 
 ---@param event on_build
 local function onBuilt(event)
@@ -66,6 +56,7 @@ local function onBuilt(event)
 		}
 	end
 end
+
 ---@param event on_player_dropped_item
 local function onDroppedItem(event)
 	if event.entity.stack.name == bait then
@@ -76,17 +67,20 @@ local function onDroppedItem(event)
 		}
 	end
 end
+
 ---@param event on_entity_destroyed
 local function onEntityDestroyed(event)
 	if script_data.dropped_bait[event.registration_number] then
 		script_data.dropped_bait[event.registration_number] = nil
 	end
 end
+
 ---@param event on_entity_died
 local function onEntityDied(event)
 	if event.entity.valid and event.entity.name == doggo then
 		local doggos = script_data.lizard_doggos
-		local item = doggos[event.entity.unit_number] and doggos[event.entity.unit_number].helditem
+		local data = doggos[event.entity.unit_number]
+		local item = data and data.helditem
 		if item then
 			event.entity.surface.spill_item_stack(
 				event.entity.position,
@@ -94,13 +88,8 @@ local function onEntityDied(event)
 				true, nil, false
 			)
 		end
+		gui.close_all_gui(data)
 		doggos[event.entity.unit_number] = nil
-		-- find any players that had this pet's GUI open and close it
-		for pid,uid in pairs(script_data.lizard_doggo_gui) do
-			if uid == event.entity.unit_number then
-				closeGui(game.players[pid])
-			end
-		end
 	end
 end
 
@@ -119,23 +108,11 @@ local function generateDoggoLoot(struct)
 		end
 	end
 end
+
 ---@param struct DoggoData
-local function clearDoggoLoot(struct)
+local function setupNextDoggoLoot(struct)
 	struct.helditem = nil
 	struct.itemtimer = game.tick + math.random(8*60*60,15*60*60) -- 8-15 minutes
-	-- find any player with this doggo open and clear their GUI
-	for pid,uid in pairs(script_data.lizard_doggo_gui) do
-		if uid == struct.entity.unit_number then
-			-- GUI can be assumed to exist if the player has it open
-			local gui = game.players[pid].gui.screen['lizard-doggo'].content.table.right.loot
-			local sprite = gui['view-lizard-doggo-loot']
-			local button = gui['take-lizard-doggo-loot']
-			sprite.sprite = nil
-			sprite.number = nil
-			sprite.tooltip = ""
-			button.enabled = false
-		end
-	end
 end
 
 --#region Doggo AI
@@ -181,7 +158,7 @@ local function eatFood(struct, berry)
 	else
 		-- eat the berry and become tamed by whoever placed it
 		struct.owner = berry.player
-		struct.itemtimer = game.tick + math.random(8*60*60,15*60*60) -- 8-15 minutes
+		setupNextDoggoLoot(struct)
 		if target.stack.count == 1 then
 			target.destroy()
 		else
@@ -296,102 +273,10 @@ local function onInteract(event)
 	if player.selected and player.selected.valid and player.selected.name == doggo then
 		if player.can_reach_entity(player.selected) then
 			local struct = script_data.lizard_doggos[player.selected.unit_number]
-			if struct and struct.owner.force == player.force then
-				local gui = player.gui.screen
-				if not gui['lizard-doggo'] then
-					local frame = gui.add{
-						type = "frame",
-						name = "lizard-doggo",
-						direction = "vertical",
-						style = "inner_frame_in_outer_frame"
-					}
-					local title_flow = frame.add{type = "flow", name = "title_flow"}
-					local title = title_flow.add{type = "label", caption = {"entity-name.small-biter"}, style = "frame_title"}
-					title.drag_target = frame
-					local pusher = title_flow.add{type = "empty-widget", style = "draggable_space_in_window_title"}
-					pusher.drag_target = frame
-					title_flow.add{type = "sprite-button", style = "frame_action_button", sprite = "utility/close_white", name = "lizard-doggo-close"}
-
-					local content = frame.add{
-						type = "frame",
-						style = "inside_shallow_frame_with_padding",
-						direction = "vertical",
-						name = "content"
-					}
-					local columns = content.add{
-						type = "flow",
-						direction = "horizontal",
-						name = "table",
-						style = "horizontal_flow_with_extra_spacing"
-					}
-					local col1 = columns.add{
-						type = "frame",
-						direction = "vertical",
-						name = "left",
-						style = "deep_frame_in_shallow_frame"
-					}
-					col1.add{
-						type = "entity-preview",
-						name = "preview",
-						style = "entity_button_base"
-					}
-					local col2 = columns.add{
-						type = "flow",
-						direction = "vertical",
-						name = "right"
-					}
-					col2.add{
-						type = "label",
-						style = "heading_2_label",
-						caption = {"gui.lizard-doggo-loot"}
-					}
-					local lootbox = col2.add{
-						type = "flow",
-						direction = "horizontal",
-						name = "loot",
-						style = "vertically_aligned_flow"
-					}
-					lootbox.add{
-						type = "sprite-button",
-						style = "slot_button_in_shallow_frame",
-						name = "view-lizard-doggo-loot",
-						mouse_button_filter = {"left"}
-					}
-					lootbox.add{
-						type = "button",
-						name = "take-lizard-doggo-loot",
-						caption = {"gui.lizard-doggo-take"}
-					}
-					col2.add{type="line",direction="horizontal"}
-					col2.add{
-						type = "button",
-						name = "stop-lizard-doggo",
-						caption = {"gui.lizard-doggo-stay"},
-						tooltip = {"gui.lizard-doggo-stay-description"}
-					}
-				end
-
-				-- roll for loot!
-				if not struct.helditem and struct.itemtimer < event.tick then
-					generateDoggoLoot(struct)
-				end
-
-				local frame = gui['lizard-doggo']
-				local content_table = frame.content.table
-				content_table.left.preview.entity = struct.entity
-				local lootbtn = content_table.right.loot['view-lizard-doggo-loot']
-				lootbtn.tooltip = struct.helditem and struct.helditem.localised_name or ""
-				lootbtn.sprite = struct.helditem and "item/"..struct.helditem.name or nil
-				lootbtn.number = struct.helditem and struct.helditem.count or nil
-				content_table.right.loot['take-lizard-doggo-loot'].enabled = struct.helditem and true or false
-
-				frame.visible = true
-				player.opened = frame
-				frame.force_auto_center()
-				script_data.lizard_doggo_gui[player.index] = struct.entity.unit_number
+			if struct and struct.owner and struct.owner.force == player.force then
+				gui.open_gui(player, struct)
 			end
 		else
-			-- create flying text like when trying to mine normally
 			player.create_local_flying_text{
 				text = {"cant-reach"},
 				create_at_cursor = true
@@ -402,59 +287,40 @@ local function onInteract(event)
 		end
 	end
 end
-local function onGuiClosed(event)
-	if event.element and event.element.valid and event.element.name == "lizard-doggo" then
-		closeGui(game.players[event.player_index])
-	end
-end
-local function onGuiClick(event)
-	if not (event.element and event.element.valid) then return end
-	local player = game.players[event.player_index]
-	if event.element.name == "lizard-doggo-close" then
-		closeGui(player)
 
-	elseif event.element.name == "take-lizard-doggo-loot" or (event.element.name == "view-lizard-doggo-loot" and event.shift) then
-		local struct = script_data.lizard_doggos[script_data.lizard_doggo_gui[player.index]]
-		if struct and struct.owner == player and struct.entity and struct.entity.valid and struct.helditem then
-			local transferred = player.insert(struct.helditem)
-			if transferred == struct.helditem.count then
-				clearDoggoLoot(struct)
-			else
-				struct.helditem.count = struct.helditem.count - transferred
-				-- find any player with this doggo open and update the number shown in their GUI
-				for pid,uid in pairs(script_data.lizard_doggo_gui) do
-					if uid == struct.entity.unit_number then
-						-- GUI can be assumed to exist if the player has it open
-						local gui = game.players[pid].gui.screen['lizard-doggo'].content.table.right.loot
-						local sprite = gui['view-lizard-doggo-loot']
-						sprite.number = struct.helditem.count
-					end
-				end
-			end
-		end
-
-	elseif event.element.name == "view-lizard-doggo-loot" then -- click without shift
-		local struct = script_data.lizard_doggos[script_data.lizard_doggo_gui[player.index]]
-		if struct and struct.owner == player and player.cursor_stack and not player.cursor_stack.valid_for_read and struct.entity and struct.entity.valid and struct.helditem then
-			player.cursor_stack.set_stack(struct.helditem)
-			clearDoggoLoot(struct)
-		end
-	elseif event.element.name == "stop-lizard-doggo" then
-		local struct = script_data.lizard_doggos[script_data.lizard_doggo_gui[player.index]]
-		if struct and struct.owner == player and struct.entity and struct.entity.valid then
-			stayPut(struct.entity, 30*60)
-			closeGui(player)
-		end
+---@param player LuaPlayer
+---@param struct DoggoData
+gui.callbacks.fast_take_loot = function(player, struct)
+	local helditem = struct.helditem
+	if not helditem then return end
+	local inserted = player.insert(helditem)
+	if inserted == helditem.count then
+		setupNextDoggoLoot(struct)
+	else
+		helditem.count = helditem.count - inserted
 	end
 end
 
-local function onMove(event)
-	-- if the player moves and has a pet open, check that the pet can still be reached
-	local player = game.players[event.player_index]
-	local opened = script_data.lizard_doggo_gui[player.index]
-	if opened then
-		if not player.can_reach_entity(script_data.lizard_doggos[opened].entity) then
-			closeGui(player)
+---@param player LuaPlayer
+---@param struct DoggoData
+gui.callbacks.take_loot = function(player, struct)
+	local helditem = struct.helditem
+	if not helditem then return end
+	if player.cursor_stack.valid_for_read then return end
+	player.cursor_stack.set_stack(helditem)
+	setupNextDoggoLoot(struct)
+end
+
+---@param struct DoggoData
+gui.callbacks.stay = function(struct)
+	if not struct.entity.valid then return end
+	stayPut(struct.entity, 30*60)
+end
+
+local function everyFiveSeconds()
+	for _,struct in pairs(script_data.lizard_doggos) do
+		if struct.owner and not struct.helditem and struct.itemtimer < game.tick then
+			generateDoggoLoot(struct)
 		end
 	end
 end
@@ -467,16 +333,15 @@ return bev.applyBuildEvents{
 	on_load = function()
 		script_data = global.pets or script_data
 	end,
+	on_nth_tick = {
+		[300] = everyFiveSeconds
+	},
 	events = {
 		[defines.events.on_player_dropped_item] = onDroppedItem,
 		[defines.events.on_entity_destroyed] = onEntityDestroyed,
 
 		[defines.events.on_entity_died] = onEntityDied,
 		[defines.events.on_ai_command_completed] = onCommandCompleted,
-		["interact"] = onInteract,
-		[defines.events.on_gui_closed] = onGuiClosed,
-		[defines.events.on_gui_click] = onGuiClick,
-
-		[defines.events.on_player_changed_position] = onMove
+		["interact"] = onInteract
 	}
 }

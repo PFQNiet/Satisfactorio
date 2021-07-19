@@ -1,7 +1,4 @@
--- uses global.train.stations to list all train stations {station, stop} - in buckets modulo 45
--- uses global.train.platforms to list freight platforms {entity, mode}
--- uses global.player_build_error_debounce to track force -> last error tick to de-duplicate placement errors
--- uses global.train.accounted to track train IDs that have already been counted by a station in the last cycle
+local gui = require(modpath.."scripts.gui.station-mode")
 local io = require(modpath.."scripts.lualib.input-output")
 local bev = require(modpath.."scripts.lualib.build-events")
 local fastTransfer = require(modpath.."scripts.organisation.containers").fastTransfer
@@ -32,18 +29,16 @@ local collision = "platform-collision"
 ---@field type "platform"
 ---@field platform LuaEntity
 ---@field storage LuaEntity|nil
----@field mode "input"|"output"
+---@field mode StationMode
 ---@field next TrainPlatformData|nil
 ---@field previous TrainPlatformData|TrainStationData
 
 ---@class global.trains
 ---@field stations table<uint, table<uint, TrainStationData>> Map of station unit_number to station data, bucketed modulo 45
 ---@field platforms table<uint, TrainPlatformData> Map of platform unit_number to platfrom data
----@field accounted table<uint, boolean> List of trains that have been accounted for this cycle
 local script_data = {
 	stations = {},
-	platforms = {},
-	accounted = {}
+	platforms = {}
 }
 for i=0,45-1 do script_data.stations[i] = {} end
 
@@ -444,111 +439,17 @@ local function onGuiOpened(event)
 
 	if entity.name == freight.."-box" or entity.name == fluid.."-tank" then
 		local struct = getPlatformByStorage(entity)
-		local unloading = struct.mode == "output"
-		-- create additional GUI for switching input/output mode (re-use truck station GUI)
-		local gui = player.gui.relative
-		if not gui['train-platform-gui'] then
-			local frame = gui.add{
-				type = "frame",
-				name = "train-platform-gui",
-				anchor = {
-					gui = entity.name == freight.."-box" and defines.relative_gui_type.container_gui or defines.relative_gui_type.storage_tank_gui,
-					position = defines.relative_gui_position.right,
-					names = {freight.."-box", fluid.."-tank"}
-				},
-				direction = "vertical",
-				caption = {"gui.train-platform-gui-title"}
-			}
-			local inner = frame.add{
-				type = "frame",
-				name = "content",
-				style = "inside_shallow_frame_with_padding",
-				direction = "vertical"
-			}
-
-			local cols = inner.add{
-				type = "flow",
-				name = "mode-select",
-				direction = "horizontal",
-				style = "horizontal_flow_with_extra_spacing"
-			}
-			local col = cols.add{
-				type = "flow",
-				name = "load",
-				direction = "vertical",
-				style = "horizontally_aligned_flow"
-			}
-			col.add{
-				type = "sprite-button",
-				name = "train-platform-mode-load",
-				sprite = "utility/import",
-				style = "station_mode_button"..(unloading and "" or "_pressed")
-			}
-			col.add{
-				type = "label",
-				name = "label",
-				caption = {"gui.train-platform-mode-load"},
-				style = unloading and "label" or "caption_label"
-			}
-
-			col = cols.add{
-				type = "flow",
-				name = "unload",
-				direction = "vertical",
-				style = "horizontally_aligned_flow"
-			}
-			col.add{
-				type = "sprite-button",
-				name = "train-platform-mode-unload",
-				sprite = "utility/export",
-				style = "station_mode_button"..(unloading and "_pressed" or "")
-			}
-			col.add{
-				type = "label",
-				name = "label",
-				caption = {"gui.train-platform-mode-unload"},
-				style = unloading and "caption_label" or "label"
-			}
-
-			inner.add{
-				type = "empty-widget",
-				style = "vertical_lines_slots_filler"
-			}
-		else
-			-- anchor may need reassigning because it could be container or storage tank
-			gui['train-platform-gui'].anchor = {
-				gui = entity.name == freight.."-box" and defines.relative_gui_type.container_gui or defines.relative_gui_type.storage_tank_gui,
-				position = defines.relative_gui_position.right,
-				names = {freight.."-box", fluid.."-tank"}
-			}
-			local cols = gui['train-platform-gui'].content['mode-select']
-			toggleModeButtons(cols, unloading)
-		end
+		gui.open_gui(player, struct.platform, struct.storage, struct.mode)
 	end
 end
-local function onGuiClick(event)
-	if not event.element.valid then return end
-	if event.element.name ~= "train-platform-mode-load" and event.element.name ~= "train-platform-mode-unload" then return end
 
-	local player = game.players[event.player_index]
-	local data = getPlatformByStorage(player.opened)
-	if event.element.name == "train-platform-mode-load" then
-		data.mode = "input"
-		for _,p in pairs(game.players) do
-			if p.opened == player.opened then
-				local cols = p.gui.relative['train-platform-gui'].content['mode-select']
-				toggleModeButtons(cols, false)
-			end
-		end
-	else
-		data.mode = "output"
-		for _,p in pairs(game.players) do
-			if p.opened == player.opened then
-				local cols = p.gui.relative['train-platform-gui'].content['mode-select']
-				toggleModeButtons(cols, true)
-			end
-		end
-	end
+---@param player LuaPlayer
+---@param platform LuaEntity
+---@param mode StationMode
+gui.callbacks.toggle_train = function(player, platform, mode)
+	local data = getPlatformOrStation(platform)
+	if not data then return end
+	data.mode = mode
 end
 
 local function onTick(event)
@@ -674,7 +575,6 @@ return bev.applyBuildEvents{
 	on_destroy = onRemoved,
 	events = {
 		[defines.events.on_gui_opened] = onGuiOpened,
-		[defines.events.on_gui_click] = onGuiClick,
 
 		[defines.events.on_tick] = onTick,
 

@@ -54,6 +54,7 @@ style['vertical_flow_with_extra_spacing'] = {
 style['horizontally_aligned_flow'] = {
 	type = "vertical_flow_style",
 	parent = "vertical_flow",
+	horizontally_stretchable = "on",
 	horizontal_align = "center"
 }
 style['vertically_aligned_flow'] = {
@@ -116,7 +117,8 @@ style['build_gun_frame'] = {
 	parent = "blurry_frame",
 	width = 540,
 	use_header_filler = false,
-	horizontally_stretchable = "off"
+	horizontally_stretchable = "off",
+	vertical_flow_style = style['horizontally_aligned_flow']
 }
 style['build_gun_slot'] = {
 	type = "button_style",
@@ -132,7 +134,8 @@ style['build_gun_progressbar'] = {
 style['radioactivity_frame'] = {
 	type = "frame_style",
 	parent = "blurry_frame",
-	use_header_filler = false
+	use_header_filler = false,
+	horizontal_flow_style = style['vertically_aligned_flow']
 }
 style['radioactivity_progressbar'] = {
 	type = "progressbar_style",
@@ -229,6 +232,16 @@ style['hub_milestone_frame'] = {
 	parent = "frame_without_filler",
 	horizontally_stretchable = "off"
 }
+style['hub_milestone_table'] = {
+	type = "table_style",
+	parent = "bordered_table",
+	column_alignments = {
+		{
+			column = 3,
+			alignment = "right"
+		}
+	}
+}
 
 style['recipe_browser_scroll_pane'] = {
 	type = "scroll_pane_style",
@@ -290,6 +303,11 @@ style['stretched_textbox'] = {
 	type = "textbox_style",
 	parent = "textbox",
 	maximal_width = 0,
+	horizontally_stretchable = "on"
+}
+style['stretched_slider'] = {
+	type = "slider_style",
+	parent = "slider",
 	horizontally_stretchable = "on"
 }
 style['multiline_label'] = {

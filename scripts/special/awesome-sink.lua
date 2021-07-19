@@ -1,9 +1,24 @@
+local gui = require(modpath.."scripts.gui.awesome-sink")
+
 -- sink is a furnace that produces awesome-points "fluid"
 -- n = tickets earned so far, next ticket earned at 500*floor(n/3)^2+1000 points
 
+---@class AwesomeSinkData
+---@field tickets AwesomeSinkTicketData
+---@field points AwesomeSinkPointData
+---@field tonext uint64
+
+---@class AwesomeSinkTicketData
+---@field earned uint
+---@field printed uint
+
+---@class AwesomeSinkPointData
+---@field earned uint64
+---@field per_minute uint
+
 ---@class global.awesome
 ---@field sinks table<uint,LuaEntity> Sinks indexed by unit number
----@field coupons number[] Total earned, total unprinted, points towards next, points per minute
+---@field coupons table<uint,AwesomeSinkData> Map of force index to earning data
 local script_data = {
 	sinks = {},
 	coupons = {}
@@ -13,19 +28,36 @@ local script_data = {
 local function pointsToNext(earned)
 	return 500 * math.floor(earned / 3)^2 + 1000
 end
+
+---@param force LuaForce
+---@return AwesomeSinkData
+local function getStruct(force)
+	if not script_data.coupons[force.index] then
+		script_data.coupons[force.index] = {
+			tickets = {
+				earned = 0,
+				printed = 0
+			},
+			points = {
+				earned = 0,
+				per_minute = 0
+			},
+			tonext = pointsToNext(0)
+		}
+	end
+	return script_data.coupons[force.index]
+end
+
 ---@param force LuaForce
 ---@param points uint
 local function gainPoints(force, points)
-	if not script_data.coupons[force.index] then script_data.coupons[force.index] = {0,0,0,0} end
-	local entry = script_data.coupons[force.index]
-	entry[3] = entry[3] + points
-	entry[4] = entry[4] + points*12 -- updated every 5 seconds, so 12x is per minute
-	local tonext = pointsToNext(entry[1])
-	while entry[3] > tonext do
-		entry[1] = entry[1] + 1
-		entry[2] = entry[2] + 1
-		entry[3] = entry[3] - tonext
-		tonext = pointsToNext(entry[1])
+	local entry = getStruct(force)
+	entry.points.earned = entry.points.earned + points
+	entry.points.per_minute = entry.points.per_minute + points*12 -- reset every 5 seconds, so 12x is per minute
+	while entry.points.earned > entry.tonext do
+		entry.tickets.earned = entry.tickets.earned + 1
+		entry.points.earned = entry.points.earned - entry.tonext
+		entry.tonext = pointsToNext(entry.tickets.earned)
 	end
 end
 
@@ -65,133 +97,40 @@ local function onRemoved(event)
 	end
 end
 
----@param player LuaPlayer
-local function updatePlayerGui(player)
-	if player.opened and player.opened_gui_type == defines.gui_type.entity and player.opened.valid and player.opened.name == base then
-		-- GUI can be assumed to exist
-		local gui = player.gui.relative['awesome-sink'].content
-		local table = gui.table
-		local coupons = script_data.coupons[player.force.index] or {0,0,0,0}
-		table.tickets.caption = util.format_number(coupons[2])
-		table.gain.caption = util.format_number(coupons[4])
-		table.tonext.caption = util.format_number(pointsToNext(coupons[1]) - coupons[3])
-		gui.bottom['awesome-sink-print'].enabled = coupons[2] > 0
-	end
-end
-local function updateAllPlayerGuis()
-	for _,player in pairs(game.players) do
-		updatePlayerGui(player)
-	end
-end
-
 ---@param event on_gui_opened
 local function onGuiOpened(event)
 	local player = game.players[event.player_index]
 	if event.gui_type == defines.gui_type.entity and event.entity.valid and event.entity.name == base then
-		-- create additional GUI for showing points and redeeming coupons
-		local gui = player.gui.relative
-		if not gui['awesome-sink'] then
-			local force_idx = player.force.index
-			local coupons = script_data.coupons[force_idx] or {0,0,0,0}
-			local frame = gui.add{
-				type = "frame",
-				name = "awesome-sink",
-				anchor = {
-					gui = defines.relative_gui_type.furnace_gui,
-					position = defines.relative_gui_position.right,
-					name = base
-				},
-				direction = "vertical",
-				caption = {"gui.awesome-sink-gui-title"}
-			}
-			local inner = frame.add{
-				type = "frame",
-				name = "content",
-				style = "inside_shallow_frame_with_padding_and_spacing",
-				direction = "vertical"
-			}
-			local table = inner.add{
-				type = "table",
-				name = "table",
-				style = "awesome_sink_table",
-				column_count = 2
-			}
-			table.add{
-				type = "label",
-				caption = {"gui.awesome-sink-printable-coupons"},
-				style = "bold_label"
-			}
-			table.add{
-				type = "label",
-				name = "tickets",
-				caption = util.format_number(coupons[2])
-			}
-
-			table.add{
-				type = "label",
-				caption = {"gui.awesome-sink-gain"}
-			}
-			table.add{
-				type = "label",
-				name = "gain",
-				caption = util.format_number(coupons[4] or 0)
-			}
-
-			table.add{
-				type = "label",
-				caption = {"gui.awesome-sink-to-next"}
-			}
-			table.add{
-				type = "label",
-				name = "tonext",
-				caption = util.format_number(pointsToNext(coupons[1]) - coupons[3])
-			}
-
-			local bottom = inner.add{
-				type = "flow",
-				name = "bottom"
-			}
-			bottom.add{type="empty-widget", style="filler_widget"}
-			local button = bottom.add{
-				type = "button",
-				style = "submit_button",
-				name = "awesome-sink-print",
-				caption = {"gui.awesome-sink-print"}
-			}
-			button.enabled = coupons[2] > 0
-			inner.add{
-				type = "empty-widget",
-				style = "vertical_lines_slots_filler"
-			}
-		else
-			updatePlayerGui(player)
-		end
+		gui.open_gui(player, getStruct(player.force))
 	end
 end
----@param event on_gui_click
-local function onGuiClick(event)
-	if event.element.valid and event.element.name == "awesome-sink-print" then
-		local player = game.players[event.player_index]
-		local force_idx = player.force.index
-		local inventory = player.get_main_inventory()
-		local caninsert = inventory.get_insertable_count("coin")
-		local print = script_data.coupons[force_idx] and script_data.coupons[force_idx][2] or 0
-		if print > 0 then
-			if caninsert == 0 then
-				print = 0
-				player.print({"inventory-restriction.player-inventory-full",{"item-name.coin"},{"inventory-full-message.main"}})
-			else
-				if print > caninsert then
-					print = caninsert
-				end
-				player.force.print({"message.received-awesome-coupons",player.name,print})
-			end
-			if print > 0 then
-				inventory.insert{name="coin",count=print}
-			end
-			script_data.coupons[force_idx][2] = script_data.coupons[force_idx][2] - print
-			updateAllPlayerGuis()
+
+---@param col Color
+---@return string formatted R,G,B
+local function formatColor(col)
+	return table.concat({col.r, col.g, col.b}, ",")
+end
+
+---@param player LuaPlayer
+gui.callbacks.print = function(player)
+	local inventory = player.get_main_inventory()
+	local caninsert = inventory.get_insertable_count("coin")
+	local data = getStruct(player.force)
+	local printable = data.tickets.earned - data.tickets.printed
+	if printable > 0 then
+		if caninsert == 0 then
+			player.print{"inventory-restriction.player-inventory-full",{"item-name.coin"},{"inventory-full-message.main"}}
+			return
 		end
+		if printable > caninsert then
+			printable = caninsert
+		end
+		if printable > 0 then
+			player.force.print{"message.received-awesome-coupons",formatColor(player.chat_color),player.name,printable}
+			inventory.insert{name="coin",count=printable}
+			data.tickets.printed = data.tickets.printed + printable
+		end
+		gui.update_gui(player.force, data)
 	end
 end
 
@@ -205,19 +144,20 @@ return bev.applyBuildEvents{
 	on_nth_tick = {
 		[300] = function()
 			for _,entry in pairs(script_data.coupons) do
-				entry[4] = 0
+				entry.points.per_minute = 0
 			end
 			for _,sink in pairs(script_data.sinks) do
 				processSink(sink)
 			end
-			updateAllPlayerGuis()
+			for _,force in pairs(game.forces) do
+				gui.update_gui(force, getStruct(force))
+			end
 		end
 	},
 	on_build = onBuilt,
 	on_destroy = onRemoved,
 	events = {
-		[defines.events.on_gui_opened] = onGuiOpened,
-		[defines.events.on_gui_click] = onGuiClick
+		[defines.events.on_gui_opened] = onGuiOpened
 	}
 }
 

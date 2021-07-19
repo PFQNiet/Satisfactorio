@@ -1,3 +1,7 @@
+local gui = {
+	mode = require(modpath.."scripts.gui.station-mode"),
+	tabs = require(modpath.."scripts.gui.truck-station-tabs")
+}
 -- uses global.trucks.stations to list all truck stations
 local io = require(modpath.."scripts.lualib.input-output")
 local bev = require(modpath.."scripts.lualib.build-events")
@@ -15,7 +19,7 @@ local fuelbox_pos = {-4,2.5}
 ---@field base LuaEntity ElectricEnergyInterface
 ---@field fuel LuaEntity Container
 ---@field cargo LuaEntity Container
----@field mode "input"|"output"
+---@field mode StationMode
 
 ---@alias TruckStationBucket table<uint, TruckStationData>
 
@@ -80,40 +84,14 @@ local function onRemoved(event)
 	end
 end
 
----@param player LuaPlayer
----@param gui LuaGuiElement
----@param fuel LuaEntity
----@param cargo LuaEntity
-local function checkRangeForTabs(player, gui, fuel, cargo)
-	if not (gui and gui.valid) then return end
-	for i,obj in pairs({fuel,cargo}) do
-		local reach = player.can_reach_entity(obj)
-		local tab = gui.tabs[i].tab
-		tab.enabled = reach
-		if reach then tab.tooltip = "" else tab.tooltip = {"cant-reach"} end
-	end
-end
-
----@param cols LuaGuiElement
----@param unload boolean
-local function toggleModeButtons(cols, unload)
-	local col = cols['load']
-	col.children[1].style = "station_mode_button"..(unload and "" or "_pressed")
-	col.label.style = unload and "label" or "caption_label"
-
-	col = cols['unload']
-	col.children[1].style = "station_mode_button"..(unload and "_pressed" or "")
-	col.label.style = unload and "caption_label" or "label"
-end
-
 ---@param event on_gui_opened
 local function onGuiOpened(event)
 	local player = game.players[event.player_index]
-	if event.gui_type ~= defines.gui_type.entity then return end
-	if not (event.entity and event.entity.valid) then return end
-	if event.entity.name == base then
+	local entity = event.entity
+	if not (entity and entity.valid) then return end
+	if entity.name == base then
 		-- opening the base instead opens the storage
-		local data = getStruct(event.entity)
+		local data = getStruct(entity)
 		if player.can_reach_entity(data.cargo) then
 			player.opened = data.cargo
 		else
@@ -127,171 +105,25 @@ local function onGuiOpened(event)
 			}
 		end
 	end
-	if event.entity.name ~= storage and event.entity.name ~= fuelbox then return end
-	local floor = event.entity.surface.find_entity(base, event.entity.position)
+	if entity.name ~= storage and entity.name ~= fuelbox then return end
+
+	local floor = entity.surface.find_entity(base, entity.position)
 	local data = getStruct(floor)
-	local gui = player.gui.relative
-	if event.entity.name == storage then
-		local unloading = data.mode == "output"
-		-- create additional GUI for switching input/output mode
-		if not gui['truck-station-gui'] then
-			local frame = gui.add{
-				type = "frame",
-				name = "truck-station-gui",
-				anchor = {
-					gui = defines.relative_gui_type.container_gui,
-					position = defines.relative_gui_position.right,
-					name = storage
-				},
-				direction = "vertical",
-				caption = {"gui.truck-station-gui-title"}
-			}
-			local inner = frame.add{
-				type = "frame",
-				name = "content",
-				style = "inside_shallow_frame_with_padding",
-				direction = "vertical"
-			}
-
-			local cols = inner.add{
-				type = "flow",
-				name = "mode-select",
-				direction = "horizontal",
-				style = "horizontal_flow_with_extra_spacing"
-			}
-			local col = cols.add{
-				type = "flow",
-				name = "load",
-				direction = "vertical",
-				style = "horizontally_aligned_flow"
-			}
-			col.add{
-				type = "sprite-button",
-				name = "truck-station-mode-load",
-				sprite = "utility/import",
-				style = "station_mode_button"..(unloading and "" or "_pressed")
-			}
-			col.add{
-				type = "label",
-				name = "label",
-				caption = {"gui.truck-station-mode-load"},
-				style = unloading and "label" or "caption_label"
-			}
-
-			col = cols.add{
-				type = "flow",
-				name = "unload",
-				direction = "vertical",
-				style = "horizontally_aligned_flow"
-			}
-			col.add{
-				type = "sprite-button",
-				name = "truck-station-mode-unload",
-				sprite = "utility/export",
-				style = "station_mode_button"..(unloading and "_pressed" or "")
-			}
-			col.add{
-				type = "label",
-				name = "label",
-				caption = {"gui.truck-station-mode-unload"},
-				style = unloading and "caption_label" or "label"
-			}
-
-			inner.add{
-				type = "empty-widget",
-				style = "vertical_lines_slots_filler"
-			}
-		else
-			gui['truck-station-gui'].visible = true
-			local cols = gui['truck-station-gui'].content['mode-select']
-			toggleModeButtons(cols, unloading)
-		end
+	if entity.name == storage then
+		gui.mode.open_gui(player, floor, entity, data.mode)
 	end
 
 	-- create fake tabs for switching to the fuel crate
-	if not gui['truck-station-tabs'] then
-		local tabs = gui.add{
-			type = "tabbed-pane",
-			name = "truck-station-tabs",
-			anchor = {
-				gui = defines.relative_gui_type.container_gui,
-				position = defines.relative_gui_position.top,
-				names = {storage, fuelbox}
-			},
-			style = "tabbed_pane_with_no_side_padding_and_tabs_hidden"
-		}
-		tabs.add_tab(
-			tabs.add{
-				type = "tab",
-				caption = {"gui.station-fuel-box"}
-			},
-			tabs.add{type="empty-widget"}
-		)
-		tabs.add_tab(
-			tabs.add{
-				type = "tab",
-				caption = {"gui.station-cargo"}
-			},
-			tabs.add{type="empty-widget"}
-		)
-	end
-	gui['truck-station-tabs'].selected_tab_index = event.entity.name == fuelbox and 1 or 2
-	checkRangeForTabs(player, gui['truck-station-tabs'], data.fuel, data.cargo)
+	gui.tabs.open_gui(player, data.fuel, data.cargo)
 end
 
----@param event on_player_changed_position
-local function onMove(event)
-	-- update tab enabled state based on reach
-	local player = game.players[event.player_index]
-	if player.opened_gui_type ~= defines.gui_type.entity then return end
-	local entity = player.opened
-	if entity.name ~= storage and entity.name ~= fuelbox then return end
-	local floor = entity.surface.find_entity(base, entity.position)
-	local data = getStruct(floor)
-	local gui = player.gui.relative
-	checkRangeForTabs(player, gui['truck-station-tabs'], data.fuel, data.cargo)
-end
-
----@param event on_gui_click
-local function onGuiClick(event)
-	if not event.element.valid then return end
-	if event.element.name ~= "truck-station-mode-load" and event.element.name ~= "truck-station-mode-unload" then return end
-
-	local player = game.players[event.player_index]
-	local floor = player.opened.surface.find_entity(base, player.opened.position)
-	local data = getStruct(floor)
-	if event.element.name == "truck-station-mode-load" then
-		data.mode = "input"
-		for _,p in pairs(game.players) do
-			if p.opened == player.opened then
-				local cols = p.gui.relative['truck-station-gui'].content['mode-select']
-				toggleModeButtons(cols, false)
-			end
-		end
-	else
-		data.mode = "output"
-		for _,p in pairs(game.players) do
-			if p.opened == player.opened then
-				local cols = p.gui.relative['truck-station-gui'].content['mode-select']
-				toggleModeButtons(cols, true)
-			end
-		end
-	end
-end
-
----@param event on_gui_selected_tab_changed
-local function onGuiTabChange(event)
-	if event.element.valid and event.element.name == "truck-station-tabs" then
-		local player = game.players[event.player_index]
-		local opened = player.opened -- either the storage or the fuelbox
-		local floor = opened.surface.find_entity(base, opened.position)
-		local data = getStruct(floor)
-		if event.element.selected_tab_index == 1 then
-			player.opened = data.fuel
-		else
-			player.opened = data.cargo
-		end
-	end
+---@param player LuaPlayer
+---@param station LuaEntity
+---@param mode StationMode
+gui.mode.callbacks.toggle_truck = function(player, station, mode)
+	local data = getStruct(station)
+	if not data then return end
+	data.mode = mode
 end
 
 ---@param event on_tick
@@ -379,9 +211,6 @@ return bev.applyBuildEvents{
 	on_destroy = onRemoved,
 	events = {
 		[defines.events.on_gui_opened] = onGuiOpened,
-		[defines.events.on_gui_click] = onGuiClick,
-		[defines.events.on_gui_selected_tab_changed] = onGuiTabChange,
-		[defines.events.on_player_changed_position] = onMove,
 
 		[defines.events.on_tick] = onTick,
 

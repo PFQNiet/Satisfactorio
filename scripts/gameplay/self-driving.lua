@@ -1,3 +1,4 @@
+local gui = require(modpath.."scripts.gui.self-driving")
 local bev = require(modpath.."scripts.lualib.build-events")
 local math2d = require("math2d")
 
@@ -15,6 +16,7 @@ local math2d = require("math2d")
 ---@field rendering uint64[] Graphics IDs
 
 ---@alias global.cars table<uint, SelfDrivingCarData> Indexed by car unit number
+---@type global.cars
 local script_data = {}
 
 ---@param car LuaEntity Car
@@ -33,6 +35,7 @@ local function getCar(car)
 	end
 	return script_data[car.unit_number]
 end
+
 ---@param entity LuaEntity Car
 local function deleteCar(entity)
 	local car = getCar(entity)
@@ -56,6 +59,7 @@ local function turn(myvector, targetvector)
 	if dir < -0.035 then return defines.riding.direction.left, dir end
 	return defines.riding.direction.straight, dir
 end
+
 ---@param myspeed number
 ---@param mypos Position
 ---@param targetpos SelfDrivingWaypoint
@@ -105,37 +109,6 @@ local function findClosestWaypoint(car)
 end
 
 ---@param car SelfDrivingCarData
----@param menu LuaGuiElement
-local function refreshStopList(car, menu)
-	menu.clear_items()
-	if #car.waypoints == 0 then return end
-	local index = 0
-	local next_stop = 0
-	for i=car.waypoint_index-1,#car.waypoints do
-		if i < 1 then i = i + #car.waypoints end
-		if car.waypoints[i].wait > 0 then
-			next_stop = i
-			break
-		end
-	end
-	local first_stop = true
-	for i,waypoint in pairs(car.waypoints) do
-		if waypoint.wait > 0 then
-			index = index + 1
-			local is_target = next_stop == 0 and first_stop or (next_stop == i)
-			menu.add_item({"",
-				is_target and "▶ " or "",
-				(waypoint.name and waypoint.name ~= "") and waypoint.name or {"gui.self-driving-waypoint",index},
-				" [img=quantity-time]", {"time-symbol-seconds",waypoint.wait}
-			})
-			if is_target then
-				first_stop = false
-				menu.selected_index = index
-			end
-		end
-	end
-end
----@param car SelfDrivingCarData
 local function refreshPathRender(car)
 	for _,line in pairs(car.rendering) do
 		rendering.destroy(line)
@@ -181,7 +154,7 @@ local function refreshPathRender(car)
 		end
 		prev = waypoint
 	end
-	if #car.waypoints > 0 and car.recording then
+	if car.recording then
 		table.insert(car.rendering, rendering.draw_line{
 			color = {1,1,0},
 			width = 1,
@@ -205,146 +178,6 @@ local function refreshPathRender(car)
 			draw_on_ground = true,
 			only_in_alt_mode = not car.recording
 		})
-	end
-end
----@param player LuaPlayer
-local function getOrCreateGui(player)
-	local gui = player.gui.relative
-	if not gui['self-driving'] then
-		local frame = gui.add{
-			type = "frame",
-			name = "self-driving",
-			anchor = {
-				gui = defines.relative_gui_type.car_gui,
-				position = defines.relative_gui_position.right,
-				names = {"truck", "tractor", "explorer"}
-			},
-			direction = "vertical",
-			caption = {"gui.self-driving-title"}
-		}
-
-		local inner = frame.add{
-			type = "frame",
-			name = "content",
-			style = "inside_shallow_frame_with_padding_and_spacing",
-			direction = "vertical"
-		}
-
-		local top = inner.add{
-			type = "flow",
-			name = "top",
-			direction = "horizontal",
-			style = "vertically_aligned_flow"
-		}
-		top.add{
-			type = "switch",
-			name = "self-driving-mode-toggle",
-			left_label_caption = {"gui.self-driving-mode-manual"},
-			right_label_caption = {"gui.self-driving-mode-auto"}
-		}
-		top.add{type="empty-widget", style="filler_widget"}
-		top.add{
-			type = "button",
-			name = "self-driving-record",
-			caption = {"gui.self-driving-record"}
-		}
-
-		inner.add{
-			type = "list-box",
-			name = "self-driving-waypoints",
-			style = "self_driving_list_box"
-		}
-
-		local editor = inner.add{
-			type = "flow",
-			name = "self-driving-edit",
-			style = "vertical_flow_with_extra_spacing",
-			direction = "vertical"
-		}
-
-		local name = editor.add{
-			type = "flow",
-			name = "edit-name",
-			direction = "horizontal",
-			style = "vertically_aligned_flow"
-		}
-		name.add{
-			type = "label",
-			caption = {"gui.self-driving-waypoint-name"}
-		}
-		name.add{
-			type = "textfield",
-			name = "self-driving-name"
-		}
-
-		local time = editor.add{
-			type = "flow",
-			name = "edit-time",
-			direction = "horizontal",
-			style = "vertically_aligned_flow"
-		}
-		time.add{
-			type = "label",
-			caption = {"gui.self-driving-waypoint-wait"}
-		}
-		time.add{
-			type = "textfield",
-			name = "self-driving-time",
-			numeric = true,
-			text = 25,
-			allow_decimal = false,
-			allow_negative = false,
-			style = "short_number_textfield"
-		}
-		time.add{
-			type = "label",
-			caption = {"gui.self-driving-waypoint-seconds"}
-		}
-
-		time.add{type="empty-widget", style="filler_widget"}
-		time.add{
-			type = "button",
-			name = "self-driving-add",
-			style = "green_button",
-			caption = {"gui.self-driving-waypoint-add"}
-		}
-
-		inner.add{
-			type = "empty-widget",
-			style = "vertical_lines_slots_filler"
-		}
-	end
-	return gui['self-driving']
-end
----@param player LuaPlayer
----@param car SelfDrivingCarData
-local function updateGui(player, car)
-	local frame = getOrCreateGui(player)
-	local content = frame['content']
-	content.top['self-driving-mode-toggle'].switch_state = car.autopilot and "right" or "left"
-	refreshStopList(car, content['self-driving-waypoints'])
-
-	local rec = content.top['self-driving-record']
-	local driving = game.players[frame.player_index].vehicle == car.car
-	if not driving then
-		rec.enabled = false
-		rec.tooltip = {"gui.self-driving-recording-drive-car"}
-	elseif car.autopilot then
-		rec.enabled = false
-		rec.tooltip = {"gui.self-driving-recording-disable-autopilot"}
-	else
-		rec.enabled = true
-		rec.tooltip = ""
-	end
-
-	if car.recording then
-		content.top['self-driving-mode-toggle'].enabled = false
-		content.top['self-driving-record'].caption = {"gui.self-driving-stop"}
-		content['self-driving-edit'].visible = true
-	else
-		content.top['self-driving-mode-toggle'].enabled = true
-		content.top['self-driving-record'].caption = {"gui.self-driving-record"}
-		content['self-driving-edit'].visible = false
 	end
 end
 
@@ -399,8 +232,11 @@ local function onTick(event)
 						car.waypoint_index = car.waypoint_index % #car.waypoints + 1
 						local driver = car.car.get_driver()
 						if driver then
-							-- gui exists in this case
-							updateGui(driver.is_player() and driver or driver.player, car)
+							gui.update_gui(driver.is_player() and driver or driver.player)
+						end
+						local passenger = car.car.get_passenger()
+						if passenger then
+							gui.update_gui(passenger.is_player() and passenger or passenger.player)
 						end
 					elseif not car.fuel_check or car.fuel_check < event.tick then
 						local fuel = car.car.burner
@@ -428,6 +264,7 @@ local function isSelfDrivingCar(entity)
 		entity.name == "tractor" or
 		entity.name == "explorer"
 end
+
 -- On crashing into something, record that into the struct so it tries to reverse
 ---@param event on_entity_damaged
 local function onDamaged(event)
@@ -451,10 +288,10 @@ local function onDriving(event)
 			car.recording = false
 			player.print{"message.self-driving-recording-aborted"}
 		end
-		updateGui(player, car)
-		refreshPathRender(car)
+		gui.update_gui(player)
 	end
 end
+
 ---@param event on_gui_opened
 local function onGuiOpen(event)
 	local player = game.players[event.player_index]
@@ -462,90 +299,78 @@ local function onGuiOpen(event)
 		player.opened = player.vehicle
 	end
 	if player.opened_gui_type == defines.gui_type.entity and isSelfDrivingCar(player.opened) then
-		local car = getCar(player.opened)
-		updateGui(player, car)
+		gui.open_gui(player, getCar(player.opened))
 	end
 end
----@param event on_gui_click
-local function onGuiClick(event)
-	local player = game.players[event.player_index]
-	if event.element.valid and event.element.name == "self-driving-record" then
-		if not player.vehicle then return end
 
-		local car = getCar(player.vehicle)
-		if not car.recording then
-			if car.autopilot then
-				player.print{"message.self-driving-recording-disable-autopilot"}
-			else
-				player.print{"message.self-driving-recording-started"}
-				car.recording = true
-				car.waypoints = {}
-				local carpos = car.car.position
-				table.insert(car.waypoints, {
+---@param player LuaPlayer
+---@param car SelfDrivingCarData
+gui.callbacks.toggle_recording = function(player, car)
+	if not car.recording then
+		if car.autopilot then
+			player.print{"message.self-driving-recording-disable-autopilot"}
+		else
+			player.print{"message.self-driving-recording-started"}
+			car.recording = true
+			local carpos = car.car.position
+			car.waypoints = {
+				{
 					x = carpos.x,
 					y = carpos.y,
 					wait = 0
-				})
-				updateGui(player, car)
-				refreshPathRender(car)
-			end
-		else
-			-- recording must have at least one waypoint, and car must be in the starting circle
-			if #car.waypoints == 0 or math2d.position.distance(car.waypoints[1], car.car.position) > 2 then
-				player.print{"message.self-driving-recording-must-close"}
-			else
-				player.print{"message.self-driving-recording-finished"}
-				car.recording = false
-				updateGui(player, car)
-			end
+				}
+			}
+			refreshPathRender(car)
 		end
-	end
-	if event.element.valid and event.element.name == "self-driving-add" then
-		local car = getCar(player.vehicle)
-		if not car.recording then return end
-		local editor = player.gui.relative['self-driving'].content['self-driving-edit']
-		local namebox = editor['edit-name']['self-driving-name']
-		local name = namebox.text
-		local time = tonumber(editor['edit-time']['self-driving-time'].text)
-		if time == 0 then return end
-
-		local carpos = car.car.position
-		local waypoint = {
-			x = carpos.x,
-			y = carpos.y,
-			wait = time,
-			name = name
-		}
-		namebox.text = ""
-		table.insert(car.waypoints, waypoint)
-		updateGui(player, car)
-		refreshPathRender(car)
+	else
+		if math2d.position.distance(car.waypoints[1], car.car.position) > 2 then
+			player.print{"message.self-driving-recording-must-close"}
+		else
+			player.print{"message.self-driving-recording-finished"}
+			car.recording = false
+		end
 	end
 end
----@param event on_gui_switch_state_changed
-local function onGuiSwitch(event)
-	local player = game.players[event.player_index]
-	if event.element.valid and event.element.name == "self-driving-mode-toggle" then
-		if not player.opened then return end
-		local car = getCar(player.opened)
-		car.autopilot = event.element.switch_state == "right"
-		if not car.autopilot then
-			car.car.riding_state = {
-				acceleration = defines.riding.acceleration.nothing,
-				direction = defines.riding.direction.straight
-			}
-		end
+
+---@param player LuaPlayer
+---@param car SelfDrivingCarData
+---@param on boolean
+gui.callbacks.toggle_autopilot = function(player, car, on)
+	car.autopilot = on
+	if not on then
+		car.car.riding_state = {
+			acceleration = defines.riding.acceleration.nothing,
+			direction = defines.riding.direction.straight
+		}
+	else
 		car.waypoint_index = findClosestWaypoint(car)
-		updateGui(player, car)
-		refreshPathRender(car)
 	end
+	refreshPathRender(car)
+end
+
+---@param player LuaPlayer
+---@param car SelfDrivingCarData
+---@param name string
+---@param wait number
+gui.callbacks.add_waypoint = function(player, car, name, wait)
+	if not car.recording then return end
+	if wait <= 0 then return end
+
+	local carpos = car.car.position
+	table.insert(car.waypoints, {
+		x = carpos.x,
+		y = carpos.y,
+		wait = wait,
+		name = name
+	})
+	refreshPathRender(car)
 end
 
 ---@param event on_destroy
 local function onRemoved(event)
 	local entity = event.entity
 	if not entity or not entity.valid then return end
-	if entity and entity.valid and isSelfDrivingCar(entity) then
+	if isSelfDrivingCar(entity) then
 		deleteCar(entity)
 	end
 end
@@ -563,8 +388,6 @@ return bev.applyBuildEvents{
 		[defines.events.on_player_driving_changed_state] = onDriving,
 
 		[defines.events.on_gui_opened] = onGuiOpen,
-		[defines.events.on_gui_click] = onGuiClick,
-		[defines.events.on_gui_switch_state_changed] = onGuiSwitch,
 
 		[defines.events.on_entity_damaged] = onDamaged
 	}

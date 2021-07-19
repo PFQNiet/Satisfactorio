@@ -1,5 +1,4 @@
--- uses global.crash_site.sites to track requirements for unlocking the spaceship
--- uses global.crash_site.opened to track last opened crash site GUI
+local gui = require(modpath.."scripts.gui.crash-sites")
 local link = require(modpath.."scripts.lualib.linked-entity")
 local getitems = require(modpath.."scripts.lualib.get-items-from")
 
@@ -114,156 +113,73 @@ local function onGuiOpened(event)
 	if event.gui_type ~= defines.gui_type.entity then return end
 	if event.entity.name ~= spaceship then return end
 
-	local gui = player.gui.relative
 	local struct = script_data.sites[event.entity.unit_number]
 	if not struct then
-		if gui['crash-site-locked'] then gui['crash-site-locked'].visible = false end
+		gui.close_gui(player)
 		event.entity.minable = true -- ensure entity can be mined
 		return
 	end
 
-	if not gui['crash-site-locked'] then
-		local frame = gui.add{
-			type = "frame",
-			name = "crash-site-locked",
-			direction = "vertical",
-			anchor = {
-				gui = defines.relative_gui_type.container_gui,
-				position = defines.relative_gui_position.right,
-				name = spaceship
-			},
-			caption = {"gui.crash-site-repairs-required"}
-		}
+	gui.open_gui(player, struct)
 
-		local content = frame.add{
-			type = "frame",
-			style = "inside_shallow_frame_with_padding_and_spacing",
-			direction = "vertical",
-			name = "content"
-		}
-		content.style.minimal_width = 200
-		local parts = content.add{
-			type = "flow",
-			direction = "horizontal",
-			name = "parts-needed"
-		}
-		parts.add{
-			type = "label",
-			style = "caption_label",
-			caption = {"gui.crash-site-parts-label"}
-		}
-		parts.add{
-			type = "label",
-			name = "requirement",
-			caption = {"gui.crash-site-not-needed"}
-		}
-
-		local power = content.add{
-			type = "flow",
-			direction = "horizontal",
-			name = "power-needed"
-		}
-		power.add{
-			type = "label",
-			style = "caption_label",
-			caption = {"gui.crash-site-power-label"}
-		}
-		power.add{
-			type = "label",
-			name = "requirement",
-			caption = {"gui.crash-site-not-needed"}
-		}
-		local bottom = content.add{
-			type = "flow",
-			name = "button"
-		}
-		bottom.add{type="empty-widget", style="filler_widget"}
-		bottom.add{
-			type = "button",
-			style = "submit_button",
-			name = "crash-site-repair-submit",
-			caption = {"gui.crash-site-open"}
-		}
-
-		content.add{
-			type = "empty-widget",
-			style = "vertical_lines_slots_filler"
-		}
-	end
-	local frame = gui['crash-site-locked']
-	local content = frame.content
-
+	-- look for the repair item in the player's inventory, and auto-insert if available
 	if struct.requirements.item then
-		content['parts-needed'].requirement.caption = {
-			"gui.crash-site-parts",
-			struct.requirements.count,
-			struct.requirements.item,
-			game.item_prototypes[struct.requirements.item].localised_name
-		}
-	else
-		content['parts-needed'].requirement.caption = {"gui.crash-site-not-needed"}
+		local need = struct.requirements.count - struct.ship.get_item_count(struct.requirements.item)
+		local inventory = player.get_main_inventory()
+		local available = inventory.get_item_count(struct.requirements.item)
+		if need > 0 and available >= need then
+			inventory.remove{
+				name = struct.requirements.item,
+				count = struct.ship.insert{
+					name = struct.requirements.item,
+					count = need
+				}
+			}
+		end
 	end
-
-	if struct.requirements.power > 0 then
-		content['power-needed'].requirement.caption = {
-			"gui.crash-site-power",
-			struct.requirements.power
-		}
-	else
-		content['power-needed'].requirement.caption = {"gui.crash-site-not-needed"}
-	end
-
-	frame.visible = true
 end
 
----@param event on_gui_click
-local function onGuiClick(event)
-	if not (event.element and event.element.valid) then return end
-	local player = game.players[event.player_index]
-	if event.element.name == "crash-site-repair-submit" then
-		local struct = script_data.sites[player.opened.unit_number]
-		if struct then
-			-- struct may be gone if say another player completed it for you, but if it's still here then it's mine
-			if struct.requirements.item then
-				local has_item = struct.ship.get_item_count(struct.requirements.item) >= struct.requirements.count
-				if not has_item then
-					player.create_local_flying_text{
-						text = {"message.crash-site-missing-items"},
-						create_at_cursor = true
-					}
-					player.play_sound{
-						path = "utility/cannot_build"
-					}
-					return
-				end
-			end
-			if struct.requirements.power > 0 then
-				local has_power = struct.eei.energy > 0
-				if not has_power then
-					player.create_local_flying_text{
-						text = {"message.crash-site-missing-power"},
-						create_at_cursor = true
-					}
-					player.play_sound{
-						path = "utility/cannot_build"
-					}
-					return
-				end
-			end
+---@param player LuaPlayer
+---@param ship LuaEntity
+gui.callbacks.repair = function(player, ship)
+	local struct = script_data.sites[ship.unit_number]
+	if not struct then return gui.close_gui(player) end
 
-			if struct.requirements.item then
-				struct.ship.remove_item{name=struct.requirements.item,count=struct.requirements.count}
-			end
-			-- insert hard drive into spaceship
-			getitems.storage(struct.ship, player.get_main_inventory())
-			struct.ship.insert{name="hard-drive",count=1}
-			-- delete entry from global table to mark it as unlocked
-			script_data.sites[player.opened.unit_number] = nil
-			-- close gui for any players that have this ship open
-			for _,p in pairs(game.players) do
-				local frame = p.gui.relative['crash-site-locked']
-				if frame then frame.visible = false end
-			end
+	---@param player LuaPlayer
+	---@param reason LocalisedString
+	local function failRepairs(player, reason)
+		player.create_local_flying_text{text = reason, create_at_cursor = true}
+		player.play_sound{path = "utility/cannot_build"}
+	end
+	if struct.requirements.item then
+		local has_item = struct.ship.get_item_count(struct.requirements.item) >= struct.requirements.count
+		if not has_item then
+			return failRepairs(player, {"message.crash-site-missing-items"})
+		end
+	end
+	if struct.requirements.power > 0 then
+		local has_power = struct.eei.energy > 0
+		if not has_power then
+			return failRepairs(player, {"message.crash-site-missing-power"})
+		end
+	end
+
+	-- consume repair items
+	if struct.requirements.item then
+		struct.ship.remove_item{name=struct.requirements.item, count=struct.requirements.count}
+	end
+
+	-- insert hard drive into spaceship
+	getitems.storage(struct.ship, player.get_main_inventory())
+	struct.ship.insert{name="hard-drive",count=1}
+
+	-- delete entry from global table to mark it as unlocked
+	script_data.sites[ship.unit_number] = nil
+
+	-- close gui for any players that have this ship open
+	for _,p in pairs(game.players) do
+		if p.opened == ship then
+			gui.close_gui(p)
 		end
 	end
 end
@@ -290,7 +206,6 @@ return {
 		end,
 		events = {
 			[defines.events.on_gui_opened] = onGuiOpened,
-			[defines.events.on_gui_click] = onGuiClick,
 
 			[defines.events.on_force_created] = alternativeHardDrives
 		}

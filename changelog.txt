@@ -411,3 +411,8 @@ Date: 2021.07.07
     - Tidying up of Milestone GUI
   Combat Balancing:
     - Unarmed melee strikes now stun the target for much longer
+---------------------------------------------------------------------------------------------------
+Version: 0.9.0
+Date: 2021.07.19
+  Changes:
+    - Total revamp of GUI systems, which does unfortunately mean incompatibility with the old and busted system.
