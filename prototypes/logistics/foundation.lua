@@ -16,7 +16,7 @@ local foundation = {
 		"player-creation",
 		"not-rotatable",
 		"not-on-map",
-		"not-deconstructible"
+		"not-deconstructable"
 	},
 	max_health = 1,
 	selection_box = {{-2,-2},{2,2}},
