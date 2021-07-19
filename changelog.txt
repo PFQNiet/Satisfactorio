@@ -416,3 +416,5 @@ Version: 0.9.0
 Date: 2021.07.19
   Changes:
     - Total revamp of GUI systems, which does unfortunately mean incompatibility with the old and busted system.
+  Ease of use:
+    - Improved handling of Foundation / Deconstruct Foundation so it doesn't spam "Not minable" errors any more.

@@ -2,6 +2,7 @@ local bev = require(modpath.."scripts.lualib.build-events")
 local math2d = require("math2d")
 
 local foundation = "foundation"
+local deconstruct = "deconstructible-foundation-proxy"
 local tile = "stone-path"
 
 ---@param event on_build
@@ -39,14 +40,11 @@ local function onBuilt(event)
 		for _,f in pairs(fish) do
 			f.destroy()
 		end
-
-		entity.minable = false
 	else
 		-- if the building is placed on foundation, then prevent that foundation from being deconstructed if it's marked that way
-		local foundations = entity.surface.find_entities_filtered{area=entity.bounding_box, name=foundation}
+		local foundations = entity.surface.find_entities_filtered{area=entity.bounding_box, name=deconstruct}
 		for _,f in pairs(foundations) do
-			f.cancel_deconstruction(f.force)
-			f.minable = false
+			f.destroy()
 		end
 	end
 end
@@ -55,6 +53,10 @@ end
 local function onRemoved(event)
 	local entity = event.entity
 	if not (entity and entity.valid) then return end
+	if entity.name == deconstruct then
+		local floor = entity.surface.find_entity(foundation, entity.position)
+		if floor then floor.destroy{raise_destroy = true} end
+	end
 	if entity.name == foundation then
 		-- remove the tiles and restore their hidden_tile
 		local tiles = {}
@@ -95,8 +97,11 @@ local function onSelectedArea(event)
 					name = {foundation,"nobelisk-on-ground"},
 					type = "smoke-with-trigger"
 				} == 0 then
-					f.minable = true
-					f.order_deconstruction(player.force, player)
+					player.surface.create_entity{
+						name = deconstruct,
+						position = f.position,
+						force = player.force
+					}.order_deconstruction(player.force, player)
 				else
 					blocked = blocked + 1
 				end
@@ -112,8 +117,7 @@ local function onDeselectedArea(event)
 	if event.item == "deconstruct-foundation" then
 		local player = game.players[event.player_index]
 		for _,f in pairs(event.entities) do
-			f.cancel_deconstruction(player.force, player)
-			f.minable = false
+			if f.force == player.force then f.destroy() end
 		end
 	end
 end
@@ -125,8 +129,9 @@ local function onDeconstruct(event)
 end
 ---@param event on_cancelled_deconstruction
 local function onUndoDeconstruct(event)
-	if event.entity.name == foundation then
-		event.entity.minable = false
+	local player = game.players[event.player_index]
+	if event.entity.valid and event.entity.name == deconstruct and event.entity.force == player.force then
+		event.entity.destroy()
 	end
 end
 

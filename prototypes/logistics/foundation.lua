@@ -15,7 +15,36 @@ local foundation = {
 		"placeable-player",
 		"player-creation",
 		"not-rotatable",
-		"not-on-map"
+		"not-on-map",
+		"not-deconstructible"
+	},
+	max_health = 1,
+	selection_box = {{-2,-2},{2,2}},
+	selection_priority = 20,
+	selectable_in_game = false,
+	render_layer = "lower-radius-visualization",
+	collision_mask = {foundation_layer}
+}
+
+local deconstruct = {
+	type = "simple-entity-with-owner",
+	name = "deconstructible-foundation-proxy",
+	localised_name = {"entity-name."..name},
+	localised_description = {"entity-description."..name},
+	icons = {
+		{icon = graphics.."icons/"..name..".png", icon_size=64},
+		{icon = "__core__/graphics/cancel.png", icon_size=64}
+	},
+	picture = {
+		filename = "__core__/graphics/cancel.png",
+		size = {64,64}
+	},
+	collision_box = {{-1.8,-1.8},{1.8,1.8}},
+	flags = {
+		"player-creation",
+		"not-rotatable",
+		"not-on-map",
+		"not-blueprintable"
 	},
 	max_health = 1,
 	minable = {
@@ -24,8 +53,8 @@ local foundation = {
 	},
 	selection_box = {{-2,-2},{2,2}},
 	selection_priority = 20,
-	render_layer = "lower-radius-visualization",
-	collision_mask = {foundation_layer}
+	render_layer = "entity-info-icon-above",
+	collision_mask = {}
 }
 
 local foundationitem = {
@@ -47,7 +76,7 @@ local foundationrecipe = makeBuildingRecipe{
 	result = name
 }
 
-data:extend{foundation,foundationitem,foundationrecipe}
+data:extend{foundation,deconstruct,foundationitem,foundationrecipe}
 
 -- custom deconstruction planner for foundation only
 data:extend({
@@ -67,7 +96,7 @@ data:extend({
 		alt_selection_mode = "any-entity",
 		alt_selection_color = {0,0,1},
 		alt_selection_cursor_box_type = "not-allowed",
-		alt_entity_filters = {name},
+		alt_entity_filters = {deconstruct.name},
 		flags = {
 			"only-in-cursor",
 			"spawnable",
