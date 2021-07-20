@@ -30,6 +30,7 @@ local fakebox = {
 	localised_description = {"entity-description."..name},
 	icon = box.icon,
 	icon_size = box.icon_size,
+	allow_copy_paste = false,
 	selection_box = {{-1.5,-2.5},{1.5,2.5}},
 	collision_box = {{-1.2,-2.2},{1.2,2.2}},
 	activity_led_light_offsets = {{0,0},{0,0},{0,0},{0,0}},
@@ -92,6 +93,7 @@ fakebox.minable.result = "infinity-"..fakebox.minable.result
 fakebox.icons = box.icons
 fakebox.localised_name = {"entity-name."..box.name}
 fakebox.localised_description = {"entity-description."..box.name}
+fakebox.allow_copy_paste = true
 
 boxitem = table.deepcopy(boxitem)
 boxitem.name = "infinity-"..boxitem.name

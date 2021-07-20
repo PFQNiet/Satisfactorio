@@ -30,6 +30,7 @@ local fakebox = {
 	localised_description = {"entity-description."..name},
 	icon = box.icon,
 	icon_size = box.icon_size,
+	allow_copy_paste = false,
 	selection_box = {{-2.5,-2.5},{2.5,2.5}},
 	collision_box = {{-2.2,-2.2},{2.2,2.2}},
 	activity_led_light_offsets = {{0,0},{0,0},{0,0},{0,0}},
