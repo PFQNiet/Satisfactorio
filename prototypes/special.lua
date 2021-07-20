@@ -7,6 +7,7 @@ require("prototypes.special.awesome-shop")
 require("prototypes.special.crash-sites")
 
 data:extend{
+	{type="item-group",name="special",order="91",icon="__Satisfactorio__/graphics/item-group/special.png",icon_size=64},
 	{type="item-subgroup",group="special",name="special",order="s-a"},
 
 	{type="recipe-category",name="hub-progressing"},
@@ -26,6 +27,8 @@ data:extend{
 	{type="item-subgroup",group="milestones",name="hub-tier7",order="h"},
 	{type="item-subgroup",group="milestones",name="hub-tier8",order="i"},
 
+	{type="item-group",name="space-elevator-phases",order="x3",icon="__Satisfactorio__/graphics/icons/space-elevator.png",icon_size=64},
+	{type="item-subgroup",group="space-elevator-phases",name="space-elevator-phases",order="a"},
 	{type="item-group",name="space-elevator",order="x3",icon="__Satisfactorio__/graphics/icons/space-elevator.png",icon_size=64},
 	{type="item-subgroup",group="space-elevator",name="space-parts-1",order="a"},
 	{type="item-subgroup",group="space-elevator",name="space-parts-2",order="b"},

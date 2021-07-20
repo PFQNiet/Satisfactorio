@@ -53,7 +53,7 @@ local function onResearch(event)
 		frecipes[technology.name.."-done"].enabled = true
 	end
 
-	if technology.name == "space-elevator-phase4" and not game.finished and event.tick > 5 then
+	if technology.name == "space-elevator-phase4" and not game.finished and game.tick > 5 then
 		game.set_game_state{
 			game_finished = true,
 			player_won = true,

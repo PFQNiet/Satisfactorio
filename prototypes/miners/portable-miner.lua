@@ -36,6 +36,7 @@ local pmbox = {
 	localised_description = {"entity-description."..name},
 	icon = pm.icon,
 	icon_size = pm.icon_size,
+	subgroup = "placeholder-buildings",
 	selection_box = {{-0.5,-0.5},{0.5,0.5}},
 	collision_box = {{-0.2,-0.2},{0.2,0.2}},
 	inventory_size = 1,

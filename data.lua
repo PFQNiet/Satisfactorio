@@ -72,10 +72,10 @@ end
 foundation_layer = nil
 train_platform_layer = nil
 
-data:extend({
+data:extend{
 	{type="recipe-category",name="building"},
-	{type="item-group",name="special",order="91",icon="__Satisfactorio__/graphics/item-group/special.png",icon_size=64},
-})
+	{type="item-subgroup",name="placeholder-buildings",group="effects",order="zzz"}
+}
 for _,key in pairs({"logistics","production","intermediate-products","combat"}) do
 	local igroup = data.raw["item-group"][key]
 	igroup.icon = "__Satisfactorio__/graphics/item-group/"..key..".png"

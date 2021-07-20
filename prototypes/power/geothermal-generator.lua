@@ -31,6 +31,7 @@ local interface = {
 	localised_description = {"entity-description."..name},
 	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
+	subgroup = "placeholder-buildings",
 	selection_box = {{-4.5,-4.5},{4.5,4.5}},
 	collision_box = {{-4.2,-4.2},{4.2,4.2}},
 	energy_source = {

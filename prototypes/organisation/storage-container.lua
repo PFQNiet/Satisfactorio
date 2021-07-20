@@ -5,6 +5,7 @@ local box = {
 	name = name,
 	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
+	subgroup = "placeholder-buildings",
 	selection_box = {{-1.5,-1.5},{1.5,1.5}},
 	selectable_in_game = false,
 	collision_box = {{-1.2,-1.2},{1.2,1.2}},

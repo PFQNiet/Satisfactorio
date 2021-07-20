@@ -26,10 +26,9 @@ local interface = {
 	name = accelerator.machine.name.."-eei",
 	localised_name = {"entity-name."..accelerator.machine.name},
 	localised_description = {"entity-description."..accelerator.machine.name},
-	icons = {
-		{icon = accelerator.machine.icon, icon_size = accelerator.machine.icon_size},
-		{icon = graphics.."icons/power.png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
-	},
+	icon = accelerator.machine.icon,
+	icon_size = accelerator.machine.icon_size,
+	subgroup = "placeholder-buildings",
 	energy_source = {
 		type = "electric",
 		buffer_capacity = "1500MW",

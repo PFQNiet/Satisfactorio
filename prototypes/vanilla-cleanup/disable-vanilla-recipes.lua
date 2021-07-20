@@ -207,6 +207,10 @@ data.raw.module["productivity-module"].limitation = {}
 data.raw.module["productivity-module-2"].limitation = {}
 data.raw.module["productivity-module-3"].limitation = {}
 
+data:extend{
+	{type="item-group",name="vanilla",order="zzz",icon="__core__/graphics/factorio.png",icon_size=128},
+	{type="item-subgroup",group="vanilla",name="vanilla"}
+}
 local vanilla_items = {
 	ammo = {
 		"artillery-shell", "atomic-bomb", "cannon-shell", "explosive-cannon-shell", "explosive-rocket", "explosive-uranium-cannon-shell", "firearm-magazine", "flamethrower-ammo", "piercing-rounds-magazine", "piercing-shotgun-shell", "rocket", "shotgun-shell", "uranium-cannon-shell", "uranium-rounds-magazine"
@@ -253,6 +257,7 @@ for type,items in pairs(vanilla_items) do
 	for _,name in pairs(items) do
 		local item = data.raw[type][name]
 		assert(item, "Item "..type.."."..name.." not found, check for typo")
+		item.subgroup = "vanilla"
 		if not item.flags then item.flags = {} end
 		table.insert(item.flags, "hidden")
 	end
@@ -313,7 +318,7 @@ local vanilla_entities = {
 	["transport-belt"] = {"transport-belt", "fast-transport-belt", "express-transport-belt"},
 	turret = {"small-worm-turret", "medium-worm-turret", "big-worm-turret", "behemoth-worm-turret"},
 	["underground-belt"] = {"underground-belt", "fast-underground-belt", "express-underground-belt"},
-	unit = {"small-biter", "medium-biter", "big-biter", "behemoth-biter", "small-spitter", "medium-spitter", "big-spitter", "behemoth-spitter"},
+	unit = {"small-biter", "medium-biter", "big-biter", "behemoth-biter", "small-spitter", "medium-spitter", "big-spitter", "behemoth-spitter", "compilatron"},
 	["unit-spawner"] = {"biter-spawner", "spitter-spawner"},
 	wall = {"stone-wall"}
 }
@@ -325,19 +330,12 @@ for type,entities in pairs(vanilla_entities) do
 		table.insert(entity.flags, "hidden")
 
 		entity.next_upgrade = nil
+		if type == "combat-robot" or type == "turret" or type == "unit" or type == "unit-spawner" then
+			entity.subgroup = "vanilla"
+		end
 	end
 end
 data.raw.cliff.cliff.cliff_explosive = nil
-
-local map = {
-	equipment = {["active-defense-equipment"] = 0, ["battery-equipment"] = 0, ["belt-immunity-equipment"] = 0, ["energy-shield-equipment"] = 0, ["generator-equipment"] = 0, ["movement-bonus-equipment"] = 0, ["night-vision-equipment"] = 0, ["roboport-equipment"] = 0, ["solar-panel-equipment"] = 0},
-	["equipment-category"] = {["equipment-category"] = 0},
-	["equipment-grid"] = {["equipment-grid"] = 0},
-	fluid = {fluid = 0},
-	["item-subgroup"] = {["item-subgroup"] = 0},
-	["recipe-category"] = {["recipe-category"] = 0},
-	["resource-category"] = {["resource-category"] = 0}
-}
 
 -- nuke achievements
 for key in pairs(defines.prototypes.achievement) do
@@ -354,5 +352,7 @@ end
 -- hide fluids
 local vanilla_fluids = {"steam", "light-oil", "lubricant", "petroleum-gas"}
 for _,key in pairs(vanilla_fluids) do
-	data.raw.fluid[key].hidden = true
+	local fluid = data.raw.fluid[key]
+	fluid.hidden = true
+	fluid.subgroup = "vanilla"
 end
