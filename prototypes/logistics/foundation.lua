@@ -27,7 +27,7 @@ local foundation = {
 }
 
 local deconstruct = {
-	type = "simple-entity-with-owner",
+	type = "arrow",
 	name = "deconstructible-foundation-proxy",
 	localised_name = {"entity-name."..name},
 	localised_description = {"entity-description."..name},
@@ -35,25 +35,26 @@ local deconstruct = {
 		{icon = graphics.."icons/"..name..".png", icon_size=64},
 		{icon = "__core__/graphics/cancel.png", icon_size=64}
 	},
-	picture = {
+	arrow_picture = empty_graphic,
+	circle_picture = {
 		filename = "__core__/graphics/cancel.png",
 		size = {64,64}
 	},
 	collision_box = {{-1.8,-1.8},{1.8,1.8}},
 	flags = {
-		"player-creation",
-		"not-rotatable",
 		"not-on-map",
 		"not-blueprintable"
 	},
-	max_health = 1,
 	minable = {
 		mining_time = 0.2,
 		result = name
 	},
+	mined_sound = {
+		filename = "__base__/sound/deconstruct-bricks.ogg",
+		volume = 0.8
+	},
 	selection_box = {{-2,-2},{2,2}},
 	selection_priority = 20,
-	render_layer = "entity-info-icon-above",
 	collision_mask = {}
 }
 

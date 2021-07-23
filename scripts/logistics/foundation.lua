@@ -40,7 +40,7 @@ local function onBuilt(event)
 		for _,f in pairs(fish) do
 			f.destroy()
 		end
-	else
+	elseif entity.name ~= deconstruct then
 		-- if the building is placed on foundation, then prevent that foundation from being deconstructed if it's marked that way
 		local foundations = entity.surface.find_entities_filtered{area=entity.bounding_box, name=deconstruct}
 		for _,f in pairs(foundations) do
@@ -100,9 +100,8 @@ local function onSelectedArea(event)
 					player.surface.create_entity{
 						name = deconstruct,
 						position = f.position,
-						force = player.force,
-						raise_built = true
-					}.order_deconstruction(player.force, player)
+						force = player.force
+					}.destructible = false
 				else
 					blocked = blocked + 1
 				end
