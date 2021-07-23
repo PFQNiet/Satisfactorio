@@ -422,11 +422,9 @@ end
 local function closeGui(player)
 	local data = getGui(player)
 	if not data then return end
-	data.port = nil
 	if player.opened == data.components.container then
 		player.opened = nil
 	end
-	data.components.container.visible = false
 end
 
 ---@param player LuaPlayer
@@ -455,10 +453,13 @@ end
 
 ---@param event on_gui_closed
 local function onGuiClosed(event)
+	if event.gui_type ~= defines.gui_type.custom then return end
 	local player = game.players[event.player_index]
 	local data = getGui(player)
-	if data and data.struct then
-		closeGui(player)
+	if not data then return end
+	if event.element == data.components.container then
+		data.port = nil
+		data.components.container.visible = false
 	end
 end
 

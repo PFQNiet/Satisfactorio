@@ -112,20 +112,21 @@ end
 local function closeGui(player)
 	local data = getGui(player)
 	if not data then return end
-	data.marker = nil
 	if player.opened == data.components.frame then
 		player.opened = nil
 	end
-	data.components.frame.visible = false
 end
 
 ---@param event on_gui_closed
 local function onGuiClosed(event)
+	if event.gui_type ~= defines.gui_type.custom then return end
 	local player = game.players[event.player_index]
 	local data = getGui(player)
-	if data and data.marker then
+	if not data then return end
+	if event.element == data.components.frame then
 		callbacks.save(player, data.marker, data.components.name.text, data.components.icon.elem_value)
-		closeGui(player)
+		data.marker = nil
+		data.components.frame.visible = false
 	end
 end
 

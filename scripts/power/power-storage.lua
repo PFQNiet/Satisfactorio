@@ -36,10 +36,9 @@ end
 ---@param event on_gui_closed
 local function onGuiClosed(event)
 	if not (event.entity and event.entity.valid) then return end
-	if event.entity.name == battery and script_data[event.entity.unit_number] then
-		local player = game.players[event.player_index]
-		local struct = script_data[event.entity.unit_number]
-		struct.opened_by[player.index] = nil
+	local struct = script_data[event.entity.unit_number]
+	if struct then
+		struct.opened_by[event.player_index] = nil
 		if not next(struct.opened_by) then
 			script_data[event.entity.unit_number] = nil
 		end

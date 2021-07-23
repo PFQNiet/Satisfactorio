@@ -114,7 +114,6 @@ local function closeGui(player)
 	if player.opened == data.components.frame then
 		player.opened = nil
 	end
-	data.components.frame.visible = false
 end
 
 ---@param player LuaPlayer
@@ -287,8 +286,13 @@ end
 
 ---@param event on_gui_closed
 local function onGuiClosed(event)
+	if event.gui_type ~= defines.gui_type.custom then return end
 	local player = game.players[event.player_index]
-	closeGui(player)
+	local data = getGui(player)
+	if not data then return end
+	if event.element == data.components.frame then
+		data.components.frame.visible = false
+	end
 end
 
 ---@param event on_gui_elem_changed
