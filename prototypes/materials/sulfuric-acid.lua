@@ -14,7 +14,7 @@ data.raw.recipe[name] = { -- in Refinery
 		{"sulfur",5},
 		{type="fluid",name="water",amount=5}
 	},
-	results = {{type="fluid",name=name,amount=10}},
+	results = {{type="fluid",name=name,amount=5}},
 	subgroup = "fluid-recipe",
 	energy_required = 6,
 	category = "refining",
