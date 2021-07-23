@@ -1,4 +1,3 @@
-local event_handler = require "event_handler"
 local gui = require(modpath.."scripts.gui.onboarding")
 
 -- track story progress in freeplay
@@ -35,13 +34,11 @@ local function isContinuable(step)
 end
 
 -- modify default freeplay scenario
-local function onInit()
+local function freeplaySetup()
 	if remote.interfaces['silo_script'] then
 		remote.call("silo_script", "set_no_victory", true)
 	end
 	if remote.interfaces.freeplay then
-		global.onboarding = global.onboarding or script_data
-
 		remote.call("freeplay","set_created_items",{
 			["xeno-zapper"] = 1
 		})
@@ -68,7 +65,6 @@ local function onInit()
 		script_data.wait_until = 120
 	else
 		script_data.step = 999
-		global.onboarding = script_data
 	end
 end
 
@@ -88,7 +84,7 @@ local function setMessage(message, button)
 	end
 end
 
-local function onSecond()
+local function update()
 	if script_data.step < 100 and script_data.wait_until > 0 and script_data.wait_until <= game.tick then
 		script_data.step = script_data.step + 1
 		if script_data.step > #messages then
@@ -113,7 +109,7 @@ end
 gui.callbacks.continue = function(player)
 	if isContinuable(script_data.step) and script_data.wait_until == 0 then
 		script_data.wait_until = game.tick
-		onSecond()
+		update()
 	end
 end
 
@@ -150,12 +146,15 @@ local function onResearch(event)
 end
 
 return {
-	on_init = onInit,
+	on_init = function()
+		global.onboarding = global.onboarding or script_data
+		freeplaySetup()
+	end,
 	on_load = function()
 		script_data = global.onboarding or script_data
 	end,
 	on_nth_tick = {
-		[60] = onSecond
+		[60] = update
 	},
 	events = {
 		[defines.events.on_player_created] = onPlayerCreated,
