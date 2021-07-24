@@ -64,7 +64,7 @@ local function checkRangeForTabs(player)
 
 	local tabs = data.components.tabs.tabs
 	for i,obj in pairs(data.entities) do
-		local reach = player.can_reach_entity(obj)
+		local reach = obj.valid and player.can_reach_entity(obj)
 		local tab = tabs[i].tab
 		tab.enabled = reach
 		tab.tooltip = reach and "" or {"cant-reach"}

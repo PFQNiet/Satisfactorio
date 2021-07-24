@@ -440,7 +440,7 @@ local function checkRangeForTabs(player)
 		data.struct.import
 	}
 	for i,obj in pairs(entities) do
-		local reach = player.can_reach_entity(obj)
+		local reach = obj.valid and player.can_reach_entity(obj)
 		if i == 1 and not reach then
 			closeGui(player)
 			return
