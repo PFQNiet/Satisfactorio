@@ -1,5 +1,6 @@
 local biter = table.deepcopy(data.raw.unit['small-biter'])
 biter.name = "lizard-doggo"
+biter.selection_priority = 55
 biter.attack_parameters.ammo_type.action.action_delivery.target_effects = nil
 biter.attack_parameters.cooldown = 60
 biter.attack_parameters.cooldown_deviation = 0
