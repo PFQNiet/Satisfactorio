@@ -431,6 +431,7 @@ end
 local function checkRangeForTabs(player)
 	local data = getGui(player)
 	if not data then return end
+	if not data.struct then return end
 
 	local tabs = data.components.tabs.tabs
 	local entities = {
@@ -458,7 +459,7 @@ local function onGuiClosed(event)
 	local data = getGui(player)
 	if not data then return end
 	if event.element == data.components.container then
-		data.port = nil
+		data.struct = nil
 		data.components.container.visible = false
 	end
 end
