@@ -42,7 +42,7 @@ local function createGui(player)
 		style = "inner_frame_in_outer_frame"
 	}
 	local title_flow = frame.add{type = "flow"}
-	local title = title_flow.add{type = "label", caption = {"entity-name.small-biter"}, style = "frame_title"}
+	local title = title_flow.add{type = "label", caption = {"entity-name.lizard-doggo"}, style = "frame_title"}
 	title.drag_target = frame
 	local pusher = title_flow.add{type = "empty-widget", style = "draggable_space_in_window_title"}
 	pusher.drag_target = frame
