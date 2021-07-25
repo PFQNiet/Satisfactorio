@@ -99,9 +99,8 @@ local function onSelectedArea(event)
 				} == 0 then
 					player.surface.create_entity{
 						name = deconstruct,
-						position = f.position,
-						force = player.force
-					}.destructible = false
+						position = f.position
+					}
 				else
 					blocked = blocked + 1
 				end
@@ -112,26 +111,23 @@ local function onSelectedArea(event)
 		end
 	end
 end
+
 ---@param event on_player_alt_selected_area
 local function onDeselectedArea(event)
 	if event.item == "deconstruct-foundation" then
 		local player = game.players[event.player_index]
 		for _,f in pairs(event.entities) do
-			if f.force == player.force then f.destroy() end
+			local floor = f.surface.find_entity(foundation, f.position)
+			if floor.force == player.force then f.destroy() end
 		end
 	end
 end
+
+-- prevent marking tiles for deconstruction
 ---@param event on_marked_for_deconstruction
 local function onDeconstruct(event)
 	if event.entity.type == "deconstructible-tile-proxy" then
 		event.entity.cancel_deconstruction(event.entity.force, event.player_index and game.players[event.player_index] or nil)
-	end
-end
----@param event on_cancelled_deconstruction
-local function onUndoDeconstruct(event)
-	local player = game.players[event.player_index]
-	if event.entity.valid and event.entity.name == deconstruct and event.entity.force == player.force then
-		event.entity.destroy()
 	end
 end
 
@@ -141,7 +137,6 @@ return bev.applyBuildEvents{
 	events = {
 		[defines.events.on_player_selected_area] = onSelectedArea,
 		[defines.events.on_player_alt_selected_area] = onDeselectedArea,
-		[defines.events.on_marked_for_deconstruction] = onDeconstruct,
-		[defines.events.on_cancelled_deconstruction] = onUndoDeconstruct
+		[defines.events.on_marked_for_deconstruction] = onDeconstruct
 	}
 }
