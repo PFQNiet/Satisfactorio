@@ -419,3 +419,15 @@ Date: 2021.07.19
   Ease of use:
     - Improved handling of Foundation / Deconstruct Foundation so it doesn't spam "Not minable" errors any more.
     - Fixed ability to copy-paste settings between Infinity Storage Containers
+---------------------------------------------------------------------------------------------------
+Version: 0.9.1
+Date: 2021.07.25
+  Changes:
+    - Added support for un-researching techs in the editor
+  Bugfixes:
+    - Fixed crash on movement after mining a truck station or drone port
+---------------------------------------------------------------------------------------------------
+Version: 1.0.0
+Date: 2021.08.06
+  Info:
+    - Initial public release

@@ -138,6 +138,10 @@ return {
 	on_init = function()
 		-- setting this to true is done via remote interface
 		global.no_victory = false
+		global.tech_extras = global.tech_extras or script_data
+	end,
+	on_load = function()
+		script_data = global.tech_extras or script_data
 	end,
 	events = {
 		[defines.events.on_research_finished] = onResearch,
