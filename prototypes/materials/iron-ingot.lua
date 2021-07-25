@@ -17,7 +17,8 @@ local recipe = {
 	},
 	result = name,
 	energy_required = 2,
-	category = "smelter"
+	category = "smelter",
+	enabled = false
 }
 copyToHandcraft(recipe, 3)
 

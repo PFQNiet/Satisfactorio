@@ -39,9 +39,10 @@ if mods[mod] then
 
 	-- add various plate recipes to tech tree when their materials are unlocked
 	-- recipe name: textplate-(small|large)-(%material)
-	data.raw.recipe['textplate-small-iron'].enabled = true
-	data.raw.recipe['textplate-large-iron'].enabled = true
-	local fx = data.raw.technology['hub-tier2-part-assembly'].effects
+	local fx = data.raw.technology['the-hub'].effects
+	table.insert(fx, {type="unlock-recipe",recipe="textplate-small-iron"})
+	table.insert(fx, {type="unlock-recipe",recipe="textplate-large-iron"})
+	fx = data.raw.technology['hub-tier2-part-assembly'].effects
 	table.insert(fx, {type="unlock-recipe",recipe="textplate-small-copper"})
 	table.insert(fx, {type="unlock-recipe",recipe="textplate-large-copper"})
 	fx = data.raw.technology['hub-tier0-hub-upgrade3'].effects

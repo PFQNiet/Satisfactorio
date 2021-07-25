@@ -9,7 +9,6 @@
 ---@field subgroup string
 ---@field order string
 ---@field ingredients Ingredient[]
----@field available_from_start boolean
 ---@field pipe_connections table
 
 ---@class makeAssemblingMachine_return
@@ -31,7 +30,6 @@ function makeAssemblingMachine(params)
 	local subgroup = params.subgroup
 	local order = params.order
 	local ingredients = params.ingredients
-	local enabled = params.available_from_start
 	local pipes = params.pipe_connections
 
 	local machine = {
@@ -130,9 +128,6 @@ function makeAssemblingMachine(params)
 		hide_from_stats = true,
 		enabled = false
 	}
-	if enabled then
-		recipe.enabled = true
-	end
 
 	data:extend{machine, item, recipe}
 	return {

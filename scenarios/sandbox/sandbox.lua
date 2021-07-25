@@ -18,8 +18,42 @@ local on_player_created = function(event)
 	player.print({"msg-introduction"})
 end
 
+---@param event on_technology_effects_reset
+local on_technology_effects_reset = function(event)
+	local force = event.force
+	force.recipes['infinity-storage-container'].enabled = true
+	force.recipes['infinity-pipeline'].enabled = true
+end
+
 return {
+	on_init = function()
+		remote.call("Satisfactorio", "set_no_victory", true)
+	end,
+	add_commands = function()
+		if not commands.commands['character'] then
+			commands.add_command("character", {"command.character"}, function(event)
+				local player = game.players[event.player_index]
+				local mode = event.parameter or (player.character and "off" or "on")
+				if mode == "on" then
+					if not player.character then
+						player.character = player.surface.create_entity{
+							name = "character",
+							position = player.surface.find_non_colliding_position("character", player.position, 0, 0.1),
+							force = player.force
+						}
+					end
+				elseif mode == "off" then
+					if player.character then
+						local char = player.character
+						player.character = nil
+						char.destroy()
+					end
+				end
+			end)
+		end
+	end,
 	events = {
-		[defines.events.on_player_created] = on_player_created
+		[defines.events.on_player_created] = on_player_created,
+		[defines.events.on_technology_effects_reset] = on_technology_effects_reset
 	}
 }

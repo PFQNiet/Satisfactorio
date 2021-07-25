@@ -32,7 +32,7 @@ local recipe = {
 	result = name,
 	energy_required = 10/4,
 	category = "equipment",
-	enabled = true
+	enabled = false
 }
 
 local stun = {

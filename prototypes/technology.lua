@@ -151,7 +151,13 @@ data:extend{
 			time = 1,
 			ingredients = {{"hub-parts",1}},
 		},
-		effects = {}
+		effects = {
+			{type="unlock-recipe",recipe="iron-ingot"},
+			{type="unlock-recipe",recipe="iron-plate"},
+			{type="unlock-recipe",recipe="iron-rod"},
+			{type="unlock-recipe",recipe="craft-bench"},
+			{type="unlock-recipe",recipe="xeno-zapper"}
+		}
 	},
 	{
 		icon = graphics.."icons/hub-parts.png",

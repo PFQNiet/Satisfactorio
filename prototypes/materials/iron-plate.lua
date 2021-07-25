@@ -18,7 +18,8 @@ local recipe = {
 	result = name,
 	result_count = 2,
 	energy_required = 6,
-	category = "constructing"
+	category = "constructing",
+	enabled = false
 }
 copyToHandcraft(recipe, 3)
 

@@ -105,7 +105,18 @@ end
 local function completeElevator(technology)
 	if game.tick > 5 then
 		local message = {"message.space-elevator-complete",technology.name,technology.localised_name}
-		technology.force.print({"",message,{"message.hub-new-tiers-available"}})
+		local newtiers = false
+		for _,effect in pairs(technology.effects) do
+			if effect.type == "unlock-recipe" then
+				newtiers = true
+				break
+			end
+		end
+		if newtiers then
+			technology.force.print({"",message,{"message.hub-new-tiers-available"}})
+		else
+			technology.force.print(message)
+		end
 	end
 	launchFreighter(findElevatorForForce(technology.force), technology.research_unit_ingredients[1].name)
 end

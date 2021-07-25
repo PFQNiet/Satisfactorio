@@ -37,6 +37,17 @@ handler.add_lib({
 				end
 			end)
 		end
+	end,
+	add_remote_interface = function()
+		if not remote.interfaces['Satisfactorio'] then
+			remote.add_interface("Satisfactorio", {
+				---@param bool boolean
+				set_no_victory = function(bool)
+					if type(bool) ~= "boolean" then error("Value for 'set_no_victory' must be a boolean") end
+					global.no_victory = bool
+				end
+			})
+		end
 	end
 })
 

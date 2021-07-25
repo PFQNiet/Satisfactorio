@@ -10,8 +10,6 @@ local bench = makeAssemblingMachine{
 	ingredients = {
 		{"iron-plate",3},
 		{"iron-rod",3}
-		-- {"iron-rod",3}
-	},
-	available_from_start = true
+	}
 }
 bench.machine.bottleneck_ignore = true
