@@ -184,11 +184,11 @@ gui.callbacks.repair = function(player, ship)
 	end
 end
 
-local function alternativeHardDrives()
+-- if crash sites are disabled, enable the awesome-shop-hard-drive recipe
+---@param event on_force_created|on_technology_effects_reset
+local function alternativeHardDrives(event)
 	if game.default_map_gen_settings.autoplace_controls['x-crashsite'].size == 0 then
-		for _,force in pairs(game.forces) do
-			force.recipes['awesome-shop-hard-drive'].enabled = true
-		end
+		event.force.recipes['awesome-shop-hard-drive'].enabled = true
 	end
 end
 
@@ -198,8 +198,7 @@ return {
 	lib = {
 		on_init = function()
 			global.crash_site = global.crash_site or script_data
-			-- if crash sites are disabled, enable the awesome-shop-hard-drive recipe
-			alternativeHardDrives()
+			alternativeHardDrives{force=game.forces.player}
 		end,
 		on_load = function()
 			script_data = global.crash_site or script_data
@@ -207,7 +206,8 @@ return {
 		events = {
 			[defines.events.on_gui_opened] = onGuiOpened,
 
-			[defines.events.on_force_created] = alternativeHardDrives
+			[defines.events.on_force_created] = alternativeHardDrives,
+			[defines.events.on_technology_effects_reset] = alternativeHardDrives
 		}
 	}
 }

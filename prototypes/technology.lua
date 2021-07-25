@@ -172,7 +172,7 @@ data:extend{
 	}
 }
 
-local parts = addTech("hub-tier0-hub-upgrade1", "hub/hub-upgrade-1-2", "hub-progressing", "hub-tier0", "a-0-1", 1, {"the-hub"}, {
+addTech("hub-tier0-hub-upgrade1", "hub/hub-upgrade-1-2", "hub-progressing", "hub-tier0", "a-0-1", 1, {"the-hub"}, {
 	{"iron-rod",10}
 }, {
 	{type="unlock-recipe",recipe="equipment-workshop"},
@@ -187,7 +187,6 @@ local parts = addTech("hub-tier0-hub-upgrade1", "hub/hub-upgrade-1-2", "hub-prog
 		}
 	}
 })
-parts.recipe.enabled = true
 addTech("hub-tier0-hub-upgrade2", "hub/hub-upgrade-1-2", "hub-progressing", "hub-tier0", "a-0-2", 1, {"hub-tier0-hub-upgrade1"}, {
 	{"iron-rod",20},
 	{"iron-plate",10}
