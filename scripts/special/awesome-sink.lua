@@ -1,6 +1,10 @@
 local gui = require(modpath.."scripts.gui.awesome-sink")
+local link = require(modpath.."scripts.lualib.linked-entity")
+local io = require(modpath.."scripts.lualib.input-output")
+local bev = require(modpath.."scripts.lualib.build-events")
 
 -- sink is a furnace that produces awesome-points "fluid"
+-- a hidden beacon speeds up the furnace based on the connected belt speed
 -- n = tickets earned so far, next ticket earned at 500*floor(n/3)^2+1000 points
 
 ---@class AwesomeSinkData
@@ -16,11 +20,16 @@ local gui = require(modpath.."scripts.gui.awesome-sink")
 ---@field earned uint64
 ---@field per_minute uint
 
+---@class AwesomeSinkStruct
+---@field sink LuaEntity
+---@field connection MachineConnection
+---@field modules LuaInventory
+
 ---@class global.awesome
----@field sinks table<uint,LuaEntity> Sinks indexed by unit number
+---@field structs table<uint,AwesomeSinkStruct> Sinks indexed by unit number
 ---@field coupons table<uint,AwesomeSinkData> Map of force index to earning data
 local script_data = {
-	sinks = {},
+	structs = {},
 	coupons = {}
 }
 
@@ -61,13 +70,29 @@ local function gainPoints(force, points)
 	end
 end
 
-local io = require(modpath.."scripts.lualib.input-output")
-local bev = require(modpath.."scripts.lualib.build-events")
-
 local base = "awesome-sink"
+local beacon = base.."-beacon"
+local module = base.."-module"
+local counts = {
+	["loader-conveyor-belt-mk-1"] = 0,
+	["loader-conveyor-belt-mk-2"] = 1,
+	["loader-conveyor-belt-mk-3"] = 2,
+	["loader-conveyor-belt-mk-4"] = 4,
+	["loader-conveyor-belt-mk-5"] = 6
+}
 
----@param sink LuaEntity
-local function processSink(sink)
+---@param struct AwesomeSinkStruct
+local function processSink(struct)
+	local mods = struct.modules
+	local count = counts[struct.connection.belt.name] or 0
+	local delta = count - mods.get_item_count(module)
+	if delta > 0 then
+		mods.insert{name=module, count=delta}
+	elseif delta < 0 then
+		mods.remove{name=module, count=-delta}
+	end
+
+	local sink = struct.sink
 	local fluidbox = sink.fluidbox[1]
 	if fluidbox then
 		-- we have some fluid!
@@ -81,9 +106,27 @@ local function onBuilt(event)
 	local entity = event.created_entity or event.entity
 	if not (entity and entity.valid) then return end
 	if entity.name == base then
-		io.addConnection(entity, {-0.5,3}, "input")
+		local conn = io.addConnection(entity, {-0.5,3}, "input")
+		local emit = entity.surface.create_entity{
+			name = beacon,
+			position = {entity.position.x+2, entity.position.y},
+			force = entity.force,
+			raise_built = true
+		}
+		link.register(entity, emit)
+		local mods = emit.get_inventory(defines.inventory.beacon_modules)
+		local count = counts[conn.belt.name] or 0
+		if count > 0 then
+			mods.insert{name=module, count=count}
+		end
 		entity.rotatable = false
-		script_data.sinks[entity.unit_number] = entity
+
+		local struct = {
+			sink = entity,
+			connection = conn,
+			modules = mods
+		}
+		script_data.structs[entity.unit_number] = struct
 	end
 end
 
@@ -93,14 +136,19 @@ local function onRemoved(event)
 	if not (entity and entity.valid) then return end
 	if entity.name == base then
 		processSink(entity)
-		script_data.sinks[entity.unit_number] = nil
+		script_data.structs[entity.unit_number] = nil
 	end
 end
 
 ---@param event on_gui_opened
 local function onGuiOpened(event)
 	local player = game.players[event.player_index]
-	if event.gui_type == defines.gui_type.entity and event.entity.valid and event.entity.name == base then
+	local entity = event.entity
+	if not (entity and entity.valid) then return end
+	if entity.name == beacon then
+		player.opened = entity.surface.find_entity(base, entity.position)
+	end
+	if entity.name == base then
 		gui.open_gui(player, getStruct(player.force))
 	end
 end
@@ -141,12 +189,33 @@ return bev.applyBuildEvents{
 	on_load = function()
 		script_data = global.awesome or script_data
 	end,
+	on_configuration_changed = function()
+		if script_data['sinks'] and not script_data.structs then
+			script_data.structs = {}
+			---@typelist number,LuaEntity
+			for i,sink in pairs(script_data['sinks']) do
+				local emit = sink.surface.create_entity{
+					name = beacon,
+					position = {sink.position.x+2,sink.position.y},
+					force = sink.force,
+					raise_built = true
+				}
+				emit.operable = false
+				script_data.structs[i] = {
+					sink = sink,
+					connection = io.getConnections(sink).connections[1],
+					modules = emit.get_inventory(defines.inventory.beacon_modules)
+				}
+			end
+			script_data['sinks'] = nil
+		end
+	end,
 	on_nth_tick = {
 		[300] = function()
 			for _,entry in pairs(script_data.coupons) do
 				entry.points.per_minute = 0
 			end
-			for _,sink in pairs(script_data.sinks) do
+			for _,sink in pairs(script_data.structs) do
 				processSink(sink)
 			end
 			for _,force in pairs(game.forces) do

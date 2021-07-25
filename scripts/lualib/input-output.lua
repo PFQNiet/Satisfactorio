@@ -309,6 +309,7 @@ end
 
 return {
 	addConnection = addConnection,
+	getConnections = getStructsForEntity,
 	toggle = toggleConnections,
 	isEnabled = isEnabled,
 	lib = bev.applyBuildEvents{

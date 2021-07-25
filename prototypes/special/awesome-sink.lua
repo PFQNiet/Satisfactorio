@@ -17,11 +17,57 @@ local base = makeAssemblingMachine{
 }
 base.machine.source_inventory_size = 1
 base.machine.result_inventory_size = 0
+base.machine.allowed_effects = "speed" -- can be sped up by the fake beacon
 base.machine.fluid_boxes = {
 	{
 		base_area = 1000000, -- space for up to 100M fluid because there's no kill like overkill
 		production_type = "output",
 		pipe_connections = {}
+	}
+}
+
+data:extend{
+	{
+		type = "beacon",
+		name = "awesome-sink-beacon",
+		localised_name = {"entity-name.awesome-sink"},
+		icon = base.machine.icon,
+		icon_size = base.machine.icon_size,
+		energy_source = {type="void"},
+		energy_usage = "1W",
+		supply_area_distance = 1,
+		distribution_effectivity = 1,
+		module_specification = {module_slots = 6}, -- fastest belt is 7x the speed of the slowest, or +6 x100%
+		allowed_effects = "speed",
+		base_picture = empty_graphic,
+		animation = empty_graphic,
+		max_health = 1,
+		collision_box = {{-0.3,-0.3},{0.3,0.3}},
+		collision_mask = {},
+		selection_box = {{-0.5,-0.5},{0.5,0.5}},
+		selectable_in_game = false,
+		flags = {
+			"hidden",
+			"hide-alt-info",
+			"not-on-map"
+		}
+	},
+	{
+		type = "module",
+		name = "awesome-sink-module",
+		localised_name = {"entity-name.awesome-sink"},
+		icon = base.machine.icon,
+		icon_size = base.machine.icon_size,
+		stack_size = 50,
+		category = "speed",
+		tier = 3,
+		effect = {
+			speed = {bonus=1}
+		},
+		flags = {
+			"hidden",
+			"only-in-cursor"
+		}
 	}
 }
 
@@ -61,7 +107,7 @@ for item,reward in pairs(paytable) do
 			},
 			ingredients = {{item,1}},
 			results = {{type="fluid",name="awesome-points",amount=reward}},
-			energy_required = 0.01,
+			energy_required = 60/112.5, -- base rate that a conveyor mk 1 can carry
 			category = "awesome-sink",
 			hide_from_player_crafting = true
 		}

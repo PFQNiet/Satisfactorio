@@ -61,6 +61,7 @@ local function onRemoved(event)
 			elseif child.type == "electric-energy-interface" then
 			elseif child.type == "storage-tank" then
 			elseif child.type == "mining-drill" then
+			elseif child.type == "beacon" then
 			elseif child.type == "train-stop" then
 			elseif child.type == "resource" then
 				-- nothing to do here
