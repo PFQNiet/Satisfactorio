@@ -1,5 +1,4 @@
--- TODO Make real tips-and-tricks
--- For now, just wipe all the Vanilla ones and say "hey you're supposed to know how Factorio works if you're playing overhaul mods"
+-- Remove vanilla tips-tricks as many of them break due to the overhaul
 local vanilla_tiptrick_categories = {
 	"belts", "copy-paste", "drag-building", "electric-network", "fast-replace",
 	"game-interaction", "ghost-building", "inserters", "logistic-network", "trains"

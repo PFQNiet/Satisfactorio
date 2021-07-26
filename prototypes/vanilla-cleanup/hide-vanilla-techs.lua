@@ -57,21 +57,3 @@ for _,s in pairs(data.raw.shortcut) do
 		s.technology_to_unlock = nil
 	end
 end
-data.raw['research-achievement'] = {}
-
-local tips = data.raw['tips-and-tricks-item']
-tips['long-handed-inserters'].trigger = {type="build-entity",entity="long-handed-inserter"}
-tips['splitters'].trigger = {type="build-entity",entity="splitter"}
-tips['underground-belts'].trigger = {type="build-entity",entity="underground-belt"}
-tips['trains'].trigger.technology = "hub-tier6-monorail-train-technology"
-tips['train-stops'].trigger = tips['train-stops'].trigger.triggers[1]
-tips['rail-signals-basic'].trigger.triggers[2].triggers[1].technology = "hub-tier6-monorail-train-technology"
-tips['gate-over-rail'].trigger.triggers[3] = {type="build-entity",entity="gate"}
-tips['logistic-network'].trigger = {type="build-entity",entity="roboport"}
-tips['personal-logistics'].trigger = {type="build-entity",entity="roboport"}
-tips['construction-robots'].trigger = {type="build-entity",entity="roboport"}
-tips['requester-chest'].trigger = {type="build-entity",entity="logistic-chest-requester"}
-tips['active-provider-chest'].trigger = {type="build-entity",entity="logistic-chest-active-provider"}
-tips['buffer-chest'].trigger = {type="build-entity",entity="logistic-chest-buffer"}
-tips['ghost-building'].trigger = {type="build-entity",entity="transport-belt",count=100}
-tips['circuit-network'].trigger = {type="build-entity",entity="logistic-chest-storage"}
