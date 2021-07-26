@@ -1,3 +1,17 @@
+---@class AltRecipeEntry
+---@field name string
+---@field ingredients Ingredient[]
+---@field result Product
+---@field result_count uint
+---@field results Product[]
+---@field main_product Product
+---@field subgroup string
+---@field energy_required number
+---@field category '"constructing"'|'"assembling"'|'"manufacturing"'|'"smelter"'|'"foundry"'|'"refining"'|'"blending"'|'"accelerating"'
+---@field icons ItemPrototypeIdentification[]
+---@field prerequisites TechnologyIdentification[]
+
+---@type AltRecipeEntry[]
 local recipes = {
 	{
 		name = "copper-alloy-ingot",
@@ -9,7 +23,8 @@ local recipes = {
 		result_count = 20,
 		energy_required = 12,
 		category = "foundry",
-		icons = {"iron-ore"}
+		icons = {"iron-ore"},
+		prerequisites = {}
 	},
 	{
 		name = "fine-black-powder",
@@ -21,7 +36,8 @@ local recipes = {
 		result_count = 4,
 		energy_required = 16,
 		category = "assembling",
-		icons = {"compacted-coal"}
+		icons = {"compacted-coal"},
+		prerequisites = {"alt-compacted-coal"}
 	},
 	{
 		name = "caterium-wire",
@@ -32,7 +48,8 @@ local recipes = {
 		result_count = 8,
 		energy_required = 4,
 		category = "constructing",
-		icons = {"caterium-ingot"}
+		icons = {"caterium-ingot"},
+		prerequisites = {"mam-caterium-caterium"}
 	},
 	{
 		name = "fused-quickwire",
@@ -44,7 +61,8 @@ local recipes = {
 		result_count = 12,
 		energy_required = 8,
 		category = "assembling",
-		icons = {"copper-ingot"}
+		icons = {"copper-ingot"},
+		prerequisites = {"mam-caterium-caterium-ingots"}
 	},
 	{
 		name = "fused-wire",
@@ -56,7 +74,8 @@ local recipes = {
 		result_count = 30,
 		energy_required = 20,
 		category = "assembling",
-		icons = {"copper-ingot","caterium-ingot"}
+		icons = {"copper-ingot","caterium-ingot"},
+		prerequisites = {"mam-caterium-caterium"}
 	},
 	{
 		name = "fine-concrete",
@@ -68,7 +87,8 @@ local recipes = {
 		result_count = 10,
 		energy_required = 24,
 		category = "assembling",
-		icons = {"silica"}
+		icons = {"silica"},
+		prerequisites = {"mam-quartz-quartz"}
 	},
 	{
 		name = "cheap-silica",
@@ -80,7 +100,8 @@ local recipes = {
 		result_count = 7,
 		energy_required = 16,
 		category = "assembling",
-		icons = {"stone"}
+		icons = {"stone"},
+		prerequisites = {"mam-quartz-silica"}
 	},
 	{
 		name = "seismic-nobelisk",
@@ -93,7 +114,8 @@ local recipes = {
 		result_count = 4,
 		energy_required = 40,
 		category = "manufacturing",
-		icons = {"crystal-oscillator"}
+		icons = {"crystal-oscillator"},
+		prerequisites = {"mam-sulfur-nobelisk","mam-quartz-quartz-crystals"}
 	},
 	{
 		name = "turbo-blend-fuel",
@@ -108,7 +130,8 @@ local recipes = {
 		subgroup = "fluid-recipe",
 		energy_required = 8,
 		category = "blending",
-		icons = {"fuel", "heavy-oil-residue"}
+		icons = {"fuel", "heavy-oil-residue"},
+		prerequisites = {"mam-sulfur-sulfur","hub-tier7-bauxite-refinement"}
 	},
 	{
 		name = "iron-wire",
@@ -119,7 +142,8 @@ local recipes = {
 		result_count = 9,
 		energy_required = 24,
 		category = "constructing",
-		icons = {"iron-ingot"}
+		icons = {"iron-ingot"},
+		prerequisites = {}
 	},
 	{
 		name = "cast-screw",
@@ -130,7 +154,8 @@ local recipes = {
 		result_count = 20,
 		energy_required = 24,
 		category = "constructing",
-		icons = {"iron-ingot"}
+		icons = {"iron-ingot"},
+		prerequisites = {}
 	},
 	{
 		name = "iron-alloy-ingot",
@@ -142,7 +167,8 @@ local recipes = {
 		result_count = 5,
 		energy_required = 6,
 		category = "foundry",
-		icons = {"copper-ore"}
+		icons = {"copper-ore"},
+		prerequisites = {}
 	},
 	{
 		name = "bolted-iron-plate",
@@ -154,7 +180,8 @@ local recipes = {
 		result_count = 3,
 		energy_required = 12,
 		category = "assembling",
-		icons = {"screw"}
+		icons = {"screw"},
+		prerequisites = {}
 	},
 	{
 		name = "stitched-iron-plate",
@@ -166,7 +193,8 @@ local recipes = {
 		result_count = 3,
 		energy_required = 32,
 		category = "assembling",
-		icons = {"wire"}
+		icons = {"wire"},
+		prerequisites = {}
 	},
 	{
 		name = "bolted-frame",
@@ -178,7 +206,8 @@ local recipes = {
 		result_count = 2,
 		energy_required = 24,
 		category = "assembling",
-		icons = {"screw"}
+		icons = {"screw"},
+		prerequisites = {"hub-tier2-part-assembly"}
 	},
 	{
 		name = "copper-rotor",
@@ -190,7 +219,8 @@ local recipes = {
 		result_count = 3,
 		energy_required = 16,
 		category = "assembling",
-		icons = {"copper-sheet"}
+		icons = {"copper-sheet"},
+		prerequisites = {"hub-tier2-part-assembly"}
 	},
 	{
 		name = "steel-rod",
@@ -201,7 +231,8 @@ local recipes = {
 		result_count = 4,
 		energy_required = 5,
 		category = "constructing",
-		icons = {"steel-ingot"}
+		icons = {"steel-ingot"},
+		prerequisites = {"hub-tier3-basic-steel-production"}
 	},
 	{
 		name = "steeled-frame",
@@ -213,7 +244,8 @@ local recipes = {
 		result_count = 3,
 		energy_required = 60,
 		category = "assembling",
-		icons = {"steel-pipe"}
+		icons = {"steel-pipe"},
+		prerequisites = {"hub-tier3-basic-steel-production"}
 	},
 	{
 		name = "steel-rotor",
@@ -225,7 +257,8 @@ local recipes = {
 		result_count = 1,
 		energy_required = 12,
 		category = "assembling",
-		icons = {"steel-pipe"}
+		icons = {"steel-pipe"},
+		prerequisites = {"hub-tier3-basic-steel-production"}
 	},
 	{
 		name = "steel-screw",
@@ -236,7 +269,8 @@ local recipes = {
 		result_count = 52,
 		energy_required = 12,
 		category = "constructing",
-		icons = {"steel-beam"}
+		icons = {"steel-beam"},
+		prerequisites = {"hub-tier3-basic-steel-production"}
 	},
 	{
 		name = "solid-steel-ingot",
@@ -248,7 +282,8 @@ local recipes = {
 		result_count = 3,
 		energy_required = 3,
 		category = "foundry",
-		icons = {"iron-ingot"}
+		icons = {"iron-ingot"},
+		prerequisites = {"hub-tier3-basic-steel-production"}
 	},
 	{
 		name = "compacted-steel-ingot",
@@ -260,7 +295,8 @@ local recipes = {
 		result_count = 10,
 		energy_required = 16,
 		category = "foundry",
-		icons = {"compacted-coal"}
+		icons = {"compacted-coal"},
+		prerequisites = {"hub-tier3-basic-steel-production","alt-compacted-coal"}
 	},
 	{
 		name = "crystal-beacon",
@@ -273,7 +309,8 @@ local recipes = {
 		result_count = 20,
 		energy_required = 120,
 		category = "manufacturing",
-		icons = {"crystal-oscillator"}
+		icons = {"crystal-oscillator"},
+		prerequisites = {"hub-tier3-basic-steel-production","mam-quartz-quartz-crystals"}
 	},
 	{
 		name = "biocoal",
@@ -284,7 +321,8 @@ local recipes = {
 		result_count = 6,
 		energy_required = 8,
 		category = "constructing",
-		icons = {"biomass"}
+		icons = {"biomass"},
+		prerequisites = {"hub-tier3-coal-power"}
 	},
 	{
 		name = "charcoal",
@@ -295,7 +333,8 @@ local recipes = {
 		result_count = 10,
 		energy_required = 4,
 		category = "constructing",
-		icons = {"wood"}
+		icons = {"wood"},
+		prerequisites = {"hub-tier3-coal-power"}
 	},
 	{
 		name = "wet-concrete",
@@ -307,7 +346,8 @@ local recipes = {
 		result_count = 4,
 		energy_required = 3,
 		category = "refining",
-		icons = {"water"}
+		icons = {"water"},
+		prerequisites = {"hub-tier3-coal-power"}
 	},
 	{
 		name = "pure-copper-ingot",
@@ -319,7 +359,8 @@ local recipes = {
 		result_count = 15,
 		energy_required = 24,
 		category = "refining",
-		icons = {"water"}
+		icons = {"water"},
+		prerequisites = {"hub-tier3-coal-power"}
 	},
 	{
 		name = "steamed-copper-sheet",
@@ -331,7 +372,8 @@ local recipes = {
 		result_count = 3,
 		energy_required = 8,
 		category = "refining",
-		icons = {"water"}
+		icons = {"water"},
+		prerequisites = {"hub-tier3-coal-power"}
 	},
 	{
 		name = "pure-iron-ingot",
@@ -343,7 +385,8 @@ local recipes = {
 		result_count = 13,
 		energy_required = 12,
 		category = "refining",
-		icons = {"water"}
+		icons = {"water"},
+		prerequisites = {"hub-tier3-coal-power"}
 	},
 	{
 		name = "pure-caterium-ingot",
@@ -355,7 +398,8 @@ local recipes = {
 		result_count = 1,
 		energy_required = 5,
 		category = "refining",
-		icons = {"water"}
+		icons = {"water"},
+		prerequisites = {"hub-tier3-coal-power","mam-caterium-caterium"}
 	},
 	{
 		name = "pure-quartz-crystal",
@@ -367,7 +411,8 @@ local recipes = {
 		result_count = 7,
 		energy_required = 8,
 		category = "refining",
-		icons = {"water"}
+		icons = {"water"},
+		prerequisites = {"hub-tier3-coal-power","mam-quartz-quartz-crystals"}
 	},
 	{
 		name = "compacted-coal",
@@ -379,7 +424,8 @@ local recipes = {
 		result_count = 5,
 		energy_required = 12,
 		category = "assembling",
-		icons = {}
+		icons = {},
+		prerequisites = {"hub-tier3-coal-power","mam-sulfur-sulfur"}
 	},
 	{
 		name = "encased-industrial-pipe",
@@ -391,7 +437,8 @@ local recipes = {
 		result_count = 1,
 		energy_required = 15,
 		category = "assembling",
-		icons = {"steel-pipe"}
+		icons = {"steel-pipe"},
+		prerequisites = {"hub-tier4-advanced-steel-production"}
 	},
 	{
 		name = "high-speed-wiring",
@@ -404,7 +451,8 @@ local recipes = {
 		result_count = 4,
 		energy_required = 32,
 		category = "manufacturing",
-		icons = {"high-speed-connector"}
+		icons = {"high-speed-connector"},
+		prerequisites = {"hub-tier4-advanced-steel-production","mam-caterium-ai-limiter"}
 	},
 	{
 		name = "quickwire-stator",
@@ -416,7 +464,8 @@ local recipes = {
 		result_count = 2,
 		energy_required = 15,
 		category = "assembling",
-		icons = {"quickwire"}
+		icons = {"quickwire"},
+		prerequisites = {"hub-tier4-advanced-steel-production","mam-caterium-caterium-ingots"}
 	},
 	{
 		name = "rigour-motor",
@@ -429,7 +478,8 @@ local recipes = {
 		result_count = 6,
 		energy_required = 48,
 		category = "manufacturing",
-		icons = {"crystal-oscillator"}
+		icons = {"crystal-oscillator"},
+		prerequisites = {"hub-tier4-advanced-steel-production","mam-quartz-quartz-crystals"}
 	},
 	{
 		name = "coated-iron-canister",
@@ -441,7 +491,8 @@ local recipes = {
 		result_count = 4,
 		energy_required = 4,
 		category = "assembling",
-		icons = {"iron-plate"}
+		icons = {"iron-plate"},
+		prerequisites = {"hub-tier5-alternative-fluid-transport"}
 	},
 	{
 		name = "steel-canister",
@@ -452,7 +503,8 @@ local recipes = {
 		result_count = 2,
 		energy_required = 3,
 		category = "constructing",
-		icons = {"steel-ingot"}
+		icons = {"steel-ingot"},
+		prerequisites = {"hub-tier5-alternative-fluid-transport"}
 	},
 	{
 		name = "heavy-encased-frame",
@@ -466,7 +518,8 @@ local recipes = {
 		result_count = 3,
 		energy_required = 64,
 		category = "manufacturing",
-		icons = {"concrete"}
+		icons = {"concrete"},
+		prerequisites = {"hub-tier5-industrial-manufacturing"}
 	},
 	{
 		name = "heavy-flexible-frame",
@@ -480,7 +533,8 @@ local recipes = {
 		result_count = 1,
 		energy_required = 16,
 		category = "manufacturing",
-		icons = {"rubber"}
+		icons = {"rubber"},
+		prerequisites = {"hub-tier5-industrial-manufacturing"}
 	},
 	{
 		name = "automated-miner",
@@ -493,7 +547,8 @@ local recipes = {
 		result = "portable-miner",
 		energy_required = 60,
 		category = "manufacturing",
-		icons = {"motor"}
+		icons = {"motor"},
+		prerequisites = {"hub-tier5-industrial-manufacturing"}
 	},
 	{
 		name = "caterium-computer",
@@ -506,7 +561,8 @@ local recipes = {
 		result_count = 1,
 		energy_required = 16,
 		category = "manufacturing",
-		icons = {"quickwire"}
+		icons = {"quickwire"},
+		prerequisites = {"hub-tier5-industrial-manufacturing","mam-caterium-caterium-ingots"}
 	},
 	{
 		name = "crystal-computer",
@@ -518,7 +574,8 @@ local recipes = {
 		result_count = 3,
 		energy_required = 64,
 		category = "assembling",
-		icons = {"crystal-oscillator"}
+		icons = {"crystal-oscillator"},
+		prerequisites = {"hub-tier5-industrial-manufacturing","mam-quartz-quartz-crystals"}
 	},
 	{
 		name = "coated-cable",
@@ -530,7 +587,8 @@ local recipes = {
 		result_count = 9,
 		energy_required = 8,
 		category = "refining",
-		icons = {"heavy-oil-residue"}
+		icons = {"heavy-oil-residue"},
+		prerequisites = {"hub-tier5-oil-processing"}
 	},
 	{
 		name = "insulated-cable",
@@ -542,7 +600,8 @@ local recipes = {
 		result_count = 20,
 		energy_required = 12,
 		category = "assembling",
-		icons = {"rubber"}
+		icons = {"rubber"},
+		prerequisites = {"hub-tier5-oil-processing"}
 	},
 	{
 		name = "electrode-circuit-board",
@@ -554,7 +613,8 @@ local recipes = {
 		result_count = 1,
 		energy_required = 12,
 		category = "assembling",
-		icons = {"petroleum-coke"}
+		icons = {"petroleum-coke"},
+		prerequisites = {"hub-tier5-oil-processing"}
 	},
 	{
 		name = "rubber-concrete",
@@ -566,7 +626,8 @@ local recipes = {
 		result_count = 9,
 		energy_required = 12,
 		category = "assembling",
-		icons = {"rubber"}
+		icons = {"rubber"},
+		prerequisites = {"hub-tier5-oil-processing"}
 	},
 	{
 		name = "heavy-oil-residue",
@@ -581,7 +642,8 @@ local recipes = {
 		subgroup = "fluid-recipe",
 		energy_required = 6,
 		category = "refining",
-		icons = {}
+		icons = {},
+		prerequisites = {"hub-tier5-oil-processing"}
 	},
 	{
 		name = "coated-iron-plate",
@@ -593,7 +655,8 @@ local recipes = {
 		result_count = 15,
 		energy_required = 12,
 		category = "assembling",
-		icons = {"plastic"}
+		icons = {"plastic"},
+		prerequisites = {"hub-tier5-oil-processing"}
 	},
 	{
 		name = "steel-coated-plate",
@@ -605,7 +668,8 @@ local recipes = {
 		result_count = 18,
 		energy_required = 24,
 		category = "assembling",
-		icons = {"steel-ingot"}
+		icons = {"steel-ingot"},
+		prerequisites = {"hub-tier5-oil-processing"}
 	},
 	{
 		name = "recycled-plastic",
@@ -617,7 +681,8 @@ local recipes = {
 		result_count = 12,
 		energy_required = 12,
 		category = "refining",
-		icons = {"rubber"}
+		icons = {"rubber"},
+		prerequisites = {"hub-tier5-oil-processing"}
 	},
 	{
 		name = "polymer-resin",
@@ -631,7 +696,8 @@ local recipes = {
 		main_product = "polymer-resin",
 		energy_required = 6,
 		category = "refining",
-		icons = {}
+		icons = {},
+		prerequisites = {"hub-tier5-oil-processing"}
 	},
 	{
 		name = "adhered-iron-plate",
@@ -643,7 +709,8 @@ local recipes = {
 		result_count = 1,
 		energy_required = 16,
 		category = "assembling",
-		icons = {"rubber"}
+		icons = {"rubber"},
+		prerequisites = {"hub-tier5-oil-processing"}
 	},
 	{
 		name = "recycled-rubber",
@@ -655,7 +722,8 @@ local recipes = {
 		result_count = 12,
 		energy_required = 12,
 		category = "refining",
-		icons = {"plastic"}
+		icons = {"plastic"},
+		prerequisites = {"hub-tier5-oil-processing"}
 	},
 	{
 		name = "plastic-smart-plating",
@@ -668,7 +736,8 @@ local recipes = {
 		result_count = 2,
 		energy_required = 24,
 		category = "manufacturing",
-		icons = {"plastic"}
+		icons = {"plastic"},
+		prerequisites = {"hub-tier5-oil-processing"}
 	},
 	{
 		name = "coke-steel-ingot",
@@ -680,7 +749,8 @@ local recipes = {
 		result_count = 20,
 		energy_required = 12,
 		category = "foundry",
-		icons = {"petroleum-coke"}
+		icons = {"petroleum-coke"},
+		prerequisites = {"hub-tier5-oil-processing"}
 	},
 	{
 		name = "flexible-framework",
@@ -693,7 +763,8 @@ local recipes = {
 		result_count = 2,
 		energy_required = 16,
 		category = "manufacturing",
-		icons = {"rubber"}
+		icons = {"rubber"},
+		prerequisites = {"hub-tier5-oil-processing"}
 	},
 	{
 		name = "quickwire-cable",
@@ -705,7 +776,8 @@ local recipes = {
 		result_count = 11,
 		energy_required = 24,
 		category = "assembling",
-		icons = {"quickwire"}
+		icons = {"quickwire"},
+		prerequisites = {"hub-tier5-oil-processing","mam-caterium-caterium-ingots"}
 	},
 	{
 		name = "caterium-circuit-board",
@@ -717,7 +789,8 @@ local recipes = {
 		result_count = 7,
 		energy_required = 48,
 		category = "assembling",
-		icons = {"quickwire"}
+		icons = {"quickwire"},
+		prerequisites = {"hub-tier5-oil-processing","mam-caterium-caterium-ingots"}
 	},
 	{
 		name = "silicon-high-speed-connector",
@@ -730,7 +803,8 @@ local recipes = {
 		result_count = 2,
 		energy_required = 40,
 		category = "manufacturing",
-		icons = {"silica"}
+		icons = {"silica"},
+		prerequisites = {"hub-tier5-oil-processing","mam-caterium-high-speed-connector","mam-quartz-quartz"}
 	},
 	{
 		name = "polyester-fabric",
@@ -742,7 +816,8 @@ local recipes = {
 		result_count = 1,
 		energy_required = 12,
 		category = "refining",
-		icons = {"polymer-resin"}
+		icons = {"polymer-resin"},
+		prerequisites = {"hub-tier5-oil-processing","mam-mycelia-fabric"}
 	},
 	{
 		name = "insulated-crystal-oscillator",
@@ -755,7 +830,8 @@ local recipes = {
 		result_count = 1,
 		energy_required = 32,
 		category = "manufacturing",
-		icons = {"rubber"}
+		icons = {"rubber"},
+		prerequisites = {"hub-tier5-oil-processing","mam-quartz-crystal-oscillator","mam-caterium-caterium-electronics"}
 	},
 	{
 		name = "silicon-circuit-board",
@@ -767,7 +843,8 @@ local recipes = {
 		result_count = 5,
 		energy_required = 24,
 		category = "assembling",
-		icons = {"silica"}
+		icons = {"silica"},
+		prerequisites = {"hub-tier5-oil-processing","mam-quartz-quartz"}
 	},
 	{
 		name = "diluted-packaged-fuel",
@@ -779,7 +856,8 @@ local recipes = {
 		result_count = 2,
 		energy_required = 2,
 		category = "refining",
-		icons = {"packaged-water"}
+		icons = {"packaged-water"},
+		prerequisites = {"hub-tier5-oil-processing"}
 	},
 	{
 		name = "turbofuel",
@@ -792,7 +870,8 @@ local recipes = {
 		subgroup = "fluid-recipe",
 		energy_required = 16,
 		category = "refining",
-		icons = {}
+		icons = {},
+		prerequisites = {"hub-tier5-oil-processing","alt-compacted-coal"}
 	},
 	{
 		name = "turbo-heavy-fuel",
@@ -805,7 +884,8 @@ local recipes = {
 		subgroup = "fluid-recipe",
 		energy_required = 8,
 		category = "refining",
-		icons = {"heavy-oil-residue"}
+		icons = {"heavy-oil-residue"},
+		prerequisites = {"hub-tier5-oil-processing","alt-compacted-coal"}
 	},
 	{
 		name = "classic-battery",
@@ -819,7 +899,8 @@ local recipes = {
 		result_count = 4,
 		energy_required = 8,
 		category = "manufacturing",
-		icons = {"plastic"}
+		icons = {"plastic"},
+		prerequisites = {"hub-tier7-aeronautical-engineering"}
 	},
 	{
 		name = "electric-motor",
@@ -831,7 +912,8 @@ local recipes = {
 		result_count = 2,
 		energy_required = 16,
 		category = "assembling",
-		icons = {"electromagnetic-control-rod"}
+		icons = {"electromagnetic-control-rod"},
+		prerequisites = {"hub-tier7-aeronautical-engineering"}
 	},
 	{
 		name = "oc-supercomputer",
@@ -843,7 +925,8 @@ local recipes = {
 		result_count = 1,
 		energy_required = 20,
 		category = "assembling",
-		icons = {"cooling-system"}
+		icons = {"cooling-system"},
+		prerequisites = {"hub-tier7-aeronautical-engineering","hub-tier8-advanced-aluminium-production"}
 	},
 	{
 		name = "super-state-computer",
@@ -857,7 +940,8 @@ local recipes = {
 		result_count = 2,
 		energy_required = 50,
 		category = "manufacturing",
-		icons = {"electromagnetic-control-rod"}
+		icons = {"electromagnetic-control-rod"},
+		prerequisites = {"hub-tier7-aeronautical-engineering","hub-tier8-nuclear-power"}
 	},
 	{
 		name = "sloppy-alumina",
@@ -870,7 +954,8 @@ local recipes = {
 		subgroup = "fluid-recipe",
 		energy_required = 3,
 		category = "refining",
-		icons = {"water"}
+		icons = {"water"},
+		prerequisites = {"hub-tier7-bauxite-refinement"}
 	},
 	{
 		name = "alclad-casing",
@@ -882,7 +967,8 @@ local recipes = {
 		result_count = 15,
 		energy_required = 8,
 		category = "assembling",
-		icons = {"copper-ingot"}
+		icons = {"copper-ingot"},
+		prerequisites = {"hub-tier7-bauxite-refinement"}
 	},
 	{
 		name = "pure-aluminium-ingot",
@@ -893,7 +979,8 @@ local recipes = {
 		result_count = 1,
 		energy_required = 2,
 		category = "smelter",
-		icons = {}
+		icons = {},
+		prerequisites = {"hub-tier7-bauxite-refinement"}
 	},
 	{
 		name = "electrode-aluminium-scrap",
@@ -908,7 +995,8 @@ local recipes = {
 		main_product = "aluminium-scrap",
 		energy_required = 4,
 		category = "refining",
-		icons = {"petroleum-coke"}
+		icons = {"petroleum-coke"},
+		prerequisites = {"hub-tier7-bauxite-refinement"}
 	},
 	{
 		name = "diluted-fuel",
@@ -921,7 +1009,8 @@ local recipes = {
 		subgroup = "fluid-recipe",
 		energy_required = 6,
 		category = "blending",
-		icons = {"water"}
+		icons = {"water"},
+		prerequisites = {"hub-tier7-bauxite-refinement"}
 	},
 	{
 		name = "radio-control-system",
@@ -935,7 +1024,8 @@ local recipes = {
 		result_count = 3,
 		energy_required = 40,
 		category = "manufacturing",
-		icons = {"crystal-oscillator"}
+		icons = {"crystal-oscillator"},
+		prerequisites = {"hub-tier7-bauxite-refinement"}
 	},
 	{
 		name = "instant-scrap",
@@ -952,7 +1042,8 @@ local recipes = {
 		main_product = "aluminium-scrap",
 		energy_required = 6,
 		category = "blending",
-		icons = {"bauxite"}
+		icons = {"bauxite"},
+		prerequisites = {"hub-tier7-bauxite-refinement","hub-tier7-aeronautical-engineering"}
 	},
 	{
 		name = "radio-connection-unit",
@@ -965,7 +1056,8 @@ local recipes = {
 		result_count = 1,
 		energy_required = 16,
 		category = "manufacturing",
-		icons = {"high-speed-connector"}
+		icons = {"high-speed-connector"},
+		prerequisites = {"hub-tier7-bauxite-refinement","hub-tier8-advanced-aluminium-production"}
 	},
 	{
 		name = "cooling-device",
@@ -978,7 +1070,8 @@ local recipes = {
 		result_count = 2,
 		energy_required = 32,
 		category = "blending",
-		icons = {"motor"}
+		icons = {"motor"},
+		prerequisites = {"hub-tier8-advanced-aluminium-production"}
 	},
 	{
 		name = "heat-exchanger",
@@ -990,7 +1083,8 @@ local recipes = {
 		result_count = 1,
 		energy_required = 6,
 		category = "assembling",
-		icons = {"rubber"}
+		icons = {"rubber"},
+		prerequisites = {"hub-tier8-advanced-aluminium-production"}
 	},
 	{
 		name = "heat-fused-frame",
@@ -1004,7 +1098,8 @@ local recipes = {
 		result_count = 1,
 		energy_required = 20,
 		category = "blending",
-		icons = {"fuel"}
+		icons = {"fuel"},
+		prerequisites = {"hub-tier8-advanced-aluminium-production","hub-tier8-particle-enrichment"}
 	},
 	{
 		name = "turbo-electric-motor",
@@ -1018,7 +1113,8 @@ local recipes = {
 		result_count = 3,
 		energy_required = 64,
 		category = "manufacturing",
-		icons = {"electromagnetic-control-rod"}
+		icons = {"electromagnetic-control-rod"},
+		prerequisites = {"hub-tier8-leading-edge-production","hub-tier8-nuclear-power"}
 	},
 	{
 		name = "electromagnetic-connection-rod",
@@ -1030,7 +1126,8 @@ local recipes = {
 		result_count = 10,
 		energy_required = 60,
 		category = "assembling",
-		icons = {"high-speed-connector"}
+		icons = {"high-speed-connector"},
+		prerequisites = {"hub-tier8-nuclear-power","mam-caterium-ai-limiter"}
 	},
 	{
 		name = "infused-uranium-cell",
@@ -1044,7 +1141,8 @@ local recipes = {
 		result_count = 4,
 		energy_required = 12,
 		category = "manufacturing",
-		icons = {"sulfur"}
+		icons = {"sulfur"},
+		prerequisites = {"hub-tier8-nuclear-power","mam-caterium-caterium-ingots","mam-quartz-quartz","mam-sulfur-sulfur"}
 	},
 	{
 		name = "uranium-fuel-unit",
@@ -1058,7 +1156,8 @@ local recipes = {
 		result_count = 3,
 		energy_required = 300,
 		category = "manufacturing",
-		icons = {"crystal-oscillator"}
+		icons = {"crystal-oscillator"},
+		prerequisites = {"hub-tier8-nuclear-power","mam-quartz-quartz-crystals"}
 	},
 	{
 		name = "instant-plutonium-cell",
@@ -1070,7 +1169,8 @@ local recipes = {
 		result_count = 20,
 		energy_required = 120,
 		category = "accelerating",
-		icons = {"non-fissile-uranium"}
+		icons = {"non-fissile-uranium"},
+		prerequisites = {"hub-tier8-particle-enrichment"}
 	},
 	{
 		name = "fertile-uranium",
@@ -1087,7 +1187,8 @@ local recipes = {
 		main_product = "non-fissile-uranium",
 		energy_required = 12,
 		category = "blending",
-		icons = {"uranium-ore"}
+		icons = {"uranium-ore"},
+		prerequisites = {"hub-tier8-particle-enrichment"}
 	},
 	{
 		name = "plutonium-fuel-unit",
@@ -1099,7 +1200,8 @@ local recipes = {
 		result_count = 1,
 		energy_required = 120,
 		category = "assembling",
-		icons = {"pressure-conversion-cube"}
+		icons = {"pressure-conversion-cube"},
+		prerequisites = {"hub-tier8-particle-enrichment"}
 	},
 	{
 		name = "turbo-pressure-motor",
@@ -1113,8 +1215,17 @@ local recipes = {
 		result_count = 2,
 		energy_required = 32,
 		category = "manufacturing",
-		icons = {"pressure-conversion-cube"}
+		icons = {"pressure-conversion-cube"},
+		prerequisites = {"hub-tier8-particle-enrichment"}
 	},
+	{
+		name = "expanded-pocket-dimension",
+		prerequisites = {}
+	},
+	{
+		name = "inflated-pocket-dimension",
+		prerequisites = {"hub-tier5-industrial-manufacturing"}
+	}
 }
 
 return recipes
