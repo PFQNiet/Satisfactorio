@@ -156,7 +156,8 @@ data:extend{
 			{type="unlock-recipe",recipe="iron-plate"},
 			{type="unlock-recipe",recipe="iron-rod"},
 			{type="unlock-recipe",recipe="craft-bench"},
-			{type="unlock-recipe",recipe="xeno-zapper"}
+			{type="unlock-recipe",recipe="xeno-zapper"},
+			{type="unlock-recipe",recipe="hub-tier0"}
 		}
 	},
 	{

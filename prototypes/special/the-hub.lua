@@ -46,7 +46,7 @@ local hubterminal = {
 	},
 	entity_info_icon_shift = {0,0},
 	draw_entity_info_icon_background = false,
-	placeable_by = {item="hub-parts",count=1},
+	placeable_by = {item=name,count=1},
 	return_ingredients_on_change = false,
 	bottleneck_ignore = true
 }
@@ -213,6 +213,6 @@ for i=0,8 do
 		allow_as_intermediate = false,
 		hide_from_stats = true,
 		hide_from_player_crafting = true,
-		enabled = i == 0
+		enabled = false
 	}}
 end
