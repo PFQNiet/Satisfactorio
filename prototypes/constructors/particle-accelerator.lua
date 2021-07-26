@@ -5,7 +5,7 @@ local accelerator = makeAssemblingMachine{
 	pipe_connections = {
 		input = {{-4,999}}
 	},
-	energy = 250, -- minimum value used by any recipe
+	energy = 1,
 	allow_power_shards = true,
 	sounds = copySoundsFrom(data.raw.lab.lab),
 	subgroup = "production-manufacturer",
@@ -19,6 +19,7 @@ local accelerator = makeAssemblingMachine{
 		{"turbo-motor",10}
 	}
 }
+accelerator.machine.energy_usage = "1W" -- power consumption is handled on the EEI but must be set so the machine shuts down in a blackout
 accelerator.machine.minable = nil
 accelerator.machine.selectable_in_game = false
 local interface = {
