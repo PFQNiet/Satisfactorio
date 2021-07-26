@@ -107,6 +107,14 @@ data:extend({
 	},
 	{
 		type = "custom-input",
+		name = "pipette-foundation",
+		key_sequence = "",
+		linked_game_control = "smart-pipette",
+		consuming = "none",
+		action = "lua"
+	},
+	{
+		type = "custom-input",
 		name = "deconstruct-foundation",
 		key_sequence = "ALT + F",
 		order = "d",

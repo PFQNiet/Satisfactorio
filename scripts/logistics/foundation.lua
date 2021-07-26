@@ -131,12 +131,21 @@ local function onDeconstruct(event)
 	end
 end
 
+local function onPipette(event)
+	local player = game.players[event.player_index]
+	if not player.selected and not player.cursor_stack.valid_for_read and player.surface.find_entity(foundation, event.cursor_position) then
+		player.cursor_ghost = foundation
+		player.play_sound{path="utility/smart_pipette"}
+	end
+end
+
 return bev.applyBuildEvents{
 	on_build = onBuilt,
 	on_destroy = onRemoved,
 	events = {
 		[defines.events.on_player_selected_area] = onSelectedArea,
 		[defines.events.on_player_alt_selected_area] = onDeselectedArea,
-		[defines.events.on_marked_for_deconstruction] = onDeconstruct
+		[defines.events.on_marked_for_deconstruction] = onDeconstruct,
+		["pipette-foundation"] = onPipette
 	}
 }
