@@ -133,7 +133,10 @@ end
 
 local function onPipette(event)
 	local player = game.players[event.player_index]
-	if not player.selected and not player.cursor_stack.valid_for_read and player.surface.find_entity(foundation, event.cursor_position) then
+	if player.selected then return end
+	if player.cursor_ghost then return end
+	if player.cursor_stack.valid_for_read then return end
+	if player.surface.find_entity(foundation, event.cursor_position) then
 		player.cursor_ghost = foundation
 		player.play_sound{path="utility/smart_pipette"}
 	end
