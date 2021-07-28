@@ -258,6 +258,7 @@ local function onGuiClosed(event)
 	if event.element == data.components.frame then
 		data.struct = nil
 		data.components.frame.visible = false
+		player.play_sound{path="entity-close/programmable-splitter"}
 	end
 end
 

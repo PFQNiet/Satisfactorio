@@ -461,6 +461,7 @@ local function onGuiClosed(event)
 	if event.element == data.components.container then
 		data.struct = nil
 		data.components.container.visible = false
+		player.play_sound{path="entity-close/drone-port"}
 	end
 end
 

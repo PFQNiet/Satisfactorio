@@ -127,6 +127,7 @@ local function onGuiClosed(event)
 		callbacks.save(player, data.marker, data.components.name.text, data.components.icon.elem_value)
 		data.marker = nil
 		data.components.frame.visible = false
+		player.play_sound{path="entity-close/map-marker"}
 	end
 end
 

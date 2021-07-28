@@ -1,4 +1,5 @@
 local name = "object-scanner"
+local sounds = copySoundsFrom(data.raw.blueprint.blueprint)
 local scanneritem = {
 	type = "selection-tool",
 	name = name,
@@ -7,6 +8,8 @@ local scanneritem = {
 	stack_size = 1,
 	subgroup = "logistics-observation",
 	order = "f["..name.."]",
+	open_sound = sounds.open_sound,
+	close_sound = sounds.close_sound,
 	selection_mode = {"nothing"},
 	selection_color = {a=0},
 	selection_cursor_box_type = "entity",
