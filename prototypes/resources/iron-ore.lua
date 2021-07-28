@@ -1,7 +1,7 @@
 -- tweak vanilla Iron Ore
 local name = "iron-ore"
 local ore = data.raw.resource[name]
-ore.icon = "__Satisfactorio__/graphics/icons/"..name..".png"
+ore.icon = graphics.."icons/"..name..".png"
 ore.icon_mipmaps = 0
 ore.autoplace = nil
 ore.stage_counts = {240,200,120,80,60,0,0,0}

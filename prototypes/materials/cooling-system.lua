@@ -1,6 +1,6 @@
 local name = "cooling-system"
 local item = {
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
 	name = name,
 	order = "h[bauxite]-c["..name.."]",

@@ -1,6 +1,6 @@
 local name = "aluminium-ingot"
 local item = {
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
 	name = name,
 	order = "h[bauxite]-c["..name.."]",
@@ -21,8 +21,8 @@ local recipe = {
 	energy_required = 4,
 	category = "foundry",
 	icons = {
-		{ icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64 },
-		{ icon = "__Satisfactorio__/graphics/icons/silica.png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
+		{ icon = graphics.."icons/"..name..".png", icon_size = 64 },
+		{ icon = graphics.."icons/silica.png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
 	},
 	enabled = false
 }

@@ -1,7 +1,7 @@
 -- tweak vanilla Crude Oil
 local name = "crude-oil"
 local ore = data.raw.resource[name]
-ore.icon = "__Satisfactorio__/graphics/icons/"..name..".png"
+ore.icon = graphics.."icons/"..name..".png"
 ore.icon_mipmaps = 0
 ore.autoplace = nil
 ore.infinite = true

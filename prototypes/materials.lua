@@ -115,7 +115,7 @@ data:extend{
 		width = 40
 	},
 	{
-		filename = "__Satisfactorio__/graphics/icons/tooltip-category-packaged-fuel.png",
+		filename = graphics.."icons/tooltip-category-packaged-fuel.png",
 		flags = {"gui-icon"},
 		height = 40,
 		mipmap_count = 2,

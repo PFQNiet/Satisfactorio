@@ -1,6 +1,6 @@
 local name = "iron-rod"
 local item = {
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
 	name = name,
 	order = "a[iron]-b["..name.."]",

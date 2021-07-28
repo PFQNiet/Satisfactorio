@@ -24,14 +24,14 @@ local base = {
 	pictures = makeRotatedSprite(name, 352, 256),
 	radius_visualisation_specification = {
 		sprite = {
-			filename = "__Satisfactorio__/graphics/particles/"..name.."-zone.png",
+			filename = graphics.."particles/"..name.."-zone.png",
 			size = {256,256}
 		},
 		distance = 4,
 		offset = {-0.5,-8}
 	},
 	max_health = 1,
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
 	collision_box = {{-5.2,-3.7},{5.2,3.7}},
 	flags = {
@@ -87,7 +87,7 @@ local fuelbox = {
 }
 
 local stationitem = {
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
 	name = name,
 	order = "t-s-a["..name.."]",

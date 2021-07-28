@@ -1,7 +1,7 @@
 -- tweak the Power Switch
 local name = "power-switch"
 local pole = data.raw['power-switch'][name]
-pole.icon = "__Satisfactorio__/graphics/icons/"..name..".png"
+pole.icon = graphics.."icons/"..name..".png"
 pole.icon_size = 64
 pole.icon_mipmaps = 0
 pole.max_health = 1

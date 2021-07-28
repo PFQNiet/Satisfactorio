@@ -5,7 +5,7 @@ local capsule = {
 	subgroup = "ammo",
 	order = "b[nobelisk]",
 	stack_size = 50,
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
 	capsule_action = {
 		type = "throw",
@@ -65,14 +65,14 @@ local projectile = {
 		}
 	},
 	animation = {
-		filename = "__Satisfactorio__/graphics/particles/"..name..".png",
+		filename = graphics.."particles/"..name..".png",
 		frame_count = 1,
 		width = 32,
 		height = 32,
 		priority = "high"
 	},
 	shadow = {
-		filename = "__Satisfactorio__/graphics/particles/"..name..".png",
+		filename = graphics.."particles/"..name..".png",
 		frame_count = 1,
 		width = 32,
 		height = 32,
@@ -90,24 +90,24 @@ local projectile = {
 local sticker = {
 	type = "sticker",
 	name = name.."-armed",
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
 	flags = {"not-on-map"},
 	single_particle = true,
 	duration_in_ticks = 24*3600*60, -- idk man, why you not detonating Nobelisks within 24 hours?
 	animation = {
-		filename = "__Satisfactorio__/graphics/particles/"..name.."-sticker.png",
+		filename = graphics.."particles/"..name.."-sticker.png",
 		size = 16
 	}
 }
 local onground = {
 	type = "simple-entity",
 	name = name.."-on-ground",
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
 	flags = {"not-on-map","hidden","placeable-off-grid"},
 	picture = {
-		filename = "__Satisfactorio__/graphics/particles/"..name.."-sticker.png",
+		filename = graphics.."particles/"..name.."-sticker.png",
 		size = 16
 	},
 	collision_box = {{-0.125,-0.125},{0.125,0.125}},
@@ -139,7 +139,7 @@ detonator = {
 	subgroup = "gun",
 	order = "b[nobelisk]",
 	stack_size = 1,
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
 	capsule_action = {
 		type = "throw",

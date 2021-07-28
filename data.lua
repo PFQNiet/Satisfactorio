@@ -1,10 +1,6 @@
 modname = "__Satisfactorio__"
 modpath = modname.."."
-modfiles = modname.."/"
-constants = modfiles.."constants/"
-graphics = modfiles.."graphics/"
-prototypes = modfiles.."prototypes/"
-scripts = modfiles.."scripts/"
+graphics = modname.."/graphics/"
 
 empty_graphic = {
 	filename = graphics.."empty.png",
@@ -78,7 +74,7 @@ data:extend{
 }
 for _,key in pairs({"logistics","production","intermediate-products","combat"}) do
 	local igroup = data.raw["item-group"][key]
-	igroup.icon = "__Satisfactorio__/graphics/item-group/"..key..".png"
+	igroup.icon = graphics.."item-group/"..key..".png"
 	igroup.icon_size = 64
 	igroup.icon_mipmaps = 1
 end

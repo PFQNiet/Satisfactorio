@@ -5,7 +5,7 @@ data:extend(
 	{
 		type = "resource",
 		name = name,
-		icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+		icon = graphics.."icons/"..name..".png",
 		icon_size = 64,
 		flags = {"placeable-neutral"},
 		order = "r",
@@ -25,7 +25,7 @@ data:extend(
 		stage_counts = {0},
 		stages = {
 			sheet = {
-				filename = "__Satisfactorio__/graphics/placeholders/"..name..".png",
+				filename = graphics.."placeholders/"..name..".png",
 				priority = "extra-high",
 				width = 160,
 				height = 160,
@@ -58,7 +58,7 @@ data:extend(
 	{
 		type = "item",
 		name = name,
-		icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+		icon = graphics.."icons/"..name..".png",
 		icon_size = 64,
 		flags = {"hidden"}, -- exists only for locale texts and Resource Scanner "recipe"
 		subgroup = "mineral-resource",

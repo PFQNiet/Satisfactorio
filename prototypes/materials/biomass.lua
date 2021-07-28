@@ -2,7 +2,7 @@ local name = "biomass"
 local item = {
 	type = "item",
 	name = name,
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
 	subgroup = "organic-resource",
 	order = "f["..name.."]",
@@ -19,8 +19,8 @@ local recipe = {
 	type = "recipe",
 	order = "f["..name.."]-a["..ingredient.."]",
 	icons = {
-		{ icon = "__Satisfactorio__/graphics/icons/biomass.png", icon_size = 64 },
-		{ icon = "__Satisfactorio__/graphics/icons/"..ingredient..".png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
+		{ icon = graphics.."icons/biomass.png", icon_size = 64 },
+		{ icon = graphics.."icons/"..ingredient..".png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
 	},
 	ingredients = {
 		{ingredient,10}
@@ -41,8 +41,8 @@ recipe = {
 	type = "recipe",
 	order = "f["..name.."]-b["..ingredient.."]",
 	icons = {
-		{ icon = "__Satisfactorio__/graphics/icons/biomass.png", icon_size = 64 },
-		{ icon = "__Satisfactorio__/graphics/icons/"..ingredient..".png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
+		{ icon = graphics.."icons/biomass.png", icon_size = 64 },
+		{ icon = graphics.."icons/"..ingredient..".png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
 	},
 	ingredients = {
 		{ingredient,4}
@@ -63,8 +63,8 @@ recipe = {
 	type = "recipe",
 	order = "f["..name.."]-c["..ingredient.."]",
 	icons = {
-		{ icon = "__Satisfactorio__/graphics/icons/biomass.png", icon_size = 64 },
-		{ icon = "__Satisfactorio__/graphics/icons/"..ingredient..".png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
+		{ icon = graphics.."icons/biomass.png", icon_size = 64 },
+		{ icon = graphics.."icons/"..ingredient..".png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
 	},
 	ingredients = {
 		{ingredient,10}
@@ -85,8 +85,8 @@ recipe = {
 	type = "recipe",
 	order = "f["..name.."]-d["..ingredient.."]",
 	icons = {
-		{ icon = "__Satisfactorio__/graphics/icons/biomass.png", icon_size = 64 },
-		{ icon = "__Satisfactorio__/graphics/icons/"..ingredient..".png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
+		{ icon = graphics.."icons/biomass.png", icon_size = 64 },
+		{ icon = graphics.."icons/"..ingredient..".png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
 	},
 	ingredients = {
 		{ingredient,1}
@@ -107,8 +107,8 @@ recipe = {
 	type = "recipe",
 	order = "f["..name.."]-e["..ingredient.."]",
 	icons = {
-		{ icon = "__Satisfactorio__/graphics/icons/biomass.png", icon_size = 64 },
-		{ icon = "__Satisfactorio__/graphics/icons/"..ingredient..".png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
+		{ icon = graphics.."icons/biomass.png", icon_size = 64 },
+		{ icon = graphics.."icons/"..ingredient..".png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
 	},
 	ingredients = {
 		{ingredient,1}

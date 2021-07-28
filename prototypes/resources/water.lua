@@ -3,7 +3,7 @@ local name = "water"
 local node = {
 	type = "resource",
 	name = name,
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
 	flags = {"placeable-neutral","not-on-map"},
 	order = "w",
@@ -31,8 +31,8 @@ local node = {
 	map_grid = false,
 	resource_patch_search_radius = 0
 }
-node.stages.sheet.filename = "__Satisfactorio__/graphics/resources/water.png"
-node.stages.sheet.hr_version.filename = "__Satisfactorio__/graphics/resources/hr-water.png"
+node.stages.sheet.filename = graphics.."resources/water.png"
+node.stages.sheet.hr_version.filename = graphics.."resources/hr-water.png"
 data:extend({node})
 
 local fluid = data.raw.fluid[name]

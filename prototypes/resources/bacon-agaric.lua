@@ -10,10 +10,10 @@ local plant = {
 		"placeable-neutral",
 		"not-on-map"
 	},
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
 	picture = {
-		filename = "__Satisfactorio__/graphics/placeholders/"..name..".png",
+		filename = graphics.."placeholders/"..name..".png",
 		size = {32,32}
 	},
 	max_health = 50,
@@ -34,7 +34,7 @@ local item = {
 	subgroup = "organic-resource",
 	order = "p[plant]-c["..name.."]",
 	stack_size = 50,
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
 	capsule_action = { -- why tf is this so complicated?
 		type = "use-on-self",

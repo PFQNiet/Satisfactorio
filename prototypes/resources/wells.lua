@@ -4,8 +4,8 @@ local template = {
 	type = "resource",
 	-- name = "resource-well", -- to be populated in clones
 	icons = {
-		{ icon = "__Satisfactorio__/graphics/icons/resource-well-pressuriser.png", icon_size = 64 },
-		{ icon = "__Satisfactorio__/graphics/icons/water.png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
+		{ icon = graphics.."icons/resource-well-pressuriser.png", icon_size = 64 },
+		{ icon = graphics.."icons/water.png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
 	},
 	flags = {"placeable-neutral"},
 	order = "x",
@@ -27,7 +27,7 @@ local template = {
 	stage_counts = {0},
 	stages = {
 		sheet = {
-			filename = "__Satisfactorio__/graphics/resources/resource-well.png",
+			filename = graphics.."resources/resource-well.png",
 			frame_count = 6,
 			width = 1500 / 6,
 			height = 250,
@@ -52,12 +52,12 @@ water.minable.results[1].name = "water"
 water.map_color = data.raw.resource['water'].map_color
 local oil = table.deepcopy(template)
 oil.name = "crude-oil-well"
-oil.icons[2].icon = "__Satisfactorio__/graphics/icons/crude-oil.png"
+oil.icons[2].icon = graphics.."icons/crude-oil.png"
 oil.minable.results[1].name = "crude-oil"
 oil.map_color = data.raw.resource['crude-oil'].map_color
 local nitro = table.deepcopy(template)
 nitro.name = "nitrogen-gas-well"
-nitro.icons[2].icon = "__Satisfactorio__/graphics/icons/nitrogen-gas.png"
+nitro.icons[2].icon = graphics.."icons/nitrogen-gas.png"
 nitro.minable.results[1].name = "nitrogen-gas"
 nitro.map_color = {r=180,g=180,b=180}
 data:extend({water,oil,nitro})
@@ -66,8 +66,8 @@ template = {
 	type = "resource",
 	-- name = "resource-node", -- to be populated in clones
 	icons = {
-		{ icon = "__Satisfactorio__/graphics/icons/resource-well-extractor.png", icon_size = 64 },
-		{ icon = "__Satisfactorio__/graphics/icons/water.png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
+		{ icon = graphics.."icons/resource-well-extractor.png", icon_size = 64 },
+		{ icon = graphics.."icons/water.png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
 	},
 	flags = {"placeable-neutral"},
 	order = "y",
@@ -106,17 +106,17 @@ water.map_color = data.raw.resource['water'].map_color
 water.stages = table.deepcopy(data.raw.resource['water'].stages)
 oil = table.deepcopy(template)
 oil.name = "crude-oil-node"
-oil.icons[2].icon = "__Satisfactorio__/graphics/icons/crude-oil.png"
+oil.icons[2].icon = graphics.."icons/crude-oil.png"
 oil.minable.results[1].name = "crude-oil"
 oil.map_color = data.raw.resource['crude-oil'].map_color
 oil.stages = table.deepcopy(data.raw.resource['crude-oil'].stages)
 nitro = table.deepcopy(template)
 nitro.name = "nitrogen-gas-node"
-nitro.icons[2].icon = "__Satisfactorio__/graphics/icons/nitrogen-gas.png"
+nitro.icons[2].icon = graphics.."icons/nitrogen-gas.png"
 nitro.minable.results[1].name = "nitrogen-gas"
 nitro.map_color = {r=180,g=180,b=180}
 nitro.stages = {sheet = {
-	filename = "__Satisfactorio__/graphics/resources/gas-vent.png",
+	filename = graphics.."resources/gas-vent.png",
 	frame_count = 8,
 	width = 1024/8,
 	height = 128,

@@ -3,7 +3,7 @@ local tower = {
 	-- the "tower" is actually a car; entering the car sets the zoom level really far out
 	type = "car",
 	name = name,
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
 	collision_box = {{-1.7,-1.7},{1.7,1.7}},
 	collision_mask = {"item-layer", "object-layer", "player-layer", "water-tile"},

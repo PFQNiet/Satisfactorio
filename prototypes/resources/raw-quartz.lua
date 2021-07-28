@@ -4,7 +4,7 @@ data:extend(
 	{
 		type = "resource",
 		name = name,
-		icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+		icon = graphics.."icons/"..name..".png",
 		icon_size = 64,
 		flags = {"placeable-neutral"},
 		order = "i",
@@ -72,7 +72,7 @@ data:extend(
 	{
 		type = "item",
 		name = name,
-		icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+		icon = graphics.."icons/"..name..".png",
 		icon_size = 64,
 		subgroup = "mineral-resource",
 		order = "i["..name.."]",

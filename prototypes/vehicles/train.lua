@@ -12,7 +12,7 @@ train.braking_force = train.weight/400
 train.friction_force = train.braking_force/40
 
 train = data.raw['item-with-entity-data']['locomotive']
-train.icon = "__Satisfactorio__/graphics/icons/electric-locomotive.png"
+train.icon = graphics.."icons/electric-locomotive.png"
 train.icon_size = 64
 train.icon_mipmaps = 1
 train.stack_size = 50
@@ -26,7 +26,7 @@ local fuel = {
 	flags = {"hidden"},
 	fuel_category = "train-power",
 	fuel_value = "85MJ", -- 1 second of max power
-	icon = "__Satisfactorio__/graphics/icons/power.png",
+	icon = graphics.."icons/power.png",
 	icon_size = 64,
 	stack_size = 1
 }

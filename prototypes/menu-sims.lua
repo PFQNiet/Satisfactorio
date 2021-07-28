@@ -1,5 +1,6 @@
 -- menu sim map seed: 2658861361
 
+local path = modname.."/menu-simulations/satis-demo-"
 local find_logo = [[
 	local logo = game.surfaces.nauvis.find_entities_filtered{name="factorio-logo-11tiles",limit=1}[1]
 	game.camera_position = {logo.position.x, logo.position.y+9.75}
@@ -10,42 +11,42 @@ local find_logo = [[
 data.raw['utility-constants'].default.main_menu_simulations = {
 	refinery = {
 		checkboard = false,
-		save = "__Satisfactorio__/menu-simulations/satis-demo-refinery.zip",
+		save = path.."refinery.zip",
 		length = 30 * 60,
 		init = find_logo,
 		update = [[]]
 	},
 	coal_power = {
 		checkboard = false,
-		save = "__Satisfactorio__/menu-simulations/satis-demo-coal-power.zip",
+		save = path.."coal-power.zip",
 		length = 30 * 60,
 		init = find_logo,
 		update = [[]]
 	},
 	self_driving = {
 		checkboard = false,
-		save = "__Satisfactorio__/menu-simulations/satis-demo-self-driving.zip",
+		save = path.."self-driving.zip",
 		length = 30 * 60,
 		init = find_logo,
 		update = [[]]
 	},
 	space_elevator = {
 		checkboard = false,
-		save = "__Satisfactorio__/menu-simulations/satis-demo-space-elevator.zip",
+		save = path.."space-elevator.zip",
 		length = 30 * 60,
 		init = find_logo,
 		update = [[]]
 	},
 	drones = {
 		checkboard = false,
-		save = "__Satisfactorio__/menu-simulations/satis-demo-drones.zip",
+		save = path.."drones.zip",
 		length = 30 * 60,
 		init = find_logo,
 		update = [[]]
 	},
 	smart_splitter = {
 		checkboard = false,
-		save = "__Satisfactorio__/menu-simulations/satis-demo-smart-splitters.zip",
+		save = path.."smart-splitters.zip",
 		length = 30 * 60,
 		init = find_logo,
 		update = [[]]

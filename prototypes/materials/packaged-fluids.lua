@@ -4,7 +4,7 @@ data:extend({
 	{
 		type = "item",
 		name = name,
-		icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+		icon = graphics.."icons/"..name..".png",
 		icon_size = 64,
 		subgroup = "packed-fluid",
 		order = "a["..name.."]",
@@ -40,7 +40,7 @@ data:extend({
 	{
 		type = "item",
 		name = name2,
-		icon = "__Satisfactorio__/graphics/icons/"..name2..".png",
+		icon = graphics.."icons/"..name2..".png",
 		icon_size = 64,
 		subgroup = "packed-fluid",
 		order = "a["..name2.."]",
@@ -77,7 +77,7 @@ data:extend({
 	{
 		type = "item",
 		name = "packaged-water",
-		icon = "__Satisfactorio__/graphics/icons/packaged-water.png",
+		icon = graphics.."icons/packaged-water.png",
 		icon_size = 64,
 		subgroup = "packed-fluid",
 		order = "b[water]",
@@ -102,8 +102,8 @@ data:extend({
 		name = "unpack-water",
 		localised_name = {"recipe-name.unpack",{"fluid-name.water"}},
 		icons = {
-			{icon = "__Satisfactorio__/graphics/icons/water.png", icon_size = 64},
-			{icon = "__Satisfactorio__/graphics/icons/packaged-water.png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
+			{icon = graphics.."icons/water.png", icon_size = 64},
+			{icon = graphics.."icons/packaged-water.png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
 		},
 		ingredients = {{"packaged-water",2}},
 		results = {{"empty-canister",2}, {type="fluid",name="water",amount=2}},
@@ -122,7 +122,7 @@ data:extend({
 	{
 		type = "item",
 		name = "packaged-oil",
-		icon = "__Satisfactorio__/graphics/icons/packaged-oil.png",
+		icon = graphics.."icons/packaged-oil.png",
 		icon_size = 64,
 		subgroup = "packed-fluid",
 		order = "c[crude-oil]",
@@ -149,8 +149,8 @@ data:extend({
 		name = "unpack-oil",
 		localised_name = {"recipe-name.unpack",{"fluid-name.crude-oil"}},
 		icons = {
-			{icon = "__Satisfactorio__/graphics/icons/crude-oil.png", icon_size = 64},
-			{icon = "__Satisfactorio__/graphics/icons/packaged-oil.png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
+			{icon = graphics.."icons/crude-oil.png", icon_size = 64},
+			{icon = graphics.."icons/packaged-oil.png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
 		},
 		ingredients = {{"packaged-oil",2}},
 		results = {{"empty-canister",2}, {type="fluid",name="crude-oil",amount=2}},
@@ -169,7 +169,7 @@ data:extend({
 	{
 		type = "item",
 		name = "packaged-heavy-oil-residue",
-		icon = "__Satisfactorio__/graphics/icons/packaged-heavy-oil-residue.png",
+		icon = graphics.."icons/packaged-heavy-oil-residue.png",
 		icon_size = 64,
 		subgroup = "packed-fluid",
 		order = "d[heavy-oil]",
@@ -196,8 +196,8 @@ data:extend({
 		name = "unpack-heavy-oil-residue",
 		localised_name = {"recipe-name.unpack",{"fluid-name.heavy-oil"}},
 		icons = {
-			{icon = "__Satisfactorio__/graphics/icons/heavy-oil-residue.png", icon_size = 64},
-			{icon = "__Satisfactorio__/graphics/icons/packaged-heavy-oil-residue.png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
+			{icon = graphics.."icons/heavy-oil-residue.png", icon_size = 64},
+			{icon = graphics.."icons/packaged-heavy-oil-residue.png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
 		},
 		ingredients = {{"packaged-heavy-oil-residue",2}},
 		results = {{"empty-canister",2}, {type="fluid",name="heavy-oil",amount=2}},
@@ -216,7 +216,7 @@ data:extend({
 	{
 		type = "item",
 		name = "packaged-alumina-solution",
-		icon = "__Satisfactorio__/graphics/icons/packaged-alumina-solution.png",
+		icon = graphics.."icons/packaged-alumina-solution.png",
 		icon_size = 64,
 		subgroup = "packed-fluid",
 		order = "e[alumina-solution]",
@@ -241,8 +241,8 @@ data:extend({
 		name = "unpack-alumina-solution",
 		localised_name = {"recipe-name.unpack",{"fluid-name.alumina-solution"}},
 		icons = {
-			{icon = "__Satisfactorio__/graphics/icons/alumina-solution.png", icon_size = 64},
-			{icon = "__Satisfactorio__/graphics/icons/packaged-alumina-solution.png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
+			{icon = graphics.."icons/alumina-solution.png", icon_size = 64},
+			{icon = graphics.."icons/packaged-alumina-solution.png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
 		},
 		ingredients = {{"packaged-alumina-solution",2}},
 		results = {{"empty-canister",2}, {type="fluid",name="alumina-solution",amount=2}},
@@ -261,7 +261,7 @@ data:extend({
 	{
 		type = "item",
 		name = "packaged-sulfuric-acid",
-		icon = "__Satisfactorio__/graphics/icons/packaged-sulfuric-acid.png",
+		icon = graphics.."icons/packaged-sulfuric-acid.png",
 		icon_size = 64,
 		subgroup = "packed-fluid",
 		order = "f[sulfuric-acid]",
@@ -286,8 +286,8 @@ data:extend({
 		name = "unpack-sulfuric-acid",
 		localised_name = {"recipe-name.unpack",{"fluid-name.sulfuric-acid"}},
 		icons = {
-			{icon = "__Satisfactorio__/graphics/icons/sulfuric-acid.png", icon_size = 64},
-			{icon = "__Satisfactorio__/graphics/icons/packaged-sulfuric-acid.png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
+			{icon = graphics.."icons/sulfuric-acid.png", icon_size = 64},
+			{icon = graphics.."icons/packaged-sulfuric-acid.png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
 		},
 		ingredients = {{"packaged-sulfuric-acid",2}},
 		results = {{"empty-canister",2}, {type="fluid",name="sulfuric-acid",amount=2}},
@@ -306,7 +306,7 @@ data:extend({
 	{
 		type = "item",
 		name = "packaged-fuel",
-		icon = "__Satisfactorio__/graphics/icons/packaged-fuel.png",
+		icon = graphics.."icons/packaged-fuel.png",
 		icon_size = 64,
 		subgroup = "packed-fluid",
 		order = "g[fuel]",
@@ -333,8 +333,8 @@ data:extend({
 		name = "unpack-fuel",
 		localised_name = {"recipe-name.unpack",{"fluid-name.fuel"}},
 		icons = {
-			{icon = "__Satisfactorio__/graphics/icons/fuel.png", icon_size = 64},
-			{icon = "__Satisfactorio__/graphics/icons/packaged-fuel.png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
+			{icon = graphics.."icons/fuel.png", icon_size = 64},
+			{icon = graphics.."icons/packaged-fuel.png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
 		},
 		ingredients = {{"packaged-fuel",2}},
 		results = {{"empty-canister",2}, {type="fluid",name="fuel",amount=2}},
@@ -353,7 +353,7 @@ data:extend({
 	{
 		type = "item",
 		name = "packaged-liquid-biofuel",
-		icon = "__Satisfactorio__/graphics/icons/packaged-liquid-biofuel.png",
+		icon = graphics.."icons/packaged-liquid-biofuel.png",
 		icon_size = 64,
 		subgroup = "packed-fluid",
 		order = "h[liquid-biofuel]",
@@ -380,8 +380,8 @@ data:extend({
 		name = "unpack-liquid-biofuel",
 		localised_name = {"recipe-name.unpack",{"fluid-name.liquid-biofuel"}},
 		icons = {
-			{icon = "__Satisfactorio__/graphics/icons/liquid-biofuel.png", icon_size = 64},
-			{icon = "__Satisfactorio__/graphics/icons/packaged-liquid-biofuel.png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
+			{icon = graphics.."icons/liquid-biofuel.png", icon_size = 64},
+			{icon = graphics.."icons/packaged-liquid-biofuel.png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
 		},
 		ingredients = {{"packaged-liquid-biofuel",2}},
 		results = {{"empty-canister",2}, {type="fluid",name="liquid-biofuel",amount=2}},
@@ -400,7 +400,7 @@ data:extend({
 	{
 		type = "item",
 		name = "packaged-turbofuel",
-		icon = "__Satisfactorio__/graphics/icons/packaged-turbofuel.png",
+		icon = graphics.."icons/packaged-turbofuel.png",
 		icon_size = 64,
 		subgroup = "packed-fluid",
 		order = "i[turbofuel]",
@@ -427,8 +427,8 @@ data:extend({
 		name = "unpack-turbofuel",
 		localised_name = {"recipe-name.unpack",{"fluid-name.turbofuel"}},
 		icons = {
-			{icon = "__Satisfactorio__/graphics/icons/turbofuel.png", icon_size = 64},
-			{icon = "__Satisfactorio__/graphics/icons/packaged-turbofuel.png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
+			{icon = graphics.."icons/turbofuel.png", icon_size = 64},
+			{icon = graphics.."icons/packaged-turbofuel.png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
 		},
 		ingredients = {{"packaged-turbofuel",2}},
 		results = {{"empty-canister",2}, {type="fluid",name="turbofuel",amount=2}},
@@ -447,7 +447,7 @@ data:extend({
 	{
 		type = "item",
 		name = "packaged-nitrogen-gas",
-		icon = "__Satisfactorio__/graphics/icons/packaged-nitrogen-gas.png",
+		icon = graphics.."icons/packaged-nitrogen-gas.png",
 		icon_size = 64,
 		subgroup = "packed-fluid",
 		order = "j[nitrogen-gas]",
@@ -472,8 +472,8 @@ data:extend({
 		name = "unpack-nitrogen-gas",
 		localised_name = {"recipe-name.unpack",{"fluid-name.nitrogen-gas"}},
 		icons = {
-			{icon = "__Satisfactorio__/graphics/icons/nitrogen-gas.png", icon_size = 64},
-			{icon = "__Satisfactorio__/graphics/icons/packaged-nitrogen-gas.png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
+			{icon = graphics.."icons/nitrogen-gas.png", icon_size = 64},
+			{icon = graphics.."icons/packaged-nitrogen-gas.png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
 		},
 		ingredients = {{"packaged-nitrogen-gas",1}},
 		results = {{"empty-fluid-tank",1}, {type="fluid",name="nitrogen-gas",amount=4}},
@@ -492,7 +492,7 @@ data:extend({
 	{
 		type = "item",
 		name = "packaged-nitric-acid",
-		icon = "__Satisfactorio__/graphics/icons/packaged-nitric-acid.png",
+		icon = graphics.."icons/packaged-nitric-acid.png",
 		icon_size = 64,
 		subgroup = "packed-fluid",
 		order = "k[nitric-acid]",
@@ -517,8 +517,8 @@ data:extend({
 		name = "unpack-nitric-acid",
 		localised_name = {"recipe-name.unpack",{"fluid-name.nitric-acid"}},
 		icons = {
-			{icon = "__Satisfactorio__/graphics/icons/nitric-acid.png", icon_size = 64},
-			{icon = "__Satisfactorio__/graphics/icons/packaged-nitric-acid.png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
+			{icon = graphics.."icons/nitric-acid.png", icon_size = 64},
+			{icon = graphics.."icons/packaged-nitric-acid.png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
 		},
 		ingredients = {{"packaged-nitric-acid",1}},
 		results = {{"empty-fluid-tank",1}, {type="fluid",name="nitric-acid",amount=1}},

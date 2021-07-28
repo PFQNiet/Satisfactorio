@@ -6,7 +6,7 @@ item.flags = {}
 item.attack_parameters.ammo_category = "rebar"
 item.attack_parameters.cooldown = 3.5*60
 item.attack_parameters.range = 50
-item.icon = "__Satisfactorio__/graphics/icons/"..name..".png"
+item.icon = graphics.."icons/"..name..".png"
 item.icon_mipmaps = 0
 item.stack_size = 1
 
@@ -29,7 +29,7 @@ local ammoname = "spiked-rebar"
 local ammo = {
 	type = "ammo",
 	name = ammoname,
-	icon = "__Satisfactorio__/graphics/icons/"..ammoname..".png",
+	icon = graphics.."icons/"..ammoname..".png",
 	icon_size = 64,
 	ammo_type = {
 		category = "rebar",
@@ -86,14 +86,14 @@ local projectile = {
 		}
 	},
 	animation = {
-		filename = "__Satisfactorio__/graphics/particles/"..ammoname..".png",
+		filename = graphics.."particles/"..ammoname..".png",
 		frame_count = 1,
 		width = 5,
 		height = 50,
 		priority = "high"
 	},
 	shadow = {
-		filename = "__Satisfactorio__/graphics/particles/"..ammoname..".png",
+		filename = graphics.."particles/"..ammoname..".png",
 		frame_count = 1,
 		width = 5,
 		height = 50,

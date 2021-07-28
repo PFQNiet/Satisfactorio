@@ -2,7 +2,7 @@ local shardname = "power-shard"
 local powershard = {
 	type = "module",
 	name = shardname,
-	icon = "__Satisfactorio__/graphics/icons/"..shardname..".png",
+	icon = graphics.."icons/"..shardname..".png",
 	icon_size = 64,
 	stack_size = 50,
 	subgroup = "mineral-resource",
@@ -78,8 +78,8 @@ local function makePowerSlug(params)
 		category = "constructing",
 		order = "s[power-slugs]-"..order.."["..name.."]",
 		icons = {
-			{icon = "__Satisfactorio__/graphics/icons/"..shardname..".png", icon_size = 64},
-			{icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
+			{icon = graphics.."icons/"..shardname..".png", icon_size = 64},
+			{icon = graphics.."icons/"..name..".png", icon_size = 64, scale = 0.25, shift = {-8, 8}}
 		},
 		enabled = false
 	}

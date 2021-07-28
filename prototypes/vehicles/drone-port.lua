@@ -17,7 +17,7 @@ local base = {
 	energy_usage = "100MW",
 	pictures = makeRotatedSprite(name, 384, 384),
 	max_health = 1,
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
 	collision_box = {{-5.7,-5.7},{5.7,5.7}},
 	flags = {
@@ -94,7 +94,7 @@ local fuelbox = {
 }
 
 local stationitem = {
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
 	name = name,
 	order = "u-a["..name.."]",

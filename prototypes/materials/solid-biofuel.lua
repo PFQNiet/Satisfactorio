@@ -3,7 +3,7 @@ local item = {
 	-- Solid Biofuel is used as "ammo" for the Chainsaw. 1 Solid Biofuel lasts for 6 seconds of continuous fire.
 	type = "ammo",
 	name = name,
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
 	subgroup = "organic-resource",
 	order = "h["..name.."]",

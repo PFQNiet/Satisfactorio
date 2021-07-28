@@ -5,7 +5,7 @@ local item = {
 	subgroup = "organic-resource",
 	order = "p[plant]-d["..name.."]",
 	stack_size = 50,
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
 	capsule_action = { -- why tf is this so complicated?
 		type = "use-on-self",
@@ -55,8 +55,8 @@ local recipe1 = {
 	energy_required = 5/4,
 	category = "equipment",
 	icons = {
-		{ icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64 },
-		{ icon = "__Satisfactorio__/graphics/icons/mycelia.png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
+		{ icon = graphics.."icons/"..name..".png", icon_size = 64 },
+		{ icon = graphics.."icons/mycelia.png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
 	},
 	enabled = false
 }
@@ -72,8 +72,8 @@ local recipe2 = {
 	energy_required = 5/4,
 	category = "equipment",
 	icons = {
-		{ icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64 },
-		{ icon = "__Satisfactorio__/graphics/icons/alien-organs.png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
+		{ icon = graphics.."icons/"..name..".png", icon_size = 64 },
+		{ icon = graphics.."icons/alien-organs.png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
 	},
 	enabled = false
 }
@@ -90,8 +90,8 @@ local recipe3 = {
 	energy_required = 5/4,
 	category = "equipment",
 	icons = {
-		{ icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64 },
-		{ icon = "__Satisfactorio__/graphics/icons/bacon-agaric.png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
+		{ icon = graphics.."icons/"..name..".png", icon_size = 64 },
+		{ icon = graphics.."icons/bacon-agaric.png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
 	},
 	enabled = false
 }

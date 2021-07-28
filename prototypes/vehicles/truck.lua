@@ -17,7 +17,7 @@ car.immune_to_tree_impacts = false
 car.minable.result = name
 
 local caritem = {
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
 	name = name,
 	order = "t-v-b["..name.."]",

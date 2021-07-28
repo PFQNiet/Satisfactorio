@@ -7,7 +7,7 @@ local drone = {
 	collision_box = {{-1 * dronesize, -1 * dronesize}, {1 * dronesize, 1 * dronesize}},
 	selection_box = {{-1 * dronesize, -1 * dronesize}, {1 * dronesize, 1 * dronesize}},
 	drawing_box = {{-3 * dronesize, -4 * dronesize}, {3 * dronesize, 2 * dronesize}},
-	icon = "__Satisfactorio__/graphics/icons/drone.png",
+	icon = graphics.."icons/drone.png",
 	icon_size = 64,
 	mined_sound = {filename = "__core__/sound/deconstruct-large.ogg",volume = 0.8},
 	open_sound = { filename = "__base__/sound/spidertron/spidertron-door-open.ogg", volume= 0.35 },
@@ -71,7 +71,7 @@ local drone = {
 	},
 
 	minimap_representation = {
-		filename = "__Satisfactorio__/graphics/particles/drone-map.png",
+		filename = graphics.."particles/drone-map.png",
 		flags = {"icon"},
 		size = {128, 128},
 		scale = 0.25
@@ -182,7 +182,7 @@ local speed_sticker = {
 local drone_item = {
 	type = "item-with-entity-data",
 	name = name,
-	icon = "__Satisfactorio__/graphics/icons/drone.png",
+	icon = graphics.."icons/drone.png",
 	icon_size = 64,
 	subgroup = "transport",
 	order = "u-b["..name.."]",

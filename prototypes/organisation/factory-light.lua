@@ -1,7 +1,7 @@
 -- tweak the Small Lamp
 local basename = "small-lamp"
 local lamp = data.raw.lamp[basename]
--- lamp.icon = "__Satisfactorio__/graphics/icons/"..name..".png"
+-- lamp.icon = graphics.."icons/"..name..".png"
 -- lamp.icon_mipmaps = 0
 lamp.max_health = 1
 lamp.energy_usage_per_tick = "1MW"

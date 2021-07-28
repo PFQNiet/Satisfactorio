@@ -8,8 +8,8 @@ fluid.icon = nil
 fluid.icon_size = nil
 fluid.icon_mipmaps = nil
 fluid.icons = {
-	{icon = "__Satisfactorio__/graphics/icons/freight-car.png", icon_size = 64},
-	{icon = "__Satisfactorio__/graphics/icons/water.png", icon_size = 64, scale = 0.25, shift = {-8,8}}
+	{icon = graphics.."icons/freight-car.png", icon_size = 64},
+	{icon = graphics.."icons/water.png", icon_size = 64, scale = 0.25, shift = {-8,8}}
 }
 fluid.stack_size = 50
 

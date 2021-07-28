@@ -2,7 +2,7 @@ local name = "power-storage"
 local accumulator = table.deepcopy(data.raw.accumulator.accumulator)
 accumulator.name = name
 accumulator.minable = {mining_time = 0.5, result = name}
-accumulator.icon = "__Satisfactorio__/graphics/icons/"..name..".png"
+accumulator.icon = graphics.."icons/"..name..".png"
 accumulator.icon_size = 64
 accumulator.icon_mipmaps = 0
 accumulator.max_health = 1

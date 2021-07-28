@@ -2,7 +2,7 @@
 local name = "sulfuric-acid"
 
 local fluid = data.raw.fluid[name]
-fluid.icon = "__Satisfactorio__/graphics/icons/"..name..".png"
+fluid.icon = graphics.."icons/"..name..".png"
 fluid.icon_mipmaps = 0
 fluid.subgroup = "fluid-product"
 fluid.order = "b[fluid-products]-c["..name.."]"

@@ -32,7 +32,7 @@ local base = {
 	energy_usage = "50MW", -- initial value, which gets increased when pulling trains
 	pictures = makeRotatedSprite(name, 448, 224),
 	max_health = 1,
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
 	render_layer = "decorative", -- required so that the train-stop renders on top of it
 	collision_box = {{-6.7,-3.2},{6.7,3.2}},
@@ -53,7 +53,7 @@ local base = {
 }
 
 local item = {
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
 	name = name,
 	order = "a[train-system]-b[platforms]-a["..name.."]",

@@ -6,7 +6,7 @@ local miner = {
 	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
 	animations = {
-		filename = "__Satisfactorio__/graphics/placeholders/"..name..".png",
+		filename = graphics.."placeholders/"..name..".png",
 		size = {96,96}
 	},
 	selection_box = {{-1.5,-1.5},{1.5,1.5}},
@@ -47,7 +47,7 @@ local miner = {
 local mineritem = {
 	type = "item",
 	name = name,
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
 	place_result = name,
 	stack_size = 50,

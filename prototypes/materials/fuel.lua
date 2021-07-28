@@ -4,7 +4,7 @@ local fluid = {
 	name = name,
 	order = "c[fuel]-a["..name.."]",
 	subgroup = "fluid-fuel",
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
 	max_temperature = 25,
 	default_temperature = 25,
@@ -38,8 +38,8 @@ local recipe2 = { -- Residual
 	energy_required = 6,
 	category = "refining",
 	icons = {
-		{ icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64 },
-		{ icon = "__Satisfactorio__/graphics/icons/heavy-oil-residue.png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
+		{ icon = graphics.."icons/"..name..".png", icon_size = 64 },
+		{ icon = graphics.."icons/heavy-oil-residue.png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
 	},
 	order = fluid.order.."-b",
 	enabled = false

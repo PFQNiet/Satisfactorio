@@ -3,8 +3,8 @@ data:extend({{
 	name = "scanner-"..name,
 	localised_name = {"recipe-name.scanner-power-slugs"},
 	icons = {
-		{icon = "__Satisfactorio__/graphics/icons/green-power-slug.png", icon_size = 64},
-		{icon = "__Satisfactorio__/graphics/icons/object-scanner.png", icon_size = 64, scale = 0.25, shift = {-8,8}}
+		{icon = graphics.."icons/green-power-slug.png", icon_size = 64},
+		{icon = graphics.."icons/object-scanner.png", icon_size = 64, scale = 0.25, shift = {-8,8}}
 	},
 	type = "recipe",
 	ingredients = {},

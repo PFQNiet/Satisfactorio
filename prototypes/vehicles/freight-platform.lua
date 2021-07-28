@@ -15,7 +15,7 @@ local base = {
 	energy_usage = "50MW",
 	pictures = makeRotatedSprite(name, 448, 224),
 	max_health = 1,
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
 	render_layer = "lower-object",
 	collision_box = {{-6.7,-3.2},{6.7,3.2}},
@@ -40,7 +40,7 @@ local walkable = {
 	name = "platform-walkable",
 	picture = empty_graphic,
 	max_health = 1,
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
 	collision_box = {{-2.7,-3.2},{2.7,3.2}},
 	collision_mask = {"object-layer", "floor-layer", "water-tile"},
@@ -55,7 +55,7 @@ local collision = {
 	name = "platform-collision",
 	picture = empty_graphic,
 	max_health = 1,
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
 	collision_box = {{-2.7,-3.2},{2.7,3.2}},
 	flags = {
@@ -87,8 +87,8 @@ local storage = {
 
 local item = {
 	icons = {
-		{icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64},
-		{icon = "__Satisfactorio__/graphics/icons/hub-parts.png", icon_size = 64, scale = 0.25, shift = {-8,8}}
+		{icon = graphics.."icons/"..name..".png", icon_size = 64},
+		{icon = graphics.."icons/hub-parts.png", icon_size = 64, scale = 0.25, shift = {-8,8}}
 	},
 	name = name,
 	order = "a[train-system]-b[platforms]-b["..name.."]",

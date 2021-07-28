@@ -58,7 +58,7 @@ local vehicle = {
 	inventory_size = 0,
 	rotation_speed = 0,
 	max_health = 1,
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
 	collision_box = {{-1.2,-1.2},{1.2,1.2}},
 	collision_mask = {"object-layer","floor-layer","water-tile"},
@@ -104,7 +104,7 @@ local vehicle2 = {
 	inventory_size = 0,
 	rotation_speed = 0,
 	max_health = 1,
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
 	collision_box = {{-0.2,-0.2},{0.2,0.2}},
 	collision_mask = {},
@@ -184,13 +184,13 @@ interface = {
 	},
 	energy_usage = "5MW",
 	picture = {
-		filename = "__Satisfactorio__/graphics/placeholders/"..name..".png",
+		filename = graphics.."placeholders/"..name..".png",
 		width = 160,
 		height = 160
 	},
 	render_layer = "lower-radius-visualization",
 	max_health = 1,
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
 	collision_box = {{-2.2,-2.2},{2.2,2.2}},
 	collision_mask = {"object-layer","floor-layer","water-tile"},
@@ -252,7 +252,7 @@ data:extend{
 	{
 		type = "sprite",
 		name = "jump-pad-landing",
-		filename = "__Satisfactorio__/graphics/particles/jump-pad-landing.png",
+		filename = graphics.."particles/jump-pad-landing.png",
 		size = {64,64}
 	}
 }

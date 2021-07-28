@@ -4,7 +4,7 @@ local name = "foundation"
 local foundation = {
 	type = "simple-entity-with-owner",
 	name = name,
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
 	picture = {
 		filename = graphics.."placeholders/"..name..".png",
@@ -61,7 +61,7 @@ local deconstruct = {
 local foundationitem = {
 	type = "item",
 	name = name,
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
 	place_result = name,
 	stack_size = 50,
@@ -88,7 +88,7 @@ data:extend({
 		stack_size = 1,
 		icons = {
 			{icon = "__base__/graphics/icons/deconstruction-planner.png", icon_size = 64},
-			{icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64}
+			{icon = graphics.."icons/"..name..".png", icon_size = 64}
 		},
 		selection_mode = "any-entity",
 		selection_color = {1,0,0},
@@ -132,7 +132,7 @@ data:extend({
 		icon = {
 			layers = {
 				{filename = "__base__/graphics/icons/deconstruction-planner.png", width=64, height=64},
-				{filename = "__Satisfactorio__/graphics/icons/"..name..".png", width=64, height=64}
+				{filename = graphics.."icons/"..name..".png", width=64, height=64}
 			}
 		},
 		order = "s-c[deconstruct-foundation]"

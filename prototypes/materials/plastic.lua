@@ -1,6 +1,6 @@
 local name = "plastic"
 local item = {
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
 	name = name,
 	order = "f[oil]-a["..name.."]",
@@ -37,8 +37,8 @@ local recipe2 = {
 	energy_required = 6,
 	category = "refining",
 	icons = {
-		{ icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64 },
-		{ icon = "__Satisfactorio__/graphics/icons/polymer-resin.png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
+		{ icon = graphics.."icons/"..name..".png", icon_size = 64 },
+		{ icon = graphics.."icons/polymer-resin.png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
 	},
 	order = item.order.."-b",
 	allow_decomposition = false,

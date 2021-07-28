@@ -4,8 +4,8 @@ data:extend({
 		name = "scanner-"..name,
 		localised_name = {"recipe-name.scanner-crash-sites"},
 		icons = {
-			{icon = "__Satisfactorio__/graphics/icons/"..name..".png", icon_size = 64},
-			{icon = "__Satisfactorio__/graphics/icons/object-scanner.png", icon_size = 64, scale = 0.25, shift = {-8,8}}
+			{icon = graphics.."icons/"..name..".png", icon_size = 64},
+			{icon = graphics.."icons/object-scanner.png", icon_size = 64, scale = 0.25, shift = {-8,8}}
 		},
 		type = "recipe",
 		ingredients = {},
@@ -23,7 +23,7 @@ data:extend({
 	{
 		type = "item",
 		name = name,
-		icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+		icon = graphics.."icons/"..name..".png",
 		icon_size = 64,
 		flags = {"hidden"},
 		stack_size = 1

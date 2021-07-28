@@ -7,7 +7,7 @@ local hub = {
 	collision_mask = {"object-layer","floor-layer","water-tile"},
 	selection_box = {{-5.5,-3.5},{7.5,3.5}},
 	selectable_in_game = false,
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
 	max_health = 1,
 	flags = {
@@ -54,7 +54,7 @@ local hubterminal = {
 local hubitem = {
 	type = "item",
 	name = name,
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
 	place_result = name,
 	stack_size = 1,
@@ -74,7 +74,7 @@ data:extend{hub,hubterminal,hubitem,hubrecipe}
 
 local silo = table.deepcopy(data.raw['rocket-silo']['rocket-silo'])
 silo.name = "ficsit-freighter"
-silo.icon = "__Satisfactorio__/graphics/icons/drop-pod.png"
+silo.icon = graphics.."icons/drop-pod.png"
 silo.icon_size = 64
 silo.icon_mipmaps = 1
 silo.collision_box = {{-1.3,-1.3},{1.3,1.3}}

@@ -2,7 +2,7 @@ local name = "battery"
 local item = {
 	type = "item",
 	name = name,
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
 	subgroup = "parts",
 	order = "h[bauxite]-g["..name.."]",
@@ -14,7 +14,7 @@ local item = {
 local recipe = {
 	name = name,
 	type = "recipe",
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
 	ingredients = {
 		{type="fluid",name="sulfuric-acid",amount=2.5},

@@ -5,7 +5,7 @@ item.name = name
 item.flags = {}
 item.attack_parameters.cooldown = 12 -- 5 per second
 item.attack_parameters.range = 50
-item.icon = "__Satisfactorio__/graphics/icons/"..name..".png"
+item.icon = graphics.."icons/"..name..".png"
 item.icon_mipmaps = 0
 item.stack_size = 1
 
@@ -31,7 +31,7 @@ item.name = ammoname
 item.flags = {}
 item.ammo_type.action[1].action_delivery[1].target_effects[2].damage.amount = 6
 item.reload_time = 180
-item.icon = "__Satisfactorio__/graphics/icons/"..ammoname..".png"
+item.icon = graphics.."icons/"..ammoname..".png"
 item.icon_mipmaps = 0
 item.magazine_size = 10
 item.stack_size = 10 -- each "clip" holds 10 bullets so a stack is really 100 bullets, as it should be

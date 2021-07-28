@@ -35,18 +35,18 @@ data:extend{
 		action = "lua",
 		associated_control_input = "resource-scanner",
 		icon = {
-			filename = "__Satisfactorio__/graphics/icons/resource-scanner.png",
+			filename = graphics.."icons/resource-scanner.png",
 			size = 64
 		},
 		disabled_icon = {
-			filename = "__Satisfactorio__/graphics/icons/resource-scanner-white.png",
+			filename = graphics.."icons/resource-scanner-white.png",
 			size = 64
 		},
 		order = "s-b[resource-scanner]"
 	},
 	{ -- dummy entity so that "made in..." shows correctly for resource-scanner recipes
 		animation = {
-			filename = "__Satisfactorio__/graphics/icons/resource-scanner.png",
+			filename = graphics.."icons/resource-scanner.png",
 			size = {64,64}
 		},
 		collision_box = {{-0.7,-0.7},{0.7,0.7}},
@@ -56,7 +56,7 @@ data:extend{
 		energy_usage = "1W",
 		flags = {},
 		fluid_boxes = {{production_type="output",pipe_connections={{position={0,-1.5},type="output"}}}},
-		icon = "__Satisfactorio__/graphics/icons/resource-scanner-white.png",
+		icon = graphics.."icons/resource-scanner-white.png",
 		icon_size = 64,
 		max_health = 1,
 		minable = nil,
@@ -66,7 +66,7 @@ data:extend{
 	},
 	{ -- dummy entity so that "made in..." shows correctly for object-scanner recipes
 		animation = {
-			filename = "__Satisfactorio__/graphics/icons/object-scanner.png",
+			filename = graphics.."icons/object-scanner.png",
 			size = {64,64}
 		},
 		collision_box = {{-0.7,-0.7},{0.7,0.7}},
@@ -76,7 +76,7 @@ data:extend{
 		energy_usage = "1W",
 		flags = {},
 		fluid_boxes = {{production_type="output",pipe_connections={{position={0,-1.5},type="output"}}}},
-		icon = "__Satisfactorio__/graphics/icons/object-scanner.png",
+		icon = graphics.."icons/object-scanner.png",
 		icon_size = 64,
 		max_health = 1,
 		minable = nil,
@@ -88,7 +88,7 @@ data:extend{
 		type = "trivial-smoke",
 		name = "resource-scanner-pulse",
 		animation = {
-			filename = "__Satisfactorio__/graphics/particles/resource-scanner-pulse.png",
+			filename = graphics.."particles/resource-scanner-pulse.png",
 			size = 64,
 			blend_mode = "additive-soft",
 			flags = {"trilinear-filtering"}
@@ -106,7 +106,7 @@ data:extend{
 	{
 		type = "sprite",
 		name = "resource-scanner-ping",
-		filename = "__Satisfactorio__/graphics/particles/resource-scanner-ping.png",
+		filename = graphics.."particles/resource-scanner-ping.png",
 		size = 64
 	}
 }

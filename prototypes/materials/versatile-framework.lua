@@ -1,6 +1,6 @@
 local name = "versatile-framework"
 local item = {
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
 	name = name,
 	localised_description = {"item-description.project-part",2},

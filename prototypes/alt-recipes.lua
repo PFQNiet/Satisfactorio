@@ -50,10 +50,10 @@ for _,r in pairs(alts) do
 			localised_description = {"technology-description.hard-drive"},
 			order = order,
 			icons = {
-				{icon = "__Satisfactorio__/graphics/technology/mam/hard-drive.png", icon_size = 256},
+				{icon = graphics.."technology/mam/hard-drive.png", icon_size = 256},
 				product
 					and {icon = product.icon, icon_size = 64, scale = 2, shift = {-64,64}}
-					or {icon = "__Satisfactorio__/graphics/technology/mam/thumbsup.png", icon_size = 256, scale = 0.5, shift = {-64,64}}
+					or {icon = graphics.."technology/mam/thumbsup.png", icon_size = 256, scale = 0.5, shift = {-64,64}}
 			},
 			prerequisites = r.prerequisites,
 			unit = {

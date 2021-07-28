@@ -1,6 +1,6 @@
 local name = "heavy-modular-frame"
 local item = {
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
 	name = name,
 	order = "a[frame]-b["..name.."]",

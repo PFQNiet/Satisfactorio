@@ -1,6 +1,6 @@
 local name = "turbo-motor"
 local item = {
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
 	name = name,
 	order = "b[motor]-d["..name.."]",

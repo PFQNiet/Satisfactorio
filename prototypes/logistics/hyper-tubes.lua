@@ -17,7 +17,7 @@ data:extend{
 local entity = table.deepcopy(data.raw.pipe.pipe)
 entity.name = name
 entity.minable.result = name
-entity.icon = "__Satisfactorio__/graphics/icons/"..name..".png"
+entity.icon = graphics.."icons/"..name..".png"
 entity.icon_mipmaps = 0
 entity.max_health = 1
 for _,pic in pairs(entity.pictures) do
@@ -57,7 +57,7 @@ name = "underground-hyper-tube"
 entity = table.deepcopy(data.raw["pipe-to-ground"]["pipe-to-ground"])
 entity.name = name
 entity.minable.result = name
-entity.icon = "__Satisfactorio__/graphics/icons/"..name..".png"
+entity.icon = graphics.."icons/"..name..".png"
 entity.icon_mipmaps = 0
 entity.max_health = 1
 for _,pic in pairs(entity.pictures) do
@@ -95,7 +95,7 @@ name = "hyper-tube-entrance"
 entity = table.deepcopy(data.raw.pump.pump)
 entity.name = name
 entity.minable.result = name
-entity.icon = "__Satisfactorio__/graphics/icons/"..name..".png"
+entity.icon = graphics.."icons/"..name..".png"
 entity.icon_mipmaps = 0
 entity.max_health = 1
 entity.energy_source.drain = "10MW"

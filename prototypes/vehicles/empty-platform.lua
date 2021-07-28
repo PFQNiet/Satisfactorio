@@ -16,7 +16,7 @@ local base = {
 	},
 	pictures = makeRotatedSprite(name, 448, 224),
 	max_health = 1,
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
 	render_layer = "lower-object",
 	collision_box = {{-6.7,-3.2},{6.7,3.2}},
@@ -36,7 +36,7 @@ local base = {
 }
 
 local item = {
-	icon = "__Satisfactorio__/graphics/icons/"..name..".png",
+	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
 	name = name,
 	order = "a[train-system]-b[platforms]-d["..name.."]",

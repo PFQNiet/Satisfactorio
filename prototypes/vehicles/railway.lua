@@ -4,7 +4,7 @@ data.raw['curved-rail']['curved-rail'].max_health = 1
 data.raw['curved-rail']['curved-rail'].selection_priority = 45
 
 local rail = data.raw['rail-planner']['rail']
-rail.icon = "__Satisfactorio__/graphics/icons/railway.png"
+rail.icon = graphics.."icons/railway.png"
 rail.icon_size = 64
 rail.icon_mipmaps = 1
 rail.stack_size = 50
