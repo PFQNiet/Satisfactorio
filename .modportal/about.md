@@ -10,6 +10,8 @@ If you enjoy Factorio and Satisfactory then this is the mod for you! **Satisfact
 * Use the Gas Mask and Hazmat Suit to protect yourself from environmental hazards
 * Complete Project Assembly!
 
+**Please support the original developers by purchasing a legal copy of [Satisfactory](https://www.satisfactorygame.com/) before downloading this mod.**
+
 ## Getting started
 You begin the game by landing on Nauvis in your Drop Pod and searching for iron. Build your HUB nearby and get to work at the Craft Bench.
 
