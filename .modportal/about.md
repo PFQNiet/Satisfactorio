@@ -49,6 +49,10 @@ Late-game, you can use Drones to trivialise long-distance transportation of mate
 
 ![A Drone delivers packaged nitrogen gas and takes empty canisters away](https://github.com/PFQNiet/Satisfactorio/raw/master/.modportal/drone-port.mp4)
 
+Continue expanding your factory until you successfully complete Project Assembly!
+
+![A train delivers materials to an Aluminium Casing factory](https://github.com/PFQNiet/Satisfactorio/raw/master/.modportal/aluminium-casing-build.mp4)
+
 ## Compatibility
 This mod is generally **incompatible** with other mods, as it totally replaces Factorio's systems with those from Satisfactory. Any mod that attempts to add technology, for example, will cause the mod to outright refuse to load.
 
