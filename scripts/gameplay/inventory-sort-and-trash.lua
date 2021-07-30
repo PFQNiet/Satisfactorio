@@ -1,12 +1,14 @@
 -- add a trash slot to the player inventory gui (controller_gui)
 local sinkable = require(modpath.."constants.sink-tradein") -- items that can be sunk can also be trashed
-local trash = require(modpath.."scripts.gui.trash-slot")
-local sort = require(modpath.."scripts.gui.sort-container")
+local gui = {
+	trash = require(modpath.."scripts.gui.trash-slot"),
+	sort = require(modpath.."scripts.gui.sort-container")
+}
 
 ---@param event on_player_created
 local function onPlayerCreated(event)
 	local player = game.players[event.player_index]
-	trash.create_gui(player)
+	gui.trash.create_gui(player)
 end
 
 local function rejectTrash(player, reason)
@@ -20,7 +22,7 @@ end
 ---@param player LuaPlayer
 ---@param stack LuaItemStack
 ---@param event on_gui_click
-trash.callbacks.trash = function(player, stack, event)
+gui.trash.callbacks.trash = function(player, stack, event)
 	if stack.name == "hub-parts" then
 		rejectTrash(player, {"message.trash-slot-hub-parts",stack.name,stack.prototype.localised_name})
 	elseif stack.name == "uranium-waste" or stack.name == "plutonium-waste" then
@@ -42,7 +44,7 @@ end
 local function onGuiOpened(event)
 	local player = game.players[event.player_index]
 	if player.opened_gui_type ~= defines.gui_type.entity then return end
-	sort.open_gui(player, player.opened)
+	gui.sort.open_gui(player, player.opened)
 end
 
 return {
