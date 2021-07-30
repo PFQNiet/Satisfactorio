@@ -1,6 +1,7 @@
 ---@class TrackedContainer
 ---@field combinator LuaEntity ConstantCombinator
 ---@field container LuaEntity Container
+---@field inventory LuaInventory
 
 ---@alias TrackedContainerBucket table<uint, TrackedContainer>
 ---@alias global.containers TrackedContainerBucket[]
@@ -107,7 +108,8 @@ end
 ---@param data TrackedContainer
 local function updateSignals(data)
 	-- get contents and update combinator
-	local contents = data.container.get_inventory(defines.inventory.chest).get_contents()
+	if not data.inventory then data.inventory = data.container.get_inventory(defines.inventory.chest) end
+	local contents = data.inventory.get_contents()
 	local signals = {}
 	for item,count in pairs(contents) do
 		table.insert(signals, {

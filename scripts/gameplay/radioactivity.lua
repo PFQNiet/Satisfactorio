@@ -13,8 +13,8 @@ local gui = require(modpath.."scripts.gui.radioactivity")
 ---@field area BoundingBox
 ---@field radioactivity number
 ---@field entities LuaEntity[] Radiation emitters
----@field containers LuaEntity[] Containers built on this chunk
----@field behemoths LuaEntity[] Behemoth Worms ("gas emitters") may be weakened by exposure to radiation
+---@field containers table<uint,LuaInventory> Containers built on this chunk, unit number => chest inventory
+---@field behemoths table<uint,LuaEntity> Behemoth Worms ("gas emitters") may be weakened by exposure to radiation
 
 ---@class global.radioactivity
 ---@field enabled boolean
@@ -222,12 +222,11 @@ local function updateChunk(entry)
 
 	local containers = entry.containers
 	local radiation = 0
-	for i=#containers,1,-1 do
-		local entity = containers[i]
-		if not entity.valid then
-			table.remove(containers,i)
+	for i,inventory in pairs(containers) do
+		if not inventory.valid then
+			containers[i] = nil
 		else
-			radiation = radiation + addRadiationForContainer(entity)
+			radiation = radiation + addRadiationForInventory(inventory)
 		end
 	end
 	radiation = math.ceil(radiation/100)
@@ -261,11 +260,10 @@ local function updateChunk(entry)
 	local pollution = surface.get_pollution({x1+1,y1+1})
 	if pollution > 1 then
 		local worms = entry.behemoths
-		local damage = pollution * 2
-		for i=#worms,1,-1 do
-			local entity = worms[i]
+		local damage = math.sqrt(pollution) / 60 * bucket_count
+		for i,entity in pairs(worms) do
 			if not entity.valid then
-				table.remove(worms,i)
+				worms[i] = nil
 			else
 				entity.destructible = true
 				entity.damage(math.min(entity.health-1, damage), game.forces.neutral, "radiation")
@@ -339,10 +337,11 @@ end
 ---@param event on_build
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
-	if not entity or not entity.valid then return end
+	if not (entity and entity.valid) then return end
+	if not entity.unit_number then return end
 	local chunk = getOrCreateChunk(entity.surface, {math.floor(entity.position.x/32), math.floor(entity.position.x/32)})
-	if entity.name == "behemoth-worm-turret" then
-		table.insert(chunk.behemoths, entity)
+	if entity.name == "gas-emitter" then
+		chunk.behemoths[entity.unit_number] = entity
 		return
 	end
 
@@ -353,7 +352,16 @@ local function onBuilt(event)
 	if entity.name == "smart-splitter-box" then return end
 	if entity.name == "programmable-splitter-box" then return end
 	-- add this entity to the chunk's list of containers
-	table.insert(chunk.containers, entity)
+	chunk.containers[entity.unit_number] = entity.get_inventory(defines.inventory.chest)
+end
+---@param event on_destroy
+local function onRemoved(event)
+	local entity = event.entity
+	if not (entity and entity.valid) then return end
+	if not entity.unit_number then return end
+	local chunk = getOrCreateChunk(entity.surface, {math.floor(entity.position.x/32), math.floor(entity.position.x/32)})
+	chunk.behemoths[entity.unit_number] = nil
+	chunk.containers[entity.unit_number] = nil
 end
 
 return bev.applyBuildEvents{
@@ -388,7 +396,7 @@ return bev.applyBuildEvents{
 		end
 	end,
 	on_build = onBuilt,
-	-- removing entities will invalidate them, which will be detected when the chunk is scanned
+	on_destroy = onRemoved,
 	events = {
 		[defines.events.on_chunk_generated] = onChunkGenerated,
 		[defines.events.on_tick] = onTick
