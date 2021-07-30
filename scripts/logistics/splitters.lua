@@ -12,6 +12,7 @@ local gui = {
 ---@field itemstack LuaItemStack
 ---@field filters table<SmartSplitterDirection, SmartSplitterFilter> Names of one or more items or any/any-undefined/overflow to allow through the given direction
 ---@field connections table<string, MachineConnection>
+---@field cycle uint8 Count number of items that pass through, mod 6
 
 ---@alias SmartSplitterFilterSingle SmartSplitterSpecialFilter|string|nil
 ---@alias SmartSplitterFilter SmartSplitterFilterSingle|SmartSplitterFilterSingle[]
@@ -253,11 +254,21 @@ local function processSplitters(event)
 					table.insert(candidates, struct.connections[dir].inserter_right.held_stack)
 				end
 			end
-			if #candidates > 0 then
-				-- found at least one candidate for receiving the item!
-				local choose = math.floor(event.tick/event.nth_tick) % #candidates -- this should cycle through candidates equally
-				candidates[choose+1].transfer_stack(contents)
-			-- else the item stays stuck in the splitter's buffer until deconstructed or filters are set to allow it through
+			local index = (struct.cycle or 0)
+			struct.cycle = (index + contents.count) % 6
+			for _=1,contents.count do
+				if #candidates > 0 then
+					-- found at least one candidate for receiving the item!
+					local choose = (index % #candidates) + 1
+					if contents.count > 1 then
+						candidates[choose].set_stack{name=contents.name, count=1}
+						contents.count = contents.count - 1
+					else
+						candidates[choose].transfer_stack(contents)
+					end
+					table.remove(candidates, choose)
+					-- else the item stays stuck in the splitter's buffer until deconstructed or filters are set to allow it through
+				end
 			end
 		end
 	end
