@@ -251,6 +251,8 @@ local function onGuiOpened(event)
 	if event.gui_type ~= defines.gui_type.entity then return end
 	local entity = event.entity
 	if entity.name ~= mam then return end
+
+	gui.mam.open_gui(player, entity)
 	if entity.get_recipe() == nil then
 		-- double-check for, and disable, any recipes that have completed technologies
 		local force = entity.force
@@ -261,7 +263,6 @@ local function onGuiOpened(event)
 			end
 		end
 	else
-		gui.mam.open_gui(player, entity)
 		updateMam(player)
 	end
 
