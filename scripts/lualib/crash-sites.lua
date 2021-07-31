@@ -5,7 +5,7 @@ local getitems = require(modpath.."scripts.lualib.get-items-from")
 local data = require(modpath.."constants.crash-sites")
 local loot_table = data.loot
 local requirement_table = data.requirements
-local crash_site = require("crash-site")
+local crash_site = require(modpath.."scripts.lualib.crash-site-spawner")
 local spaceship = "crash-site-spaceship"
 
 ---@class CrashSiteRequirements
@@ -59,31 +59,9 @@ end
 ---@param surface LuaSurface
 ---@param position Position
 local function createCrashSite(surface, position)
-	crash_site.create_crash_site(
-		surface,
-		position,
-		{},
-		generateLoot()
-	)
-	-- game doesn't trigger raise-built for this so handle that manually
-	local wreckage = surface.find_entities_filtered{
-		name = {
-			"crash-site-spaceship",
-			"crash-site-spaceship-wreck-big-1", "crash-site-spaceship-wreck-big-2",
-			"crash-site-spaceship-wreck-medium-1", "crash-site-spaceship-wreck-medium-2", "crash-site-spaceship-wreck-medium-3",
-			"crash-site-spaceship-wreck-small-1", "crash-site-spaceship-wreck-small-2", "crash-site-spaceship-wreck-small-3",
-			"crash-site-spaceship-wreck-small-4", "crash-site-spaceship-wreck-small-5", "crash-site-spaceship-wreck-small-6"
-		},
-		position = position,
-		radius = 55
-	}
-	for _,wreck in pairs(wreckage) do
-		wreck.force = "neutral"
-		wreck.destructible = false
-	end
-
-	local ship = surface.find_entity(spaceship, position)
+	local ship = crash_site.create_crash_site(surface, position, generateLoot())
 	ship.minable = false
+
 	local reqs = generateRequirements()
 	local eei
 	if reqs.power > 0 then
