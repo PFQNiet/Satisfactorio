@@ -76,3 +76,7 @@ I also recommend [Satisfactory Tools](https://u4.satisfactorytools.com/productio
 As you can see from the screenshots and clips above, the graphics for this mod are currently lacking. Buildings are just white cards with the building's icon in the middle.
 
 If you have experience making graphics for Factorio mods and would like to help, **please reach out**, I'd love to hear from you.
+
+## Credits
+* Thumbnail and logo text by [snouz](https://mods.factorio.com/mod/MbrTestMod)
+* Item/building icons from [Satisfactory](https://www.satisfactorygame.com/)
