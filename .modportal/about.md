@@ -1,3 +1,5 @@
+![Satisfactorio!](https://github.com/PFQNiet/Satisfactorio/raw/master/.modportal/satisfactorio-logo.png)
+
 ## About
 If you enjoy Factorio and Satisfactory then this is the mod for you! **Satisfactorio** ports (almost) *all* of the features of Satisfactory into Factorio.
 * Connect belts directly to input/output slots of machines
