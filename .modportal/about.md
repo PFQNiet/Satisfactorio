@@ -14,6 +14,8 @@ If you enjoy Factorio and Satisfactory then this is the mod for you! **Satisfact
 
 **Please support the original developers by purchasing a legal copy of [Satisfactory](https://www.satisfactorygame.com/) before downloading this mod.**
 
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/J3J04Z864)
+
 ## Getting started
 You begin the game by landing on Nauvis in your Drop Pod and searching for iron. Build your HUB nearby and get to work at the Craft Bench.
 
