@@ -7,6 +7,8 @@ require("prototypes.special.awesome-shop")
 require("prototypes.special.crash-sites")
 
 data:extend{
+	{type="item-group",name="awesome-shop",order="99",icon=graphics.."icons/awesome-shop.png",icon_size=64},
+
 	{type="item-group",name="special",order="91",icon=graphics.."item-group/special.png",icon_size=64},
 	{type="item-subgroup",group="special",name="special",order="s-a"},
 
