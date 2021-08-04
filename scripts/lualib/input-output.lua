@@ -22,6 +22,25 @@ local script_data = {
 	belts = {}
 }
 
+local vectors = {
+	[defines.direction.north] = {
+		left = {-1,0},
+		right = {1,0}
+	},
+	[defines.direction.east] = {
+		left = {0,-1},
+		right = {0,1}
+	},
+	[defines.direction.south] = {
+		left = {1,0},
+		right = {-1,0}
+	},
+	[defines.direction.west] = {
+		left = {0,1},
+		right = {0,-1}
+	}
+}
+
 local inserter_name = "loader-inserter"
 -- map belt/underground names to tiers
 local belt_tiers = {
@@ -187,12 +206,16 @@ local function addConnection(entity, offset, mode, target, direction)
 	local isactive = belt.name ~= loader_belts[0]
 
 	local target_position = (target or entity).position
-	local belt_left_position = math2d.position.add(position, math2d.position.rotate_vector({-0.25,0},direction/8*360))
-	local belt_right_position = math2d.position.add(position, math2d.position.rotate_vector({0.25,0},direction/8*360))
+	local belt_left_position = math2d.position.add(position, math2d.position.divide_scalar(vectors[direction].left,4))
+	local belt_right_position = math2d.position.add(position, math2d.position.divide_scalar(vectors[direction].right,4))
+	-- Input: to ensure both lanes are pulled from equally, place input inserters on either side of the belt
+	-- Output: to ensure multiple outputs pull equally, place output inserters on the target so they're on the same chunk
+	local inserter_left_position = mode == "input" and math2d.position.add(position, vectors[direction].left) or target_position
+	local inserter_right_position = mode == "input" and math2d.position.add(position, vectors[direction].right) or target_position
 
 	local inserter_left = entity.surface.create_entity{
 		name = inserter_name,
-		position = entity.position,
+		position = inserter_left_position,
 		direction = direction,
 		force = entity.force,
 		raise_built = true
@@ -204,7 +227,7 @@ local function addConnection(entity, offset, mode, target, direction)
 
 	local inserter_right = entity.surface.create_entity{
 		name = inserter_name,
-		position = entity.position,
+		position = inserter_right_position,
 		direction = direction,
 		force = entity.force,
 		raise_built = true
