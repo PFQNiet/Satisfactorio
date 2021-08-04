@@ -425,6 +425,8 @@ Date: 2021.07.25
   Changes:
     - Added support for un-researching techs in the editor
     - The AWESOME Sink now consumes power constantly, rather than stuttering
+  Ease of use:
+    - Truck Stations and (Fluid) Freight Platforms can now be toggled by "rotating" the building
   Bugfixes:
     - Fixed crash on movement after mining a truck station or drone port
 ---------------------------------------------------------------------------------------------------
