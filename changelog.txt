@@ -425,6 +425,7 @@ Date: 2021.07.25
   Changes:
     - Added support for un-researching techs in the editor
     - The AWESOME Sink now consumes power constantly, rather than stuttering
+    - Machine inputs now correctly pull from both lanes of a belt equally, rather than preferring one over the other
   Ease of use:
     - Truck Stations and (Fluid) Freight Platforms can now be toggled by "rotating" the building
   Bugfixes:
