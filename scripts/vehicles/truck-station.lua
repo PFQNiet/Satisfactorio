@@ -65,7 +65,6 @@ local function onBuilt(event)
 		io.addConnection(entity, {-4,3.5}, "input", fuel)
 		io.addConnection(entity, {0,3.5}, "input", store)
 		io.addConnection(entity, {2,3.5}, "output", store, defines.direction.south)
-		entity.rotatable = false
 		script_data.stations[entity.unit_number%30][entity.unit_number] = {
 			base = entity,
 			fuel = fuel,
@@ -81,6 +80,24 @@ local function onRemoved(event)
 	if not entity or not entity.valid then return end
 	if entity.name == base then
 		clearStruct(entity)
+	end
+end
+
+---@param event on_player_rotated_entity
+local function onRotated(event)
+	local player = game.players[event.player_index]
+	local entity = event.entity
+	if not (entity and entity.valid) then return end
+	if entity.name ~= base then return end
+	local data = getStruct(entity)
+	data.mode = data.mode == "input" and "output" or "input"
+	entity.direction = event.previous_direction
+	player.create_local_flying_text{
+		text = {"message.station-mode-toggle-"..data.mode},
+		create_at_cursor = true
+	}
+	if player.opened == data.cargo then
+		gui.mode.open_gui(player, data.base, data.cargo, data.mode)
 	end
 end
 
@@ -210,6 +227,7 @@ return bev.applyBuildEvents{
 	on_build = onBuilt,
 	on_destroy = onRemoved,
 	events = {
+		[defines.events.on_player_rotated_entity] = onRotated,
 		[defines.events.on_gui_opened] = onGuiOpened,
 
 		[defines.events.on_tick] = onTick,

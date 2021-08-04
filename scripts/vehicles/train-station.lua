@@ -187,6 +187,7 @@ local function onBuilt(event)
 				platform = nil
 			end
 
+			entity.rotatable = false
 			local stop = entity.surface.create_entity{
 				name = trainstop,
 				position = stationpos,
@@ -362,7 +363,6 @@ local function onBuilt(event)
 
 			registerPlatform(struct)
 		end
-		entity.rotatable = false
 
 		link.register(entity, entity.surface.create_entity{
 			name = walkable, -- left side in direction of travel is walkable
@@ -398,16 +398,22 @@ local function onRemoved(event)
 	end
 end
 
----@param cols LuaGuiElement
----@param unload boolean
-local function toggleModeButtons(cols, unload)
-	local col = cols['load']
-	col.children[1].style = "station_mode_button"..(unload and "" or "_pressed")
-	col.label.style = unload and "label" or "caption_label"
-
-	col = cols['unload']
-	col.children[1].style = "station_mode_button"..(unload and "_pressed" or "")
-	col.label.style = unload and "caption_label" or "label"
+---@param event on_player_rotated_entity
+local function onRotated(event)
+	local player = game.players[event.player_index]
+	local entity = event.entity
+	if not (entity and entity.valid) then return end
+	if entity.name ~= freight and entity.name ~= fluid then return end
+	local data = getPlatform(entity)
+	data.mode = data.mode == "input" and "output" or "input"
+	entity.direction = event.previous_direction
+	player.create_local_flying_text{
+		text = {"message.station-mode-toggle-"..data.mode},
+		create_at_cursor = true
+	}
+	if player.opened == data.storage then
+		gui.mode.open_gui(player, data.platform, data.storage, data.mode)
+	end
 end
 
 local function onGuiOpened(event)
@@ -574,6 +580,7 @@ return bev.applyBuildEvents{
 	on_build = onBuilt,
 	on_destroy = onRemoved,
 	events = {
+		[defines.events.on_player_rotated_entity] = onRotated,
 		[defines.events.on_gui_opened] = onGuiOpened,
 
 		[defines.events.on_tick] = onTick,
