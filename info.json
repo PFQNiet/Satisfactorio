@@ -8,7 +8,7 @@
 	"homepage": "https://github.com/PFQNiet/Satisfactorio",
 	"factorio_version": "1.1",
 	"dependencies": [
-		"base >= 1.1.34",
+		"base >= 1.1.37",
 		"?BottleneckLite >= 1.2.0",
 		"?RateCalculator >= 2.2.0",
 		"?Factorissimo2 >= 2.5.2",

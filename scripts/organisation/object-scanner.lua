@@ -75,7 +75,7 @@ end
 
 ---@param player LuaPlayer
 local function putObjectScannerInCursor(player)
-	if player.cursor_stack.valid_for_read then
+	if not player.is_cursor_empty() then
 		-- player is already holding something
 		return
 	end

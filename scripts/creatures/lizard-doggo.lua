@@ -306,7 +306,7 @@ end
 gui.callbacks.take_loot = function(player, struct)
 	local helditem = struct.helditem
 	if not helditem then return end
-	if player.cursor_stack.valid_for_read then return end
+	if not player.is_cursor_empty() then return end
 	player.cursor_stack.set_stack(helditem)
 	setupNextDoggoLoot(struct)
 end

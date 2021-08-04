@@ -68,7 +68,7 @@ local function onHarvest(event)
 	-- check if the "open GUI" event is intended for a plant...
 	local player = game.players[event.player_index]
 	if not (player.selected and player.selected.valid) then return end
-	if player.cursor_stack.valid_for_read then return end
+	if not player.is_cursor_empty() then return end
 	local entity = player.selected
 	if entity.name == "paleberry" or entity.name == "beryl-nut" or entity.name == "bacon-agaric" then
 		-- ensure it's not too far away...
