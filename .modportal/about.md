@@ -51,6 +51,10 @@ Tame wild Lizard Doggos (which look suspiciously like Small Biters...) and they'
 
 ![Collecting loot from a Doggo farm](https://github.com/PFQNiet/Satisfactorio/raw/master/.modportal/doggo-farm.mp4)
 
+More mobility options include the Jetpack, Hyper tubes and the Zipline, allowing quick and easy traversal of your factory.
+
+![Zipline demonstration flying around a Modular Frame factory](https://github.com/PFQNiet/Satisfactorio/raw/master/.modportal/zipline.mp4)
+
 Late-game, you can use Drones to trivialise long-distance transportation of materials, assuming you produce enough Batteries to support them.
 
 ![A Drone delivers packaged nitrogen gas and takes empty canisters away](https://github.com/PFQNiet/Satisfactorio/raw/master/.modportal/drone-port.mp4)
