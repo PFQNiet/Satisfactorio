@@ -118,12 +118,20 @@ function tipTrickSetup(params)
 						[defines.direction.south] = {{0.25,0},{-0.25,0}},
 						[defines.direction.west] = {{0,0.25},{0,-0.25}}
 					}
+					local inserter_shift = {
+						[defines.direction.north] = {{-1,0},{1,0}},
+						[defines.direction.east] = {{0,-1},{0,1}},
+						[defines.direction.south] = {{1,0},{-1,0}},
+						[defines.direction.west] = {{0,1},{0,-1}}
+					}
 					local belt_left_position = {x=belt.position.x + belt_shift[direction][1][1], y=belt.position.y + belt_shift[direction][1][2]}
 					local belt_right_position = {x=belt.position.x + belt_shift[direction][2][1], y=belt.position.y + belt_shift[direction][2][2]}
+					local inserter_left_position = mode == "input" and {x=belt.position.x + inserter_shift[direction][1][1], y=belt.position.y + inserter_shift[direction][1][2]} or entity.position
+					local inserter_right_position = mode == "input" and {x=belt.position.x + inserter_shift[direction][2][1], y=belt.position.y + inserter_shift[direction][2][2]} or entity.position
 
 					inserter_left = entity.surface.create_entity{
 						name = "loader-inserter",
-						position = entity.position,
+						position = inserter_left_position,
 						direction = direction,
 						force = entity.force,
 						raise_built = true
@@ -134,7 +142,7 @@ function tipTrickSetup(params)
 
 					inserter_right = entity.surface.create_entity{
 						name = "loader-inserter",
-						position = entity.position,
+						position = inserter_right_position,
 						direction = direction,
 						force = entity.force,
 						raise_built = true
