@@ -87,7 +87,7 @@ local function createGui(player)
 		style = "tabbed_pane_with_no_side_padding_and_tabs_hidden"
 	}
 	tabs.add_tab(
-		tabs.add{type = "tab", caption = {"gui.station-drone"}},
+		tabs.add{type = "tab", caption = {"entity-name.drone-port"}},
 		tabs.add{type="empty-widget"}
 	)
 	tabs.add_tab(
@@ -276,6 +276,24 @@ local function createGui(player)
 end
 
 ---@param player LuaPlayer
+---@param tabs TabAndContent[]
+---@param struct DronePortData
+local function checkRangeForTabs(player, tabs, struct)
+	local entities = {
+		struct.stop,
+		struct.fuel,
+		struct.export,
+		struct.import
+	}
+	for i,obj in pairs(entities) do
+		local reach = obj.valid and (obj.type == "train-stop" or player.can_reach_entity(obj))
+		local tab = tabs[i].tab
+		tab.enabled = reach
+		tab.tooltip = reach and "" or {"cant-reach"}
+	end
+end
+
+---@param player LuaPlayer
 ---@param name string
 local function updateName(player, name)
 	local data = getGui(player)
@@ -345,6 +363,7 @@ local function openGui(player, struct, status, destination, stats)
 	local components = data.components
 
 	components.tabs.selected_tab_index = 1
+	checkRangeForTabs(player, components.tabs.tabs, struct)
 	updateName(player, struct.name)
 	updateStatus(player, status)
 	updateMinimap(player, struct.drone or struct.base)
@@ -424,31 +443,6 @@ local function closeGui(player)
 	if not data then return end
 	if player.opened == data.components.container then
 		player.opened = nil
-	end
-end
-
----@param player LuaPlayer
-local function checkRangeForTabs(player)
-	local data = getGui(player)
-	if not data then return end
-	if not data.struct then return end
-
-	local tabs = data.components.tabs.tabs
-	local entities = {
-		data.struct.base,
-		data.struct.fuel,
-		data.struct.export,
-		data.struct.import
-	}
-	for i,obj in pairs(entities) do
-		local reach = obj.valid and player.can_reach_entity(obj)
-		if i == 1 and not reach then
-			closeGui(player)
-			return
-		end
-		local tab = tabs[i].tab
-		tab.enabled = reach
-		tab.tooltip = reach and "" or {"cant-reach"}
 	end
 end
 
@@ -606,7 +600,10 @@ end
 ---@param event on_player_changed_position
 local function onMove(event)
 	local player = game.players[event.player_index]
-	checkRangeForTabs(player)
+	local data = getGui(player)
+	if data and data.struct then
+		checkRangeForTabs(player, data.components.tabs.tabs, data.struct)
+	end
 end
 
 return {

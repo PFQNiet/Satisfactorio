@@ -334,6 +334,17 @@ local function onGuiOpened(event)
 	end
 end
 
+-- if the player clicks on a station but can't reach it normally, open the stop anyway
+local function onInteract(event)
+	local player = game.players[event.player_index]
+	local entity = player.selected
+	if not (entity and entity.valid) then return end
+	if entity.name ~= base then return end
+	if player.can_reach_entity(entity) then return end
+	local struct = getStruct(entity)
+	player.opened = struct.stop
+end
+
 ---@param player LuaPlayer
 ---@param port DronePortData
 ---@param name string
@@ -788,6 +799,7 @@ return bev.applyBuildEvents{
 		[defines.events.on_spider_command_completed] = onSpiderDone,
 		[defines.events.on_tick] = onTick,
 
+		["interact"] = onInteract,
 		["fast-entity-transfer-hook"] = function(event) onFastTransfer(event, false) end,
 		["fast-entity-split-hook"] = function(event) onFastTransfer(event, true) end
 	}

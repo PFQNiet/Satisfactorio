@@ -31,7 +31,7 @@ local function createGui(player)
 		style = "tabbed_pane_with_no_side_padding_and_tabs_hidden"
 	}
 	tabs.add_tab(
-		tabs.add{type = "tab", caption = {"gui.station-drone"}},
+		tabs.add{type = "tab", caption = {"entity-name.drone-port"}},
 		tabs.add{type="empty-widget"}
 	)
 	tabs.add_tab(
@@ -64,7 +64,7 @@ local function checkRangeForTabs(player)
 
 	local tabs = data.components.tabs.tabs
 	for i,obj in pairs(data.entities) do
-		local reach = obj.valid and player.can_reach_entity(obj)
+		local reach = obj.valid and (obj.type == "train-stop" or player.can_reach_entity(obj))
 		local tab = tabs[i].tab
 		tab.enabled = reach
 		tab.tooltip = reach and "" or {"cant-reach"}
