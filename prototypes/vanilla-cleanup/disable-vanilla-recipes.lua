@@ -153,7 +153,7 @@ local vanilla_recipes = { -- items with the same name in Satisfactory are overwr
 	"rocket-control-unit",
 	"rocket-fuel",
 	"rocket-launcher",
-	"rocket-part",
+	-- "rocket-part", -- Helmod breaks if this recipe is removed. TODO remove it again when Helmod is patched.
 	"rocket-silo",
 	"satellite",
 	"shotgun",
