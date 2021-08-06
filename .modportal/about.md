@@ -70,6 +70,7 @@ Win the game by completing Project Assembly!
 This mod is generally **incompatible** with other mods, as it totally replaces Factorio's systems with those from Satisfactory. Any mod that attempts to add technology, for example, will cause the mod to outright refuse to load.
 
 However, compatibility patches can be made! The following mods are compatible:
+
 * Rate Calculator
 * Bottleneck Lite
 * Text Plates
