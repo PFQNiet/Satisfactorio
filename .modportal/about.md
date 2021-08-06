@@ -2,6 +2,7 @@
 
 ## About
 If you enjoy Factorio and Satisfactory then this is the mod for you! **Satisfactorio** ports (almost) *all* of the features of Satisfactory into Factorio.
+
 * Connect belts directly to input/output slots of machines
 * Submit materials to the HUB/MAM/Space Elevator to progress
 * Engage in melee combat with hostile creatures
