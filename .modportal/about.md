@@ -89,3 +89,4 @@ If you have experience making graphics for Factorio mods and would like to help,
 * Thumbnail and logo text by [snouz](https://mods.factorio.com/mod/MbrTestMod)
 * Item/building icons from [Satisfactory](https://www.satisfactorygame.com/)
 * Resource Well / Nitrogen Gas resource sprites currently "borrowed" from [Krastorio 2](https://mods.factorio.com/mod/Krastorio2)
+* Inspiration for machine loaders from [therax](https://mods.factorio.com/user/therax)'s Miniloaders
