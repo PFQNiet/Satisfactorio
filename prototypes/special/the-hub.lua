@@ -216,3 +216,16 @@ for i=0,8 do
 		enabled = false
 	}}
 end
+
+-- "HUB Finder" button
+data:extend{
+	{
+		type = "shortcut",
+		name = "hub-finder",
+		action = "lua",
+		toggleable = true,
+		technology_to_unlock = "the-hub",
+		icon = {filename = graphics.."icons/"..name..".png", width=64, height=64},
+		order = "s-d[hub-finder]"
+	}
+}

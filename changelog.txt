@@ -440,3 +440,8 @@ Version: 1.0.1
 Date: 2021.08.06
   Bugfixes:
     - Hotfix incompatibility with Helmod
+---------------------------------------------------------------------------------------------------
+Version: 1.0.2
+Date: 2021.08.06
+  Changes:
+    - Added "HUB Finder" to the shortcut bar, allowing you to find your way back to the HUB if you get lost.

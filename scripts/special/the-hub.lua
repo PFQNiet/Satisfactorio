@@ -2,15 +2,12 @@ local gui = {
 	tracker = require(modpath.."scripts.gui.the-hub-tracker"),
 	terminal = require(modpath.."scripts.gui.the-hub-terminal")
 }
-
--- uses global.hub.terminal as table of Force index -> HUB terminal
--- uses global.hub.cooldown as table of Force index -> tick at which the Freighter returns
-local util = require("util")
 local math2d = require("math2d")
 local string = require(modpath.."scripts.lualib.string")
 local bev = require(modpath.."scripts.lualib.build-events")
 local link = require(modpath.."scripts.lualib.linked-entity")
 local getitems = require(modpath.."scripts.lualib.get-items-from")
+local pings = require(modpath.."scripts.lualib.pings")
 
 local base = "the-hub"
 local terminal = "the-hub-terminal"
@@ -36,6 +33,7 @@ local freighter = "ficsit-freighter"
 ---@field freighter LuaEntity
 ---@field inserter LuaEntity
 ---@field cooldown uint Tick at which the Freighter returns
+---@field pings table<uint,PingData> Player pings pointing to home
 
 ---@alias global.hub table<uint, HubData> Force index => HUB
 ---@type global.hub
@@ -423,6 +421,12 @@ local function onRemoved(event)
 	-- the terminal is the only minable entity
 	if entity.valid and entity.name == terminal then
 		local hub = findHubForForce(entity.force)
+		if hub.pings then
+			for pid,ping in pairs(hub.pings) do
+				game.players[pid].set_shortcut_toggled("hub-finder",false)
+				pings.deletePing(ping)
+			end
+		end
 		hub.valid = false
 	end
 end
@@ -443,6 +447,7 @@ local function onResearch(event)
 		end
 	end
 end
+---@param event on_gui_opened
 local function onGuiOpened(event)
 	local entity = event.entity
 	if entity and entity.valid and entity.name == terminal then
@@ -457,6 +462,32 @@ local function onGuiOpened(event)
 					force.recipes[recipe.name.."-done"].enabled = true
 				end
 			end
+		end
+	end
+end
+
+---@param event on_lua_shortcut
+local function onShortcut(event)
+	if event.prototype_name == "hub-finder" then
+		local player = game.players[event.player_index]
+		local hub = findHubForForce(player.force)
+		if not hub.pings then hub.pings = {} end
+		if not player.is_shortcut_toggled(event.prototype_name) then
+			if not hub.valid then
+				player.create_local_flying_text{
+					text = {"message.hub-not-built"},
+					create_at_cursor = true
+				}
+				player.play_sound{path="utility/cannot_build"}
+				player.set_shortcut_toggled(event.prototype_name, false)
+			else
+				hub.pings[player.index] = pings.addPing(player, hub.floor)
+				player.set_shortcut_toggled(event.prototype_name, true)
+			end
+		else
+			pings.deletePing(hub.pings[player.index])
+			hub.pings[player.index] = nil
+			player.set_shortcut_toggled(event.prototype_name, false)
 		end
 	end
 end
@@ -483,6 +514,7 @@ return bev.applyBuildEvents{
 	on_destroy = onRemoved,
 	events = {
 		[defines.events.on_research_finished] = onResearch,
-		[defines.events.on_gui_opened] = onGuiOpened
+		[defines.events.on_gui_opened] = onGuiOpened,
+		[defines.events.on_lua_shortcut] = onShortcut
 	}
 }
