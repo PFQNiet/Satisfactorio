@@ -1,356 +1,81 @@
 ---------------------------------------------------------------------------------------------------
-Version: 0.0.1
-Date: 2020.09.16
+Version: 1.0.3
+Date: 2021.08.06
   Info:
-    - Initial alpha release
+    - Rearranged changelog to put newest versions at the top, for easier viewing on mod portal
+  Bugfixes:
+    - Fixed incorrect locale string of radioactive items
 ---------------------------------------------------------------------------------------------------
-Version: 0.1.0
-Date: 2020.11.05
+Version: 1.0.2
+Date: 2021.08.06
+  Changes:
+    - Added "HUB Finder" to the shortcut bar, allowing you to find your way back to the HUB if you get lost.
+---------------------------------------------------------------------------------------------------
+Version: 1.0.1
+Date: 2021.08.06
+  Bugfixes:
+    - Hotfix incompatibility with Helmod
+---------------------------------------------------------------------------------------------------
+Version: 1.0.0
+Date: 2021.08.06
   Info:
-    - Pre-release release
+    - Initial public release
 ---------------------------------------------------------------------------------------------------
-Version: 0.1.1
-Date: 2020.11.06
-  Features:
-    - Added a welcome message to point the player towards the Resource Scanner and first steps.
-  Combat Balancing:
-    - Resource deposits close to spawn will only be guarded by 1 or 2 weaker enemies max.
-    - Resource deposits close to spawn cannot have poison gas.
-  Ease of use:
-    - Added corpse tracker so that you can find your dead body after respawning.
-  Bugfixes:
-    - Rail (chain) signals could not be built outside of Creative mode and lacked dismantle option.
-    - Valve was not unlocked by the technology that was supposed to unlock it.
----------------------------------------------------------------------------------------------------
-Version: 0.1.2
-Date: 2020.11.07
-  Balancing:
-    - Valve is now unlocked in Tier 5, Oil Processing.
-    - Pipe/Pump Mk.2 are now their own Milestone in Tier 6
-    - Cost of Pipe/Pump Mk.2 have been adjusted accordingly.
-    - Pump Mk.2 power consumption reduced from 12MW to 8MW
-  Combat Balancing:
-    - Enemies that chase the player will disengage if you run far enough.
----------------------------------------------------------------------------------------------------
-Version: 0.1.3
-Date: 2020.11.07
-  Graphics:
-    - Ore nodes are now highlighted when a mining drill is in hand
-  Control:
-    - Localised "jump" control
-    - Added sort order to custom inputs
-  Combat Balancing:
-    - Player now only regenerates to 30HP
-    - Time before auto-heal kicks in increased to match Satisfactory (50s)
-    - Player now respawns at 30HP after dying
----------------------------------------------------------------------------------------------------
-Version: 0.1.4
-Date: 2020.11.10
-  Ease of use:
-    - "Add 5" and "Add Stack" options added to Recipe Browser buttons
-  Bugfixes:
-    - Various optimisations and performance improvements
-    - Exiting a Jetpack or Parachute or Hyper Tube would crash the game
-    - Xeno-basher didn't affect flying enemies
-    - Entities with custom GUIs now auto-close when you move away or the entity is destroyed
-    - Fixed some crashes with the Object Scanner and Beacons
----------------------------------------------------------------------------------------------------
-Version: 0.1.5
-Date: 2020.11.11
+Version: 0.9.1
+Date: 2021.07.25
   Changes:
-    - A Parachute can now also be used to avoid damage when unsafe-landing from a Jump Pad
-  Gui:
-    - Added Tier markers for the HUB tiers
+    - Added support for un-researching techs in the editor
+    - The AWESOME Sink now consumes power constantly, rather than stuttering
+    - Machine inputs now correctly pull from both lanes of a belt equally, rather than preferring one over the other
+  Ease of use:
+    - Truck Stations and (Fluid) Freight Platforms can now be toggled by "rotating" the building
   Bugfixes:
-    - Better handling of "research recipes" that are already done
-    - When the last entity of a Hypertube is an Underground, you exited at the wrong spot
+    - Fixed crash on movement after mining a truck station or drone port
 ---------------------------------------------------------------------------------------------------
-Version: 0.2.0
-Date: 2020.11.13
-  Features:
-    - The start of Freeplay is now Onboarding, with objective-based tutorial to get you started.
-  Bugfixes:
-    - Catastrophic bug after save/load! Whoops! So all save files are kinda knackered...
----------------------------------------------------------------------------------------------------
-Version: 0.2.1
-Date: 2020.11.14
-  Features:
-    - "Starting area size" now affects the distance at which nodes are only minimally guarded
-  Gui:
-    - Added "flow rate" GUI when opening pipes
-  Bugfixes:
-    - As HUB Upgrade milestones are completed, the HUB now checks for collision with the player.
-    - Smart/Programmable splitters weren't saved correctly.
-    - Mk.2 pipes etc. were giving back Mk.1 items on removal
----------------------------------------------------------------------------------------------------
-Version: 0.2.2
-Date: 2020.11.19
+Version: 0.9.0
+Date: 2021.07.19
   Changes:
-    - Screw removed as an independent item and now just replaces Iron Gear
-    - Foundation now snaps to nearby Foundations to avoid off-by-one construction
+    - Total revamp of GUI systems, which does unfortunately mean incompatibility with the old and busted system.
+  Ease of use:
+    - Improved handling of Foundation / Deconstruct Foundation so it doesn't spam "Not minable" errors any more.
+    - Fixed ability to copy-paste settings between Infinity Storage Containers
+---------------------------------------------------------------------------------------------------
+Version: 0.8.5
+Date: 2021.07.07
+  Changes:
+    - Added Tips + Tricks entry explaining how (not) to use Train conditions
   Bugfixes:
-    - Power Slugs that are covered by Huge Rocks are now, in fact, covered
-    - Space Elevator crash fixed
-    - Space Elevator "rocket silo" entity is now not selectable
-    - Better handling of potentially incompatible mods
-    - Items on belts are now masked properly by freight platforms
-    - Various fixes and optimisations
+    - Fixed resource wells spawning off-centre
+    - Fixed that generators running out of fuel (but not water) would generate free energy (#74)
+    - Taming lizard doggos was broken due to an error in refactoring (#75)
+  Gui:
+    - Improvements to Resource/Object/Beacon Scanner GUIs
+    - Tidying up of Milestone GUI
+  Combat Balancing:
+    - Unarmed melee strikes now stun the target for much longer
+---------------------------------------------------------------------------------------------------
+Version: 0.8.4
+Date: 2021.07.06
+  Optimizations:
+    - Further performance improvements and refactoring
   Modding:
-    - Added framework for mod compatibility scripts
-    - Compatible with Construction Drones
-    - Compatible with Factorissimo 2
+    - Added compatibility with Text Plates
+    - Added compatibility with BottleneckLite
 ---------------------------------------------------------------------------------------------------
-Version: 0.2.3
-Date: 2020.11.23
-  Graphics:
-    - Scaled the Ficsit Freighter to match its actual size
-  Ease of use:
-    - Submitting excess items to the HUB, Space Elevator or MAM now has better handling
-    - Added submission requirements to technology descriptions
-  Bugfixes:
-    - Train platforms now collide with most objects, greatly reducing the manual collision handling
-    - Trains weren't consuming the correct amount of power
----------------------------------------------------------------------------------------------------
-Version: 0.3.0
-Date: 2020.11.24
+Version: 0.8.3
+Date: 2021.07.04
   Changes:
-    - Upgraded to Factorio 1.1
-    - Many GUI elements have been moved from gui.left to gui.relative
-  Bugfixes:
-    - Mining a self-driving car now cleans up the rendered path
+    - Collapsing the to-do list now keeps the item list open, only hiding the ingredient list
+    - Mining a building that is on your to-do list increments the list by one
+    - To-do list now responds to Craft Bench and Equipment Workshop items
 ---------------------------------------------------------------------------------------------------
-Version: 0.3.1
-Date: 2020.11.25
+Version: 0.8.2
+Date: 2021.07.02
   Changes:
-    - Tips and tricks have been tweaked to at least work with Satisfactorio buildings
-    - Main menu scenes have been added
----------------------------------------------------------------------------------------------------
-Version: 0.3.2
-Date: 2020.11.29
-  Gui:
-    - Improved the integration of various GUI elements
-  Bugfixes:
-    - Fixed that mining a lookout tower while you were in it would result in the range buff sticking
-    - Fixed that mining a harvested plant would crash the game a few hours later
-    - Fixed that dying in a car would leave the self-driving GUI open, leading to a crash
----------------------------------------------------------------------------------------------------
-Version: 0.3.3
-Date: 2020.11.30
-  Features:
-    - Inventory trash slot, which can be used to discard any items cluttering your inventory.
-    - Sort button added to various storage containers and cars.
----------------------------------------------------------------------------------------------------
-Version: 0.4.0
-Date: 2021.01.14
-  Major Features:
-    - Build Gun! Now instead of fiddling with crafting and dismantling buildings, just pick a building and place away!
-    - Mining a building now gives the ingredients back, so they can be recycled.
-  Balancing:
-    - Increase spawn rate of Geyser
-  Bugfixes:
-    - Reworked electric-energy-interface entities to make better use of the system, notably for tooltips.
-    - Added Fuse Box to Geothermal Generator
-  Changes:
-    - No longer compatible with Construction Drones, use Companion Drones instead.
-    - You can no longer merge belts without a Conveyor Merger - this is to prevent possible assumptions of how lanes work
-    - If Crash Sites are disabled in map generation, Hard Drives can be purchased from the AWESOME Shop
-  Ease of use:
-    - Added "pipe length" info to pipe GUI for better planning of pipelines
-  Modding:
-    - No longer compatible with Companion Drones, due to the Build Gun
----------------------------------------------------------------------------------------------------
-Version: 0.4.1
-Date: 2021.01.17
-  Changes:
-    - Building something on your To Do list removes it from said list.
-  Balancing:
-    - Added Power Shard as a purchaseable item from the AWESOME Shop.
-  Bugfixes:
-    - It was possible to merge belts when undergrounds were involved, particularly when flipping them.
----------------------------------------------------------------------------------------------------
-Version: 0.4.2
-Date: 2021.01.24
-  Changes:
-    - Entities with input/output now respond better to neighbouring belts by snapping their types
-    - This also removes the ability to directly chain buildings. There MUST be a belt between them
----------------------------------------------------------------------------------------------------
-Version: 0.4.3
-Date: 2021.01.26
-  Changes:
-    - Upped Factorio version required (due to bugfixes in the base game I had previously hacked around)
-    - Removed said "hacking around" as the underlying bugs are now fixed!
-  Bugfixes:
-    - Building outputs can no longer sideload onto pre-existing belts, they will simply fail to snap
-    - Build Gun collision check now uses real built-in range check instead of re-creating it
-    - Mineral deposits (and Huge Rocks) no longer spawn on resource nodes if disabled
-    - "Behemoth Worm" (aka indestructible poison gas rocks) no longer spawn if mineral deposits are disabled
----------------------------------------------------------------------------------------------------
-Version: 0.4.4
-Date: 2021.01.29
-  Bugfixes:
-    - The Build Gun no longer siphons items from your inventory when building power poles by dragging
-    - Build Gun GUI was updating too often under some circumstances
-    - Build Gun GUI wasn't updating often enough under other circumstances!
-    - Mining an item while holding a ghost now recalculates whether you can afford it.
----------------------------------------------------------------------------------------------------
-Version: 0.5.0
-Date: 2021.01.30
-  Info:
-    - Release Candidate 1!
-  Changes:
-    - Added IO markers to all placeholder graphics for easier planning/visualisation
-  Bugfixes:
-    - The Build Gun was still broken, of course.
----------------------------------------------------------------------------------------------------
-Version: 0.5.1
-Date: 2021.01.31
-  Bugfixes:
-    - Recipe browser crashed when another mod added a tech with no cost
-    - Typos in localisation
-    - Game crash when placing an underground belt directly next to an input/output
-    - To-do list did not properly decrement when placing certain entities
----------------------------------------------------------------------------------------------------
-Version: 0.6.0
-Date: 2021.06.03
-  Changes:
-    - Implemented Update 4 changes
-    - Coal, Fuel and Nuclear generators are now simpler entities
-    - Hypertubes now allow junctions and keyboard input to change directions
-  Scripting:
-    - Make use of defines.prototypes for cleaner code
----------------------------------------------------------------------------------------------------
-Version: 0.6.1
-Date: 2021.06.04
-  Changes:
-    - Sub-components of various entites are no longer selectable directly
----------------------------------------------------------------------------------------------------
-Version: 0.6.2
-Date: 2021.06.05
-  Bugfixes:
-    - (Industrial) Storage Containers didn't show their contents in the UI, now fixed (kinda)
-  Ease of use:
-    - "Smart" fast-transfer: transferring items into or out of a Truck Station or Drone port will intelligently select between the fuel box and cargo inventories
----------------------------------------------------------------------------------------------------
-Version: 0.6.3
-Date: 2021.06.05
-  Changes:
-    - Fuel value of Fuel updated
-  Bugfixes:
-    - Crash in the Zipline
----------------------------------------------------------------------------------------------------
-Version: 0.6.4
-Date: 2021.06.11
-  Features:
-    - Added GUI to Power Storage
-  Bugfixes:
-    - Fix crash when trying to fast-transfer from a tree
-    - Rails now work properly in the Build Gun
----------------------------------------------------------------------------------------------------
-Version: 0.6.5
-Date: 2021.06.12
-  Changes:
-    - Added UI to better show flight time of the Jetpack
-  Bugfixes:
-    - Fixed price of Rifle Ammo in AWESOME shop
-    - Fixed incorrect icons for resource wells
-    - Fixed that Water Extractors did not show on the map
-    - Fixed map colour of Splitters/Mergers
-    - Fixed Alt Recipe selection screen not showing byproducts properly
-    - Fixed that Loader Conveyors were destructible (mostly by Nobelisk explosion)
----------------------------------------------------------------------------------------------------
-Version: 0.6.6
-Date: 2021.06.13
-  Changes:
-    - Increased stack size of all Buildings so that the Build Gun can better show affordable amount
-    - Added "Scanner" icon to resource/object scan "recipe" icons
-    - Added custom icons for "nothing"-type technology effects
-  Bugfixes:
-    - Fixed incorrect locale for capsule item tooltips
-    - More locale fixes
-    - Fixed cost of underground belts/pipes (was double what it should have been)
-    - Fix that, in the rare case Foundation snaps to clip into another Foundation, both would be immovable
----------------------------------------------------------------------------------------------------
-Version: 0.6.7
-Date: 2021.06.17
+    - Drone Port now uses a Train Stop internally so it can be opened from the map view
+    - Drones now try to only pull as many batteries as needed for a round trip, rather than a full stack
   Optimizations:
-    - Greatly reduced processing time of Radioactivity. If it's still too much, use /toggle-radiation command to disable radiation in-game.
-    - Reworked power production buildings.
-  Ease of use:
-    - Tabs for composite entities (Truck Station, Drone Port) now disable themselves if you are out of range of that component
-    - You must now Shift-click to trash equipment, so you don't accidentally trash it when you meant to equip it.
----------------------------------------------------------------------------------------------------
-Version: 0.6.8
-Date: 2021.06.17
-  Changes:
-    - Renamed various creature entities to their Satisfactory equivalents
-    - Reduced the amount of time for Resource Scanner pings to respond
-  Balancing:
-    - Decreased mining time of resource deposits
-  Combat Balancing:
-    - Further reduced the amount of enemies at resource nodes close to your spawn point.
-    - Some nodes may even be totally undefended.
-  Bugfixes:
-    - Fixed train station not appearing on map
-    - Fixed buggy Tips+Tricks
----------------------------------------------------------------------------------------------------
-Version: 0.6.9
-Date: 2021.06.18
-  Changes:
-    - Changed stack size of underground belts to 50 for better fit with Build Gun
-    - Truck stations and Freight platforms now have their outputs disabled as well as their inputs when a vehicle is docked
-  Ease of use:
-    - Reduced the number of batteries needed for Drones to take off, based on calculated requirement
-    - Added "out of fuel" notice to Drones, just in case
-    - Added chart tag to drone ports
-    - Added "blank map" preset for when you want no resources at all (eg. map editor)
-  Balancing:
-    - Slightly increased length of underground pipe Mk.2
-  Bugfixes:
-    - Cancelling an autopilot recording by exiting the car now properly cleans up the path drawing
-    - Several Project Assembly parts only produced one, should have been two per craft
-  Optimizations:
-    - Tidied up Sandbox scenario
-    - Improved performance of technology unlock progression system
----------------------------------------------------------------------------------------------------
-Version: 0.7.0
-Date: 2021.06.18
-  Changes:
-    - Crash Sites can be mined after repairing them, but this takes an entire minute to do as they're not _supposed_ to be mined.
-    - Crash Site debris can be blown up with Nobelisks
-  Balancing:
-    - Nobelisks now destroy trees outright, rather than using the scale-with-distance approach.
-    - Behemoth Worms ("gas emitters") can be destroyed by first weakening them with large amounts of radiation.
-  Optimizations:
-    - Re-structured locale strings into multiple files instead of one monolithic file
----------------------------------------------------------------------------------------------------
-Version: 0.7.1
-Date: 2021.06.18
-  Bugfixes:
-    - Crash when Player Two changed the HUB Milestone being researched
-    - Fixed ability to put building items into containers
----------------------------------------------------------------------------------------------------
-Version: 0.7.2
-Date: 2021.06.20
-  Changes:
-    - Added Factory Light to Quartz tech tree
-  Balancing:
-    - Increased speed of Mk4 conveyor belts so that they're higher than Satisfactory speeds
-    - Satisfactory belts: 60/120/270/480/780
-    - Satisfactorio belts: 112.5/225/337.5/562.5/787.5
-    - I really wish Factorio belts were more flexible...
-    - Decreased mining time of all factory buildings (1 > 0.5)
-    - Increased mining time of The HUB (1 > 5)
-    - (Visual only) set "craft time" of all buildings to 1s for consistency
-  Bugfixes:
-    - Fixed that removing an assembler via script didn't properly refund items
-    - Fix incorrect delivery requirements for Hover Pack
----------------------------------------------------------------------------------------------------
-Version: 0.8.0
-Date: 2021.06.26
-  Changes:
-    - Total overhaul of the code!!!
-    - The only way to go fast, is to go well.
-    - Added Infinity Storage Container and Infinity Pipeline, which are automatically unlocked in Sandbox mode
+    - MASSIVE performance improvement of resource spawner. This does mean there's a small chance of "mixed patches" but that's worth it for code that's 60x faster!
 ---------------------------------------------------------------------------------------------------
 Version: 0.8.1
 Date: 2021.06.30
@@ -375,73 +100,355 @@ Date: 2021.06.30
     - Allow pipeline construction on water again
     - Make Particle Accelerator shut down in a blackout
 ---------------------------------------------------------------------------------------------------
-Version: 0.8.2
-Date: 2021.07.02
+Version: 0.8.0
+Date: 2021.06.26
   Changes:
-    - Drone Port now uses a Train Stop internally so it can be opened from the map view
-    - Drones now try to only pull as many batteries as needed for a round trip, rather than a full stack
-  Optimizations:
-    - MASSIVE performance improvement of resource spawner. This does mean there's a small chance of "mixed patches" but that's worth it for code that's 60x faster!
+    - Total overhaul of the code!!!
+    - The only way to go fast, is to go well.
+    - Added Infinity Storage Container and Infinity Pipeline, which are automatically unlocked in Sandbox mode
 ---------------------------------------------------------------------------------------------------
-Version: 0.8.3
-Date: 2021.07.04
+Version: 0.7.2
+Date: 2021.06.20
   Changes:
-    - Collapsing the to-do list now keeps the item list open, only hiding the ingredient list
-    - Mining a building that is on your to-do list increments the list by one
-    - To-do list now responds to Craft Bench and Equipment Workshop items
----------------------------------------------------------------------------------------------------
-Version: 0.8.4
-Date: 2021.07.06
-  Optimizations:
-    - Further performance improvements and refactoring
-  Modding:
-    - Added compatibility with Text Plates
-    - Added compatibility with BottleneckLite
----------------------------------------------------------------------------------------------------
-Version: 0.8.5
-Date: 2021.07.07
-  Changes:
-    - Added Tips + Tricks entry explaining how (not) to use Train conditions
+    - Added Factory Light to Quartz tech tree
+  Balancing:
+    - Increased speed of Mk4 conveyor belts so that they're higher than Satisfactory speeds
+    - Satisfactory belts: 60/120/270/480/780
+    - Satisfactorio belts: 112.5/225/337.5/562.5/787.5
+    - I really wish Factorio belts were more flexible...
+    - Decreased mining time of all factory buildings (1 > 0.5)
+    - Increased mining time of The HUB (1 > 5)
+    - (Visual only) set "craft time" of all buildings to 1s for consistency
   Bugfixes:
-    - Fixed resource wells spawning off-centre
-    - Fixed that generators running out of fuel (but not water) would generate free energy (#74)
-    - Taming lizard doggos was broken due to an error in refactoring (#75)
-  Gui:
-    - Improvements to Resource/Object/Beacon Scanner GUIs
-    - Tidying up of Milestone GUI
+    - Fixed that removing an assembler via script didn't properly refund items
+    - Fix incorrect delivery requirements for Hover Pack
+---------------------------------------------------------------------------------------------------
+Version: 0.7.1
+Date: 2021.06.18
+  Bugfixes:
+    - Crash when Player Two changed the HUB Milestone being researched
+    - Fixed ability to put building items into containers
+---------------------------------------------------------------------------------------------------
+Version: 0.7.0
+Date: 2021.06.18
+  Changes:
+    - Crash Sites can be mined after repairing them, but this takes an entire minute to do as they're not _supposed_ to be mined.
+    - Crash Site debris can be blown up with Nobelisks
+  Balancing:
+    - Nobelisks now destroy trees outright, rather than using the scale-with-distance approach.
+    - Behemoth Worms ("gas emitters") can be destroyed by first weakening them with large amounts of radiation.
+  Optimizations:
+    - Re-structured locale strings into multiple files instead of one monolithic file
+---------------------------------------------------------------------------------------------------
+Version: 0.6.9
+Date: 2021.06.18
+  Changes:
+    - Changed stack size of underground belts to 50 for better fit with Build Gun
+    - Truck stations and Freight platforms now have their outputs disabled as well as their inputs when a vehicle is docked
+  Ease of use:
+    - Reduced the number of batteries needed for Drones to take off, based on calculated requirement
+    - Added "out of fuel" notice to Drones, just in case
+    - Added chart tag to drone ports
+    - Added "blank map" preset for when you want no resources at all (eg. map editor)
+  Balancing:
+    - Slightly increased length of underground pipe Mk.2
+  Bugfixes:
+    - Cancelling an autopilot recording by exiting the car now properly cleans up the path drawing
+    - Several Project Assembly parts only produced one, should have been two per craft
+  Optimizations:
+    - Tidied up Sandbox scenario
+    - Improved performance of technology unlock progression system
+---------------------------------------------------------------------------------------------------
+Version: 0.6.8
+Date: 2021.06.17
+  Changes:
+    - Renamed various creature entities to their Satisfactory equivalents
+    - Reduced the amount of time for Resource Scanner pings to respond
+  Balancing:
+    - Decreased mining time of resource deposits
   Combat Balancing:
-    - Unarmed melee strikes now stun the target for much longer
----------------------------------------------------------------------------------------------------
-Version: 0.9.0
-Date: 2021.07.19
-  Changes:
-    - Total revamp of GUI systems, which does unfortunately mean incompatibility with the old and busted system.
-  Ease of use:
-    - Improved handling of Foundation / Deconstruct Foundation so it doesn't spam "Not minable" errors any more.
-    - Fixed ability to copy-paste settings between Infinity Storage Containers
----------------------------------------------------------------------------------------------------
-Version: 0.9.1
-Date: 2021.07.25
-  Changes:
-    - Added support for un-researching techs in the editor
-    - The AWESOME Sink now consumes power constantly, rather than stuttering
-    - Machine inputs now correctly pull from both lanes of a belt equally, rather than preferring one over the other
-  Ease of use:
-    - Truck Stations and (Fluid) Freight Platforms can now be toggled by "rotating" the building
+    - Further reduced the amount of enemies at resource nodes close to your spawn point.
+    - Some nodes may even be totally undefended.
   Bugfixes:
-    - Fixed crash on movement after mining a truck station or drone port
+    - Fixed train station not appearing on map
+    - Fixed buggy Tips+Tricks
 ---------------------------------------------------------------------------------------------------
-Version: 1.0.0
-Date: 2021.08.06
+Version: 0.6.7
+Date: 2021.06.17
+  Optimizations:
+    - Greatly reduced processing time of Radioactivity. If it's still too much, use /toggle-radiation command to disable radiation in-game.
+    - Reworked power production buildings.
+  Ease of use:
+    - Tabs for composite entities (Truck Station, Drone Port) now disable themselves if you are out of range of that component
+    - You must now Shift-click to trash equipment, so you don't accidentally trash it when you meant to equip it.
+---------------------------------------------------------------------------------------------------
+Version: 0.6.6
+Date: 2021.06.13
+  Changes:
+    - Increased stack size of all Buildings so that the Build Gun can better show affordable amount
+    - Added "Scanner" icon to resource/object scan "recipe" icons
+    - Added custom icons for "nothing"-type technology effects
+  Bugfixes:
+    - Fixed incorrect locale for capsule item tooltips
+    - More locale fixes
+    - Fixed cost of underground belts/pipes (was double what it should have been)
+    - Fix that, in the rare case Foundation snaps to clip into another Foundation, both would be immovable
+---------------------------------------------------------------------------------------------------
+Version: 0.6.5
+Date: 2021.06.12
+  Changes:
+    - Added UI to better show flight time of the Jetpack
+  Bugfixes:
+    - Fixed price of Rifle Ammo in AWESOME shop
+    - Fixed incorrect icons for resource wells
+    - Fixed that Water Extractors did not show on the map
+    - Fixed map colour of Splitters/Mergers
+    - Fixed Alt Recipe selection screen not showing byproducts properly
+    - Fixed that Loader Conveyors were destructible (mostly by Nobelisk explosion)
+---------------------------------------------------------------------------------------------------
+Version: 0.6.4
+Date: 2021.06.11
+  Features:
+    - Added GUI to Power Storage
+  Bugfixes:
+    - Fix crash when trying to fast-transfer from a tree
+    - Rails now work properly in the Build Gun
+---------------------------------------------------------------------------------------------------
+Version: 0.6.3
+Date: 2021.06.05
+  Changes:
+    - Fuel value of Fuel updated
+  Bugfixes:
+    - Crash in the Zipline
+---------------------------------------------------------------------------------------------------
+Version: 0.6.2
+Date: 2021.06.05
+  Bugfixes:
+    - (Industrial) Storage Containers didn't show their contents in the UI, now fixed (kinda)
+  Ease of use:
+    - "Smart" fast-transfer: transferring items into or out of a Truck Station or Drone port will intelligently select between the fuel box and cargo inventories
+---------------------------------------------------------------------------------------------------
+Version: 0.6.1
+Date: 2021.06.04
+  Changes:
+    - Sub-components of various entites are no longer selectable directly
+---------------------------------------------------------------------------------------------------
+Version: 0.6.0
+Date: 2021.06.03
+  Changes:
+    - Implemented Update 4 changes
+    - Coal, Fuel and Nuclear generators are now simpler entities
+    - Hypertubes now allow junctions and keyboard input to change directions
+  Scripting:
+    - Make use of defines.prototypes for cleaner code
+---------------------------------------------------------------------------------------------------
+Version: 0.5.1
+Date: 2021.01.31
+  Bugfixes:
+    - Recipe browser crashed when another mod added a tech with no cost
+    - Typos in localisation
+    - Game crash when placing an underground belt directly next to an input/output
+    - To-do list did not properly decrement when placing certain entities
+---------------------------------------------------------------------------------------------------
+Version: 0.5.0
+Date: 2021.01.30
   Info:
-    - Initial public release
----------------------------------------------------------------------------------------------------
-Version: 1.0.1
-Date: 2021.08.06
-  Bugfixes:
-    - Hotfix incompatibility with Helmod
----------------------------------------------------------------------------------------------------
-Version: 1.0.2
-Date: 2021.08.06
+    - Release Candidate 1!
   Changes:
-    - Added "HUB Finder" to the shortcut bar, allowing you to find your way back to the HUB if you get lost.
+    - Added IO markers to all placeholder graphics for easier planning/visualisation
+  Bugfixes:
+    - The Build Gun was still broken, of course.
+---------------------------------------------------------------------------------------------------
+Version: 0.4.4
+Date: 2021.01.29
+  Bugfixes:
+    - The Build Gun no longer siphons items from your inventory when building power poles by dragging
+    - Build Gun GUI was updating too often under some circumstances
+    - Build Gun GUI wasn't updating often enough under other circumstances!
+    - Mining an item while holding a ghost now recalculates whether you can afford it.
+---------------------------------------------------------------------------------------------------
+Version: 0.4.3
+Date: 2021.01.26
+  Changes:
+    - Upped Factorio version required (due to bugfixes in the base game I had previously hacked around)
+    - Removed said "hacking around" as the underlying bugs are now fixed!
+  Bugfixes:
+    - Building outputs can no longer sideload onto pre-existing belts, they will simply fail to snap
+    - Build Gun collision check now uses real built-in range check instead of re-creating it
+    - Mineral deposits (and Huge Rocks) no longer spawn on resource nodes if disabled
+    - "Behemoth Worm" (aka indestructible poison gas rocks) no longer spawn if mineral deposits are disabled
+---------------------------------------------------------------------------------------------------
+Version: 0.4.2
+Date: 2021.01.24
+  Changes:
+    - Entities with input/output now respond better to neighbouring belts by snapping their types
+    - This also removes the ability to directly chain buildings. There MUST be a belt between them
+---------------------------------------------------------------------------------------------------
+Version: 0.4.1
+Date: 2021.01.17
+  Changes:
+    - Building something on your To Do list removes it from said list.
+  Balancing:
+    - Added Power Shard as a purchaseable item from the AWESOME Shop.
+  Bugfixes:
+    - It was possible to merge belts when undergrounds were involved, particularly when flipping them.
+---------------------------------------------------------------------------------------------------
+Version: 0.4.0
+Date: 2021.01.14
+  Major Features:
+    - Build Gun! Now instead of fiddling with crafting and dismantling buildings, just pick a building and place away!
+    - Mining a building now gives the ingredients back, so they can be recycled.
+  Balancing:
+    - Increase spawn rate of Geyser
+  Bugfixes:
+    - Reworked electric-energy-interface entities to make better use of the system, notably for tooltips.
+    - Added Fuse Box to Geothermal Generator
+  Changes:
+    - No longer compatible with Construction Drones, use Companion Drones instead.
+    - You can no longer merge belts without a Conveyor Merger - this is to prevent possible assumptions of how lanes work
+    - If Crash Sites are disabled in map generation, Hard Drives can be purchased from the AWESOME Shop
+  Ease of use:
+    - Added "pipe length" info to pipe GUI for better planning of pipelines
+  Modding:
+    - No longer compatible with Companion Drones, due to the Build Gun
+---------------------------------------------------------------------------------------------------
+Version: 0.3.3
+Date: 2020.11.30
+  Features:
+    - Inventory trash slot, which can be used to discard any items cluttering your inventory.
+    - Sort button added to various storage containers and cars.
+---------------------------------------------------------------------------------------------------
+Version: 0.3.2
+Date: 2020.11.29
+  Gui:
+    - Improved the integration of various GUI elements
+  Bugfixes:
+    - Fixed that mining a lookout tower while you were in it would result in the range buff sticking
+    - Fixed that mining a harvested plant would crash the game a few hours later
+    - Fixed that dying in a car would leave the self-driving GUI open, leading to a crash
+---------------------------------------------------------------------------------------------------
+Version: 0.3.1
+Date: 2020.11.25
+  Changes:
+    - Tips and tricks have been tweaked to at least work with Satisfactorio buildings
+    - Main menu scenes have been added
+---------------------------------------------------------------------------------------------------
+Version: 0.3.0
+Date: 2020.11.24
+  Changes:
+    - Upgraded to Factorio 1.1
+    - Many GUI elements have been moved from gui.left to gui.relative
+  Bugfixes:
+    - Mining a self-driving car now cleans up the rendered path
+---------------------------------------------------------------------------------------------------
+Version: 0.2.3
+Date: 2020.11.23
+  Graphics:
+    - Scaled the Ficsit Freighter to match its actual size
+  Ease of use:
+    - Submitting excess items to the HUB, Space Elevator or MAM now has better handling
+    - Added submission requirements to technology descriptions
+  Bugfixes:
+    - Train platforms now collide with most objects, greatly reducing the manual collision handling
+    - Trains weren't consuming the correct amount of power
+---------------------------------------------------------------------------------------------------
+Version: 0.2.2
+Date: 2020.11.19
+  Changes:
+    - Screw removed as an independent item and now just replaces Iron Gear
+    - Foundation now snaps to nearby Foundations to avoid off-by-one construction
+  Bugfixes:
+    - Power Slugs that are covered by Huge Rocks are now, in fact, covered
+    - Space Elevator crash fixed
+    - Space Elevator "rocket silo" entity is now not selectable
+    - Better handling of potentially incompatible mods
+    - Items on belts are now masked properly by freight platforms
+    - Various fixes and optimisations
+  Modding:
+    - Added framework for mod compatibility scripts
+    - Compatible with Construction Drones
+    - Compatible with Factorissimo 2
+---------------------------------------------------------------------------------------------------
+Version: 0.2.1
+Date: 2020.11.14
+  Features:
+    - "Starting area size" now affects the distance at which nodes are only minimally guarded
+  Gui:
+    - Added "flow rate" GUI when opening pipes
+  Bugfixes:
+    - As HUB Upgrade milestones are completed, the HUB now checks for collision with the player.
+    - Smart/Programmable splitters weren't saved correctly.
+    - Mk.2 pipes etc. were giving back Mk.1 items on removal
+---------------------------------------------------------------------------------------------------
+Version: 0.2.0
+Date: 2020.11.13
+  Features:
+    - The start of Freeplay is now Onboarding, with objective-based tutorial to get you started.
+  Bugfixes:
+    - Catastrophic bug after save/load! Whoops! So all save files are kinda knackered...
+---------------------------------------------------------------------------------------------------
+Version: 0.1.5
+Date: 2020.11.11
+  Changes:
+    - A Parachute can now also be used to avoid damage when unsafe-landing from a Jump Pad
+  Gui:
+    - Added Tier markers for the HUB tiers
+  Bugfixes:
+    - Better handling of "research recipes" that are already done
+    - When the last entity of a Hypertube is an Underground, you exited at the wrong spot
+---------------------------------------------------------------------------------------------------
+Version: 0.1.4
+Date: 2020.11.10
+  Ease of use:
+    - "Add 5" and "Add Stack" options added to Recipe Browser buttons
+  Bugfixes:
+    - Various optimisations and performance improvements
+    - Exiting a Jetpack or Parachute or Hyper Tube would crash the game
+    - Xeno-basher didn't affect flying enemies
+    - Entities with custom GUIs now auto-close when you move away or the entity is destroyed
+    - Fixed some crashes with the Object Scanner and Beacons
+---------------------------------------------------------------------------------------------------
+Version: 0.1.3
+Date: 2020.11.07
+  Graphics:
+    - Ore nodes are now highlighted when a mining drill is in hand
+  Control:
+    - Localised "jump" control
+    - Added sort order to custom inputs
+  Combat Balancing:
+    - Player now only regenerates to 30HP
+    - Time before auto-heal kicks in increased to match Satisfactory (50s)
+    - Player now respawns at 30HP after dying
+---------------------------------------------------------------------------------------------------
+Version: 0.1.2
+Date: 2020.11.07
+  Balancing:
+    - Valve is now unlocked in Tier 5, Oil Processing.
+    - Pipe/Pump Mk.2 are now their own Milestone in Tier 6
+    - Cost of Pipe/Pump Mk.2 have been adjusted accordingly.
+    - Pump Mk.2 power consumption reduced from 12MW to 8MW
+  Combat Balancing:
+    - Enemies that chase the player will disengage if you run far enough.
+---------------------------------------------------------------------------------------------------
+Version: 0.1.1
+Date: 2020.11.06
+  Features:
+    - Added a welcome message to point the player towards the Resource Scanner and first steps.
+  Combat Balancing:
+    - Resource deposits close to spawn will only be guarded by 1 or 2 weaker enemies max.
+    - Resource deposits close to spawn cannot have poison gas.
+  Ease of use:
+    - Added corpse tracker so that you can find your dead body after respawning.
+  Bugfixes:
+    - Rail (chain) signals could not be built outside of Creative mode and lacked dismantle option.
+    - Valve was not unlocked by the technology that was supposed to unlock it.
+---------------------------------------------------------------------------------------------------
+Version: 0.1.0
+Date: 2020.11.05
+  Info:
+    - Pre-release release
+---------------------------------------------------------------------------------------------------
+Version: 0.0.1
+Date: 2020.09.16
+  Info:
+    - Initial alpha release
