@@ -135,7 +135,7 @@ local function onRemoved(event)
 	local entity = event.entity
 	if not (entity and entity.valid) then return end
 	if entity.name == base then
-		processSink(entity)
+		processSink(script_data.structs[entity.unit_number])
 		script_data.structs[entity.unit_number] = nil
 	end
 end
