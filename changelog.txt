@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.6
+Date: 2021.08.12
+  Bugfixes:
+    - Fix that changing object scanner from the quickbar would leave a "zombie" ping.
+    - Added the /clear-pings command to clear such zombie pings.
+    - Note that this will also clear Corpse Finder pings so be sure to clean up first ;)
+---------------------------------------------------------------------------------------------------
 Version: 1.0.5
 Date: 2021.08.12
   Bugfixes:

@@ -70,6 +70,9 @@ local function updatePingTarget(id, target)
 	if not struct then return end
 	local sprite = getSpriteForTarget(target)
 	struct.target = target
+	if struct.sprite ~= sprite then
+		rendering.set_sprite(struct.graphics.item, sprite)
+	end
 	struct.sprite = sprite
 end
 
@@ -188,6 +191,18 @@ return {
 		end,
 		on_load = function()
 			script_data = global.pings or script_data
+		end,
+		add_commands = function()
+			if not commands.commands['clear-pings'] then
+				commands.add_command("clear-pings",{"command.clear-pings"},function(event)
+					local player = game.players[event.player_index]
+					for i,ping in pairs(script_data.pings) do
+						if ping.player == player then
+							deletePing(i)
+						end
+					end
+				end)
+			end
 		end,
 		events = {
 			[defines.events.on_tick] = onTick,
