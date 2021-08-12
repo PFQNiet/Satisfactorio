@@ -68,7 +68,10 @@ handler.add_lib({
 			})
 		end
 	end,
-	on_init = setBuildEventFilter,
+	on_init = function()
+		setBuildEventFilter()
+		game.difficulty_settings.technology_price_multiplier = 1
+	end,
 	on_load = setBuildEventFilter
 })
 
