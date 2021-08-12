@@ -5,6 +5,8 @@ Date: 2021.08.12
     - Most recipes in the Equipment Workshop did not correctly tick down the To Do List
   Changes:
     - Craft Bench and Equipment Workshop output inventories are now also counted as "owned" for the To Do List
+  Balancing:
+    - Increased HUB Biomass Burners from 20MW to 21MW for easier recovery from blackouts in early-game (due to energy buffers)
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.4
 Date: 2021.08.07
