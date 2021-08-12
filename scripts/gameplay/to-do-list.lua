@@ -72,8 +72,10 @@ end
 local function onCraft(event)
 	local player = game.players[event.player_index]
 	local recipe = event.recipe.prototype
-	if string.ends_with(recipe.name, "-manual") then
-		recipe = game.recipe_prototypes[string.remove_suffix(recipe.name, "-manual")]
+	if recipe.category == "hand-craft" or recipe.category == "equipment" then
+		if string.ends_with(recipe.name, "-manual") then
+			recipe = game.recipe_prototypes[string.remove_suffix(recipe.name, "-manual")]
+		end
 		if not recipe then return end
 		todo.add_item(player, recipe, -recipe.main_product.amount)
 		todo.update_inventory(player)
