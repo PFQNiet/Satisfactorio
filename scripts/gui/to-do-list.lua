@@ -435,9 +435,11 @@ local function updateInventory(player)
 
 	-- "handcrafting" building input inventories count too!
 	if player.opened_gui_type == defines.gui_type.entity and (player.opened.name == "craft-bench" or player.opened.name == "equipment-workshop") then
-		local merge = player.opened.get_inventory(defines.inventory.assembling_machine_input).get_contents()
-		for k,v in pairs(merge) do
-			inventory[k] = (inventory[k] or 0) + v
+		for _,key in pairs{defines.inventory.assembling_machine_input, defines.inventory.assembling_machine_output} do
+			local merge = player.opened.get_inventory(key).get_contents()
+			for k,v in pairs(merge) do
+				inventory[k] = (inventory[k] or 0) + v
+			end
 		end
 		if player.opened.is_crafting() then
 			local ingredients = player.opened.get_recipe().prototype.ingredients

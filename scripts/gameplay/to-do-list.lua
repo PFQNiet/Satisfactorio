@@ -72,7 +72,7 @@ end
 local function onCraft(event)
 	local player = game.players[event.player_index]
 	local recipe = event.recipe.prototype
-	if recipe.category == "hand-craft" or recipe.category == "equipment" then
+	if recipe.category == "craft-bench" or recipe.category == "equipment" then
 		if string.ends_with(recipe.name, "-manual") then
 			recipe = game.recipe_prototypes[string.remove_suffix(recipe.name, "-manual")]
 		end
