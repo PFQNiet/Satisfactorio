@@ -36,7 +36,7 @@ local function updateScan(player)
 	local scan = script_data.scans[player.index]
 	if not scan then return end
 	-- ensure player is still holding Object Scanner
-	if not (player.cursor_stack.valid_for_read and player.cursor_stack.name == scanner) then
+	if not (player.cursor_stack and player.cursor_stack.valid_for_read and player.cursor_stack.name == scanner) then
 		pings.deletePing(scan.ping)
 		return
 	end
@@ -92,11 +92,13 @@ end
 ---@param player LuaPlayer
 ---@param tags ObjectScannerEntryTags
 gui.object.callbacks.scan = function(player, tags)
-	script_data.scans[player.index] = {
-		type = tags.name,
-		target = nil,
-		ping = nil
-	}
+	local scan = script_data.scans[player.index]
+	if not scan then
+		scan = {}
+		script_data.scans[player.index] = scan
+	end
+	scan.type = tags.name
+	scan.target = nil
 	if tags.name == "map-marker" then
 		if not gui.beacon.open_gui(player) then
 			gui.object.open_gui(player)
@@ -113,14 +115,16 @@ end
 gui.beacon.callbacks.scan = function(player, tags)
 	local beacon = player.surface.find_entity("map-marker", tags.position)
 	if not beacon then return end
-	script_data.scans[player.index] = {
-		type = "map-marker",
-		target = {
-			surface = beacon.surface,
-			position = beacon.position,
-			sprite = tags.icon
-		},
-		ping = nil
+	local scan = script_data.scans[player.index]
+	if not scan then
+		scan = {}
+		script_data.scans[player.index] = scan
+	end
+	scan.type = "map-marker"
+	scan.target = {
+		surface = beacon.surface,
+		position = beacon.position,
+		sprite = tags.icon
 	}
 	putObjectScannerInCursor(player)
 	updateScan(player)

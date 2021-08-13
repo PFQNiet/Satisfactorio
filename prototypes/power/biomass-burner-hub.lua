@@ -21,7 +21,7 @@ local burner = {
 		type = "electric",
 		usage_priority = "secondary-output"
 	},
-	max_power_output = "20000001W",
+	max_power_output = "21000001W",
 	open_sound = sounds.open_sound,
 	close_sound = sounds.close_sound,
 	working_sound = sounds.working_sound,

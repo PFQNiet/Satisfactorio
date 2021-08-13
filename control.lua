@@ -27,6 +27,25 @@ handler.add_libraries(require(modpath.."scripts.weapons"))
 handler.add_libraries(require(modpath.."scripts.gui.lib"))
 handler.add_libraries(require(modpath.."scripts.lualib.lib"))
 
+-- filter out ghost-build/destroy events
+local function setBuildEventFilter()
+	local noghosts = {{filter="ghost",invert=true}}
+	local events = {
+		defines.events.on_built_entity,
+		defines.events.on_robot_built_entity,
+		defines.events.script_raised_built,
+		defines.events.script_raised_revive,
+
+		defines.events.on_player_mined_entity,
+		defines.events.on_robot_mined_entity,
+		defines.events.on_entity_died,
+		defines.events.script_raised_destroy
+	}
+	for _,evt in pairs(events) do
+		script.set_event_filter(evt, noghosts)
+	end
+end
+
 handler.add_lib({
 	add_commands = function()
 		if not commands.commands['respawn'] then
@@ -48,7 +67,12 @@ handler.add_lib({
 				end
 			})
 		end
-	end
+	end,
+	on_init = function()
+		setBuildEventFilter()
+		game.difficulty_settings.technology_price_multiplier = 1
+	end,
+	on_load = setBuildEventFilter
 })
 
 -- Control-time Mod Compatibility
