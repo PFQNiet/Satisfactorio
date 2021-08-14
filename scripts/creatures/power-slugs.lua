@@ -12,10 +12,8 @@ local colours = {
 local names = {}
 for n in pairs(colours) do table.insert(names, n) end
 
----@param event on_build
-local function onBuilt(event)
-	local entity = event.created_entity or event.entity
-	if not entity or not entity.valid then return end
+---@param entity LuaEntity
+local function onBuilt(entity)
 	if not colours[entity.name] then return end
 	rendering.draw_light{
 		sprite = "utility/light_medium",
