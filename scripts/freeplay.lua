@@ -80,7 +80,9 @@ local function setMessage(message, button)
 	script_data.message = message
 	for _,player in pairs(game.forces.player.players) do
 		gui.update(player, message, button)
-		player.force.play_sound{path = "utility/new_objective"}
+		if message ~= "" then
+			player.force.play_sound{path = "utility/new_objective"}
+		end
 	end
 end
 
