@@ -40,12 +40,6 @@ local function onBuilt(event)
 		for _,f in pairs(fish) do
 			f.destroy()
 		end
-	elseif entity.name ~= deconstruct then
-		-- if the building is placed on foundation, then prevent that foundation from being deconstructed if it's marked that way
-		local foundations = entity.surface.find_entities_filtered{area=entity.bounding_box, name=deconstruct}
-		for _,f in pairs(foundations) do
-			f.destroy()
-		end
 	end
 end
 
@@ -55,7 +49,23 @@ local function onRemoved(event)
 	if not (entity and entity.valid) then return end
 	if entity.name == deconstruct then
 		local floor = entity.surface.find_entity(foundation, entity.position)
-		if floor then floor.destroy{raise_destroy = true} end
+		if floor then
+			if floor.surface.count_entities_filtered{
+				area = floor.selection_box,
+				invert = true, -- any of the following are fine...
+				force = "neutral",
+				name = {foundation,"nobelisk-on-ground"},
+				type = "smoke-with-trigger"
+			} == 0 then
+				floor.destroy{raise_destroy = true}
+			else
+				-- blocked by entity, create new deconstruction proxy
+				floor.surface.create_entity{
+					name = deconstruct,
+					position = floor.position
+				}
+			end
+		end
 	end
 	if entity.name == foundation then
 		-- remove the tiles and restore their hidden_tile
@@ -87,27 +97,13 @@ end
 local function onSelectedArea(event)
 	if event.item == "deconstruct-foundation" then
 		local player = game.players[event.player_index]
-		local blocked = 0
 		for _,f in pairs(event.entities) do
 			if f.force == player.force then
-				if f.surface.count_entities_filtered{
-					area = f.selection_box,
-					invert = true, -- any of the following are fine...
-					force = "neutral",
-					name = {foundation,"nobelisk-on-ground"},
-					type = "smoke-with-trigger"
-				} == 0 then
-					player.surface.create_entity{
-						name = deconstruct,
-						position = f.position
-					}
-				else
-					blocked = blocked + 1
-				end
+				player.surface.create_entity{
+					name = deconstruct,
+					position = f.position
+				}
 			end
-		end
-		if blocked > 0 then
-			player.print{"message.foundation-blocked",blocked}
 		end
 	end
 end

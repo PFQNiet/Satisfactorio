@@ -5,11 +5,13 @@ Date: 2021.08.14
     - Russian translations added (thanks Shadow_Man)
   Bugfixes:
     - Don't play "new objective" sound effect when completing Onboarding
+  Changes:
+    - Foundation can be marked for deconstruction even with entities on top, but can't actually be mined until the obstacle is removed.
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.7
 Date: 2021.08.13
   Bugfixes:
-    - Settings the technology multiplier to anything other than 1 would break MAM research
+    - Setting the technology multiplier to anything other than 1 would break MAM research
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.6
 Date: 2021.08.12

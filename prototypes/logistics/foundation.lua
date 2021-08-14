@@ -41,6 +41,7 @@ local deconstruct = {
 		size = {64,64}
 	},
 	collision_box = {{-1.8,-1.8},{1.8,1.8}},
+	collision_mask = {"object-layer"},
 	flags = {
 		"not-on-map",
 		"not-blueprintable"
@@ -54,8 +55,7 @@ local deconstruct = {
 		volume = 0.8
 	},
 	selection_box = {{-2,-2},{2,2}},
-	selection_priority = 20,
-	collision_mask = {}
+	selection_priority = 20
 }
 
 local foundationitem = {
