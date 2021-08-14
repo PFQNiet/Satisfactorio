@@ -34,6 +34,7 @@ local tower = {
 		mining_time = 0.5,
 		result = name
 	},
+	mined_sound = data.raw["utility-sounds"].default.deconstruct_big,
 	flags = {
 		"not-on-map",
 		"no-automated-item-removal",
