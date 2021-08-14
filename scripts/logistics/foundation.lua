@@ -64,6 +64,12 @@ local function onRemoved(event)
 					name = deconstruct,
 					position = floor.position
 				}
+				if event.player_index then
+					game.players[event.player_index].create_local_flying_text{
+						text = {"message.foundation-blocked"},
+						create_at_cursor = true
+					}
+				end
 			end
 		end
 	end
