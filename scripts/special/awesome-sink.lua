@@ -101,43 +101,35 @@ local function processSink(struct)
 	end
 end
 
----@param event on_build
-local function onBuilt(event)
-	local entity = event.created_entity or event.entity
-	if not (entity and entity.valid) then return end
-	if entity.name == base then
-		local conn = io.addConnection(entity, {-0.5,3}, "input")
-		local emit = entity.surface.create_entity{
-			name = beacon,
-			position = {entity.position.x+2, entity.position.y},
-			force = entity.force,
-			raise_built = true
-		}
-		link.register(entity, emit)
-		local mods = emit.get_inventory(defines.inventory.beacon_modules)
-		local count = counts[conn.belt.name] or 0
-		if count > 0 then
-			mods.insert{name=module, count=count}
-		end
-		entity.rotatable = false
-
-		local struct = {
-			sink = entity,
-			connection = conn,
-			modules = mods
-		}
-		script_data.structs[entity.unit_number] = struct
+---@param entity LuaEntity
+local function onBuilt(entity)
+	local conn = io.addConnection(entity, {-0.5,3}, "input")
+	local emit = entity.surface.create_entity{
+		name = beacon,
+		position = {entity.position.x+2, entity.position.y},
+		force = entity.force,
+		raise_built = true
+	}
+	link.register(entity, emit)
+	local mods = emit.get_inventory(defines.inventory.beacon_modules)
+	local count = counts[conn.belt.name] or 0
+	if count > 0 then
+		mods.insert{name=module, count=count}
 	end
+	entity.rotatable = false
+
+	local struct = {
+		sink = entity,
+		connection = conn,
+		modules = mods
+	}
+	script_data.structs[entity.unit_number] = struct
 end
 
----@param event on_destroy
-local function onRemoved(event)
-	local entity = event.entity
-	if not (entity and entity.valid) then return end
-	if entity.name == base then
-		processSink(script_data.structs[entity.unit_number])
-		script_data.structs[entity.unit_number] = nil
-	end
+---@param entity LuaEntity
+local function onRemoved(entity)
+	processSink(script_data.structs[entity.unit_number])
+	script_data.structs[entity.unit_number] = nil
 end
 
 ---@param event on_gui_opened
@@ -223,8 +215,14 @@ return bev.applyBuildEvents{
 			end
 		end
 	},
-	on_build = onBuilt,
-	on_destroy = onRemoved,
+	on_build = {
+		callback = onBuilt,
+		filter = {name=base}
+	},
+	on_destroy = {
+		callback = onRemoved,
+		filter = {name=base}
+	},
 	events = {
 		[defines.events.on_gui_opened] = onGuiOpened
 	}

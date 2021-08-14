@@ -8,26 +8,23 @@ local miners = {
 	["miner-mk-2"] = true,
 	["miner-mk-3"] = true
 }
+local names = {}
+for n in pairs(miners) do table.insert(names, n) end
 local box = "miner-box"
 
----@param event on_build
-local function onBuilt(event)
-	local entity = event.created_entity or event.entity
-	if not (entity and entity.valid) then return end
-	local name = entity.name
-	if miners[name] then
-		-- spawn a box for this drill
-		local store = entity.surface.create_entity{
-			name = box,
-			position = entity.position,
-			force = entity.force,
-			raise_built = true
-		}
-		link.register(entity,store)
+---@param entity LuaEntity
+local function onBuilt(entity)
+	-- spawn a box for this drill
+	local store = entity.surface.create_entity{
+		name = box,
+		position = entity.position,
+		force = entity.force,
+		raise_built = true
+	}
+	link.register(entity,store)
 
-		io.addConnection(entity, {0,-6}, "output", store)
-		entity.rotatable = false
-	end
+	io.addConnection(entity, {0,-6}, "output", store)
+	entity.rotatable = false
 end
 
 ---@param event table "on_custom_input"
@@ -64,7 +61,10 @@ local function onFastTransfer(event, half)
 end
 
 return bev.applyBuildEvents{
-	on_build = onBuilt,
+	on_build = {
+		callback = onBuilt,
+		filter = {name=names}
+	},
 	events = {
 		["fast-entity-transfer-hook"] = function(event) onFastTransfer(event, false) end,
 		["fast-entity-split-hook"] = function(event) onFastTransfer(event, true) end

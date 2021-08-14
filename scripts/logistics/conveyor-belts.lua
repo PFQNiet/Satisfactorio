@@ -31,25 +31,23 @@ local belts = {
 	["conveyor-lift-mk-4"] = true,
 	["conveyor-lift-mk-5"] = true
 }
+local names = {}
+for n in pairs(belts) do table.insert(names, n) end
 
----@param event on_build
-local function onBuilt(event)
-	local entity = event.created_entity or event.entity
-	if not entity or not entity.valid then return end
-	if belts[entity.name] then
-		if not isValidBelt(entity) then
-			local player = entity.last_user
-			refundEntity(player, entity)
-			if not debounce_error[player.force.index] or debounce_error[player.force.index] < event.tick then
-				player.create_local_flying_text{
-					text = {"message.belt-no-naked-merging"},
-					create_at_cursor = true
-				}
-				player.play_sound{
-					path = "utility/cannot_build"
-				}
-				debounce_error[player.force.index] = event.tick + 60
-			end
+---@param entity LuaEntity
+local function onBuilt(entity)
+	if not isValidBelt(entity) then
+		local player = entity.last_user
+		refundEntity(player, entity)
+		if not debounce_error[player.force.index] or debounce_error[player.force.index] < game.tick then
+			player.create_local_flying_text{
+				text = {"message.belt-no-naked-merging"},
+				create_at_cursor = true
+			}
+			player.play_sound{
+				path = "utility/cannot_build"
+			}
+			debounce_error[player.force.index] = game.tick + 60
 		end
 	end
 end
@@ -83,7 +81,10 @@ return bev.applyBuildEvents{
 	on_load = function()
 		debounce_error = global.player_build_error_debounce or debounce_error
 	end,
-	on_build = onBuilt,
+	on_build = {
+		callback = onBuilt,
+		filter = {name=names}
+	},
 	events = {
 		[defines.events.on_player_rotated_entity] = onRotated
 	}

@@ -35,21 +35,13 @@ local function updateBenchData(data)
 	end
 end
 
----@param event on_build
-local function onBuilt(event)
-	local entity = event.created_entity or event.entity
-	if not (entity and entity.valid) then return end
-	if entity.name ~= bench and entity.name ~= workshop then return end
-
+---@param entity LuaEntity
+local function onBuilt(entity)
 	entity.active = false
 end
 
----@param event on_destroy
-local function onRemoved(event)
-	local entity = event.entity
-	if not (entity and entity.valid) then return end
-	if entity.name ~= bench and entity.name ~= workshop then return end
-
+---@param entity LuaEntity
+local function onRemoved(entity)
 	local map = script_data[entity.unit_number]
 	if map then
 		updateBenchData(map)
@@ -114,8 +106,14 @@ return bev.applyBuildEvents{
 	on_nth_tick = {
 		[6] = updateAllBenches
 	},
-	on_build = onBuilt,
-	on_destroy = onRemoved,
+	on_build = {
+		callback = onBuilt,
+		filter = {name={bench, workshop}}
+	},
+	on_destroy = {
+		callback = onRemoved,
+		filter = {name={bench, workshop}}
+	},
 	events = {
 		[defines.events.on_gui_opened] = onGuiOpened,
 		[defines.events.on_gui_closed] = onGuiClosed

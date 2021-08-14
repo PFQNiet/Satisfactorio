@@ -374,61 +374,52 @@ gui.terminal.callbacks.submit = function(player, term)
 	hub.terminal.set_recipe(nil)
 end
 
----@param event on_build
-local function onBuilt(event)
-	---@type LuaEntity
-	local entity = event.created_entity or event.entity
-	if not entity or not entity.valid then return end
-	if entity.name == base then
-		local hub = findHubForForce(entity.force)
-		if hub.valid then
-			-- player has somehow managed to build two HUBs
-			-- since this indicates some kind of glitch, the editor, or cross-force shenanigans, do not refund the cost
-			entity.last_user.create_local_flying_text{
-				text = {"message.hub-only-one-allowed"},
-				create_at_cursor = true
-			}
-			entity.last_user.play_sound{path="utility/cannot_build"}
-			entity.destroy()
-			return
-		end
-		hub.valid = true
-		hub.floor = entity
-		-- cache some properties of the floor
-		hub.surface = entity.surface
-		hub.position = entity.position
-		hub.direction = entity.direction
-		buildTerminal(hub)
-		buildCraftBench(hub)
-		buildStorageChest(hub)
-		buildBiomassBurner1(hub)
-		buildBiomassBurner2(hub)
-		buildFreighter(hub)
+---@param entity LuaEntity
+local function onBuilt(entity)
+	local hub = findHubForForce(entity.force)
+	if hub.valid then
+		-- player has somehow managed to build two HUBs
+		-- since this indicates some kind of glitch, the editor, or cross-force shenanigans, do not refund the cost
+		entity.last_user.create_local_flying_text{
+			text = {"message.hub-only-one-allowed"},
+			create_at_cursor = true
+		}
+		entity.last_user.play_sound{path="utility/cannot_build"}
+		entity.destroy()
+		return
+	end
+	hub.valid = true
+	hub.floor = entity
+	-- cache some properties of the floor
+	hub.surface = entity.surface
+	hub.position = entity.position
+	hub.direction = entity.direction
+	buildTerminal(hub)
+	buildCraftBench(hub)
+	buildStorageChest(hub)
+	buildBiomassBurner1(hub)
+	buildBiomassBurner2(hub)
+	buildFreighter(hub)
 
-		-- if this is the first time building, then complete the "build the HUB" tech
-		local force = hub.force
-		if not force.technologies['the-hub'].researched then
-			force.research_queue = {"the-hub"}
-			force.technologies['the-hub'].researched = true
-			force.play_sound{path="utility/research_completed"}
-		end
+	-- if this is the first time building, then complete the "build the HUB" tech
+	local force = hub.force
+	if not force.technologies['the-hub'].researched then
+		force.research_queue = {"the-hub"}
+		force.technologies['the-hub'].researched = true
+		force.play_sound{path="utility/research_completed"}
 	end
 end
 
----@param event on_destroy
-local function onRemoved(event)
-	local entity = event.entity
-	-- the terminal is the only minable entity
-	if entity.valid and entity.name == terminal then
-		local hub = findHubForForce(entity.force)
-		if hub.pings then
-			for pid,ping in pairs(hub.pings) do
-				game.players[pid].set_shortcut_toggled("hub-finder",false)
-				pings.deletePing(ping)
-			end
+---@param entity LuaEntity
+local function onRemoved(entity)
+	local hub = findHubForForce(entity.force)
+	if hub.pings then
+		for pid,ping in pairs(hub.pings) do
+			game.players[pid].set_shortcut_toggled("hub-finder",false)
+			pings.deletePing(ping)
 		end
-		hub.valid = false
 	end
+	hub.valid = false
 end
 
 local function on6thTick()
@@ -510,8 +501,14 @@ return bev.applyBuildEvents{
 	on_nth_tick = {
 		[6] = on6thTick
 	},
-	on_build = onBuilt,
-	on_destroy = onRemoved,
+	on_build = {
+		callback = onBuilt,
+		filter = {name=base}
+	},
+	on_destroy = {
+		callback = onRemoved,
+		filter = {name=terminal}
+	},
 	events = {
 		[defines.events.on_research_finished] = onResearch,
 		[defines.events.on_gui_opened] = onGuiOpened,

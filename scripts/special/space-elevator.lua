@@ -25,73 +25,65 @@ local function findElevatorForForce(force)
 	return script_data.elevator[force.index]
 end
 
----@param event on_build
-local function onBuilt(event)
-	local entity = event.created_entity or event.entity
-	if not (entity and entity.valid) then return end
-	if entity.name == elevator then
-		if findElevatorForForce(entity.force) then
-			local player = entity.last_user
-			refundEntity(player, entity)
-			if not debounce_error[player.force.index] or debounce_error[player.force.index] < event.tick then
-				player.create_local_flying_text{
-					text = {"message.space-elevator-only-one-allowed"},
-					create_at_cursor = true
-				}
-				player.play_sound{
-					path = "utility/cannot_build"
-				}
-				debounce_error[player.force.index] = event.tick + 60
-			end
-			return
-		else
-			-- position hack to avoid it trying to drop stuff in the rocket silo
-			local target_hack = {position={entity.position.x-8,entity.position.y}}
-			io.addConnection(entity, {-10,13}, "input", target_hack)
-			io.addConnection(entity, {-8,13}, "input", target_hack)
-			io.addConnection(entity, {-6,13}, "input", target_hack)
-			io.addConnection(entity, {-10,-13}, "input", target_hack, defines.direction.south)
-			io.addConnection(entity, {-8,-13}, "input", target_hack, defines.direction.south)
-			io.addConnection(entity, {-6,-13}, "input", target_hack, defines.direction.south)
-
-			local silo = entity.surface.create_entity{
-				name = elevator.."-silo",
-				position = entity.position,
-				force = entity.force,
-				raise_built = true
+---@param entity LuaEntity
+local function onBuilt(entity)
+	if findElevatorForForce(entity.force) then
+		local player = entity.last_user
+		refundEntity(player, entity)
+		if not debounce_error[player.force.index] or debounce_error[player.force.index] < game.tick then
+			player.create_local_flying_text{
+				text = {"message.space-elevator-only-one-allowed"},
+				create_at_cursor = true
 			}
-			silo.operable = false
-			silo.auto_launch = true
-			link.register(entity, silo)
-
-			local inserter = silo.surface.create_entity{
-				name = "loader-inserter",
-				position = silo.position,
-				force = silo.force,
-				raise_built = true
+			player.play_sound{
+				path = "utility/cannot_build"
 			}
-			inserter.drop_position = silo.position
-			inserter.operable = false
-			link.register(entity, inserter)
-
-			script_data.elevator[entity.force.index] = {
-				elevator = entity,
-				silo = silo,
-				inserter = inserter
-			}
-			entity.rotatable = false
-			entity.active = false
+			debounce_error[player.force.index] = game.tick + 60
 		end
+		return
+	else
+		-- position hack to avoid it trying to drop stuff in the rocket silo
+		local target_hack = {position={entity.position.x-8,entity.position.y}}
+		io.addConnection(entity, {-10,13}, "input", target_hack)
+		io.addConnection(entity, {-8,13}, "input", target_hack)
+		io.addConnection(entity, {-6,13}, "input", target_hack)
+		io.addConnection(entity, {-10,-13}, "input", target_hack, defines.direction.south)
+		io.addConnection(entity, {-8,-13}, "input", target_hack, defines.direction.south)
+		io.addConnection(entity, {-6,-13}, "input", target_hack, defines.direction.south)
+
+		local silo = entity.surface.create_entity{
+			name = elevator.."-silo",
+			position = entity.position,
+			force = entity.force,
+			raise_built = true
+		}
+		silo.operable = false
+		silo.auto_launch = true
+		link.register(entity, silo)
+
+		local inserter = silo.surface.create_entity{
+			name = "loader-inserter",
+			position = silo.position,
+			force = silo.force,
+			raise_built = true
+		}
+		inserter.drop_position = silo.position
+		inserter.operable = false
+		link.register(entity, inserter)
+
+		script_data.elevator[entity.force.index] = {
+			elevator = entity,
+			silo = silo,
+			inserter = inserter
+		}
+		entity.rotatable = false
+		entity.active = false
 	end
 end
 
----@param event on_destroy
-local function onRemoved(event)
-	local entity = event.entity
-	if not (entity and entity.valid) then return end
-	if entity.name == elevator then
-		script_data.elevator[entity.force.index] = nil
-	end
+---@param entity LuaEntity
+local function onRemoved(entity)
+	script_data.elevator[entity.force.index] = nil
 end
 
 ---@param struct SpaceElevator
@@ -234,8 +226,14 @@ return bev.applyBuildEvents{
 	on_nth_tick = {
 		[6] = updateAllPlayers,
 	},
-	on_build = onBuilt,
-	on_destroy = onRemoved,
+	on_build = {
+		callback = onBuilt,
+		filter = {name=elevator}
+	},
+	on_destroy = {
+		callback = onRemoved,
+		filter = {name=elevator}
+	},
 	events = {
 		[defines.events.on_research_finished] = onResearch,
 		[defines.events.on_gui_opened] = onGuiOpened

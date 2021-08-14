@@ -35,26 +35,25 @@ local function unregisterLink(parent, child)
 	end
 end
 
----@param event on_destroy
-local function onRemoved(event)
-	local entity = event.entity
-	if not (entity and entity.valid) then return end
+---@param entity LuaEntity
+---@param buffer LuaInventory
+local function onRemoved(entity, buffer)
 	local reg = getRegistration(entity)
 	if not reg then return end
 	for _,child in pairs(reg) do
 		if child.valid then
 			if child.type == "burner-generator" then
-				getitems.burner(child, event.buffer)
+				getitems.burner(child, buffer)
 			elseif child.type == "assembling-machine" or child.type == "rocket-silo" then
-				getitems.assembler(child, event.buffer)
+				getitems.assembler(child, buffer)
 			elseif child.type == "container" then
-				getitems.storage(child, event.buffer)
+				getitems.storage(child, buffer)
 			elseif child.type == "car" then
-				getitems.car(child, event.buffer)
+				getitems.car(child, buffer)
 			elseif child.type == "spider-vehicle" then
-				getitems.spider(child, event.buffer)
+				getitems.spider(child, buffer)
 			elseif child.type == "inserter" then
-				getitems.inserter(child, event.buffer)
+				getitems.inserter(child, buffer)
 			elseif child.type == "infinity-container" then
 			elseif child.type == "simple-entity-with-owner" then
 			elseif child.type == "electric-pole" then
@@ -84,6 +83,12 @@ return {
 		on_load = function()
 			script_data = global.linked_entities or script_data
 		end,
-		on_destroy = onRemoved
+		on_destroy = {
+			callback = onRemoved,
+			filter = {
+				---@param entity LuaEntity
+				callback = function(entity) return getRegistration(entity) and true or false end
+			}
+		}
 	}
 }

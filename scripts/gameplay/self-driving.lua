@@ -259,7 +259,7 @@ end
 
 ---@param entity LuaEntity
 local function isSelfDrivingCar(entity)
-	if not entity then return false end
+	if not (entity and entity.valid) then return false end
 	return entity.name == "truck" or
 		entity.name == "tractor" or
 		entity.name == "explorer"
@@ -366,15 +366,6 @@ gui.callbacks.add_waypoint = function(player, car, name, wait)
 	refreshPathRender(car)
 end
 
----@param event on_destroy
-local function onRemoved(event)
-	local entity = event.entity
-	if not entity or not entity.valid then return end
-	if isSelfDrivingCar(entity) then
-		deleteCar(entity)
-	end
-end
-
 return bev.applyBuildEvents{
 	on_init = function()
 		global.cars = global.cars or script_data
@@ -382,7 +373,10 @@ return bev.applyBuildEvents{
 	on_load = function()
 		script_data = global.cars or script_data
 	end,
-	on_destroy = onRemoved,
+	on_destroy = {
+		callback = deleteCar,
+		filter = {name={"truck", "tractor", "explorer"}}
+	},
 	events = {
 		[defines.events.on_tick] = onTick,
 		[defines.events.on_player_driving_changed_state] = onDriving,

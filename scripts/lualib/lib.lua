@@ -1,4 +1,5 @@
 return {
+	require(modpath.."scripts.lualib.build-events").lib,
 	require(modpath.."scripts.lualib.input-output").lib,
 	require(modpath.."scripts.lualib.linked-entity").lib,
 	require(modpath.."scripts.lualib.pings").lib,

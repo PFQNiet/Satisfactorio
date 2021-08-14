@@ -37,24 +37,20 @@ local script_data = {
 	dropped_bait = {}
 }
 
----@param event on_build
-local function onBuilt(event)
-	local entity = event.created_entity or event.entity
-	if not entity or not entity.valid then return end
-	if entity.name == doggo then
-		script_data.lizard_doggos[entity.unit_number] = {
-			entity = entity,
-			owner = nil, -- no owner = wild
-			itemtimer = nil,
-			helditem = nil
-		}
-		entity.set_command{
-			type = defines.command.wander,
-			radius = 20,
-			ticks_to_wait = 180,
-			distraction = defines.distraction.none
-		}
-	end
+---@param entity LuaEntity
+local function onBuilt(entity)
+	script_data.lizard_doggos[entity.unit_number] = {
+		entity = entity,
+		owner = nil, -- no owner = wild
+		itemtimer = nil,
+		helditem = nil
+	}
+	entity.set_command{
+		type = defines.command.wander,
+		radius = 20,
+		ticks_to_wait = 180,
+		distraction = defines.distraction.none
+	}
 end
 
 ---@param event on_player_dropped_item
@@ -326,7 +322,10 @@ local function everyFiveSeconds()
 end
 
 return bev.applyBuildEvents{
-	on_build = onBuilt,
+	on_build = {
+		callback = onBuilt,
+		filter = {name=doggo}
+	},
 	on_init = function()
 		global.pets = global.pets or script_data
 	end,

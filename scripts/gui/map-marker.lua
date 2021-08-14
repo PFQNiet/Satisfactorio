@@ -146,10 +146,8 @@ local function onGuiClick(event)
 end
 
 -- if a player had a beacon's GUI open, close it
----@param event on_destroy
-local function onRemoved(event)
-	local entity = event.entity
-	if not (entity and entity.valid) then return end
+---@param entity LuaEntity
+local function onRemoved(entity)
 	for _,player in pairs(game.players) do
 		local data = getGui(player)
 		if data and data.marker == entity then
@@ -180,7 +178,10 @@ return {
 		on_load = function()
 			script_data = global.gui and global.gui.map_marker or script_data
 		end,
-		on_destroy = onRemoved,
+		on_destroy = {
+			callback = onRemoved,
+			filter = {name="map-marker"}
+		},
 		events = {
 			[defines.events.on_gui_closed] = onGuiClosed,
 			[defines.events.on_gui_click] = onGuiClick,

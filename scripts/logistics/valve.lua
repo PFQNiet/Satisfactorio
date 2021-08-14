@@ -119,22 +119,14 @@ local function deleteStruct(entity)
 	script_data[entity.unit_number] = nil
 end
 
----@param event on_build
-local function onBuilt(event)
-	local entity = event.created_entity or event.entity
-	if not (entity and entity.valid) then return end
-	if entity.name == valve then
-		createStruct(entity)
-	end
+---@param entity LuaEntity
+local function onBuilt(entity)
+	createStruct(entity)
 end
 
----@param event on_destroy
-local function onRemoved(event)
-	local entity = event.entity
-	if not (entity and entity.valid) then return end
-	if entity.name == valve then
-		deleteStruct(entity)
-	end
+---@param entity LuaEntity
+local function onRemoved(entity)
+	deleteStruct(entity)
 end
 
 ---@param event on_player_rotated_entity
@@ -236,8 +228,14 @@ return bev.applyBuildEvents{
 			end
 		end
 	end,
-	on_build = onBuilt,
-	on_destroy = onRemoved,
+	on_build = {
+		callback = onBuilt,
+		filter = {name=valve}
+	},
+	on_destroy = {
+		callback = onRemoved,
+		filter = {name=valve}
+	},
 	events = {
 		[defines.events.on_player_rotated_entity] = onRotated,
 		[defines.events.on_entity_settings_pasted] = onPaste,

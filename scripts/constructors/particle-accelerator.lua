@@ -51,27 +51,17 @@ local function deleteStruct(entity)
 	script_data[entity.unit_number%buckets][entity.unit_number] = nil
 end
 
----@param event on_build
-local function onBuilt(event)
-	local entity = event.created_entity or event.entity
-	if not (entity and entity.valid) then return end
-
-	if entity.name == accelerator then
-		io.addConnection(entity, {-8,5.5}, "input")
-		io.addConnection(entity, {-6,5.5}, "input")
-		io.addConnection(entity, {-8,-5.5}, "output")
-		createStruct(entity)
-	end
+---@param entity LuaEntity
+local function onBuilt(entity)
+	io.addConnection(entity, {-8,5.5}, "input")
+	io.addConnection(entity, {-6,5.5}, "input")
+	io.addConnection(entity, {-8,-5.5}, "output")
+	createStruct(entity)
 end
 
----@param event on_destroy
-local function onRemoved(event)
-	local entity = event.entity
-	if not (entity and entity.valid) then return end
-
-	if entity.name == eei then
-		deleteStruct(entity)
-	end
+---@param entity LuaEntity
+local function onRemoved(entity)
+	deleteStruct(entity)
 end
 
 -- power consumed by recipes
@@ -114,8 +104,14 @@ return bev.applyBuildEvents{
 	on_load = function()
 		script_data = global.accelerators or script_data
 	end,
-	on_build = onBuilt,
-	on_destroy = onRemoved,
+	on_build = {
+		callback = onBuilt,
+		filter = {name=accelerator}
+	},
+	on_destroy = {
+		callback = onRemoved,
+		filter = {name=eei}
+	},
 	events = {
 		[defines.events.on_tick] = onTick,
 		[defines.events.on_gui_opened] = onGuiOpened

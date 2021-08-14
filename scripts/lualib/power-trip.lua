@@ -57,54 +57,11 @@ local function findRegistration(entity)
 	return script_data.accumulators[lookup]
 end
 ---@param entity LuaEntity
-local function unregisterGenerator(entity)
+local function onRemoved(entity)
 	local struct = findRegistration(entity)
-	if not struct then return end
 	if struct.burner then script_data.pointers[struct.burner.unit_number] = nil end
 	script_data.pointers[struct.generator.unit_number] = nil
 	script_data.accumulators[struct.accumulator.unit_number] = nil
-end
-
----@param event on_destroy
-local function onRemoved(event)
-	local entity = event.entity
-	if not (entity and entity.valid) then return end
-	unregisterGenerator(entity)
-end
-
----@param player LuaPlayer
-local function createFusebox(player)
-	local gui = player.gui.relative
-	if not gui['fusebox'] then
-		local flow = gui.add{
-			type = "flow",
-			name = "fusebox",
-			anchor = {
-				gui = defines.relative_gui_type.entity_with_energy_source_gui,
-				position = defines.relative_gui_position.bottom
-			},
-			style = "frame_with_even_paddings"
-		}
-		flow.add{type="empty-widget", style="filler_widget"}
-		local frame = flow.add{type = "frame"}
-		frame.add{
-			type = "button",
-			style = "submit_button",
-			name = "fusebox-reset-fuse",
-			caption = {"gui.power-trip-reset-fuse-button"}
-		}
-	end
-	local flow = gui['fusebox']
-	local types = {
-		["burner-generator"] = "entity_with_energy_source_gui",
-		["electric-energy-interface"] = "electric_energy_interface_gui",
-		["furnace"] = "furnace_gui",
-		["default"] = "assembling_machine_gui"
-	}
-	flow.anchor = {
-		gui = defines.relative_gui_type[types[player.opened and player.opened.type or "default"] or types["default"]],
-		position = defines.relative_gui_position.bottom
-	}
 end
 
 ---@param entry GeneratorData
@@ -210,7 +167,13 @@ return {
 		on_nth_tick = {
 			[60] = on60thTick
 		},
-		on_destroy = onRemoved,
+		on_destroy = {
+			callback = onRemoved,
+			filter = {
+				---@param entity LuaEntity
+				callback = function(entity) return findRegistration(entity) and true or false end
+			}
+		},
 		events = {
 			[defines.events.on_gui_opened] = onGuiOpened,
 			[defines.events.on_gui_closed] = onGuiClosed

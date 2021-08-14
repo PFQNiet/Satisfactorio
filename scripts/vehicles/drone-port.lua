@@ -169,14 +169,13 @@ local function getPortStatus(data)
 	}
 end
 
----@param event on_build
 ---@param entity LuaEntity
 ---@param reason LocalisedString
-local function rejectBuild(event, entity, reason)
+local function rejectBuild(entity, reason)
 	local player = entity.last_user
 	refundEntity(player, entity)
 	if player then
-		if not debounce_error[player.force.index] or debounce_error[player.force.index] < event.tick then
+		if not debounce_error[player.force.index] or debounce_error[player.force.index] < game.tick then
 			player.create_local_flying_text{
 				text = reason,
 				create_at_cursor = true
@@ -184,15 +183,13 @@ local function rejectBuild(event, entity, reason)
 			player.play_sound{
 				path = "utility/cannot_build"
 			}
-			debounce_error[player.force.index] = event.tick + 60
+			debounce_error[player.force.index] = game.tick + 60
 		end
 	end
 end
 
----@param event on_build
-local function onBuilt(event)
-	local entity = event.created_entity or event.entity
-	if not (entity and entity.valid) then return end
+---@param entity LuaEntity
+local function onBuilt(entity)
 	if entity.name == base then
 		local station = entity.surface.create_entity{
 			name = stop,
@@ -251,14 +248,14 @@ local function onBuilt(event)
 		-- ensure there is a drone port here
 		local port = entity.surface.find_entity(base, entity.position)
 		if not port then
-			return rejectBuild(event, entity, {"message.drone-must-be-built-on-port"})
+			return rejectBuild(entity, {"message.drone-must-be-built-on-port"})
 		end
 		local data = getStruct(port)
 		if data.drone then
-			return rejectBuild(event, entity, {"message.drone-port-has-another-drone"})
+			return rejectBuild(entity, {"message.drone-port-has-another-drone"})
 		end
 		if #data.guests > 0 then
-			return rejectBuild(event, entity, {"message.drone-port-is-busy"})
+			return rejectBuild(entity, {"message.drone-port-is-busy"})
 		end
 		link.register(port, entity)
 		entity.teleport(port.position)
@@ -273,10 +270,8 @@ local function onBuilt(event)
 	end
 end
 
----@param event on_destroy
-local function onRemoved(event)
-	local entity = event.entity
-	if not (entity and entity.valid) then return end
+---@param entity LuaEntity
+local function onRemoved(entity)
 	if entity.name == base then
 		clearStruct(entity)
 	end
@@ -790,8 +785,14 @@ return bev.applyBuildEvents{
 		script_data = global.drones or script_data
 		debounce_error = global.player_build_error_debounce or debounce_error
 	end,
-	on_build = onBuilt,
-	on_destroy = onRemoved,
+	on_build = {
+		callback = onBuilt,
+		filter = {name={base, vehicle}}
+	},
+	on_destroy = {
+		callback = onRemoved,
+		filter = {name={base, vehicle}}
+	},
 	events = {
 		[defines.events.on_gui_opened] = onGuiOpened,
 

@@ -38,19 +38,15 @@ local function getUndergroundPipeExit(source)
 	return nil
 end
 
----@param event on_build
-local function onBuilt(event)
-	local entity = event.created_entity or event.entity
-	if not (entity and entity.valid) then return end
-	if entity.name == entrance then
-		local launcher = entity.surface.create_entity{
-			name = car,
-			position = entity.position,
-			force = entity.force,
-			raise_built = true
-		}
-		link.register(entity, launcher)
-	end
+---@param entity LuaEntity
+local function onBuilt(entity)
+	local launcher = entity.surface.create_entity{
+		name = car,
+		position = entity.position,
+		force = entity.force,
+		raise_built = true
+	}
+	link.register(entity, launcher)
 end
 
 ---@type table<defines.direction, Vector>
@@ -216,7 +212,10 @@ return bev.applyBuildEvents{
 		script_data = global.hyper_tube or script_data
 		debounce_error = global.player_build_error_debounce or debounce_error
 	end,
-	on_build = onBuilt,
+	on_build = {
+		callback = onBuilt,
+		filter = {name=entrance}
+	},
 	events = {
 		[defines.events.on_player_driving_changed_state] = onVehicle,
 		[defines.events.on_tick] = onTick

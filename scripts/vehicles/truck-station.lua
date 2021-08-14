@@ -42,45 +42,37 @@ local function clearStruct(floor)
 	script_data.stations[floor.unit_number%30][floor.unit_number] = nil
 end
 
----@param event on_build
-local function onBuilt(event)
-	local entity = event.created_entity or event.entity
-	if not entity or not entity.valid then return end
-	if entity.name == base then
-		-- add storage boxes
-		local store = entity.surface.create_entity{
-			name = storage,
-			position = math2d.position.add(entity.position, math2d.position.rotate_vector(storage_pos, entity.direction*45)),
-			force = entity.force,
-			raise_built = true
-		}
-		local fuel = entity.surface.create_entity{
-			name = fuelbox,
-			position = math2d.position.add(entity.position, math2d.position.rotate_vector(fuelbox_pos, entity.direction*45)),
-			force = entity.force,
-			raise_built = true
-		}
-		link.register(entity, fuel)
-		link.register(entity, store)
-		io.addConnection(entity, {-4,3.5}, "input", fuel)
-		io.addConnection(entity, {0,3.5}, "input", store)
-		io.addConnection(entity, {2,3.5}, "output", store, defines.direction.south)
-		script_data.stations[entity.unit_number%30][entity.unit_number] = {
-			base = entity,
-			fuel = fuel,
-			cargo = store,
-			mode = "input"
-		}
-	end
+---@param entity LuaEntity
+local function onBuilt(entity)
+	-- add storage boxes
+	local store = entity.surface.create_entity{
+		name = storage,
+		position = math2d.position.add(entity.position, math2d.position.rotate_vector(storage_pos, entity.direction*45)),
+		force = entity.force,
+		raise_built = true
+	}
+	local fuel = entity.surface.create_entity{
+		name = fuelbox,
+		position = math2d.position.add(entity.position, math2d.position.rotate_vector(fuelbox_pos, entity.direction*45)),
+		force = entity.force,
+		raise_built = true
+	}
+	link.register(entity, fuel)
+	link.register(entity, store)
+	io.addConnection(entity, {-4,3.5}, "input", fuel)
+	io.addConnection(entity, {0,3.5}, "input", store)
+	io.addConnection(entity, {2,3.5}, "output", store, defines.direction.south)
+	script_data.stations[entity.unit_number%30][entity.unit_number] = {
+		base = entity,
+		fuel = fuel,
+		cargo = store,
+		mode = "input"
+	}
 end
 
----@param event on_destroy
-local function onRemoved(event)
-	local entity = event.entity
-	if not entity or not entity.valid then return end
-	if entity.name == base then
-		clearStruct(entity)
-	end
+---@param entity LuaEntity
+local function onRemoved(entity)
+	clearStruct(entity)
 end
 
 ---@param event on_player_rotated_entity
@@ -224,8 +216,14 @@ return bev.applyBuildEvents{
 	on_load = function()
 		script_data = global.trucks or script_data
 	end,
-	on_build = onBuilt,
-	on_destroy = onRemoved,
+	on_build = {
+		callback = onBuilt,
+		filter = {name=base}
+	},
+	on_destroy = {
+		callback = onRemoved,
+		filter = {name=base}
+	},
 	events = {
 		[defines.events.on_player_rotated_entity] = onRotated,
 		[defines.events.on_gui_opened] = onGuiOpened,

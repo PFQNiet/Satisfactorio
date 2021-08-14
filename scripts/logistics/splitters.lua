@@ -274,9 +274,9 @@ local function processSplitters(event)
 	end
 end
 
----@param event on_destroy
-local function onRemoved(event)
-	local struct = getSplitter(event.entity)
+---@param entity LuaEntity
+local function onRemoved(entity)
+	local struct = getSplitter(entity)
 	if not struct then return end
 	cleanupSplitter(struct)
 end
@@ -295,7 +295,15 @@ return {
 	get = getSplitter,
 	refresh = serialise,
 	lib = bev.applyBuildEvents{
-		on_destroy = onRemoved,
+		on_destroy = {
+			callback = onRemoved,
+			filter = {name={
+				"conveyor-merger",
+				"conveyor-splitter",
+				"smart-splitter",
+				"programmable-splitter"
+			}}
+		},
 		on_init = function()
 			global.splitters = global.splitters or script_data
 		end,

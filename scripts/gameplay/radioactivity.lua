@@ -334,18 +334,14 @@ local function onTick(event)
 	end
 end
 
----@param event on_build
-local function onBuilt(event)
-	local entity = event.created_entity or event.entity
-	if not (entity and entity.valid) then return end
-	if not entity.unit_number then return end
+---@param entity LuaEntity
+local function onBuilt(entity)
 	local chunk = getOrCreateChunk(entity.surface, {math.floor(entity.position.x/32), math.floor(entity.position.x/32)})
 	if entity.name == "gas-emitter" then
 		chunk.behemoths[entity.unit_number] = entity
 		return
 	end
 
-	if entity.type ~= "container" then return end
 	-- exclude fake boxes used in splitters and mergers, as they may only hold one item at a time so contribute negligible radiation to the chunk
 	if entity.name == "conveyor-merger-box" then return end
 	if entity.name == "conveyor-splitter-box" then return end
@@ -354,11 +350,8 @@ local function onBuilt(event)
 	-- add this entity to the chunk's list of containers
 	chunk.containers[entity.unit_number] = entity.get_inventory(defines.inventory.chest)
 end
----@param event on_destroy
-local function onRemoved(event)
-	local entity = event.entity
-	if not (entity and entity.valid) then return end
-	if not entity.unit_number then return end
+---@param entity LuaEntity
+local function onRemoved(entity)
 	local chunk = getOrCreateChunk(entity.surface, {math.floor(entity.position.x/32), math.floor(entity.position.x/32)})
 	chunk.behemoths[entity.unit_number] = nil
 	chunk.containers[entity.unit_number] = nil
@@ -395,8 +388,14 @@ return bev.applyBuildEvents{
 			end)
 		end
 	end,
-	on_build = onBuilt,
-	on_destroy = onRemoved,
+	on_build = {
+		callback = onBuilt,
+		filter = {name="gas-emitter", type="container"}
+	},
+	on_destroy = {
+		callback = onRemoved,
+		filter = {name="gas-emitter", type="container"}
+	},
 	events = {
 		[defines.events.on_chunk_generated] = onChunkGenerated,
 		[defines.events.on_tick] = onTick

@@ -60,10 +60,8 @@ local function getSatelliteNodesForPressuriser(entity)
 	return well.nodes
 end
 
----@param event on_build
-local function onBuilt(event)
-	local entity = event.created_entity or event.entity
-	if not (entity and entity.valid) then return end
+---@param entity LuaEntity
+local function onBuilt(entity)
 	if entity.name == pressuriser then
 		-- if the well hasn't been registered yet, spawn satellite nodes
 		local well = entity.surface.find_entities_filtered{position=entity.position, type="resource"}[1] -- can be assumed to exist since we built a miner on it
@@ -143,10 +141,8 @@ local function onBuilt(event)
 	end
 end
 
----@param event on_destroy
-local function onRemoved(event)
-	local entity = event.entity
-	if not (entity and entity.valid) then return end
+---@param entity LuaEntity
+local function onRemoved(entity)
 	if entity.name == pressuriser then
 		-- pressuriser removed: depressurise all satellite nodes
 		local nodes = getSatelliteNodesForPressuriser(entity)
@@ -188,8 +184,14 @@ return bev.applyBuildEvents{
 	on_load = function()
 		script_data = global.wells or script_data
 	end,
-	on_build = onBuilt,
-	on_destroy = onRemoved,
+	on_build = {
+		callback = onBuilt,
+		filter = {name={pressuriser,extractor}}
+	},
+	on_destroy = {
+		callback = onRemoved,
+		filter = {name={pressuriser,extractor}}
+	},
 	events = {
 		[defines.events.on_tick] = onTick
 	}

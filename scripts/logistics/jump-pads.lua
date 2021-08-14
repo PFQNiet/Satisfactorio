@@ -35,39 +35,25 @@ local script_data = {
 	visualisation = {}
 }
 
----@param event on_build
-local function onBuilt(event)
-	local entity = event.created_entity or event.entity
-	if not entity or not entity.valid then return end
-	if entity.name == launcher then
-		local car = entity.surface.create_entity{
-			name = vehicle,
-			position = entity.position,
-			direction = entity.direction,
-			force = entity.force,
-			raise_built = true
-		}
-		link.register(entity, car)
-		script_data.pads[entity.unit_number] = 40
-	end
+---@param entity LuaEntity
+local function onBuilt(entity)
+	local car = entity.surface.create_entity{
+		name = vehicle,
+		position = entity.position,
+		direction = entity.direction,
+		force = entity.force,
+		raise_built = true
+	}
+	link.register(entity, car)
+	script_data.pads[entity.unit_number] = 40
 end
----@param event on_destroy
-local function onRemoved(event)
-	local entity = event.entity
-	if not entity or not entity.valid then return end
-	if entity.name == launcher then
-		local car = entity.surface.find_entity(vehicle, entity.position)
-		if car and car.valid then
-			car.destroy()
-		end
-		script_data.pads[entity.unit_number] = nil
-	elseif entity.name == vehicle then
-		local floor = entity.surface.find_entity(launcher, entity.position)
-		if floor and floor.valid then
-			script_data.pads[floor.unit_number] = nil
-			floor.destroy()
-		end
+---@param entity LuaEntity
+local function onRemoved(entity)
+	local car = entity.surface.find_entity(vehicle, entity.position)
+	if car and car.valid then
+		car.destroy()
 	end
+	script_data.pads[entity.unit_number] = nil
 end
 local function onRotated(event)
 	local entity = event.entity
@@ -282,8 +268,14 @@ return bev.applyBuildEvents{
 	on_load = function()
 		script_data = global.launch_pads or script_data
 	end,
-	on_build = onBuilt,
-	on_destroy = onRemoved,
+	on_build = {
+		callback = onBuilt,
+		filter = {name=launcher}
+	},
+	on_destroy = {
+		callback = onRemoved,
+		filter = {name=launcher}
+	},
 	events = {
 		[defines.events.on_player_rotated_entity] = function(event)
 			onRotated(event)

@@ -64,10 +64,6 @@ local vehicle = {
 	collision_mask = {"object-layer","floor-layer","water-tile"},
 	selection_box = {{-1.5,-1.5},{1.5,1.5}},
 	selectable_in_game = false,
-	minable = {
-		mining_time = 0.5,
-		result = name
-	},
 	flags = {
 		"not-on-map",
 		"no-automated-item-removal",

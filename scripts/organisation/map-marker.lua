@@ -38,24 +38,17 @@ gui.callbacks.save = function(player, marker, name, icon)
 	end
 end
 
----@param event on_build
-local function onBuilt(event)
-	---@type LuaEntity
-	local entity = event.created_entity or event.entity
-	if not (entity and entity.valid) then return end
-	if entity.name ~= item_name then return end
+---@param entity LuaEntity
+local function onBuilt(entity)
 	local tag = entity.force.add_chart_tag(entity.surface, {position=entity.position,icon={type="item",name="map-marker"}})
-	if event.name == defines.events.on_built_entity then
-		local player = game.players[event.player_index]
+	local player = entity.last_user
+	if player then
 		player.clear_cursor()
 		gui.open_gui(player, entity, tag)
 	end
 end
----@param event on_destroy
-local function onRemoved(event)
-	local entity = event.entity
-	if not (entity and entity.valid) then return end
-	if entity.name ~= item_name then return end
+---@param entity LuaEntity
+local function onRemoved(entity)
 	local tag = findBeaconTag(entity)
 	if tag then tag.destroy() end
 end
@@ -95,8 +88,14 @@ local function onTagRemoved(event)
 end
 
 return bev.applyBuildEvents{
-	on_build = onBuilt,
-	on_destroy = onRemoved,
+	on_build = {
+		callback = onBuilt,
+		filter = {name=item_name}
+	},
+	on_destroy = {
+		callback = onRemoved,
+		filter = {name=item_name}
+	},
 	events = {
 		[defines.events.on_gui_opened] = onGuiOpened,
 		[defines.events.on_chart_tag_added] = onTagAdded,

@@ -9,6 +9,9 @@ local colours = {
 	["purple-power-slug"] = {0.5,0.25,1},
 	["purple-power-slug-decorative"] = {0.5,0.25,1}
 }
+local names = {}
+for n in pairs(colours) do table.insert(names, n) end
+
 ---@param event on_build
 local function onBuilt(event)
 	local entity = event.created_entity or event.entity
@@ -25,5 +28,8 @@ local function onBuilt(event)
 end
 
 return bev.applyBuildEvents{
-	on_build = onBuilt
+	on_build = {
+		callback = onBuilt,
+		filter = {name=names}
+	}
 }

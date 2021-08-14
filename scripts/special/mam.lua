@@ -281,13 +281,9 @@ local function onGuiOpened(event)
 	end
 end
 
----@param event on_build
-local function onBuilt(event)
-	local entity = event.created_entity or event.entity
-	if not (entity and entity.valid) then return end
-	if entity.name == mam then
-		entity.active = false
-	end
+---@param entity LuaEntity
+local function onBuilt(entity)
+	entity.active = false
 end
 
 return bev.applyBuildEvents{
@@ -300,7 +296,10 @@ return bev.applyBuildEvents{
 	on_nth_tick = {
 		[6] = updateAllPlayers
 	},
-	on_build = onBuilt,
+	on_build = {
+		callback = onBuilt,
+		filter = {name=mam}
+	},
 	events = {
 		[defines.events.on_research_finished] = onResearch,
 

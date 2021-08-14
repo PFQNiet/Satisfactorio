@@ -3,17 +3,15 @@ local bev = require(modpath.."scripts.lualib.build-events")
 
 local refinery = "refinery"
 
----@param event on_build
-local function onBuilt(event)
-	local entity = event.created_entity or event.entity
-	if not (entity and entity.valid) then return end
-
-	if entity.name == refinery then
-		io.addConnection(entity, {1,4.5}, "input")
-		io.addConnection(entity, {1,-4.5}, "output")
-	end
+---@param entity LuaEntity
+local function onBuilt(entity)
+	io.addConnection(entity, {1,4.5}, "input")
+	io.addConnection(entity, {1,-4.5}, "output")
 end
 
 return bev.applyBuildEvents{
-	on_build = onBuilt
+	on_build = {
+		callback = onBuilt,
+		filter = {name=refinery}
+	}
 }

@@ -55,6 +55,8 @@ local belt_tiers = {
 	["conveyor-belt-mk-5"] = 5,
 	["conveyor-lift-mk-5"] = 5
 }
+local belt_names = {}
+for n in pairs(belt_tiers) do table.insert(belt_names, n) end
 -- map tier to loader belt name
 local loader_belts = {
 	[0] = "loader-conveyor",
@@ -64,12 +66,11 @@ local loader_belts = {
 	[4] = "loader-conveyor-belt-mk-4",
 	[5] = "loader-conveyor-belt-mk-5"
 }
+local loader_names = {}
+for _,n in pairs(loader_belts) do loader_names[n] = true end
 ---@param belt LuaEntity
 local function isLoaderBelt(belt)
-	for _,name in pairs(loader_belts) do
-		if name == belt.name then return true end
-	end
-	return false
+	return loader_names[belt.name]
 end
 
 ---@param entity LuaEntity
@@ -304,29 +305,32 @@ local function isEnabled(entity)
 	return structs.active
 end
 
----@param event on_build|on_player_rotated_entity
-local function onBuiltOrRotated(event)
-	-- building and rotating both have the same effects!
-	local entity = event.created_entity or event.entity
+---@param entity LuaEntity
+local function onBuilt(entity)
+	local tier = belt_tiers[entity.name]
+	if not tier then return end -- not a known belt type
+	snapNeighbouringLoaderBelts(entity, tier)
+end
+
+---@param event on_player_rotated_entity
+local function onRotated(event)
+	local entity = event.entity
 	if not (entity and entity.valid) then return end
 	local tier = belt_tiers[entity.name]
 	if not tier then return end -- not a known belt type
 	snapNeighbouringLoaderBelts(entity, tier)
 end
 
----@param event on_destroy
-local function onRemoved(event)
-	local entity = event.entity
-	if not (entity and entity.valid) then return end
-
+---@param entity LuaEntity
+---@param buffer LuaInventory
+local function onRemoved(entity, buffer)
 	-- if the entity had any IO connections, those will be cleaned up
-	destroyConnections(entity, event.buffer)
+	destroyConnections(entity, buffer)
 
 	local tier = belt_tiers[entity.name]
 	if tier then
 		-- disconnect neighbouring loaders
-		snapNeighbouringLoaderBelts(entity, 0, event.buffer)
-		return
+		snapNeighbouringLoaderBelts(entity, 0, buffer)
 	end
 end
 
@@ -342,10 +346,15 @@ return {
 		on_load = function()
 			script_data = global.io or script_data
 		end,
-		on_build = onBuiltOrRotated,
-		on_destroy = onRemoved,
+		on_build = {
+			callback = onBuilt,
+			filter = {name=belt_names}
+		},
+		on_destroy = {
+			callback = onRemoved
+		},
 		events = {
-			[defines.events.on_player_rotated_entity] = onBuiltOrRotated
+			[defines.events.on_player_rotated_entity] = onRotated
 		}
 	}
 }

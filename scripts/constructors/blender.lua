@@ -3,18 +3,16 @@ local bev = require(modpath.."scripts.lualib.build-events")
 
 local blender = "blender"
 
----@param event on_build
-local function onBuilt(event)
-	local entity = event.created_entity or event.entity
-	if not (entity and entity.valid) then return end
-
-	if entity.name == blender then
-		io.addConnection(entity, {-3,3.5}, "input")
-		io.addConnection(entity, {-1,3.5}, "input")
-		io.addConnection(entity, {1,-3.5}, "output")
-	end
+---@param entity LuaEntity
+local function onBuilt(entity)
+	io.addConnection(entity, {-3,3.5}, "input")
+	io.addConnection(entity, {-1,3.5}, "input")
+	io.addConnection(entity, {1,-3.5}, "output")
 end
 
 return bev.applyBuildEvents{
-	on_build = onBuilt
+	on_build = {
+		callback = onBuilt,
+		filter = {name=blender}
+	}
 }

@@ -93,15 +93,14 @@ local function unregisterPlatformOrStation(entity)
 end
 
 local debounce_error = {}
---- refund the entity and trigger an error message flying text (but only if event.tick is not too recent from the last one)
+--- refund the entity and trigger an error message flying text (but only if game.tick is not too recent from the last one)
 ---@param entity LuaEntity
 ---@param reason LocalisedString
----@param event EventData
-local function denyConstruction(entity, reason, event)
+local function denyConstruction(entity, reason)
 	local player = entity.last_user
 	refundEntity(player, entity)
 	if player then
-		if not debounce_error[player.force.index] or debounce_error[player.force.index] < event.tick then
+		if not debounce_error[player.force.index] or debounce_error[player.force.index] < game.tick then
 			player.create_local_flying_text{
 				text = reason,
 				create_at_cursor = true
@@ -109,7 +108,7 @@ local function denyConstruction(entity, reason, event)
 			player.play_sound{
 				path = "utility/cannot_build"
 			}
-			debounce_error[player.force.index] = event.tick + 60
+			debounce_error[player.force.index] = game.tick + 60
 		end
 	end
 end
@@ -125,277 +124,270 @@ local function assertPosition(entity, position)
 	return true
 end
 
----@param event on_built_entity|on_robot_built_entity|script_raised_built|script_raised_revive
-local function onBuilt(event)
-	local entity = event.created_entity or event.entity
-	if not (entity and entity.valid) then return end
-	if entity.name == station or entity.name == freight or entity.name == fluid or entity.name == empty then
-		-- check if it collides with something
-		local colliders = entity.surface.find_entities_filtered{
-			area = entity.bounding_box,
-			collision_mask = {"item-layer", "object-layer", "player-layer", "water-tile"}
-		}
-		for _,collider in pairs(colliders) do
-			if collider ~= entity and collider.name ~= "straight-rail" then
-				return denyConstruction(entity, {"cant-build-reason.entity-in-the-way",collider.localised_name or {"entity-name."..collider.name}}, event)
+---@param entity LuaEntity
+local function onBuilt(entity)
+	-- check if it collides with something
+	local colliders = entity.surface.find_entities_filtered{
+		area = entity.bounding_box,
+		collision_mask = {"item-layer", "object-layer", "player-layer", "water-tile"}
+	}
+	for _,collider in pairs(colliders) do
+		if collider ~= entity and collider.name ~= "straight-rail" then
+			return denyConstruction(entity, {"cant-build-reason.entity-in-the-way",collider.localised_name or {"entity-name."..collider.name}})
+		end
+		if collider.name == "straight-rail" then
+			-- only allowed on the central line, and even then only in the same direction
+			if collider.direction%4 ~= entity.direction%4 then -- rails are limited to north/east
+				return denyConstruction(entity, {"cant-build-reason.entity-in-the-way",collider.localised_name or {"entity-name."..collider.name}})
 			end
-			if collider.name == "straight-rail" then
-				-- only allowed on the central line, and even then only in the same direction
-				if collider.direction%4 ~= entity.direction%4 then -- rails are limited to north/east
-					return denyConstruction(entity, {"cant-build-reason.entity-in-the-way",collider.localised_name or {"entity-name."..collider.name}}, event)
+			if entity.direction == defines.direction.north or entity.direction == defines.direction.south then
+				if collider.position.x ~= entity.position.x then
+					return denyConstruction(entity, {"cant-build-reason.entity-in-the-way",collider.localised_name or {"entity-name."..collider.name}})
 				end
-				if entity.direction == defines.direction.north or entity.direction == defines.direction.south then
-					if collider.position.x ~= entity.position.x then
-						return denyConstruction(entity, {"cant-build-reason.entity-in-the-way",collider.localised_name or {"entity-name."..collider.name}}, event)
-					end
-				else
-					if collider.position.y ~= entity.position.y then
-						return denyConstruction(entity, {"cant-build-reason.entity-in-the-way",collider.localised_name or {"entity-name."..collider.name}}, event)
-					end
+			else
+				if collider.position.y ~= entity.position.y then
+					return denyConstruction(entity, {"cant-build-reason.entity-in-the-way",collider.localised_name or {"entity-name."..collider.name}})
 				end
 			end
 		end
+	end
 
-		if entity.name == station then
-			-- station must be on rail grid
-			-- entity is 7x14 and station is placed at {2,-2.5} relative to the entity
-			local stationpos = math2d.position.add(entity.position, math2d.position.rotate_vector(stop_pos, entity.direction*45))
-			stationpos.x = math.floor(stationpos.x+0.01) -- epsilon for checking if entity is on the grid
-			stationpos.y = math.floor(stationpos.y+0.01)
-			-- stationpos should now be on the 2x2 grid, that is the grid where centre points are ODD
-			if stationpos.x%2 ~= 1 or stationpos.y%2 ~= 1 then
-				return denyConstruction(entity, {"message.entity-must-be-placed-on-rail-grid",{"entity-name."..entity.name}}, event)
+	if entity.name == station then
+		-- station must be on rail grid
+		-- entity is 7x14 and station is placed at {2,-2.5} relative to the entity
+		local stationpos = math2d.position.add(entity.position, math2d.position.rotate_vector(stop_pos, entity.direction*45))
+		stationpos.x = math.floor(stationpos.x+0.01) -- epsilon for checking if entity is on the grid
+		stationpos.y = math.floor(stationpos.y+0.01)
+		-- stationpos should now be on the 2x2 grid, that is the grid where centre points are ODD
+		if stationpos.x%2 ~= 1 or stationpos.y%2 ~= 1 then
+			return denyConstruction(entity, {"message.entity-must-be-placed-on-rail-grid",{"entity-name."..entity.name}})
+		end
+
+		-- look for an existing platform to bind to
+		local behind = math2d.position.add(entity.position, math2d.position.rotate_vector({0,7}, entity.direction*45))
+		local platform = entity.surface.find_entities_filtered{
+			name = {freight, fluid, empty},
+			position = behind,
+			force = entity.force
+		}[1]
+		-- prevent double-ended stations by ensuring the platform doesn't link backwards to another station
+		if platform and assertPosition(platform, behind) then
+			local lookup = getPlatform(platform)
+			while lookup and lookup.type == "platform" do
+				lookup = lookup.previous
 			end
+			if lookup then
+				return denyConstruction(entity, {"message.no-double-ended-stations"})
+			end
+		else
+			platform = nil
+		end
 
-			-- look for an existing platform to bind to
-			local behind = math2d.position.add(entity.position, math2d.position.rotate_vector({0,7}, entity.direction*45))
-			local platform = entity.surface.find_entities_filtered{
-				name = {freight, fluid, empty},
-				position = behind,
-				force = entity.force
-			}[1]
-			-- prevent double-ended stations by ensuring the platform doesn't link backwards to another station
-			if platform and assertPosition(platform, behind) then
-				local lookup = getPlatform(platform)
-				while lookup and lookup.type == "platform" do
-					lookup = lookup.previous
-				end
-				if lookup then
-					return denyConstruction(entity, {"message.no-double-ended-stations"}, event)
+		entity.rotatable = false
+		local stop = entity.surface.create_entity{
+			name = trainstop,
+			position = stationpos,
+			direction = entity.direction,
+			force = entity.force,
+			raise_built = true
+		}
+		link.register(entity, stop)
+		stop.rotatable = false
+
+		---@type TrainStationData
+		local struct = {
+			id = entity.unit_number,
+			type = "station",
+			station = entity,
+			stop = stop
+		}
+		registerStation(struct)
+
+		-- take possession of any linked platforms
+		if platform then
+			local lookup = getPlatform(platform)
+			struct.next = lookup
+			-- if platforms are registered in reverse order, fix that by swapping next/previous
+			if lookup.previous then
+				-- temporarily put station as the "next" item to the first platform; it will be swapped into place
+				lookup.next = struct
+				while lookup do
+					local prev = lookup.previous
+					local next = lookup.next
+					lookup.previous = next
+					lookup.next = prev
+					lookup = lookup.next
 				end
 			else
-				platform = nil
+				-- new head is on the correct end, just record it on the first platform
+				lookup.previous = struct
 			end
+		end
+	else
+		-- platforms must be adjacent to another platform or a station
+		local before = math2d.position.add(entity.position, math2d.position.rotate_vector({0,-7}, entity.direction*45))
+		local platform1 = entity.surface.find_entities_filtered{
+			name = {station, freight, fluid, empty},
+			position = before,
+			force = entity.force
+		}[1]
+		if platform1 and not assertPosition(platform1, before) then
+			platform1 = nil
+		end
 
-			entity.rotatable = false
-			local stop = entity.surface.create_entity{
-				name = trainstop,
-				position = stationpos,
+		local behind = math2d.position.add(entity.position, math2d.position.rotate_vector({0,7}, entity.direction*45))
+		local platform2 = entity.surface.find_entities_filtered{
+			name = {station, freight, fluid, empty},
+			position = behind,
+			force = entity.force
+		}[1]
+		if platform2 and not assertPosition(platform2, behind) then
+			platform2 = nil
+		end
+
+		if not (platform1 or platform2) then
+			return denyConstruction(entity, {"message.entity-must-be-placed-next-to-platform",{"entity-name."..entity.name}})
+		end
+
+		local lookup1 = platform1 and getPlatformOrStation(platform1)
+		local lookup2 = platform2 and getPlatformOrStation(platform2)
+		local iterateToEnd = function(step)
+			while step.previous do
+				step = step.previous
+			end
+			return step
+		end
+		local head1 = lookup1 and iterateToEnd(lookup1).type == "station"
+		local head2 = lookup2 and iterateToEnd(lookup2).type == "station"
+		if head1 and head2 then
+			return denyConstruction(entity, {"message.no-double-ended-stations"})
+		end
+		if not (head1 or head2) then
+			return denyConstruction(entity, {"message.cannot-infer-direction"})
+		end
+
+		---@type TrainPlatformData
+		local struct = {
+			id = entity.unit_number,
+			type = "platform",
+			platform = entity,
+			mode = "input"
+		}
+
+		if head1 then
+			if lookup1 then
+				lookup1.next = struct
+				struct.previous = lookup1
+			end
+			if lookup2 then
+				lookup2.previous = struct
+				struct.next = lookup2
+			end
+		else
+			if lookup1 then
+				lookup1.previous = struct
+				struct.next = lookup1
+			end
+			if lookup2 then
+				lookup2.next = struct
+				struct.previous = lookup2
+			end
+		end
+
+		if entity.name == freight then
+			local store = entity.surface.create_entity{
+				name = entity.name.."-box",
+				position = math2d.position.add(entity.position, math2d.position.rotate_vector(storage_pos, entity.direction*45)),
+				force = entity.force,
+				raise_built = true
+			}
+			link.register(entity, store)
+			io.addConnection(entity, {6.5,-2}, "output", store, defines.direction.east)
+			io.addConnection(entity, {6.5,-1}, "input", store, defines.direction.west)
+			io.addConnection(entity, {6.5,1}, "input", store, defines.direction.west)
+			io.addConnection(entity, {6.5,2}, "output", store, defines.direction.east)
+			struct.storage = store
+		end
+		if entity.name == fluid then
+			local tank = entity.surface.create_entity{
+				name = entity.name.."-tank",
+				position = math2d.position.add(entity.position, math2d.position.rotate_vector(tank_pos, entity.direction*45)),
 				direction = entity.direction,
 				force = entity.force,
 				raise_built = true
 			}
-			link.register(entity, stop)
-			stop.rotatable = false
-
-			---@type TrainStationData
-			local struct = {
-				id = entity.unit_number,
-				type = "station",
-				station = entity,
-				stop = stop
+			tank.rotatable = false
+			link.register(entity, tank)
+			struct.storage = tank
+			rendering.draw_sprite{
+				sprite = "utility.fluid_indication_arrow",
+				orientation = ((entity.direction+defines.direction.east)%8)/8,
+				render_layer = "arrow",
+				target = entity,
+				target_offset = math2d.position.rotate_vector({6.5,-2}, entity.direction*45),
+				surface = entity.surface,
+				only_in_alt_mode = true
 			}
-			registerStation(struct)
-
-			-- take possession of any linked platforms
-			if platform then
-				local lookup = getPlatform(platform)
-				struct.next = lookup
-				-- if platforms are registered in reverse order, fix that by swapping next/previous
-				if lookup.previous then
-					-- temporarily put station as the "next" item to the first platform; it will be swapped into place
-					lookup.next = struct
-					while lookup do
-						local prev = lookup.previous
-						local next = lookup.next
-						lookup.previous = next
-						lookup.next = prev
-						lookup = lookup.next
-					end
-				else
-					-- new head is on the correct end, just record it on the first platform
-					lookup.previous = struct
-				end
-			end
-		else
-			-- platforms must be adjacent to another platform or a station
-			local before = math2d.position.add(entity.position, math2d.position.rotate_vector({0,-7}, entity.direction*45))
-			local platform1 = entity.surface.find_entities_filtered{
-				name = {station, freight, fluid, empty},
-				position = before,
-				force = entity.force
-			}[1]
-			if platform1 and not assertPosition(platform1, before) then
-				platform1 = nil
-			end
-
-			local behind = math2d.position.add(entity.position, math2d.position.rotate_vector({0,7}, entity.direction*45))
-			local platform2 = entity.surface.find_entities_filtered{
-				name = {station, freight, fluid, empty},
-				position = behind,
-				force = entity.force
-			}[1]
-			if platform2 and not assertPosition(platform2, behind) then
-				platform2 = nil
-			end
-
-			if not (platform1 or platform2) then
-				return denyConstruction(entity, {"message.entity-must-be-placed-next-to-platform",{"entity-name."..entity.name}}, event)
-			end
-
-			local lookup1 = platform1 and getPlatformOrStation(platform1)
-			local lookup2 = platform2 and getPlatformOrStation(platform2)
-			local iterateToEnd = function(step)
-				while step.previous do
-					step = step.previous
-				end
-				return step
-			end
-			local head1 = lookup1 and iterateToEnd(lookup1).type == "station"
-			local head2 = lookup2 and iterateToEnd(lookup2).type == "station"
-			if head1 and head2 then
-				return denyConstruction(entity, {"message.no-double-ended-stations"}, event)
-			end
-			if not (head1 or head2) then
-				return denyConstruction(entity, {"message.cannot-infer-direction"}, event)
-			end
-
-			---@type TrainPlatformData
-			local struct = {
-				id = entity.unit_number,
-				type = "platform",
-				platform = entity,
-				mode = "input"
+			rendering.draw_sprite{
+				sprite = "utility.fluid_indication_arrow",
+				orientation = ((entity.direction+defines.direction.west)%8)/8,
+				render_layer = "arrow",
+				target = entity,
+				target_offset = math2d.position.rotate_vector({6.5,-1}, entity.direction*45),
+				surface = entity.surface,
+				only_in_alt_mode = true
 			}
-
-			if head1 then
-				if lookup1 then
-					lookup1.next = struct
-					struct.previous = lookup1
-				end
-				if lookup2 then
-					lookup2.previous = struct
-					struct.next = lookup2
-				end
-			else
-				if lookup1 then
-					lookup1.previous = struct
-					struct.next = lookup1
-				end
-				if lookup2 then
-					lookup2.next = struct
-					struct.previous = lookup2
-				end
-			end
-
-			if entity.name == freight then
-				local store = entity.surface.create_entity{
-					name = entity.name.."-box",
-					position = math2d.position.add(entity.position, math2d.position.rotate_vector(storage_pos, entity.direction*45)),
-					force = entity.force,
-					raise_built = true
-				}
-				link.register(entity, store)
-				io.addConnection(entity, {6.5,-2}, "output", store, defines.direction.east)
-				io.addConnection(entity, {6.5,-1}, "input", store, defines.direction.west)
-				io.addConnection(entity, {6.5,1}, "input", store, defines.direction.west)
-				io.addConnection(entity, {6.5,2}, "output", store, defines.direction.east)
-				struct.storage = store
-			end
-			if entity.name == fluid then
-				local tank = entity.surface.create_entity{
-					name = entity.name.."-tank",
-					position = math2d.position.add(entity.position, math2d.position.rotate_vector(tank_pos, entity.direction*45)),
-					direction = entity.direction,
-					force = entity.force,
-					raise_built = true
-				}
-				tank.rotatable = false
-				link.register(entity, tank)
-				struct.storage = tank
-				rendering.draw_sprite{
-					sprite = "utility.fluid_indication_arrow",
-					orientation = ((entity.direction+defines.direction.east)%8)/8,
-					render_layer = "arrow",
-					target = entity,
-					target_offset = math2d.position.rotate_vector({6.5,-2}, entity.direction*45),
-					surface = entity.surface,
-					only_in_alt_mode = true
-				}
-				rendering.draw_sprite{
-					sprite = "utility.fluid_indication_arrow",
-					orientation = ((entity.direction+defines.direction.west)%8)/8,
-					render_layer = "arrow",
-					target = entity,
-					target_offset = math2d.position.rotate_vector({6.5,-1}, entity.direction*45),
-					surface = entity.surface,
-					only_in_alt_mode = true
-				}
-				rendering.draw_sprite{
-					sprite = "utility.fluid_indication_arrow",
-					orientation = ((entity.direction+defines.direction.west)%8)/8,
-					render_layer = "arrow",
-					target = entity,
-					target_offset = math2d.position.rotate_vector({6.5,1}, entity.direction*45),
-					surface = entity.surface,
-					only_in_alt_mode = true
-				}
-				rendering.draw_sprite{
-					sprite = "utility.fluid_indication_arrow",
-					orientation = ((entity.direction+defines.direction.east)%8)/8,
-					render_layer = "arrow",
-					target = entity,
-					target_offset = math2d.position.rotate_vector({6.5,2}, entity.direction*45),
-					surface = entity.surface,
-					only_in_alt_mode = true
-				}
-			end
-
-			registerPlatform(struct)
+			rendering.draw_sprite{
+				sprite = "utility.fluid_indication_arrow",
+				orientation = ((entity.direction+defines.direction.west)%8)/8,
+				render_layer = "arrow",
+				target = entity,
+				target_offset = math2d.position.rotate_vector({6.5,1}, entity.direction*45),
+				surface = entity.surface,
+				only_in_alt_mode = true
+			}
+			rendering.draw_sprite{
+				sprite = "utility.fluid_indication_arrow",
+				orientation = ((entity.direction+defines.direction.east)%8)/8,
+				render_layer = "arrow",
+				target = entity,
+				target_offset = math2d.position.rotate_vector({6.5,2}, entity.direction*45),
+				surface = entity.surface,
+				only_in_alt_mode = true
+			}
 		end
 
-		link.register(entity, entity.surface.create_entity{
-			name = walkable, -- left side in direction of travel is walkable
-			position = math2d.position.add(entity.position, math2d.position.rotate_vector({-4,0}, entity.direction*45)),
-			direction = entity.direction,
-			force = entity.force,
-			raise_built = true
-		})
-		link.register(entity, entity.surface.create_entity{
-			name = (entity.name == station or entity.name == empty) and walkable or collision, -- right side is blocked by freight
-			position = math2d.position.add(entity.position, math2d.position.rotate_vector({4,0}, entity.direction*45)),
-			direction = entity.direction,
-			force = entity.force,
-			raise_built = true
-		})
+		registerPlatform(struct)
 	end
+
+	link.register(entity, entity.surface.create_entity{
+		name = walkable, -- left side in direction of travel is walkable
+		position = math2d.position.add(entity.position, math2d.position.rotate_vector({-4,0}, entity.direction*45)),
+		direction = entity.direction,
+		force = entity.force,
+		raise_built = true
+	})
+	link.register(entity, entity.surface.create_entity{
+		name = (entity.name == station or entity.name == empty) and walkable or collision, -- right side is blocked by freight
+		position = math2d.position.add(entity.position, math2d.position.rotate_vector({4,0}, entity.direction*45)),
+		direction = entity.direction,
+		force = entity.force,
+		raise_built = true
+	})
 end
 
-local function onRemoved(event)
-	local entity = event.entity
-	if not (entity and entity.valid) then return end
-	if entity.name == station or entity.name == freight or entity.name == fluid or entity.name == empty then
-		local struct = getPlatformOrStation(entity)
-		if struct then
-			if struct.next then
-				struct.next.previous = nil
-			end
-			if struct.previous then
-				struct.previous.next = nil
-			end
+---@param entity LuaEntity
+local function onRemoved(entity)
+	local struct = getPlatformOrStation(entity)
+	if struct then
+		if struct.next then
+			struct.next.previous = nil
 		end
-		unregisterPlatformOrStation(entity)
+		if struct.previous then
+			struct.previous.next = nil
+		end
 	end
+	unregisterPlatformOrStation(entity)
 end
 
 ---@param event on_player_rotated_entity
@@ -588,8 +580,14 @@ return bev.applyBuildEvents{
 		script_data = global.trains or script_data
 		debounce_error = global.player_build_error_debounce or debounce_error
 	end,
-	on_build = onBuilt,
-	on_destroy = onRemoved,
+	on_build = {
+		callback = onBuilt,
+		filter = {name={station, freight, fluid, empty}}
+	},
+	on_destroy = {
+		callback = onRemoved,
+		filter = {name={station, freight, fluid, empty}}
+	},
 	events = {
 		[defines.events.on_player_rotated_entity] = onRotated,
 		[defines.events.on_gui_opened] = onGuiOpened,
