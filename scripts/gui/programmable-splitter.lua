@@ -325,7 +325,7 @@ local function onGuiSelected(event)
 		for _,p in pairs(game.players) do
 			if p ~= player then
 				local other = getGui(p)
-				if other.struct == data.struct then
+				if other and other.struct == data.struct then
 					updateGui(p)
 				end
 			end
@@ -356,7 +356,7 @@ local function onGuiElemChanged(event)
 		for _,p in pairs(game.players) do
 			if p ~= player then
 				local other = getGui(p)
-				if other.struct == data.struct then
+				if other and other.struct == data.struct then
 					updateGui(p)
 				end
 			end
