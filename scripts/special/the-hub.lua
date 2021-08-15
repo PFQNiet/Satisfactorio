@@ -443,6 +443,7 @@ local function onGuiOpened(event)
 	local entity = event.entity
 	if entity and entity.valid and entity.name == terminal then
 		local player = game.players[event.player_index]
+		gui.tracker.create_gui(player)
 		gui.terminal.open_gui(player, entity)
 		if entity.get_recipe() == nil then
 			-- double-check for, and disable, any recipes that have completed technologies
@@ -483,6 +484,15 @@ local function onShortcut(event)
 	end
 end
 
+---@param event on_player_created
+local function onPlayerCreated(event)
+	local player = game.players[event.player_index]
+	local force = player.force
+	if force.technologies['the-hub'].researched then
+		gui.tracker.create_gui(player)
+	end
+end
+
 return bev.applyBuildEvents{
 	on_init = function()
 		global.hub = global.hub or script_data
@@ -492,9 +502,9 @@ return bev.applyBuildEvents{
 	end,
 	on_configuration_changed = function()
 		for _,p in pairs(game.players) do
-			local gui = p.gui.left['hub-milestone']
-			if gui and not gui.content then
-				gui.destroy()
+			local left = p.gui.left['hub-milestone']
+			if left and not left.content then
+				left.destroy()
 			end
 		end
 	end,
@@ -510,6 +520,7 @@ return bev.applyBuildEvents{
 		filter = {name=terminal}
 	},
 	events = {
+		[defines.events.on_player_created] = onPlayerCreated,
 		[defines.events.on_research_finished] = onResearch,
 		[defines.events.on_gui_opened] = onGuiOpened,
 		[defines.events.on_lua_shortcut] = onShortcut

@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.1.3
+Date: 2021.08.15
+  Bugfixes:
+    - Players who joined a game after the HUB was built for the first time would not get access to the HUB.
+---------------------------------------------------------------------------------------------------
 Version: 1.1.2
 Date: 2021.08.15
   Bugfixes:
