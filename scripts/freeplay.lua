@@ -155,6 +155,20 @@ return {
 	on_load = function()
 		script_data = global.onboarding or script_data
 	end,
+	add_commands = function()
+		if not commands.commands['get-hub-parts'] then
+			commands.add_command("get-hub-parts", {"command.get-hub-parts"}, function(event)
+				local player = game.players[event.player_index]
+				if player.get_item_count("hub-parts") > 0 then
+					player.print{"message.get-hub-parts-already-got"}
+				elseif (global.hub[player.force.index] and global.hub[player.force.index].valid) then
+					player.print{"message.get-hub-parts-already-built"}
+				else
+					player.insert{name="hub-parts",count=1}
+				end
+			end)
+		end
+	end,
 	on_nth_tick = {
 		[60] = update
 	},

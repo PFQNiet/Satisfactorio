@@ -3,6 +3,8 @@ Version: 1.1.2
 Date: 2021.08.15
   Bugfixes:
     - Fix crash when changing Smart Splitter filters in multiplayer
+  Changes:
+    - Added /get-hub-parts command to Freeplay. Allows you to continue even if you lose or misplace the HUB Parts and no longer have a HUB.
 ---------------------------------------------------------------------------------------------------
 Version: 1.1.1
 Date: 2021.08.14
