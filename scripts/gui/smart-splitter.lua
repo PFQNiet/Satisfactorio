@@ -224,7 +224,7 @@ local function onGuiSelected(event)
 	if not (event.element and event.element.valid) then return end
 	local player = game.players[event.player_index]
 	local data = getGui(player)
-	if not data then return end
+	if not (data and data.struct) then return end
 	local components = data.components
 
 	if event.element.name == "smart-splitter-filter-menu" then
@@ -261,7 +261,7 @@ local function onGuiElemChanged(event)
 	if not (event.element and event.element.valid) then return end
 	local player = game.players[event.player_index]
 	local data = getGui(player)
-	if not data then return end
+	if not (data and data.struct) then return end
 	local components = data.components
 
 	if event.element.name == "smart-splitter-filter-item" then
