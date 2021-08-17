@@ -2,6 +2,7 @@
 Version: 1.1.5
 Date: 2021.08.17
   Bugfixes:
+    - Fix crash when editor is used to delete tiles under Foundation (#84)
     - Deconstructing a blocked foundation would yield infinite concrete (#85)
 ---------------------------------------------------------------------------------------------------
 Version: 1.1.4

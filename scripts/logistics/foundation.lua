@@ -85,10 +85,14 @@ local function onRemoved(entity, buffer, player)
 		for dx=-1.5,1.5,1 do
 			for dy=-1.5,1.5,1 do
 				local original_tile = entity.surface.get_hidden_tile({entity.position.x+dx,entity.position.y+dy})
-				table.insert(tiles,{name=original_tile,position={entity.position.x+dx,entity.position.y+dy}})
+				if original_tile then
+					table.insert(tiles,{name=original_tile,position={entity.position.x+dx,entity.position.y+dy}})
+				end
 			end
 		end
-		entity.surface.set_tiles(tiles, true, false, false, true)
+		if #tiles > 0 then
+			entity.surface.set_tiles(tiles, true, false, false, true)
+		end
 		local others = entity.surface.find_entities_filtered{area=entity.selection_box, name=foundation, invert=true}
 		for _,other in pairs(others) do
 			-- this should only happen if an entity has moved here, eg. character or enemy
