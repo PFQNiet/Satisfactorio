@@ -47,7 +47,7 @@ local deconstruct = {
 		"not-blueprintable"
 	},
 	minable = {
-		mining_time = 0.2,
+		mining_time = 0.5,
 		result = name
 	},
 	mined_sound = {

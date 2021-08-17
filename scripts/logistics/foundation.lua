@@ -1,3 +1,4 @@
+local bm = require(modpath.."scripts.lualib.building-management")
 local bev = require(modpath.."scripts.lualib.build-events")
 local math2d = require("math2d")
 
@@ -40,8 +41,9 @@ local function onBuilt(entity)
 end
 
 ---@param entity LuaEntity
+---@param buffer LuaInventory
 ---@param player LuaPlayer
-local function onRemoved(entity, _, player)
+local function onRemoved(entity, buffer, player)
 	if entity.name == deconstruct then
 		local floor = entity.surface.find_entity(foundation, entity.position)
 		if floor then
@@ -59,6 +61,15 @@ local function onRemoved(entity, _, player)
 					name = deconstruct,
 					position = floor.position
 				}
+				-- to avoid reliance on event order, try removing the Foundation from the buffer and then remove its ingredients if it failed
+				for _,p in pairs(entity.prototype.mineable_properties.products) do
+					if buffer.remove{name=p.name, count=p.amount} == 0 then
+						local recipe = bm.getBuildingRecipe(p.name)
+						for _,i in pairs(recipe.ingredients) do
+							buffer.remove{name=i.name, count=i.amount}
+						end
+					end
+				end
 				if player then
 					player.create_local_flying_text{
 						text = {"message.foundation-blocked"},
