@@ -173,7 +173,12 @@ local function updateMam(player)
 				force.recipes[recipe.name].enabled = false
 				force.recipes[recipe.name.."-done"].enabled = true
 			end
-			player.print{"message.mam-already-done",research.name,research.localised_name}
+			if player then
+				player.create_local_flying_text{
+					text = {"message.mam-already-done",research.localised_name},
+					create_at_cursor = true
+				}
+			end
 		else
 			local inventory = entity.get_inventory(defines.inventory.assembling_machine_input)
 			local submitted = inventory.get_contents()

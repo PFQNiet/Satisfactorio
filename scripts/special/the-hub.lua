@@ -313,7 +313,13 @@ local function updateMilestoneGUI(force)
 			else
 				milestone = game.item_prototypes[recipe.products[1].name]
 				if force.technologies[milestone.name].researched then
-					local player = hub.terminal.last_user
+					local player = nil
+					for _,p in pairs(hub.terminal.force.players) do
+						if p.opened == hub.terminal then
+							player = p
+							break
+						end
+					end
 					-- milestone already completed, so reject it
 					getitems.assembler(hub.terminal, player and player.get_main_inventory())
 					hub.terminal.set_recipe(nil)
@@ -321,7 +327,12 @@ local function updateMilestoneGUI(force)
 						force.recipes[recipe.name].enabled = false
 						force.recipes[recipe.name.."-done"].enabled = true
 					end
-					player.print{"message.milestone-already-researched",milestone.name,milestone.localised_name}
+					if player then
+						player.create_local_flying_text{
+							text = {"message.milestone-already-researched",milestone.localised_name},
+							create_at_cursor = true
+						}
+					end
 					milestone = {name="none"}
 				else
 					local inventory = hub.terminal.get_inventory(defines.inventory.assembling_machine_input)

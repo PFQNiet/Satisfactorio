@@ -127,11 +127,17 @@ local function updateElevator(player)
 		if force.technologies[phase.name].researched then
 			-- phase already completed, so reject it
 			getitems.assembler(entity, player.get_main_inventory())
+			entity.set_recipe(nil)
 			if phase.name == recipe.name then
 				force.recipes[recipe.name].enabled = false
 				force.recipes[recipe.name.."-done"].enabled = true
 			end
-			player.print{"message.space-elevator-already-done",phase.name,phase.localised_name}
+			if player then
+				player.create_local_flying_text{
+					text = {"message.space-elevator-already-done",phase.localised_name},
+					create_at_cursor = true
+				}
+			end
 		else
 			local inventory = entity.get_inventory(defines.inventory.assembling_machine_input)
 			local submitted = inventory.get_contents()
