@@ -21,6 +21,7 @@ local bait = "paleberry"
 ---@class DoggoData
 ---@field entity LuaEntity Unit
 ---@field owner LuaPlayer|nil No owner = wild
+---@field force LuaForce|nil
 ---@field itemtimer uint Tick at which the next item will be generated
 ---@field helditem DoggoLoot|nil Found loot
 
@@ -153,8 +154,12 @@ local function eatFood(struct, berry)
 		}
 	else
 		-- eat the berry and become tamed by whoever placed it
-		struct.owner = berry.player
-		setupNextDoggoLoot(struct)
+		-- if the player is gone, just forget it
+		if berry.player and berry.player.valid then
+			struct.owner = berry.player
+			struct.force = berry.player.force
+			setupNextDoggoLoot(struct)
+		end
 		if target.stack.count == 1 then
 			target.destroy()
 		else
@@ -203,6 +208,7 @@ end
 ---@param struct DoggoData
 ---@return number
 local function howFarIsMyOwner(struct)
+	if not (struct.owner and struct.owner.valid and struct.owner.connected) then return math.huge end
 	local mypos = struct.entity.position
 	local ownerpos = struct.owner.position
 	return (ownerpos.x-mypos.x)^2 + (ownerpos.y-mypos.y)^2
@@ -269,8 +275,17 @@ local function onInteract(event)
 	if player.selected and player.selected.valid and player.selected.name == doggo then
 		if player.can_reach_entity(player.selected) then
 			local struct = script_data.lizard_doggos[player.selected.unit_number]
-			if struct and struct.owner and struct.owner.force == player.force then
-				gui.open_gui(player, struct)
+			if struct and struct.owner then
+				if not struct.force then
+					if not struct.owner.valid then
+						-- player was deleted, so fallback to being adopted by this player instead
+						struct.owner = player
+					end
+					struct.force = struct.owner.force
+				end
+				if struct.force == player.force then
+					gui.open_gui(player, struct)
+				end
 			end
 		else
 			player.create_local_flying_text{
