@@ -3,6 +3,8 @@ Version: 1.1.6
 Date: 2021.08.18
   Bugfixes:
     - Fix another infinite concrete glitch (#89)
+  Locale:
+    - Latest Russian text fixes
 ---------------------------------------------------------------------------------------------------
 Version: 1.1.5
 Date: 2021.08.17
