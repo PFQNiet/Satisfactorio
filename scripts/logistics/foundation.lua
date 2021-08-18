@@ -115,10 +115,14 @@ local function onSelectedArea(event)
 		local player = game.players[event.player_index]
 		for _,f in pairs(event.entities) do
 			if f.force == player.force then
-				player.surface.create_entity{
-					name = deconstruct,
-					position = f.position
-				}
+				if f.type == "entity-ghost" then
+					f.destroy()
+				else
+					player.surface.create_entity{
+						name = deconstruct,
+						position = f.position
+					}
+				end
 			end
 		end
 	end
@@ -130,7 +134,7 @@ local function onDeselectedArea(event)
 		local player = game.players[event.player_index]
 		for _,f in pairs(event.entities) do
 			local floor = f.surface.find_entity(foundation, f.position)
-			if floor.force == player.force then f.destroy() end
+			if (not floor) or (floor.force == player.force) then f.destroy() end
 		end
 	end
 end
