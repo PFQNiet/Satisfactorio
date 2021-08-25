@@ -16,6 +16,7 @@
 				"Factorissimo2": true,
 				"helmod": true,
 				"textplates": true,
+				"even-distribution": true,
 				"BottleneckLite": true,
 				"flib": true,
 				"GCKI": true

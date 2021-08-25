@@ -13,6 +13,7 @@
 		"?RateCalculator >= 2.2.0",
 		"?Factorissimo2 >= 2.5.2",
 		"?textplates >= 0.6.3",
+		"?even-distribution >= 1.0.10",
 		"?GCKI >= 1.1.1"
 	]
 }

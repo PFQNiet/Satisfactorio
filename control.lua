@@ -77,3 +77,4 @@ handler.add_lib({
 
 -- Control-time Mod Compatibility
 handler.add_lib(require(modpath.."compatibility.factorissimo2-control"))
+handler.add_lib(require(modpath.."compatibility.even-distribution-control"))
