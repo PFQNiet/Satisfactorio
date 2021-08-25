@@ -9,6 +9,7 @@ Date: 2021.08.25
     - Harvesting a plant while standing too close could lead to getting stuck. (#91)
   Modding:
     - Improved compatibility with Even Distribution (it was buggy with Splitters/Mergers) and added it to optional dependencies.
+    - Ensured compatibility with Factory Planner
 ---------------------------------------------------------------------------------------------------
 Version: 1.1.7
 Date: 2021.08.20

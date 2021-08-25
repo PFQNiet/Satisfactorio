@@ -11,6 +11,7 @@
 		"base >= 1.1.37",
 		"?BottleneckLite >= 1.2.0",
 		"?RateCalculator >= 2.2.0",
+		"?factoryplanner >= 1.1.25",
 		"?Factorissimo2 >= 2.5.2",
 		"?textplates >= 0.6.3",
 		"?even-distribution >= 1.0.10",
