@@ -155,7 +155,7 @@ local function eatFood(struct, berry)
 	else
 		-- eat the berry and become tamed by whoever placed it
 		-- if the player is gone, just forget it
-		if berry.player and berry.player.valid then
+		if not struct.owner and berry.player and berry.player.valid then
 			struct.owner = berry.player
 			struct.force = berry.player.force
 			setupNextDoggoLoot(struct)
@@ -165,6 +165,7 @@ local function eatFood(struct, berry)
 		else
 			target.stack.count = target.stack.count - 1
 		end
+		unit.health = unit.prototype.max_health
 		unit.set_command{
 			type = defines.command.stop,
 			ticks_to_wait = 60,
@@ -243,29 +244,33 @@ local function onCommandCompleted(event)
 			if not struct.owner then
 				local berry = lookForFood(struct.entity)
 				if berry then
-					eatFood(struct, berry)
+					return eatFood(struct, berry)
 				else
 					local character = findNearbyCharacter(struct.entity)
 					if character then
-						runAwayFrom(struct.entity, character)
-					else
-						wanderFreely(struct.entity)
+						return runAwayFrom(struct.entity, character)
 					end
-				end
-			else
-				local dist = howFarIsMyOwner(struct)
-				if dist < 5*5 then
-					stayPut(struct.entity, 60)
-				elseif dist < 20*20 then
-					followOwner(struct.entity, struct.owner)
-				else
-					wanderFreely(struct.entity)
+					return wanderFreely(struct.entity)
 				end
 			end
-		else
-			-- died perhaps, clean up the struct
-			script_data.lizard_doggos[event.unit_number] = nil
+
+			if struct.entity.health < struct.entity.prototype.max_health then
+				local berry = lookForFood(struct.entity)
+				if berry then
+					return eatFood(struct, berry)
+				end
+			end
+
+			local dist = howFarIsMyOwner(struct)
+			if dist < 5*5 then
+				return stayPut(struct.entity, 60)
+			elseif dist < 20*20 then
+				return followOwner(struct.entity, struct.owner)
+			end
+			return wanderFreely(struct.entity)
 		end
+		-- died perhaps, clean up the struct
+		script_data.lizard_doggos[event.unit_number] = nil
 	end
 end
 --#endregion
