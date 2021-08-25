@@ -77,7 +77,8 @@ local function onHarvest(event)
 				local remains = entity.surface.create_entity{
 					name = entity.name.."-harvested",
 					position = entity.position,
-					force = game.forces.neutral
+					force = game.forces.neutral,
+					move_stuck_players = true
 				}
 				table.insert(script_data, {
 					entity = remains,
@@ -109,7 +110,8 @@ local function checkForRegrowth(event)
 				plant.entity.surface.create_entity{
 					name = string.remove_suffix(plant.entity.name, "-harvested"),
 					position = plant.entity.position,
-					force = "neutral"
+					force = "neutral",
+					move_stuck_players = true
 				}
 				plant.entity.destroy()
 			end

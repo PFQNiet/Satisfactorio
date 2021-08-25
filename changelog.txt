@@ -6,6 +6,7 @@ Date: 2021.08.25
   Bugfixes:
     - Added sanity check for recipe ingredient counts
     - Used the above sanity check to find that Fabric was listed as craftable in the Constructor, instead of the Assembler.
+    - Harvesting a plant while standing too close could lead to getting stuck. (#91)
 ---------------------------------------------------------------------------------------------------
 Version: 1.1.7
 Date: 2021.08.20
