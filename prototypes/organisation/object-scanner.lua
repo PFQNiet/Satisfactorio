@@ -1,30 +1,13 @@
 local name = "object-scanner"
-local sounds = copySoundsFrom(data.raw.blueprint.blueprint)
 local scanneritem = {
-	type = "selection-tool",
+	type = "item",
 	name = name,
+	localised_description = {"item-description.object-scanner",{"gui.instruction-to-open-item","__ALT_CONTROL__1__open-item__"}},
 	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
 	stack_size = 1,
 	subgroup = "logistics-observation",
-	order = "f["..name.."]",
-	open_sound = sounds.open_sound,
-	close_sound = sounds.close_sound,
-	selection_mode = {"nothing"},
-	selection_color = {a=0},
-	selection_cursor_box_type = "entity",
-	alt_selection_mode = {"nothing"},
-	alt_selection_color = {a=0},
-	alt_selection_cursor_box_type = "entity",
-	mouse_cursor = name,
-	flags = {"mod-openable"}
-}
-local defaultcursor = {
-	type = "mouse-cursor",
-	name = name,
-	filename = graphics.."empty.png",
-	hot_pixel_x = 0,
-	hot_pixel_y = 0
+	order = "f["..name.."]"
 }
 
 local ingredients = {
@@ -42,4 +25,14 @@ local scannerrecipe = {
 	enabled = false
 }
 
-data:extend({scanneritem,defaultcursor,scannerrecipe})
+local openscanner = {
+	type = "custom-input",
+	name = "open-object-scanner",
+	key_sequence = "",
+	linked_game_control = "open-item",
+	consuming = "none",
+	include_selected_prototype = true,
+	action = "lua"
+}
+
+data:extend{scanneritem, scannerrecipe, openscanner}
