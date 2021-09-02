@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.1.10
+Date: 2021.09.02
+  Bugfixes:
+    - Reverted Object Scanner "fix" as it is now fixed in Factorio 1.1.39 - required base version raised accordingly.
+---------------------------------------------------------------------------------------------------
 Version: 1.1.9
 Date: 2021.08.30
   Bugfixes:

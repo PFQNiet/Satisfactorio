@@ -147,14 +147,11 @@ return {
 		[60] = on60thTick
 	},
 	events = {
-		["open-object-scanner"] = function(event)
+		[defines.events.on_mod_item_opened] = function(event)
 			local player = game.players[event.player_index]
-			local proto = event.selected_prototype
-			if not proto then return end
-			if proto.base_type ~= "item" then return end
-			if proto.name ~= scanner then return end
-			if player.opened ~= nil and not player.opened_self then return end
-			gui.object.open_gui(player)
+			if event.item.name == scanner then
+				gui.object.open_gui(player)
+			end
 		end
 	}
 }
