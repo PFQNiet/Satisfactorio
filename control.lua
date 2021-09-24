@@ -29,7 +29,7 @@ handler.add_libraries(require(modpath.."scripts.lualib.lib"))
 
 -- filter out ghost-build/destroy events
 local function setBuildEventFilter()
-	local noghosts = {{filter="ghost",invert=true}}
+	local noghosts = {{filter="ghost",invert=true},{mode="and",filter="type",type="item-entity",invert=true}}
 	local events = {
 		defines.events.on_built_entity,
 		defines.events.on_robot_built_entity,

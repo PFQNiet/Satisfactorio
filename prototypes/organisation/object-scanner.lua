@@ -10,7 +10,7 @@ local scanneritem = {
 	order = "f["..name.."]",
 	open_sound = sounds.open_sound,
 	close_sound = sounds.close_sound,
-	selection_mods = {"nothing"},
+	selection_mode = {"nothing"},
 	selection_color = {a=0},
 	selection_cursor_box_type = "entity",
 	alt_selection_mode = {"nothing"},

@@ -3,6 +3,11 @@ Version: 1.1.10
 Date: 2021.09.02
   Bugfixes:
     - Reverted Object Scanner "fix" as it is now fixed in Factorio 1.1.39 - required base version raised accordingly.
+    - Fix crash when an entity is dismantled by something other than a player
+  Modding:
+    - Improved support for other mods to add new technologies to the tech tree
+  Optimizations:
+    - Item-on-ground no longer triggers Satisfactorio events, reducing lag when a large number are triggered (eg. chainsawing dense forest)
 ---------------------------------------------------------------------------------------------------
 Version: 1.1.9
 Date: 2021.08.30

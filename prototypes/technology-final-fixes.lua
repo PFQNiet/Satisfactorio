@@ -84,6 +84,8 @@ for _,item in pairs(data.raw.tool) do
 				table.insert(description_groups.upgrade, {"item-description.tech-result-line",{"item-description.tech-result-inventory-expansion", effect.modifier}})
 			elseif effect.type == "nothing" then
 				table.insert(description_groups.upgrade, {"item-description.tech-result-line",effect.effect_description})
+			elseif effect.type == "ghost-time-to-live" then
+				-- do nothing
 			else
 				error("Unknown effect type "..effect.type.." for tech "..item.name)
 			end

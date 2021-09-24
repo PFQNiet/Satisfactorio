@@ -33,8 +33,10 @@ local function addTech(name, icon, category, subgroup, order, time, prerequisite
 		table.insert(lab.inputs, name)
 	end
 	local iconsize = 256
+	local iconmip = 1
 	if type(icon) == "table" then
 		iconsize = icon.size
+		iconmip = icon.mipmaps or 1
 		icon = icon.filename
 	end
 	if icon:sub(1,1) ~= "_" then
@@ -51,6 +53,7 @@ local function addTech(name, icon, category, subgroup, order, time, prerequisite
 			icons = {{
 				icon = icon,
 				icon_size = iconsize,
+				icon_mipmaps = iconmip,
 				scale = 64/iconsize
 			}},
 			stack_size = 1,

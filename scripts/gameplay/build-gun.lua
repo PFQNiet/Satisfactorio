@@ -160,7 +160,7 @@ local function onRemoved(event)
 			end
 		end
 	end
-	onCursorChange(event)
+	if player then onCursorChange(event) end
 end
 
 return {
