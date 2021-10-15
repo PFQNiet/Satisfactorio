@@ -4,6 +4,7 @@ Date: 2021.09.02
   Bugfixes:
     - Reverted Object Scanner "fix" as it is now fixed in Factorio 1.1.39 - required base version raised accordingly.
     - Fix crash when an entity is dismantled by something other than a player
+    - Fix crash with the object scanner looking for invalid entities
   Modding:
     - Improved support for other mods to add new technologies to the tech tree
   Optimizations:

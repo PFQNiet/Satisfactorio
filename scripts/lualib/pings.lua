@@ -33,6 +33,9 @@ end
 ---@param target LuaEntity|PingTarget
 ---@return uint
 local function addPing(player, target)
+	if not target then return end
+	if target.object_name == "LuaEntity" and not target.valid then return end
+
 	local index = script_data.auto_increment + 1
 	script_data.auto_increment = index
 
@@ -68,6 +71,8 @@ end
 local function updatePingTarget(id, target)
 	local struct = script_data.pings[id]
 	if not struct then return end
+	if not target then return end
+	if target.object_name == "LuaEntity" and not target.valid then return end
 	local sprite = getSpriteForTarget(target)
 	struct.target = target
 	if struct.sprite ~= sprite then
