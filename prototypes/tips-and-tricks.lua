@@ -6,7 +6,7 @@ local vanilla_tiptrick_categories = {
 local vanilla_tiptrick_items = {
 	"active-provider-chest", "belt-lanes", "buffer-chest", "bulk-crafting", "burner-inserter-refueling", "circuit-network", "clear-cursor",
 	"connect-switch", "construction-robots", "copy-entity-settings", "copy-paste", "copy-paste-filters", "copy-paste-requester-chest",
-	"copy-paste-spidertron", "copy-paste-trains", "drag-building", "drag-building-poles", "drag-building-underground-belts", "e-confirm",
+	"copy-paste-spidertron", "copy-paste-trains", "drag-building", "drag-building-poles", "pole-dragging-coverage", "drag-building-underground-belts", "e-confirm",
 	"electric-network", "electric-pole-connections", "entity-transfers", "fast-belt-bending", "fast-obstacle-traversing", "fast-replace",
 	"fast-replace-belt-splitter", "fast-replace-belt-underground", "fast-replace-direction", "gate-over-rail", "ghost-building",
 	"ghost-rail-planner", "inserters", "insertion-limits", "introduction", "limit-chests", "logistic-network", "long-handed-inserters",
