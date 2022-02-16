@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.1.11
+Date: 2022.02.16
+  Bugfixes:
+    - Restored compatibility with newer Factorio versions
+  Info:
+    - I will be gradually working on bringing Update 5 content to this mod, including changes to vehicle loading/unloading. Thank you for your support and patience!
+---------------------------------------------------------------------------------------------------
 Version: 1.1.10
 Date: 2021.09.02
   Bugfixes:

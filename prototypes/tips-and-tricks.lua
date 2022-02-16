@@ -4,19 +4,30 @@ local vanilla_tiptrick_categories = {
 	"game-interaction", "ghost-building", "inserters", "logistic-network", "trains"
 }
 local vanilla_tiptrick_items = {
-	"active-provider-chest", "belt-lanes", "buffer-chest", "bulk-crafting", "burner-inserter-refueling", "circuit-network", "clear-cursor",
-	"connect-switch", "construction-robots", "copy-entity-settings", "copy-paste", "copy-paste-filters", "copy-paste-requester-chest",
-	"copy-paste-spidertron", "copy-paste-trains", "drag-building", "drag-building-poles", "pole-dragging-coverage", "drag-building-underground-belts", "e-confirm",
-	"electric-network", "electric-pole-connections", "entity-transfers", "fast-belt-bending", "fast-obstacle-traversing", "fast-replace",
-	"fast-replace-belt-splitter", "fast-replace-belt-underground", "fast-replace-direction", "gate-over-rail", "ghost-building",
-	"ghost-rail-planner", "inserters", "insertion-limits", "introduction", "limit-chests", "logistic-network", "long-handed-inserters",
-	"low-power", "move-between-labs", "passive-provider-chest", "personal-logistics", "pipette", "pump-connection", "rail-building",
-	"rail-signals-advanced", "rail-signals-basic", "requester-chest", "rotating-assemblers", "shoot-targeting", "show-info",
-	"splitter-filters", "splitters", "stack-transfers", "steam-power", "storage-chest", "train-stop-same-name", "train-stops",
-	"trains", "transport-belts", "underground-belts", "z-dropping"
+	-- "active-provider-chest", "belt-lanes", "buffer-chest", "bulk-crafting", "burner-inserter-refueling", "circuit-network", "clear-cursor",
+	-- "connect-switch", "construction-robots", "copy-entity-settings", "copy-paste", "copy-paste-filters", "copy-paste-requester-chest",
+	-- "copy-paste-spidertron", "copy-paste-trains", "drag-building", "drag-building-poles", "drag-building-underground-belts", "e-confirm",
+	-- "electric-network", "electric-pole-connections", "entity-transfers", "fast-belt-bending", "fast-obstacle-traversing", "fast-replace",
+	-- "fast-replace-belt-splitter", "fast-replace-belt-underground", "fast-replace-direction", "gate-over-rail", "ghost-building",
+	-- "ghost-rail-planner", "inserters", "insertion-limits", "introduction", "limit-chests", "logistic-network", "long-handed-inserters",
+	-- "low-power", "move-between-labs", "passive-provider-chest", "personal-logistics", "pipette", "pump-connection", "rail-building",
+	-- "rail-signals-advanced", "rail-signals-basic", "requester-chest", "rotating-assemblers", "shoot-targeting", "show-info",
+	-- "splitter-filters", "splitters", "stack-transfers", "steam-power", "storage-chest", "train-stop-same-name", "train-stops",
+	-- "trains", "transport-belts", "underground-belts", "z-dropping"
+	"introduction"
 }
 for _,name in pairs(vanilla_tiptrick_categories) do data.raw['tips-and-tricks-item-category'][name] = nil end
 for _,name in pairs(vanilla_tiptrick_items) do data.raw['tips-and-tricks-item'][name] = nil end
+for name,tip in pairs(data.raw['tips-and-tricks-item']) do
+	if tip.dependencies then
+		for _,dep in pairs(tip.dependencies) do
+			if not data.raw['tips-and-tricks-item'][dep] then
+				data.raw['tips-and-tricks-item'][name] = nil
+				break
+			end
+		end
+	end
+end
 
 -- tips + tricks take place in the area {{-16,-9},{16,9}}
 
