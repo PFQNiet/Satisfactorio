@@ -1,4 +1,4 @@
-if not script.active_mods['Factorissimo2'] then return {} end
+if not script.active_mods['factorissimo-2-notnotmelon'] then return {} end
 
 local function applyUpgrades(force)
 	-- set Factorissimo "upgrade" techs to researched

@@ -13,7 +13,7 @@
 			"adjustMods": {
 				"debugadapter": true,
 				"Satisfactorio": true,
-				"Factorissimo2": true,
+				"factorissimo-2-notnotmelon": true,
 				"factoryplanner": true,
 				"textplates": true,
 				"even-distribution": true,
@@ -21,7 +21,7 @@
 				"flib": true,
 				"GCKI": true
 			},
-			"modsPath": "E:\\Documents\\factorio-mods"
+			"modsPath": "C:\\Users\\temp\\Desktop\\migrate\\Documents\\factorio-mods"
 		},
 		{
 			"type": "factoriomod",
@@ -33,7 +33,7 @@
 				"debugadapter": true,
 				"Satisfactorio": true
 			},
-			"modsPath": "E:\\Documents\\factorio-mods"
+			"modsPath": "C:\\Users\\temp\\Desktop\\migrate\\Documents\\factorio-mods"
 		},
 		{
 			"type": "factoriomod",
@@ -45,7 +45,7 @@
 				"debugadapter": true,
 				"Satisfactorio": true
 			},
-			"modsPath": "E:\\Documents\\factorio-mods",
+			"modsPath": "C:\\Users\\temp\\Desktop\\migrate\\Documents\\factorio-mods",
 			"hookMode": "profile"
 		}
 	]

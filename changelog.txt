@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.0.0
+Date: ????
+  Changes:
+    - NO ATTEMPT HAS BEEN MADE TO PRESERVE COMPATIBILITY WITH 1.x due to sheer number of changes.
+  Modding:
+    - Fixed compatibility with updates to Text Plates
+    - Switched to notnotmelon's Factorissimo fork
+---------------------------------------------------------------------------------------------------
 Version: 1.1.11
 Date: 2022.02.16
   Bugfixes:

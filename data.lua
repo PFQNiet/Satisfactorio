@@ -103,7 +103,6 @@ require("prototypes.menu-sims")
 
 require("compatibility.factorissimo2")
 require("compatibility.gcki")
-require("compatibility.textplates")
 
 for _,fluid in pairs(data.raw.fluid) do
 	fluid.auto_barrel = false

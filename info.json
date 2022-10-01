@@ -1,6 +1,6 @@
 {
 	"name": "Satisfactorio",
-	"version": "1.1.11",
+	"version": "2.0.0",
 	"title": "Satisfactorio",
 	"description": "Love Factorio? Love Satisfactory? Want to play both at once? Well all right then! This overhaul mod reworks Factorio to play more like Satisfactory, with Milestones, self-driving cars, direct connection of belts to machines, and much more!\n\n[font=default-bold]Please support the original developers by purchasing a legal copy of Satisfactory before downloading this mod.[/font]",
 	"author": "Niet",
@@ -8,12 +8,12 @@
 	"homepage": "https://github.com/PFQNiet/Satisfactorio",
 	"factorio_version": "1.1",
 	"dependencies": [
-		"base >= 1.1.39",
-		"?BottleneckLite >= 1.2.0",
-		"?RateCalculator >= 2.2.0",
-		"?factoryplanner >= 1.1.25",
-		"?Factorissimo2 >= 2.5.2",
-		"?textplates >= 0.6.3",
+		"base >= 1.1.69",
+		"?BottleneckLite >= 1.2.4",
+		"?RateCalculator >= 2.4.4",
+		"?factoryplanner >= 1.1.59",
+		"?factorissimo-2-notnotmelon >= 1.1.20",
+		"?textplates >= 0.6.9",
 		"?even-distribution >= 1.0.10",
 		"?GCKI >= 1.1.1"
 	]

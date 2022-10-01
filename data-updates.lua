@@ -61,6 +61,7 @@ for _,type in pairs(vehicle_types) do
 end
 
 require("prototypes.alt-recipes")
+require("compatibility.textplates")
 
 -- auto-generate technology item descriptors
 for _,tech in pairs(data.raw.technology) do

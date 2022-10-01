@@ -9,6 +9,7 @@ if mods[mod] then
 		["concrete"] = "concrete",
 		["glass"] = "quartz-crystal",
 		["gold"] = "caterium-ingot",
+		["plastic"] = "plastic",
 		["uranium"] = "uranium-ore",
 	}
 
@@ -53,6 +54,9 @@ if mods[mod] then
 	fx = data.raw.technology['hub-tier3-basic-steel-production'].effects
 	table.insert(fx, {type="unlock-recipe",recipe="textplate-small-steel"})
 	table.insert(fx, {type="unlock-recipe",recipe="textplate-large-steel"})
+	fx = data.raw.technology['hub-tier5-oil-processing'].effects
+	table.insert(fx, {type="unlock-recipe",recipe="textplate-small-plastic"})
+	table.insert(fx, {type="unlock-recipe",recipe="textplate-large-plastic"})
 	fx = data.raw.technology['mam-quartz-quartz-crystals'].effects
 	table.insert(fx, {type="unlock-recipe",recipe="textplate-small-glass"})
 	table.insert(fx, {type="unlock-recipe",recipe="textplate-large-glass"})
