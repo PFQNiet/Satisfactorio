@@ -1,3 +1,5 @@
+local placeholder = require("graphics.placeholders.builder")
+
 local name = "power-storage"
 local accumulator = table.deepcopy(data.raw.accumulator.accumulator)
 accumulator.name = name
@@ -16,11 +18,7 @@ accumulator.energy_source = {
 }
 accumulator.selection_box = {{-1.5,-1.5},{1.5,1.5}}
 accumulator.collision_box = {{-1.2,-1.2},{1.2,1.2}}
-accumulator.picture = {
-	filename = graphics.."placeholders/"..name..".png",
-	direction_count = 1,
-	size = {96,96}
-}
+accumulator.picture = placeholder().addBox(-1,-1,3,3,{},{}).addIcon(graphics.."icons/"..name..".png",64).result()
 
 local accumulatoritem = {
 	type = "item",

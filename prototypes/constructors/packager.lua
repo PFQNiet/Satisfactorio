@@ -1,6 +1,9 @@
+local placeholder = require("graphics.placeholders.builder")
+
 makeAssemblingMachine{
 	name = "packager",
 	size = {5,5},
+	animation = placeholder().fourway().addBox(-2,-2,5,5,{{-1,2},{1,2}},{{-1,-2},{1,-2}}).addIcon(graphics.."icons/packager.png",64).result(),
 	category = "packaging",
 	pipe_connections = {
 		input = {{-1,999}},

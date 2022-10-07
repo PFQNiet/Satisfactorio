@@ -1,4 +1,10 @@
+local placeholder = require("graphics.placeholders.builder")
 local name = "valve"
+local sprites = placeholder().fourway().addBox(0,-0.5,1,2,{},{}).addIcon(graphics.."icons/valve.png",32)
+sprites.north().addMark('arrow','north',{0,-0.75})
+sprites.east().addMark('arrow','east',{0.75,0})
+sprites.south().addMark('arrow','south',{0,0.75})
+sprites.west().addMark('arrow','west',{-0.75,0})
 local valve = {
 	type = "constant-combinator",
 	name = name,
@@ -10,7 +16,7 @@ local valve = {
 	activity_led_sprites = empty_graphic,
 	circuit_wire_connection_points = data.raw['constant-combinator']['constant-combinator'].circuit_wire_connection_points,
 	item_slot_count = 2,
-	sprites = makeRotatedSprite(name, 32, 64),
+	sprites = sprites.result(),
 	max_health = 1,
 	collision_box = {{-0.4,-0.9},{0.4,0.9}},
 	flags = {

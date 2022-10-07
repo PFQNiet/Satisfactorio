@@ -1,13 +1,20 @@
+local placeholder = require("graphics.placeholders.builder")
+
 local name = "geothermal-generator"
+local animation = placeholder().addBox(-4,-4,9,9,{},{}).addIcon(graphics.."icons/"..name..".png",128).result()
+local mask = table.deepcopy(animation)
+for _,layer in pairs(mask.layers) do layer.tint = {0.5,0.5,0.5,0.5} end
+table.insert(mask.layers, {
+	filename = graphics.."placeholders/geyser.png",
+	width = 160,
+	height = 160
+})
 local miner = {
 	type = "mining-drill",
 	name = name,
 	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
-	animations = {
-		filename = graphics.."placeholders/"..name.."-mask.png",
-		size = {288,288}
-	},
+	animations = mask,
 	selection_box = {{-4.5,-4.5},{4.5,4.5}},
 	collision_box = {{-4.2,-4.2},{4.2,4.2}},
 	collision_mask = {"item-layer","object-layer","player-layer"},
@@ -40,10 +47,7 @@ local interface = {
 		usage_priority = "primary-output"
 	},
 	energy_production = "200000001W", -- produce 1 extra watt for the buffer
-	animation = {
-		filename = graphics.."placeholders/"..name..".png",
-		size = {288,288}
-	},
+	animation = animation,
 	flags = {
 		"not-rotatable"
 	},

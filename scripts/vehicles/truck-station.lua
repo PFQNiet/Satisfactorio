@@ -60,8 +60,10 @@ local function onBuilt(entity)
 	link.register(entity, fuel)
 	link.register(entity, store)
 	io.addConnection(entity, {-4,3.5}, "input", fuel)
+	io.addConnection(entity, {-1,3.5}, "input", store)
 	io.addConnection(entity, {0,3.5}, "input", store)
 	io.addConnection(entity, {2,3.5}, "output", store, defines.direction.south)
+	io.addConnection(entity, {3,3.5}, "output", store, defines.direction.south)
 	script_data.stations[entity.unit_number%30][entity.unit_number] = {
 		base = entity,
 		fuel = fuel,

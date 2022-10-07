@@ -1,3 +1,5 @@
+local placeholder = require("graphics.placeholders.builder")
+
 local bufferbox = {
 	type = "container",
 	name = "miner-box",
@@ -20,6 +22,8 @@ data:extend{bufferbox}
 local function makeMiner(params)
 	---@type string
 	local name = params.name
+	---@type table
+	local animations = params.animations
 	---@type int
 	local power = params.power
 	---@type int 1, 2, 4
@@ -35,7 +39,7 @@ local function makeMiner(params)
 		name = name,
 		icon = graphics.."icons/"..name..".png",
 		icon_size = 64,
-		animations = makeRotatedSprite(name, 160, 288, {0,-2}),
+		animations = animations,
 		selection_box = {{-2.5,-6.5},{2.5,2.5}},
 		collision_box = {{-2.2,-6.2},{2.2,2.2}},
 		energy_source = {
@@ -86,6 +90,7 @@ end
 
 makeMiner{
 	name = "miner-mk-1",
+	animations = placeholder().fourway().addBox(-2,-6,5,9,{},{{0,-6}}).addIcon(graphics.."icons/miner-mk-1.png",64).result(),
 	power = 5,
 	speed = 1,
 	order = "a",
@@ -98,6 +103,7 @@ makeMiner{
 
 makeMiner{
 	name = "miner-mk-2",
+	animations = placeholder().fourway().addBox(-2,-6,5,9,{},{{0,-6}}).addIcon(graphics.."icons/miner-mk-2.png",64).result(),
 	power = 12,
 	speed = 2,
 	order = "b",
@@ -111,6 +117,7 @@ makeMiner{
 
 makeMiner{
 	name = "miner-mk-3",
+	animations = placeholder().fourway().addBox(-2,-6,5,9,{},{{0,-6}}).addIcon(graphics.."icons/miner-mk-3.png",64).result(),
 	power = 30,
 	speed = 4,
 	order = "c",

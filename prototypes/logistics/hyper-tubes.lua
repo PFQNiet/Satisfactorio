@@ -1,3 +1,4 @@
+local placeholder = require("graphics.placeholders.builder")
 -- fake fluid to filter the hyper-tube "fluid box"
 local name = "hyper-tube"
 data:extend{
@@ -102,7 +103,7 @@ entity.energy_source.drain = "10MW"
 entity.energy_source.buffer_capacity = "10MW"
 entity.energy_usage = "10MW"
 entity.glass_pictures = nil
-entity.animations = makeRotatedSprite(name, 32, 32)
+entity.animations = placeholder().fourway().addBox(0,0,1,1,{},{}).addIcon(graphics.."icons/"..name..".png",32).result()
 entity.fluid_animations = nil
 entity.pumping_speed = 0
 entity.fluid_wagon_connector_frame_count = 0

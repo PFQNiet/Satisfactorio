@@ -1,3 +1,5 @@
+local placeholder = require("graphics.placeholders.builder")
+
 assert(train_platform_layer ~= nil, "Train station must be defined before freight platform, as it uses its collision mask")
 
 local sounds = copySoundsFrom(data.raw["storage-tank"]["storage-tank"])
@@ -13,7 +15,7 @@ local base = {
 		drain = "0W"
 	},
 	energy_usage = "50MW",
-	pictures = makeRotatedSprite(name, 448, 224),
+	pictures = placeholder().fourway().addBox(-6.5,-3,6,7,{},{}).addBox(1.5,-3,6,7,{{6.5,-1},{6.5,1}},{{6.5,-2},{6.5,2}}).addIcon(graphics.."icons/"..name..".png",64,{4,0}).result(),
 	max_health = 1,
 	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,

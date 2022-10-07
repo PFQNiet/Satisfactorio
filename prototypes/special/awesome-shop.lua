@@ -1,7 +1,10 @@
+local placeholder = require("graphics.placeholders.builder")
+
 -- the shop is an assembler that "dispenses" items for coupons ("coin")
 local shop = makeAssemblingMachine{
 	name = "awesome-shop",
 	size = {3,2},
+	animation = placeholder().fourway().addBox(-1,-0.5,3,2,{},{}).addIcon(graphics.."icons/awesome-shop.png",64).result(),
 	category = "awesome-shop",
 	sounds = copySoundsFrom(data.raw.roboport.roboport),
 	subgroup = "special",

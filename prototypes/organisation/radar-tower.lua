@@ -14,11 +14,8 @@ radar.energy_source.buffer_capacity = "30MW"
 radar.energy_usage = "30MW"
 radar.selection_box = {{-2.5,-2.5},{2.5,2.5}}
 radar.collision_box = {{-2.2,-2.2},{2.2,2.2}}
-radar.pictures = {
-	filename = graphics.."placeholders/"..name..".png",
-	direction_count = 1,
-	size = {160,160}
-}
+-- radar.pictures = placeholder().addBox(-2,-2,5,5,{},{}).addIcon(graphics.."icons/"..name..".png",64).result()
+-- for _,layer in pairs(radar.pictures.layers) do layer.direction_count = 1 end
 
 local radaritem = {
 	type = "item",

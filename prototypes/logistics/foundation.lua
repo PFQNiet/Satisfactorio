@@ -1,4 +1,10 @@
+local placeholder = require("graphics.placeholders.builder")
 foundation_layer = require("collision-mask-util").get_first_unused_layer()
+
+local graphic = placeholder().addBox(-1.5,-1.5,4,4,{},{}).addIcon(graphics.."icons/foundation.png",64).result()
+for i,tile in pairs(graphic.layers) do
+	tile.tint = {0.5,0.5,0.5,0.5}
+end
 
 local name = "foundation"
 local foundation = {
@@ -6,10 +12,7 @@ local foundation = {
 	name = name,
 	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
-	picture = {
-		filename = graphics.."placeholders/"..name..".png",
-		size = {128,128},
-	},
+	picture = graphic,
 	collision_box = {{-1.8,-1.8},{1.8,1.8}},
 	flags = {
 		"placeable-player",

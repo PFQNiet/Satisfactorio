@@ -1,3 +1,5 @@
+local placeholder = require("graphics.placeholders.builder")
+
 local bufferbox = {
 	type = "container",
 	name = "merger-splitter-box",
@@ -23,6 +25,8 @@ data:extend{bufferbox}
 local function makeSplitter(params)
 	---@type string
 	local name = params.name
+	---@type table
+	local sprites = params.sprites
 	---@type int
 	local slots = params.signal_slots or 0
 	---@type string
@@ -39,7 +43,7 @@ local function makeSplitter(params)
 		activity_led_sprites = empty_graphic,
 		circuit_wire_connection_points = data.raw['constant-combinator']['constant-combinator'].circuit_wire_connection_points,
 		item_slot_count = slots,
-		sprites = makeRotatedSprite(name, 96, 96),
+		sprites = sprites,
 		max_health = 1,
 		icon = graphics.."icons/"..name..".png",
 		icon_size = 64,
@@ -79,6 +83,7 @@ end
 
 makeSplitter{
 	name = "conveyor-merger",
+	sprites = placeholder().fourway().addBox(-1,-1,3,3,{{-1,0},{0,1},{1,0}},{{0,-1}}).addIcon(graphics.."icons/conveyor-merger.png",64).result(),
 	order = "a",
 	ingredients = {
 		{"iron-plate",2},
@@ -87,6 +92,7 @@ makeSplitter{
 }
 makeSplitter{
 	name = "conveyor-splitter",
+	sprites = placeholder().fourway().addBox(-1,-1,3,3,{{0,1}},{{-1,0},{0,-1},{1,0}}).addIcon(graphics.."icons/conveyor-splitter.png",64).result(),
 	order = "b",
 	ingredients = {
 		{"iron-plate",2},
@@ -95,6 +101,7 @@ makeSplitter{
 }
 makeSplitter{
 	name = "smart-splitter",
+	sprites = placeholder().fourway().addBox(-1,-1,3,3,{{0,1}},{{-1,0},{0,-1},{1,0}}).addIcon(graphics.."icons/smart-splitter.png",64).result(),
 	signal_slots = 3,
 	order = "c",
 	ingredients = {
@@ -105,6 +112,7 @@ makeSplitter{
 }
 makeSplitter{
 	name = "programmable-splitter",
+	sprites = placeholder().fourway().addBox(-1,-1,3,3,{{0,1}},{{-1,0},{0,-1},{1,0}}).addIcon(graphics.."icons/programmable-splitter.png",64).result(),
 	signal_slots = 64,
 	order = "d",
 	ingredients = {

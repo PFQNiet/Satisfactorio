@@ -3,6 +3,10 @@ Version: 2.0.0
 Date: ????
   Changes:
     - NO ATTEMPT HAS BEEN MADE TO PRESERVE COMPATIBILITY WITH 1.x due to sheer number of changes.
+    - The Truck Station now has two input and output ports.
+  Graphics:
+    - Changed all placeholder building graphics to a "dark-theme" style.
+    - Revamped placeholder building graphics with more distinct input/output markers
   Modding:
     - Fixed compatibility with updates to Text Plates
     - Switched to notnotmelon's Factorissimo fork

@@ -1,6 +1,9 @@
+local placeholder = require("graphics.placeholders.builder")
+
 local mam = makeAssemblingMachine{
 	name = "mam",
 	size = {4,2},
+	animation = placeholder().fourway().addBox(-1.5,-0.5,4,2,{},{}).addIcon(graphics.."icons/mam.png",64).result(),
 	category = "mam",
 	subgroup = "special",
 	order = "b",

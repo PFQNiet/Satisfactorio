@@ -1,6 +1,9 @@
+local placeholder = require("graphics.placeholders.builder")
+
 local accelerator = makeAssemblingMachine{
 	name = "particle-accelerator",
 	size = {19,12},
+	animation = placeholder().fourway().addBox(-9,-5.5,19,12,{{-8,5.5},{-6,5.5},{-4,5.5}},{{-8,-5.5}}).addIcon(graphics.."icons/particle-accelerator.png",64).result(),
 	category = "accelerating",
 	pipe_connections = {
 		input = {{-4,999}}

@@ -1,8 +1,10 @@
+local placeholder = require("graphics.placeholders.builder")
+
 local name = "the-hub"
 local hub = {
 	type = "simple-entity-with-owner",
 	name = name,
-	picture = makeRotatedSprite(name, 416, 224, {1,0}),
+	picture = placeholder().fourway().addBox(-5,-3,13,7,{},{}).addIcon(graphics.."icons/"..name..".png",64,{1,0}).result(),
 	collision_box = {{-5.3,-3.3},{7.3,3.3}},
 	collision_mask = {"object-layer","floor-layer","water-tile"},
 	selection_box = {{-5.5,-3.5},{7.5,3.5}},

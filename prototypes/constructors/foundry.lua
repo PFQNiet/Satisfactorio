@@ -1,6 +1,9 @@
+local placeholder = require("graphics.placeholders.builder")
+
 makeAssemblingMachine{
 	name = "foundry",
 	size = {5,4},
+	animation = placeholder().fourway().addBox(-2,-1.5,5,4,{{-1,1.5},{1,1.5}},{{1,-1.5}}).addIcon(graphics.."icons/foundry.png",64).result(),
 	category = "foundry",
 	energy = 16,
 	allow_power_shards = true,

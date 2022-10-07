@@ -1,3 +1,5 @@
+local placeholder = require("graphics.placeholders.builder")
+
 local name = "fuel-generator"
 
 -- There IS an entity type for burning fuel, however it produces variable power for a fixed fluid consumption
@@ -6,6 +8,7 @@ local boiler = makeAssemblingMachine{
 	name = name,
 	type = "furnace", -- allow auto-selection of steaming recipe based on provided fuel
 	size = {10,10},
+	animation = placeholder().fourway().addBox(-4.5,-4.5,10,10,{{0.5,-4.5}},{}).addIcon(graphics.."icons/"..name..".png",96).result(),
 	energy = 150,
 	category = "fuel-generator",
 	sounds = copySoundsFrom(data.raw["assembling-machine"]["oil-refinery"]),
@@ -23,7 +26,6 @@ local boiler = makeAssemblingMachine{
 	}
 }
 boiler.machine.energy_source = {type="void"} -- the furnace ingredient becomes the fuel
-boiler.machine.animation = {filename = graphics.."placeholders/"..name..".png", size = {10*32,10*32}}
 boiler.machine.source_inventory_size = 0
 boiler.machine.result_inventory_size = 0
 boiler.machine.fluid_boxes[1].base_area = 0.05

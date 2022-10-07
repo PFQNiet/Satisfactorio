@@ -1,3 +1,5 @@
+local placeholder = require("graphics.placeholders.builder")
+
 -- base entity is an electric-energy-interface to manage power consumption
 -- station itself is a pair of storage chests: one with a single slot and single input for fuel, and one with 48 slots, one input and one output
 -- building itself is 8x11 so the layout can be |F---I-O--|
@@ -21,7 +23,7 @@ local base = {
 		drain = "0W"
 	},
 	energy_usage = "20MW",
-	pictures = makeRotatedSprite(name, 352, 256),
+	pictures = placeholder().fourway().addBox(-5,-3.5,11,8,{{-4,3.5},{-1,3.5},{0,3.5}},{{2,3.5},{3,3.5}}).addIcon(graphics.."icons/"..name..".png",96).addFuelMark{-4,3}.result(),
 	radius_visualisation_specification = {
 		sprite = {
 			filename = graphics.."particles/"..name.."-zone.png",

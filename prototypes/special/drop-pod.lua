@@ -1,9 +1,8 @@
+local placeholder = require("graphics.placeholders.builder")
+
 local name = "drop-pod"
 local pod = {
-	picture = {
-		filename = graphics.."placeholders/"..name..".png",
-		size = {96,96},
-	},
+	picture = placeholder().addBox(-1,-1,3,3,{},{}).addIcon(graphics.."icons/"..name..".png",64).result(),
 	collision_box = {{-1.2,-1.2},{1.2,1.2}},
 	flags = {
 		"placeable-player"

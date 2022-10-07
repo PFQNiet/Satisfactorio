@@ -1,8 +1,11 @@
+local placeholder = require("graphics.placeholders.builder")
+
 -- the Sink is a furnace that converts items into a fake "fluid" for points, which is periodically emptied out to award tickets
 -- its GUI will be supplemented by a count of points and a button to claim Coupons
 local base = makeAssemblingMachine{
 	name = "awesome-sink",
 	type = "furnace",
+	animation = placeholder().fourway().addBox(-3.5,-3,8,7,{{-0.5,3}},{}).addIcon(graphics.."icons/awesome-sink.png",64).result(),
 	size = {8,7},
 	energy = 30,
 	category = "awesome-sink",

@@ -2,6 +2,7 @@
 ---@field name string
 ---@field type string
 ---@field size int[]
+---@field animation table
 ---@field category string
 ---@field energy int
 ---@field allow_power_shards boolean
@@ -23,6 +24,7 @@ function makeAssemblingMachine(params)
 	local type = params.type or "assembling-machine"
 	local width = params.size[1]
 	local height = params.size[2]
+	local animation = params.animation
 	local category = params.category
 	local energy = params.energy
 	local shards = params.allow_power_shards
@@ -44,7 +46,7 @@ function makeAssemblingMachine(params)
 		},
 		selection_box = {{-width/2, -height/2}, {width/2, height/2}},
 		collision_box = {{-width/2+0.3, -height/2+0.3}, {width/2-0.3, height/2-0.3}},
-		animation = makeRotatedSprite(name, width*32, height*32),
+		animation = animation or makeRotatedSprite(name, width*32, height*32),
 		energy_source = {type="void"},
 		energy_usage = "1W",
 		crafting_speed = 1,

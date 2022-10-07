@@ -1,3 +1,5 @@
+local placeholder = require("graphics.placeholders.builder")
+
 local name = "biomass-burner"
 local sounds = copySoundsFrom(data.raw.furnace["stone-furnace"])
 local burner = {
@@ -7,10 +9,7 @@ local burner = {
 	icon_size = 64,
 	selection_box = {{-2,-2},{2,2}},
 	collision_box = {{-1.7,-1.7},{1.7,1.7}},
-	animation = {
-		filename = graphics.."placeholders/"..name..".png",
-		size = {128,128},
-	},
+	animation = placeholder().addBox(-1.5,-1.5,4,4,{},{}).addIcon(graphics.."icons/"..name..".png",64).result(),
 	burner = {
 		type = "burner",
 		fuel_category = "chemical",

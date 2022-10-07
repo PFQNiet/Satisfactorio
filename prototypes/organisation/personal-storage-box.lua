@@ -1,3 +1,5 @@
+local placeholder = require("graphics.placeholders.builder")
+
 local name = "personal-storage-box"
 local sounds = copySoundsFrom(data.raw.container["wooden-chest"])
 local box = {
@@ -11,10 +13,7 @@ local box = {
 	open_sound = sounds.open_sound,
 	close_sound = sounds.close_sound,
 	max_health = 1,
-	picture = {
-		filename = graphics.."placeholders/"..name..".png",
-		size = {32,32}
-	},
+	picture = placeholder().addBox(0,0,1,1,{},{}).addIcon(graphics.."icons/"..name..".png",32).result(),
 	inventory_size = 25,
 	enable_inventory_bar = false,
 	minable = {

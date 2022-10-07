@@ -1,3 +1,5 @@
+local placeholder = require("graphics.placeholders.builder")
+
 assert(train_platform_layer ~= nil, "Train station must be defined before freight platform, as it uses its collision mask")
 
 local name = "empty-platform"
@@ -14,7 +16,7 @@ local base = {
 		render_no_power_icon = false,
 		render_no_network_icon = false
 	},
-	pictures = makeRotatedSprite(name, 448, 224),
+	pictures = placeholder().fourway().addBox(-6.5,-3,6,7,{},{}).addBox(1.5,-3,6,7,{},{}).addIcon(graphics.."icons/"..name..".png",64,{4,0}).result(),
 	max_health = 1,
 	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,

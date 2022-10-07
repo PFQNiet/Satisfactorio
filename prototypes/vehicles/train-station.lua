@@ -1,3 +1,5 @@
+local placeholder = require("graphics.placeholders.builder")
+
 -- base entity is an electric-energy-interface to manage power consumption
 -- station is 7x14 and auto-builds (and removes) a vanilla train-stop entity
 -- freight platform layout is |OI-IO|
@@ -30,7 +32,7 @@ local base = {
 		output_flow_limit = "0W"
 	},
 	energy_usage = "50MW", -- initial value, which gets increased when pulling trains
-	pictures = makeRotatedSprite(name, 448, 224),
+	pictures = placeholder().fourway().addBox(-6.5,-3,6,7,{},{}).addBox(1.5,-3,6,7,{},{}).addIcon(graphics.."icons/"..name..".png",64,{4,0}).result(),
 	max_health = 1,
 	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,

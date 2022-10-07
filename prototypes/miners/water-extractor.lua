@@ -1,3 +1,4 @@
+local placeholder = require("graphics.placeholders.builder")
 assert(foundation_layer ~= nil, "Foundation must be defined before water extractor, as it uses its collision mask")
 
 local name = "water-extractor"
@@ -8,7 +9,7 @@ local extractor = {
 	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
 	subgroup = "placeholder-buildings",
-	animations = makeRotatedSprite(name, 320, 320),
+	animations = placeholder().fourway().addBox(-4.5,-4.5,10,10,{},{{0.5,-4.5}}).addIcon(graphics.."icons/"..name..".png",128).result(),
 	selection_box = {{-5,-5},{5,5}},
 	collision_box = {{-4.7,-4.7},{4.7,4.7}},
 	collision_mask = {"ground-tile","object-layer",foundation_layer},
@@ -44,7 +45,7 @@ local extractor = {
 				{5.5,0.5},
 				{-0.5,5.5},
 				{-5.5,-0.5}
-			}}
+			},type="output"}
 		},
 		pipe_covers = pipecoverspictures()
 	},
@@ -52,7 +53,7 @@ local extractor = {
 }
 -- "placeholder" that can be placed on any water tiles, will spawn a water "resource node" beneath itself
 -- EEI type is used so that tooltip provides power info
-local placeholder = {
+local fake = {
 	type = "electric-energy-interface",
 	name = name.."-placeholder",
 	localised_name = {"entity-name."..name},
@@ -99,4 +100,4 @@ local extractorrecipe = makeBuildingRecipe{
 	result = name
 }
 
-data:extend{extractor,placeholder,extractoritem,extractorrecipe}
+data:extend{extractor,fake,extractoritem,extractorrecipe}

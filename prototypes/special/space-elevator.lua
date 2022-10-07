@@ -1,7 +1,10 @@
+local placeholder = require("graphics.placeholders.builder")
+
 local name = "space-elevator"
 local elevator = makeAssemblingMachine{
 	name = name,
 	size = {27,27},
+	animation = placeholder().fourway().addBox(-13,-13,27,27,{{-10,13},{-8,13},{-6,13},{-10,-13},{-8,-13},{-6,-13}},{}).addIcon(graphics.."icons/space-elevator.png",256).result(),
 	category = "space-elevator",
 	subgroup = "special",
 	order = "e",

@@ -1,3 +1,5 @@
+local placeholder = require("graphics.placeholders.builder")
+
 local name = "industrial-fluid-buffer"
 local tank = {
 	type = "storage-tank",
@@ -31,24 +33,7 @@ local tank = {
 		fluid_background = empty_graphic,
 		flow_sprite = empty_graphic,
 		gas_flow = empty_graphic,
-		picture = {
-			north = {
-				filename = graphics.."placeholders/"..name.."-ns.png",
-				size = {224,224}
-			},
-			east = {
-				filename = graphics.."placeholders/"..name.."-ew.png",
-				size = {224,224}
-			},
-			south = {
-				filename = graphics.."placeholders/"..name.."-ns.png",
-				size = {224,224}
-			},
-			west = {
-				filename = graphics.."placeholders/"..name.."-ew.png",
-				size = {224,224}
-			}
-		}
+		picture = placeholder().fourway().addBox(-3,-3,7,7,{{0,-3},{0,3}},{}).addIcon(graphics.."icons/"..name..".png",64).result()
 	},
 	selection_box = {{-3.5,-3.5},{3.5,3.5}},
 	two_direction_only = true,

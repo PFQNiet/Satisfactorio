@@ -1,3 +1,5 @@
+local placeholder = require("graphics.placeholders.builder")
+
 local name = "resource-well-extractor"
 local sounds = copySoundsFrom(data.raw["mining-drill"].pumpjack)
 local miner = {
@@ -5,10 +7,7 @@ local miner = {
 	name = name,
 	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
-	animations = {
-		filename = graphics.."placeholders/"..name..".png",
-		size = {96,96}
-	},
+	animations = placeholder().fourway().addBox(-1,-1,3,3,{},{{0,-1}}).addIcon(graphics.."icons/"..name..".png",64).result(),
 	selection_box = {{-1.5,-1.5},{1.5,1.5}},
 	collision_box = {{-1.2,-1.2},{1.2,1.2}},
 	energy_source = {type = "void"},
@@ -38,7 +37,7 @@ local miner = {
 				{2,0},
 				{0,2},
 				{-2,0}
-			}}
+			},type="output"}
 		},
 		pipe_covers = pipecoverspictures()
 	}

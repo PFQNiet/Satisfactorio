@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-4 -4 160 360">
+	<style>
+		:root {
+			--fill: #333;
+			--stroke: #e69100;
+		}
+	</style>
+	<defs>
+		<circle id="circle" cx="16" cy="16" r="15" stroke-width="2" stroke="var(--stroke)" fill="var(--fill)" />
+		<rect id="fill" x="-4" y="-4" width="40" height="40" fill="var(--fill)" />
+		<path id="half" d="M36,1 H16 A15,15 0,0,0 16,31 H36" stroke-width="2" stroke="var(--stroke)" fill="var(--fill)" />
+		<g id="quarter">
+			<path d="M1,36 V32 A31,31 0,0,1 32,1 H36 V36" fill="var(--fill)" />
+			<path d="M1,36 V32 A31,31 0,0,1 32,1 H36" stroke-width="2" stroke="var(--stroke)" fill="none" />
+		</g>
+		<g id="edge">
+			<rect x="-4" y="1" width="40" height="35" fill="var(--fill)" />
+			<line x1="-4" x2="36" y1="1" y2="1" stroke-width="2" stroke="var(--stroke)" />
+		</g>
+		<g id="input">
+			<use xlink:href="#edge" />
+			<path d="M0,0 V8 L16,16 L32,8 V0Z" fill="var(--stroke)" />
+		</g>
+		<g id="output">
+			<use xlink:href="#edge" />
+			<path d="M0,0 V16 L16,8 L32,16 V0Z" fill="var(--stroke)" />
+		</g>
+		<g id="merger">
+			<line x1="16" x2="16" y1="4" y2="28" stroke-width="2" stroke="var(--stroke)" />
+			<line y1="16" y2="16" x1="4" x2="28" stroke-width="2" stroke="var(--stroke)" />
+			<polygon points="16,2 20,10 12,10" fill="var(--stroke)" />
+		</g>
+		<g id="splitter">
+			<use xlink:href="#merger" />
+			<polygon points="2,16 10,20 10,12" fill="var(--stroke)" />
+			<polygon points="30,16 22,20 22,12" fill="var(--stroke)" />
+		</g>
+		<polygon id="plain-arrow" points="16,8 24,24 8,24" fill="var(--stroke)" />
+		<g id="fuel-icon">
+			<line x1="4" x2="23" y1="28" y2="28" stroke-width="2" stroke="var(--stroke)" />
+			<rect x="7" y="3" width="13" height="15" rx="3" stroke-width="2" stroke="var(--stroke)" fill="none" />
+			<rect x="7" y="12" width="13" height="15" stroke-width="2" stroke="var(--stroke)" fill="var(--stroke)" />
+			<path d="M18,24 H23 a4,4 0,0,0 4,-4 v-8 l-4,-4 l2,2 v4 l2,2" stroke-width="2" stroke="var(--stroke)" fill="none" />
+		</g>
+	</defs>
+
+	<g id="preview">
+		<use xlink:href="#circle" transform="translate(0,0)" />
+		<use xlink:href="#fill" transform="translate(40,0)" />
+		<use xlink:href="#fuel-icon" transform="translate(80,0)" />
+		<use xlink:href="#half" transform="translate(0,40)" />
+		<use xlink:href="#half" transform="translate(40,40) rotate(180 16 16)" />
+		<use xlink:href="#half" transform="translate(80,40) rotate(90 16 16)" />
+		<use xlink:href="#half" transform="translate(120,40) rotate(270 16 16)" />
+		<use xlink:href="#quarter" transform="translate(0,80)" />
+		<use xlink:href="#quarter" transform="translate(40,80) rotate(90 16 16)" />
+		<use xlink:href="#quarter" transform="translate(80,80) rotate(270 16 16)" />
+		<use xlink:href="#quarter" transform="translate(120,80) rotate(180 16 16)" />
+		<use xlink:href="#edge" transform="translate(0,120)" />
+		<use xlink:href="#edge" transform="translate(40,120) rotate(90 16 16)" />
+		<use xlink:href="#edge" transform="translate(80,120) rotate(180 16 16)" />
+		<use xlink:href="#edge" transform="translate(120,120) rotate(270 16 16)" />
+		<use xlink:href="#input" transform="translate(0,160)" />
+		<use xlink:href="#input" transform="translate(40,160) rotate(90 16 16)" />
+		<use xlink:href="#input" transform="translate(80,160) rotate(180 16 16)" />
+		<use xlink:href="#input" transform="translate(120,160) rotate(270 16 16)" />
+		<use xlink:href="#output" transform="translate(0,200)" />
+		<use xlink:href="#output" transform="translate(40,200) rotate(90 16 16)" />
+		<use xlink:href="#output" transform="translate(80,200) rotate(180 16 16)" />
+		<use xlink:href="#output" transform="translate(120,200) rotate(270 16 16)" />
+		<use xlink:href="#merger" transform="translate(0,240)" />
+		<use xlink:href="#merger" transform="translate(40,240) rotate(90 16 16)" />
+		<use xlink:href="#merger" transform="translate(80,240) rotate(180 16 16)" />
+		<use xlink:href="#merger" transform="translate(120,240) rotate(270 16 16)" />
+		<use xlink:href="#splitter" transform="translate(0,280)" />
+		<use xlink:href="#splitter" transform="translate(40,280) rotate(90 16 16)" />
+		<use xlink:href="#splitter" transform="translate(80,280) rotate(180 16 16)" />
+		<use xlink:href="#splitter" transform="translate(120,280) rotate(270 16 16)" />
+		<use xlink:href="#plain-arrow" transform="translate(0,320)" />
+		<use xlink:href="#plain-arrow" transform="translate(40,320) rotate(90 16 16)" />
+		<use xlink:href="#plain-arrow" transform="translate(80,320) rotate(180 16 16)" />
+		<use xlink:href="#plain-arrow" transform="translate(120,320) rotate(270 16 16)" />
+	</g>
+</svg>

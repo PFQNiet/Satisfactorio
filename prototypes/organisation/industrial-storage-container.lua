@@ -1,3 +1,5 @@
+local placeholder = require("graphics.placeholders.builder")
+
 local name = "industrial-storage-container"
 local sounds = copySoundsFrom(data.raw.container["steel-chest"])
 local box = {
@@ -37,7 +39,7 @@ local fakebox = {
 	activity_led_sprites = empty_graphic,
 	circuit_wire_connection_points = data.raw['constant-combinator']['constant-combinator'].circuit_wire_connection_points,
 	item_slot_count = box.inventory_size,
-	sprites = makeRotatedSprite(name, 160, 160),
+	sprites = placeholder().fourway().addBox(-2,-2,5,5,{{-1,2},{1,2}},{{-1,-2},{1,-2}}).addIcon(graphics.."icons/"..name..".png",64).result(),
 	max_health = 1,
 	open_sound = box.open_sound,
 	close_sound = box.close_sound,

@@ -1,3 +1,5 @@
+local placeholder = require("graphics.placeholders.builder")
+
 local name = "map-marker"
 
 local beacon = {
@@ -7,10 +9,7 @@ local beacon = {
 	activity_led_sprites = empty_graphic,
 	circuit_wire_connection_points = data.raw['constant-combinator']['constant-combinator'].circuit_wire_connection_points,
 	item_slot_count = 0,
-	sprites = {
-		filename = graphics.."placeholders/"..name..".png",
-		size = {32,32}
-	},
+	sprites = placeholder().addBox(0,0,1,1,{},{}).addIcon(graphics.."icons/"..name..".png",32).result(),
 	max_health = 1,
 	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,

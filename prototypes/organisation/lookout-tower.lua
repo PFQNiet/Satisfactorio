@@ -1,4 +1,8 @@
+local placeholder = require("graphics.placeholders.builder")
+
 local name = "lookout-tower"
+local animation = placeholder().addBox(-1.5,-1.5,4,4,{},{}).addIcon(graphics.."icons/"..name..".png",64).result()
+for _,layer in pairs(animation.layers) do layer.direction_count = 1 end
 local tower = {
 	-- the "tower" is actually a car; entering the car sets the zoom level really far out
 	type = "car",
@@ -8,12 +12,7 @@ local tower = {
 	collision_box = {{-1.7,-1.7},{1.7,1.7}},
 	collision_mask = {"item-layer", "object-layer", "player-layer", "water-tile"},
 	selection_box = {{-2,-2},{2,2}},
-	animation = {
-		direction_count = 1,
-		filename = graphics.."placeholders/"..name..".png",
-		width = 128,
-		height = 128
-	},
+	animation = animation,
 	braking_power = "200kW",
 	burner = {
 		effectivity = 1,

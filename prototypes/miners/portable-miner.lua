@@ -1,3 +1,5 @@
+local placeholder = require("graphics.placeholders.builder")
+
 local name = "portable-miner"
 local sounds = copySoundsFrom(data.raw["mining-drill"]["burner-mining-drill"])
 local pm = {
@@ -5,10 +7,7 @@ local pm = {
 	name = name,
 	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
-	animations = {
-		filename = graphics.."placeholders/"..name..".png",
-		size = {32,32}
-	},
+	animations = placeholder().addBox(0,0,1,1,{},{}).addIcon(graphics.."icons/"..name..".png",32).result(),
 	selection_box = {{-0.5,-0.5},{0.5,0.5}},
 	selectable_in_game = false,
 	collision_box = {{-0.2,-0.2},{0.2,0.2}},

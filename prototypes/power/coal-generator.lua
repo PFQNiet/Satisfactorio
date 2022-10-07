@@ -1,7 +1,10 @@
+local placeholder = require("graphics.placeholders.builder")
+
 local name = "coal-generator"
 local boiler = makeAssemblingMachine{
 	name = name,
 	size = {5,12},
+	animation = placeholder().fourway().addBox(-2,-5.5,5,12,{{-1,5.5},{1,5.5}},{}).addIcon(graphics.."icons/"..name..".png",64,{0,3}).result(),
 	energy = 75,
 	category = "coal-generator",
 	sounds = copySoundsFrom(data.raw.generator["steam-engine"]),
