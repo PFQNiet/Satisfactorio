@@ -4,9 +4,9 @@
 local lab = {
 	name = "omnilab",
 	type = "lab",
-	collision_box = {{-1.3,-1.3},{1.3,1.3}},
+	collision_box = {{0,0},{0,0}},
 	collision_mask = {},
-	selection_box = {{-1.5,-1.5},{1.5,1.5}},
+	selection_box = {{0,0},{0,0}},
 	off_animation = empty_graphic,
 	on_animation = empty_graphic,
 	inputs = {},
