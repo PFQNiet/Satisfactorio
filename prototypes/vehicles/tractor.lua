@@ -29,8 +29,8 @@ local carrecipe = makeBuildingRecipe{
 	name = name,
 	ingredients = {
 		{"modular-frame",5},
-		{"map-marker",5},
-		{"rotor",10}
+		{"rotor",5},
+		{"reinforced-iron-plate",10}
 	},
 	result = name
 }

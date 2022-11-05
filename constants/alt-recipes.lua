@@ -809,12 +809,12 @@ local recipes = {
 	{
 		name = "polyester-fabric",
 		ingredients = {
-			{"polymer-resin",16},
-			{type="fluid",name="water",amount=10}
+			{"polymer-resin",1},
+			{type="fluid",name="water",amount=1}
 		},
 		result = "fabric",
 		result_count = 1,
-		energy_required = 12,
+		energy_required = 2,
 		category = "refining",
 		icons = {"polymer-resin"},
 		prerequisites = {"hub-tier5-oil-processing","mam-mycelia-fabric"}

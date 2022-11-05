@@ -4,7 +4,7 @@ local item = {
 	icon_size = 64,
 	name = name,
 	order = "j[sulfur]-a["..name.."]",
-	stack_size = 100,
+	stack_size = 200,
 	subgroup = "ingots",
 	type = "item"
 }
@@ -14,10 +14,11 @@ local recipe = {
 	type = "recipe",
 	ingredients = {
 		{"coal",1},
-		{"sulfur",2}
+		{"sulfur",1}
 	},
 	result = name,
-	energy_required = 8,
+	result_count = 2,
+	energy_required = 4,
 	category = "assembling",
 	enabled = false
 }

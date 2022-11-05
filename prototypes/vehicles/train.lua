@@ -49,8 +49,7 @@ local recipe = makeBuildingRecipe{
 		{"heavy-modular-frame",5},
 		{"motor",10},
 		{"steel-pipe",15},
-		{"computer",5},
-		{"map-marker",5}
+		{"computer",5}
 	},
 	result = "locomotive"
 }

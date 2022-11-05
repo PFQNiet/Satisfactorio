@@ -29,7 +29,7 @@ local defaultcursor = {
 
 local ingredients = {
 	{"reinforced-iron-plate",4},
-	{"map-marker",3},
+	{"wire",20},
 	{"screw",50}
 }
 local scannerrecipe = {

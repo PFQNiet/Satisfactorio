@@ -30,11 +30,11 @@ local caritem = {
 local carrecipe = makeBuildingRecipe{
 	name = name,
 	ingredients = {
-		{"motor",8},
-		{"computer",10},
-		{"heavy-modular-frame",4},
+		{"motor",15},
+		{"circuit-board",10},
+		{"heavy-modular-frame",5},
 		{"rubber",50},
-		{"map-marker",10}
+		{"encased-industrial-beam",20}
 	},
 	result = name
 }

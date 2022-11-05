@@ -31,7 +31,7 @@ local carrecipe = makeBuildingRecipe{
 	ingredients = {
 		{"crystal-oscillator",5},
 		{"motor",5},
-		{"map-marker",15},
+		{"steel-pipe",15},
 		{"heavy-modular-frame",5}
 	},
 	result = name
