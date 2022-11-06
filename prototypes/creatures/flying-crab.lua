@@ -97,12 +97,12 @@ attack.ammo_type = {
 		}
 	}
 }
-attack.cooldown = 1200
+attack.cooldown = 600
 attack.cooldown_deviation = 0
 attack.damage_modifier = 1
 attack.range = 20
 worm.healing_per_tick = 0
-worm.max_health = 0.99
+worm.max_health = 20
 worm.resistances = nil
 worm.call_for_help_radius = 0
 --[[

@@ -26,43 +26,43 @@ local function onScriptTriggerEffect(event)
 		}
 	end
 	if event.effect_id == spawn and event.source_entity and event.source_entity.valid and event.source_entity.name == spawner then
-		-- self-destruct
-		-- Manually place carapace here rather than using loot system, because loot system uses collision and these are mostly on water
-		event.source_entity.surface.create_entity{
-			name = "item-on-ground",
-			force = "neutral",
-			position = event.source_entity.position,
-			stack = {name="alien-carapace",count=1}
-		}
-		event.source_entity.die(event.source_entity.force, event.source_entity)
-	end
-end
-
--- When a spawner dies, spawn 3 crabs and have them spread out fast
----@param event on_entity_died
-local function onEntityDied(event)
-	if event.entity.name == spawner then
+		local entity = event.source_entity
+		local position = entity.position
+		-- spawn crabs
 		for _=1,3 do
 			local r = math.random()+1
 			local theta = math.random()*math.pi*2
-			local crab = event.entity.surface.create_entity{
+			local crab = entity.surface.create_entity{
 				name = name,
-				force = event.entity.force,
+				force = entity.force,
 				position = {
-					event.entity.position.x + math.cos(theta)*r,
-					event.entity.position.y - math.sin(theta)*r
+					position.x + math.cos(theta)*r,
+					position.y - math.sin(theta)*r
 				}
 			}
 			crab.set_command{
 				type = defines.command.go_to_location,
 				destination = {
-					event.entity.position.x + math.cos(theta)*r*5,
-					event.entity.position.y - math.sin(theta)*r*5
+					position.x + math.cos(theta)*r*5,
+					position.y - math.sin(theta)*r*5
 				},
 				distraction = defines.distraction.none,
 				radius = 1
 			}
 		end
+	end
+end
+
+-- Manually place carapace here rather than using loot system, because loot system uses collision and these are mostly on water
+---@param event on_entity_died
+local function onEntityDied(event)
+	if event.entity.name == spawner then
+		event.entity.surface.create_entity{
+			name = "item-on-ground",
+			force = "neutral",
+			position = event.entity.position,
+			stack = {name="hatcher-remains",count=1}
+		}
 	end
 end
 

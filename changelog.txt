@@ -8,6 +8,8 @@ Date: ????
     - Added Smokeless Powder for higher-tier weapons production.
     - Polyester Fabric and Turbofuel recipes are no longer unlocked via Hard Drive Research.
     - The Map has been moved from Quartz research to a Tier 1 Milestone.
+  Combat Balancing:
+    - Flying Crab hatchers now have health and must be destroyed by the player.
   Graphics:
     - Changed all placeholder building graphics to a "dark-theme" style.
     - Revamped placeholder building graphics with more distinct input/output markers
