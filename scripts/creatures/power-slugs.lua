@@ -2,8 +2,8 @@ local bev = require(modpath.."scripts.lualib.build-events")
 
 -- add a light to each power slug to draw attention
 local colours = {
-	["green-power-slug"] = {0.25,1,0.25},
-	["green-power-slug-decorative"] = {0.25,1,0.25},
+	["blue-power-slug"] = {0.25,0.25,1},
+	["blue-power-slug-decorative"] = {0.25,0.25,1},
 	["yellow-power-slug"] = {1,1,0.25},
 	["yellow-power-slug-decorative"] = {1,1,0.25},
 	["purple-power-slug"] = {0.5,0.25,1},

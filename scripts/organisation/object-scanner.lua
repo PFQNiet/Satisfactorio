@@ -49,8 +49,8 @@ local function updateScan(player)
 		candidates = player.surface.find_enemy_units(player.position, 250, player.force)
 	else
 		local names = {search_for}
-		if search_for == "green-power-slug" then
-			names = {"green-power-slug", "yellow-power-slug", "purple-power-slug"}
+		if search_for == "blue-power-slug" then
+			names = {"blue-power-slug", "yellow-power-slug", "purple-power-slug"}
 		elseif search_for == "crash-site" then
 			names = {"crash-site-spaceship"}
 		end

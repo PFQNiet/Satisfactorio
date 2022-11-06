@@ -198,7 +198,7 @@ local function spawnNode(resource, surface, cx, cy)
 				end
 			elseif resource.type == "x-powerslug" then
 				pval = purity -- always just a single slug, purity value affects rarity of slug
-				local tiers = {"green","green","green","green","green","green","yellow","yellow","yellow","purple"}
+				local tiers = {"blue","blue","blue","blue","blue","blue","yellow","yellow","yellow","purple"}
 				local slug = tiers[pval].."-power-slug"
 				resource.value = math.ceil(pval/2) -- remap 1-10 as 1-5
 				local tx = cx+x+0.5

@@ -89,7 +89,7 @@ local function createGui(player)
 		local proto = game[product.type.."_prototypes"][product.name]
 		local sprite = product.type.."/"..product.name
 		local name = proto.localised_name
-		if product.name == "green-power-slug" then name = {"gui.object-scanner-power-slugs"} end
+		if product.name == "blue-power-slug" then name = {"gui.object-scanner-power-slugs"} end
 
 		local flow = list.add{
 			type = "flow",

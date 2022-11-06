@@ -90,7 +90,7 @@ local loot = {
 		amount_min = 1,
 		amount_max = 1
 	},
-	["green-power-slug"] = {
+	["blue-power-slug"] = {
 		probability = 1.5,
 		amount_min = 1,
 		amount_max = 1

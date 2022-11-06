@@ -89,7 +89,7 @@ local function makePowerSlug(params)
 end
 
 makePowerSlug{
-	name = "green-power-slug",
+	name = "blue-power-slug",
 	order = "b",
 	shards = 1,
 	craft_time = 8,

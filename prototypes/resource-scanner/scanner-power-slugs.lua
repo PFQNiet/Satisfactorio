@@ -3,12 +3,12 @@ data:extend({{
 	name = "scanner-"..name,
 	localised_name = {"recipe-name.scanner-power-slugs"},
 	icons = {
-		{icon = graphics.."icons/green-power-slug.png", icon_size = 64},
+		{icon = graphics.."icons/blue-power-slug.png", icon_size = 64},
 		{icon = graphics.."icons/object-scanner.png", icon_size = 64, scale = 0.25, shift = {-8,8}}
 	},
 	type = "recipe",
 	ingredients = {},
-	result = "green-power-slug",
+	result = "blue-power-slug",
 	energy_required = 1,
 	category = "object-scanner",
 	order = "a",

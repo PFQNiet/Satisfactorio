@@ -910,19 +910,19 @@ addTech("mam-power-slugs-overclocking", "mam/overclocking", "mam", "mam-power-sl
 	{"iron-plate",50},
 	{"wire",50}
 }, {})
-addTech("mam-power-slugs-green-power-slugs", "mam/green-power-slug", "mam", "mam-power-slugs", "m-6-2", 3, {"mam-power-slugs-overclocking"}, {
-	{"green-power-slug",1}
+addTech("mam-power-slugs-blue-power-slugs", "mam/blue-power-slug", "mam", "mam-power-slugs", "m-6-2", 3, {"mam-power-slugs-overclocking"}, {
+	{"blue-power-slug",1}
 }, {
-	{type="unlock-recipe",recipe="power-shard-from-green-power-slug"}
+	{type="unlock-recipe",recipe="power-shard-from-blue-power-slug"}
 })
-addTech("mam-power-slugs-slug-scanning", "mam/green-power-slug", "mam", "mam-power-slugs", "m-6-3", 3, {"mam-power-slugs-green-power-slugs"}, {
+addTech("mam-power-slugs-slug-scanning", "mam/blue-power-slug", "mam", "mam-power-slugs", "m-6-3", 3, {"mam-power-slugs-blue-power-slugs"}, {
 	{"iron-rod",50},
 	{"wire",100},
 	{"copper-cable",50}
 }, {
 	{type="unlock-recipe",recipe="scanner-power-slugs"}
 })
-addTech("mam-power-slugs-yellow-power-slugs", "mam/yellow-power-slug", "mam", "mam-power-slugs", "m-6-4", 3, {"mam-power-slugs-green-power-slugs"}, {
+addTech("mam-power-slugs-yellow-power-slugs", "mam/yellow-power-slug", "mam", "mam-power-slugs", "m-6-4", 3, {"mam-power-slugs-blue-power-slugs"}, {
 	{"yellow-power-slug",1},
 	{"reinforced-iron-plate",25},
 	{"copper-cable",100}

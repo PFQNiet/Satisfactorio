@@ -9,6 +9,7 @@ Date: ????
     - Polyester Fabric and Turbofuel recipes are no longer unlocked via Hard Drive Research.
     - The Map has been moved from Quartz research to a Tier 1 Milestone.
     - Added Alien Protein and Organic Data Capsules.
+    - Blue Power Slug replaces Green Power Slug.
   Combat Balancing:
     - Flying Crab hatchers now have health and must be destroyed by the player.
     - Creatures now drop more specific remains, which can then be made into protein.
