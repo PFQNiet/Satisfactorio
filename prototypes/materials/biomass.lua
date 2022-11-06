@@ -78,7 +78,7 @@ recipe = {
 copyToHandcraft(recipe, 1)
 data:extend{recipe}
 
-ingredient = "alien-carapace"
+ingredient = "alien-protein"
 recipe = {
 	name = name.."-from-"..ingredient,
 	localised_name = {"recipe-name.x-from-y",{"item-name."..name}, {"item-name."..ingredient}},
@@ -98,26 +98,4 @@ recipe = {
 	enabled = false
 }
 copyToHandcraft(recipe, 2)
-data:extend{recipe}
-
-ingredient = "alien-organs"
-recipe = {
-	name = name.."-from-"..ingredient,
-	localised_name = {"recipe-name.x-from-y",{"item-name."..name}, {"item-name."..ingredient}},
-	type = "recipe",
-	order = "f["..name.."]-e["..ingredient.."]",
-	icons = {
-		{ icon = graphics.."icons/biomass.png", icon_size = 64 },
-		{ icon = graphics.."icons/"..ingredient..".png", icon_size = 64, scale = 0.25, shift = {-8, 8} }
-	},
-	ingredients = {
-		{ingredient,1}
-	},
-	result = name,
-	result_count = 200,
-	energy_required = 8,
-	category = "constructing",
-	enabled = false
-}
-copyToHandcraft(recipe, 4)
 data:extend{recipe}

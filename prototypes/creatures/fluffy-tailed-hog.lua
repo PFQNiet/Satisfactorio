@@ -16,7 +16,7 @@ biter.resistances = nil
 biter.vision_distance = 30
 biter.loot = {
 	{
-		item = "alien-carapace",
+		item = "hog-remains",
 		count_min = 1,
 		count_max = 1
 	}

@@ -21,8 +21,10 @@ require("prototypes.resources.wells")
 require("prototypes.resources.geyser")
 
 -- loot
-require("prototypes.resources.alien-carapace")
-require("prototypes.resources.alien-organs")
+require("prototypes.resources.hog-remains")
+require("prototypes.resources.plasma-spitter-remains")
+require("prototypes.resources.stinger-remains")
+require("prototypes.resources.hatcher-remains")
 require("prototypes.resources.beryl-nut")
 require("prototypes.resources.paleberry")
 require("prototypes.resources.bacon-agaric")

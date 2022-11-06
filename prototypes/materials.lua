@@ -1,3 +1,5 @@
+require("prototypes.materials.alien-protein")
+require("prototypes.materials.organic-data-capsule")
 require("prototypes.materials.biomass")
 require("prototypes.materials.solid-biofuel")
 require("prototypes.materials.liquid-biofuel")
