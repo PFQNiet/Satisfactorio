@@ -7,6 +7,7 @@ Date: ????
     - Vehicles and other recipes that needed Beacons have been adjusted to no longer use Beacons.
     - Added Smokeless Powder for higher-tier weapons production.
     - Polyester Fabric and Turbofuel recipes are no longer unlocked via Hard Drive Research.
+    - The Map has been moved from Quartz research to a Tier 1 Milestone.
   Graphics:
     - Changed all placeholder building graphics to a "dark-theme" style.
     - Revamped placeholder building graphics with more distinct input/output markers

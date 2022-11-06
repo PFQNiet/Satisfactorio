@@ -295,7 +295,14 @@ addTech("hub-tier1-field-research", "hub/equipment", "hub-progressing", "hub-tie
 	{type="unlock-recipe",recipe="personal-storage-box"},
 	{type="unlock-recipe",recipe="map-marker"},
 	{type="unlock-recipe",recipe="object-scanner"},
-	{type="character-inventory-slots-bonus",modifier=3,use_icon_overlay_constant=false}
+	{type="character-inventory-slots-bonus",modifier=3,use_icon_overlay_constant=false},
+	{
+		type = "nothing",
+		effect_description = {"technology-effect.map"},
+		icons = {
+			{icon = graphics.."technology/mam/map.png", icon_size = 256}
+		}
+	}
 })
 
 addTech("hub-tier2-part-assembly", "hub/factory", "hub-progressing", "hub-tier2", "a-2-1", 360, {"hub-tier0-hub-upgrade6"}, {
@@ -966,6 +973,7 @@ addTech("mam-quartz-explorer", "mam/explorer", "mam", "mam-quartz", "m-7-7", 300
 }, {
 	{type="unlock-recipe",recipe="explorer"}
 })
+--[[
 addTech("mam-quartz-frequency-mapping", "mam/map", "mam", "mam-quartz", "m-7-8", 300, {"mam-quartz-signal-technologies"}, {
 	{"crystal-oscillator",10},
 	{"map-marker",10}
@@ -978,6 +986,7 @@ addTech("mam-quartz-frequency-mapping", "mam/map", "mam", "mam-quartz", "m-7-8",
 		}
 	}
 })
+]]
 addTech("mam-quartz-radio-signal-scanning", "mam/crash-site", "mam", "mam-quartz", "m-7-9", 300, {"mam-quartz-frequency-mapping"}, {
 	{"crystal-oscillator",50},
 	{"motor",100},

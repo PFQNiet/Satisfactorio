@@ -1,5 +1,5 @@
--- Minimap and main map are disabled until unlocked by technology later in the game
-local maptech = "mam-quartz-frequency-mapping"
+-- Minimap and main map are disabled until unlocked by technology
+local maptech = "hub-tier1-field-research"
 return {
 	events = {
 		[defines.events.on_player_created] = function(event)
