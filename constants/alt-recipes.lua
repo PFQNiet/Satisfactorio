@@ -124,7 +124,7 @@ local recipes = {
 			{type="fluid",name="heavy-oil",amount=4},
 			{"sulfur",3},
 			{"petroleum-coke",3}
-		},
+	},
 		results = {{type="fluid",name="turbofuel",amount=6}},
 		main_product = "turbofuel",
 		subgroup = "fluid-recipe",
@@ -807,19 +807,6 @@ local recipes = {
 		prerequisites = {"hub-tier5-oil-processing","mam-caterium-high-speed-connector","mam-quartz-quartz"}
 	},
 	{
-		name = "polyester-fabric",
-		ingredients = {
-			{"polymer-resin",1},
-			{type="fluid",name="water",amount=1}
-		},
-		result = "fabric",
-		result_count = 1,
-		energy_required = 2,
-		category = "refining",
-		icons = {"polymer-resin"},
-		prerequisites = {"hub-tier5-oil-processing","mam-mycelia-fabric"}
-	},
-	{
 		name = "insulated-crystal-oscillator",
 		ingredients = {
 			{"quartz-crystal",10},
@@ -858,20 +845,6 @@ local recipes = {
 		category = "refining",
 		icons = {"packaged-water"},
 		prerequisites = {"hub-tier5-oil-processing"}
-	},
-	{
-		name = "turbofuel",
-		ingredients = {
-			{type="fluid",name="fuel",amount=6},
-			{"compacted-coal",4}
-		},
-		results = {{type="fluid",name="turbofuel",amount=5}},
-		main_product = "turbofuel",
-		subgroup = "fluid-recipe",
-		energy_required = 16,
-		category = "refining",
-		icons = {},
-		prerequisites = {"hub-tier5-oil-processing","alt-compacted-coal"}
 	},
 	{
 		name = "turbo-heavy-fuel",

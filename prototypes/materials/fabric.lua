@@ -23,4 +23,18 @@ local recipe = {
 }
 copyToHandcraft(recipe, 2)
 
-data:extend{item,recipe}
+local autorecipe = {
+	name = "polyester-fabric",
+	order = item.order.."-auto",
+	type = "recipe",
+	ingredients = {
+		{"polymer-resin",1},
+		{type="fluid",name="water",amount=1}
+	},
+	result = name,
+	energy_required = 2,
+	category = "refining",
+	enabled = false
+}
+
+data:extend{item,recipe,autorecipe}
