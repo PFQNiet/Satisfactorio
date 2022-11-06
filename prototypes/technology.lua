@@ -736,12 +736,12 @@ addTech("mam-alien-organisms-hostile-organism-detection", "mam/enemies", "mam", 
 }, {
 	{type="unlock-recipe",recipe="scanner-enemies"}
 })
-addTech("mam-alien-organisms-medicinal-inhaler", "mam/medicinal-inhaler", "mam", "mam-alien-organisms", "m-1-a", 300, {"mam-alien-organisms-organic-properties"}, {
-	{"alien-organs",5},
-	{"mycelia",10},
-	{"modular-frame",100}
+addTech("mam-alien-organisms-protein-inhaler", "mam/medicinal-inhaler", "mam", "mam-alien-organisms", "m-1-a", 300, {"mam-alien-organisms-organic-properties"}, {
+	{"alien-protein",2},
+	{"beryl-nut",20},
+	{"rotor",50}
 }, {
-	{type="unlock-recipe",recipe="medicinal-inhaler-from-alien-organs"}
+	{type="unlock-recipe",recipe="protein-inhaler"}
 })
 addTech("mam-alien-organisms-inflated-pocket-dimension", "mam/thumbsup", "mam", "mam-alien-organisms", "m-1-b", 300, {"mam-alien-organisms-structural-analysis","mam-alien-organisms-organic-properties"}, {
 	{"alien-carapace",5},
@@ -857,12 +857,18 @@ addTech("mam-mycelia-medical-properties", "mam/key", "mam", "mam-mycelia", "m-4-
 	{"paleberry",2},
 	{"beryl-nut",3}
 }, {})
-addTech("mam-mycelia-medicinal-inhaler", "mam/medicinal-inhaler", "mam", "mam-mycelia", "m-4-3", 3, {"mam-mycelia-medical-properties"}, {
+addTech("mam-mycelia-vitamin-inhaler", "mam/medicinal-inhaler", "mam", "mam-mycelia", "m-4-3", 3, {"mam-mycelia-medical-properties"}, {
 	{"mycelia",10},
-	{"reinforced-iron-plate",25},
-	{"rotor",25}
+	{"paleberry",5}
 }, {
-	{type="unlock-recipe",recipe="medicinal-inhaler"}
+	{type="unlock-recipe",recipe="vitamin-inhaler"}
+})
+addTech("mam-mycelia-therapeutic-inhaler", "mam/medicinal-inhaler", "mam", "mam-mycelia", "m-4-3", 3, {"mam-mycelia-medical-properties"}, {
+	{"mycelia",15},
+	{"bacon-agaric",1},
+	{"alien-protein",1}
+}, {
+	{type="unlock-recipe",recipe="therapeutic-inhaler"}
 })
 addTech("mam-mycelia-fabric", "mam/fabric", "mam", "mam-mycelia", "m-4-4", 3, {"mam-mycelia-mycelia"}, {
 	{"mycelia",25},
@@ -892,7 +898,7 @@ addTech("mam-nutrients-bacon-agaric", "mam/bacon-agaric", "mam", "mam-nutrients"
 }, {
 	{type="unlock-recipe",recipe="scanner-bacon-agaric"}
 })
-addTech("mam-nutrients-nutritional-mixture", "mam/key", "mam", "mam-nutrients", "m-5-4", 3, {"mam-nutrients-beryl-nut","mam-nutrients-paleberry","mam-nutrients-bacon-agaric"}, {
+addTech("mam-nutrients-nutritional-processor", "mam/key", "mam", "mam-nutrients", "m-5-4", 3, {"mam-nutrients-beryl-nut","mam-nutrients-paleberry","mam-nutrients-bacon-agaric"}, {
 	{"stator",25},
 	{"steel-pipe",100},
 	{"wire",500}
