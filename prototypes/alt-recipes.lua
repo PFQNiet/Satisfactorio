@@ -70,8 +70,6 @@ for _,r in pairs(alts) do
 	})
 end
 -- add packaging/unpacking turbofuel
-table.insert(data.raw.technology['alt-turbofuel'].effects, {type="unlock-recipe",recipe="packaged-turbofuel"})
-table.insert(data.raw.technology['alt-turbofuel'].effects, {type="unlock-recipe",recipe="unpack-turbofuel"})
 table.insert(data.raw.technology['alt-turbo-heavy-fuel'].effects, {type="unlock-recipe",recipe="packaged-turbofuel"})
 table.insert(data.raw.technology['alt-turbo-heavy-fuel'].effects, {type="unlock-recipe",recipe="unpack-turbofuel"})
 table.insert(data.raw.technology['alt-turbo-blend-fuel'].effects, {type="unlock-recipe",recipe="packaged-turbofuel"})

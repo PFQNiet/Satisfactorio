@@ -696,59 +696,70 @@ addTech("space-elevator-phase4", "space/assembly-director-system", "space-elevat
 })
 
 --[[ MAM ]]--
-addTech("mam-alien-organisms-alien-carapace", "mam/alien-carapace", "mam", "mam-alien-organisms", "m-1-1", 3, {"hub-tier1-field-research"}, {
-	{"alien-carapace",1}
-}, {})
-addTech("mam-alien-organisms-structural-analysis", "mam/biomass", "mam", "mam-alien-organisms", "m-1-2", 3, {"mam-alien-organisms-alien-carapace"}, {
-	{"alien-carapace",10}
+addTech("mam-alien-organisms-hog-research", "mam/hog-remains", "mam", "mam-alien-organisms", "m-1-1", 3, {"hub-tier1-field-research"}, {
+	{"hog-remains",1}
 }, {
-	{type="unlock-recipe",recipe="biomass-from-alien-carapace"}
+	{type="unlock-recipe",recipe="alien-protein-from-hog-remains"}
 })
-addTech("mam-alien-organisms-alien-organs", "mam/alien-organs", "mam", "mam-alien-organisms", "m-1-4", 3, {"hub-tier1-field-research"}, {
-	{"alien-organs",1}
-}, {})
-addTech("mam-alien-organisms-organic-properties", "mam/biomass", "mam", "mam-alien-organisms", "m-1-5", 3, {"mam-alien-organisms-alien-organs"}, {
-	{"alien-organs",3}
+addTech("mam-alien-organisms-hatcher-research", "mam/hatcher-remains", "mam", "mam-alien-organisms", "m-1-2", 3, {"hub-tier1-field-research"}, {
+	{"hatcher-remains",1}
 }, {
-	{type="unlock-recipe",recipe="biomass-from-alien-organs"}
+	{type="unlock-recipe",recipe="alien-protein-from-hatcher-remains"}
 })
-addTech("mam-alien-organisms-rebar-gun", "mam/rebar-gun", "mam", "mam-alien-organisms", "m-1-6", 300, {"mam-alien-organisms-structural-analysis"}, {
-	{"reinforced-iron-plate",50},
-	{"rotor",25},
-	{"screw",500}
+--[[
+addTech("mam-alien-organisms-stinger-research", "mam/stinger-remains", "mam", "mam-alien-organisms", "m-1-3", 3, {"hub-tier1-field-research"}, {
+	{"stinger-remains",1}
 }, {
-	{type="unlock-recipe",recipe="rebar-gun"}
+	{type="unlock-recipe",recipe="alien-protein-from-stinger-remains"}
 })
-addTech("mam-alien-organisms-spiked-rebars", "mam/spiked-rebar", "mam", "mam-alien-organisms", "m-1-7", 3, {"mam-alien-organisms-rebar-gun"}, {
-	{"rotor",25},
-	{"iron-rod",200}
+]]
+addTech("mam-alien-organisms-spitter-research", "mam/plasma-spitter-remains", "mam", "mam-alien-organisms", "m-1-4", 3, {"hub-tier1-field-research"}, {
+	{"plasma-spitter-remains",1}
 }, {
-	{type="unlock-recipe",recipe="spiked-rebar"}
+	{type="unlock-recipe",recipe="alien-protein-from-plasma-spitter-remains"}
 })
-addTech("mam-alien-organisms-object-scanner-improvements", "mam/key", "mam", "mam-alien-organisms", "m-1-8", 3, {"mam-alien-organisms-structural-analysis","mam-alien-organisms-organic-properties"}, {
-	{"crystal-oscillator",5},
-	{"stator",10},
-	{"object-scanner",1}
-}, {})
-addTech("mam-alien-organisms-hostile-organism-detection", "mam/enemies", "mam", "mam-alien-organisms", "m-1-9", 3, {"mam-alien-organisms-object-scanner-improvements"}, {
-	{"alien-organs",5},
-	{"alien-carapace",5}
+addTech("mam-alien-organisms-bioorganic-properties", "mam/organic-data-capsule", "mam", "mam-alien-organisms", "m-1-5", 3, {
+	"mam-alien-organisms-hog-research",
+	"mam-alien-organisms-hatcher-research",
+	-- "mam-alien-organisms-hog-research",
+	"mam-alien-organisms-spitter-research"
 }, {
-	{type="unlock-recipe",recipe="scanner-enemies"}
+	{"alien-protein",5}
+}, {
+	{type="unlock-recipe",recipe="organic-data-capsule"},
+	{type="unlock-recipe",recipe="biomass-from-alien-protein"}
 })
-addTech("mam-alien-organisms-protein-inhaler", "mam/medicinal-inhaler", "mam", "mam-alien-organisms", "m-1-a", 300, {"mam-alien-organisms-organic-properties"}, {
+addTech("mam-alien-organisms-protein-inhaler", "mam/medicinal-inhaler", "mam", "mam-alien-organisms", "m-1-6", 3, {"mam-alien-organisms-bioorganic-properties"}, {
 	{"alien-protein",2},
 	{"beryl-nut",20},
 	{"rotor",50}
 }, {
 	{type="unlock-recipe",recipe="protein-inhaler"}
 })
-addTech("mam-alien-organisms-inflated-pocket-dimension", "mam/thumbsup", "mam", "mam-alien-organisms", "m-1-b", 300, {"mam-alien-organisms-structural-analysis","mam-alien-organisms-organic-properties"}, {
-	{"alien-carapace",5},
-	{"alien-organs",5},
-	{"wire",3000}
+addTech("mam-alien-organisms-structural-analysis", "mam/key", "mam", "mam-alien-organisms", "m-1-7", 3, {"mam-align-organisms-bioorganic-properties"}, {
+	{"organic-data-capsule",5},
+	{"iron-rod",100}
+}, {})
+addTech("mam-alien-organisms-rebar-gun", "mam/rebar-gun", "mam", "mam-alien-organisms", "m-1-8", 3, {"mam-alien-organisms-structural-analysis"}, {
+	{"rotor",25},
+	{"reinforced-iron-plate",50},
+	{"screw",500}
+}, {
+	{type="unlock-recipe",recipe="rebar-gun"}
+})
+addTech("mam-alien-organisms-inflated-pocket-dimension", "mam/thumbsup", "mam", "mam-alien-organisms", "m-1-9", 3, {"mam-alien-organisms-bioorganic-properties"}, {
+	{"alien-protein",3},
+	{"wire",1000}
 }, {
 	{type="character-inventory-slots-bonus",modifier=6,use_icon_overlay_constant=false}
+})
+-- expanded toolbelt
+addTech("mam-alien-organisms-hostile-organism-detection", "mam/enemies", "mam", "mam-alien-organisms", "m-1-b", 3, {"mam-alien-organisms-bioorganic-properties"}, {
+	{"organic-data-capsule",10},
+	{"crystal-oscillator",5},
+	{"high-speed-connector",5}
+}, {
+	{type="unlock-recipe",recipe="scanner-enemies"}
 })
 
 addTech("mam-caterium-caterium", "mam/caterium-ore", "mam", "mam-caterium", "m-2-1", 3, {"hub-tier1-field-research"}, {
@@ -766,77 +777,76 @@ addTech("mam-caterium-quickwire", "mam/quickwire", "mam", "mam-caterium", "m-2-3
 }, {
 	{type="unlock-recipe",recipe="quickwire"}
 })
-addTech("mam-caterium-inflated-pocket-dimension", "mam/thumbsup", "mam", "mam-caterium", "m-2-4", 120, {"mam-caterium-caterium-ingots"}, {
-	{"caterium-ingot",10},
-	{"wire",500},
-	{"reinforced-iron-plate",50}
-}, {
-	{type="character-inventory-slots-bonus",modifier=6,use_icon_overlay_constant=false}
-})
-addTech("mam-caterium-zipline", "mam/zipline", "mam", "mam-caterium", "m-2-5", 300, {"mam-caterium-caterium-electronics"}, {
+addTech("mam-caterium-zipline", "mam/zipline", "mam", "mam-caterium", "m-2-4", 3, {"mam-caterium-quickwire"}, {
 	{"quickwire",100},
 	{"copper-cable",50}
 }, {
 	{type="unlock-recipe",recipe="zipline"}
 })
-addTech("mam-caterium-caterium-electronics", "mam/key", "mam", "mam-caterium", "m-2-6", 3, {"mam-caterium-quickwire"}, {
+addTech("mam-caterium-caterium-electronics", "mam/key", "mam", "mam-caterium", "m-2-5", 3, {"mam-caterium-quickwire"}, {
 	{"quickwire",100}
 }, {})
-addTech("mam-caterium-blade-runners", "mam/blade-runners", "mam", "mam-caterium", "m-2-7", 300, {"mam-caterium-caterium-electronics"}, {
-	{"quickwire",100},
-	{"modular-frame",10}
+addTech("mam-caterium-stun-rebar", "mam/stun-rebar", "mam", "mam-caterium", "m-2-6", 3, {"mam-caterium-quickwire"}, {
+	{"quickwire",50},
+	{"iron-rebar",10}
 }, {
-	{type="unlock-recipe",recipe="blade-runners"}
+	{type="unlock-recipe",recipe="stun-rebar"}
 })
-addTech("mam-caterium-ai-limiter", "mam/ai-limiter", "mam", "mam-caterium", "m-2-8", 3, {"mam-caterium-caterium-electronics"}, {
+addTech("mam-caterium-ai-limiter", "mam/ai-limiter", "mam", "mam-caterium", "m-2-7", 3, {"mam-caterium-caterium-electronics"}, {
 	{"quickwire",200},
 	{"copper-sheet",50}
 }, {
 	{type="unlock-recipe",recipe="ai-limiter"}
 })
-addTech("mam-caterium-power-poles-mk2", "mam/power-pole-mk2", "mam", "mam-caterium", "m-2-9", 300, {"mam-caterium-caterium-electronics"}, {
+addTech("mam-caterium-power-poles-mk2", "mam/power-pole-mk2", "mam", "mam-caterium", "m-2-8", 3, {"mam-caterium-caterium-electronics"}, {
 	{"quickwire",300}
 }, {
 	{type="unlock-recipe",recipe="power-pole-mk-2"}
 })
-addTech("mam-caterium-smart-splitter", "mam/smart-splitter", "mam", "mam-caterium", "m-2-a", 300, {"mam-caterium-ai-limiter"}, {
-	{"ai-limiter",10},
-	{"reinforced-iron-plate",50}
-}, {
-	{type="unlock-recipe",recipe="smart-splitter"}
-})
-addTech("mam-caterium-power-switch", "mam/power-switch", "mam", "mam-caterium", "m-2-b", 300, {"mam-caterium-ai-limiter"}, {
-	{"steel-beam",100},
-	{"ai-limiter",50}
-}, {
-	{type="unlock-recipe",recipe="power-switch"}
-})
-addTech("mam-caterium-high-speed-connector", "mam/high-speed-connector", "mam", "mam-caterium", "m-2-c", 3, {"mam-caterium-ai-limiter"}, {
+addTech("mam-caterium-high-speed-connector", "mam/high-speed-connector", "mam", "mam-caterium", "m-2-9", 3, {"mam-caterium-caterium-electronics"}, {
 	{"quickwire",500},
 	{"plastic",50}
 }, {
 	{type="unlock-recipe",recipe="high-speed-connector"}
 })
-addTech("mam-caterium-supercomputer", "mam/supercomputer", "mam", "mam-caterium", "m-2-d", 3, {"mam-caterium-high-speed-connector"}, {
+addTech("mam-caterium-smart-splitter", "mam/smart-splitter", "mam", "mam-caterium", "m-2-a", 3, {"mam-caterium-ai-limiter"}, {
+	{"ai-limiter",10},
+	{"reinforced-iron-plate",50}
+}, {
+	{type="unlock-recipe",recipe="smart-splitter"}
+})
+addTech("mam-caterium-power-switch", "mam/power-switch", "mam", "mam-caterium", "m-2-b", 3, {"mam-caterium-ai-limiter"}, {
+	{"steel-beam",100},
+	{"ai-limiter",50}
+}, {
+	{type="unlock-recipe",recipe="power-switch"}
+})
+addTech("mam-caterium-supercomputer", "mam/supercomputer", "mam", "mam-caterium", "m-2-c", 3, {"mam-caterium-ai-limiter","mam-caterium-high-speed-connector"}, {
 	{"ai-limiter",50},
 	{"high-speed-connector",50},
 	{"computer",50}
 }, {
 	{type="unlock-recipe",recipe="supercomputer"}
 })
-addTech("mam-caterium-power-poles-mk3", "mam/power-pole-mk3", "mam", "mam-caterium", "m-2-e", 360, {"mam-caterium-high-speed-connector"}, {
+addTech("mam-caterium-power-poles-mk3", "mam/power-pole-mk3", "mam", "mam-caterium", "m-2-d", 3, {"mam-caterium-high-speed-connector"}, {
 	{"high-speed-connector",100},
 	{"steel-pipe",200}
 }, {
 	{type="unlock-recipe",recipe="power-pole-mk-3"}
 })
-addTech("mam-caterium-programmable-splitter", "mam/programmable-splitter", "mam", "mam-caterium", "m-2-f", 480, {"mam-caterium-supercomputer"}, {
+addTech("mam-caterium-bullet-guidance-system", "mam/homing-rifle-ammo", "mam", "mam-caterium", "m-2-e", 3, {"mam-caterium-high-speed-connector"}, {
+	{"high-speed-connector",10},
+	{"rifle-ammo",50}
+}, {
+	{type="unlock-recipe",recipe="homing-rifle-ammo"}
+})
+addTech("mam-caterium-programmable-splitter", "mam/programmable-splitter", "mam", "mam-caterium", "m-2-f", 3, {"mam-caterium-supercomputer"}, {
 	{"supercomputer",50},
 	{"heavy-modular-frame",50}
 }, {
 	{type="unlock-recipe",recipe="programmable-splitter"}
 })
-addTech("mam-caterium-geothermal-generator", "mam/geothermal-generator", "mam", "mam-caterium", "m-2-g", 480, {"mam-caterium-supercomputer"}, {
+addTech("mam-caterium-geothermal-generator", "mam/geothermal-generator", "mam", "mam-caterium", "m-2-g", 3, {"mam-caterium-supercomputer"}, {
 	{"supercomputer",50},
 	{"heavy-modular-frame",50},
 	{"rubber",300}
@@ -845,65 +855,76 @@ addTech("mam-caterium-geothermal-generator", "mam/geothermal-generator", "mam", 
 	{type="unlock-recipe",recipe="scanner-geyser"}
 })
 
--- 3: flower petals
-
-addTech("mam-mycelia-mycelia", "mam/mycelia", "mam", "mam-mycelia", "m-4-1", 3, {"hub-tier1-field-research"}, {
+addTech("mam-mycelia-mycelia", "mam/mycelia", "mam", "mam-mycelia", "m-3-1", 3, {"hub-tier1-field-research"}, {
 	{"mycelia",5}
 }, {
 	{type="unlock-recipe",recipe="biomass-from-mycelia"}
 })
-addTech("mam-mycelia-medical-properties", "mam/key", "mam", "mam-mycelia", "m-4-2", 3, {"mam-mycelia-mycelia"}, {
-	{"bacon-agaric",1},
-	{"paleberry",2},
-	{"beryl-nut",3}
+addTech("mam-mycelia-fabric", "mam/fabric", "mam", "mam-mycelia", "m-3-2", 3, {"mam-mycelia-mycelia"}, {
+	{"mycelia",25},
+	{"biomass",100}
+}, {
+	{type="unlock-recipe",recipe="fabric"}
+})
+addTech("mam-mycelia-toxic-cellular-modification", "mam/gas-nobelisk", "mam", "mam-mycelia", "m-3-3", 3, {"mam-mycelia-mycelia"}, {
+	{"nobelisk",50},
+	{"mycelia",100},
+	{"biomass",200}
+}, {
+	{type="unlock-recipe",recipe="gas-nobelisk"}
+})
+addTech("mam-mycelia-medical-properties", "mam/key", "mam", "mam-mycelia", "m-3-4", 3, {"mam-mycelia-mycelia"}, {
+	{"mycelia",25},
+	{"stator",10}
 }, {})
-addTech("mam-mycelia-vitamin-inhaler", "mam/medicinal-inhaler", "mam", "mam-mycelia", "m-4-3", 3, {"mam-mycelia-medical-properties"}, {
+addTech("mam-mycelia-parachute", "mam/parachute", "mam", "mam-mycelia", "m-3-5", 3, {"mam-mycelia-fabric"}, {
+	{"fabric",10},
+	{"copper-cable",50}
+}, {
+	{type="unlock-recipe",recipe="parachute"}
+})
+-- expanded toolbelt
+addTech("mam-mycelia-synthetic-polyester-fabric", "mam/fabric", "mam", "mam-mycelia", "m-3-7", 3, {"mam-mycelia-fabric"}, {
+	{"fabric",25},
+	{"polymer-resin",100}
+}, {
+	{type="unlock-recipe",recipe="polyester-fabric"}
+})
+addTech("mam-mycelia-vitamin-inhaler", "mam/medicinal-inhaler", "mam", "mam-mycelia", "m-3-8", 3, {"mam-mycelia-medical-properties"}, {
 	{"mycelia",10},
 	{"paleberry",5}
 }, {
 	{type="unlock-recipe",recipe="vitamin-inhaler"}
 })
-addTech("mam-mycelia-therapeutic-inhaler", "mam/medicinal-inhaler", "mam", "mam-mycelia", "m-4-3", 3, {"mam-mycelia-medical-properties"}, {
+addTech("mam-mycelia-therapeutic-inhaler", "mam/medicinal-inhaler", "mam", "mam-mycelia", "m-3-9", 3, {"mam-mycelia-medical-properties"}, {
 	{"mycelia",15},
 	{"bacon-agaric",1},
 	{"alien-protein",1}
 }, {
 	{type="unlock-recipe",recipe="therapeutic-inhaler"}
 })
-addTech("mam-mycelia-fabric", "mam/fabric", "mam", "mam-mycelia", "m-4-4", 3, {"mam-mycelia-mycelia"}, {
-	{"mycelia",25},
-	{"biomass",100}
-}, {
-	{type="unlock-recipe",recipe="fabric"}
-})
-addTech("mam-mycelia-parachute", "mam/parachute", "mam", "mam-mycelia", "m-4-5", 3, {"mam-mycelia-fabric"}, {
-	{"fabric",10},
-	{"copper-cable",50}
-}, {
-	{type="unlock-recipe",recipe="parachute"}
-})
 
-addTech("mam-nutrients-beryl-nut", "mam/beryl-nut", "mam", "mam-nutrients", "m-5-1", 180, {"hub-tier1-field-research"}, {
+addTech("mam-nutrients-beryl-nut", "mam/beryl-nut", "mam", "mam-nutrients", "m-4-1", 3, {"hub-tier1-field-research"}, {
 	{"beryl-nut",5}
 }, {
 	{type="unlock-recipe",recipe="scanner-beryl-nut"}
 })
-addTech("mam-nutrients-paleberry", "mam/paleberry", "mam", "mam-nutrients", "m-5-2", 180, {"hub-tier1-field-research"}, {
+addTech("mam-nutrients-paleberry", "mam/paleberry", "mam", "mam-nutrients", "m-4-2", 3, {"hub-tier1-field-research"}, {
 	{"paleberry",2}
 }, {
 	{type="unlock-recipe",recipe="scanner-paleberry"}
 })
-addTech("mam-nutrients-bacon-agaric", "mam/bacon-agaric", "mam", "mam-nutrients", "m-5-3", 180, {"hub-tier1-field-research"}, {
+addTech("mam-nutrients-bacon-agaric", "mam/bacon-agaric", "mam", "mam-nutrients", "m-4-3", 3, {"hub-tier1-field-research"}, {
 	{"bacon-agaric",1}
 }, {
 	{type="unlock-recipe",recipe="scanner-bacon-agaric"}
 })
-addTech("mam-nutrients-nutritional-processor", "mam/key", "mam", "mam-nutrients", "m-5-4", 3, {"mam-nutrients-beryl-nut","mam-nutrients-paleberry","mam-nutrients-bacon-agaric"}, {
-	{"stator",25},
-	{"steel-pipe",100},
+addTech("mam-nutrients-nutritional-processor", "mam/key", "mam", "mam-nutrients", "m-4-4", 3, {"mam-nutrients-beryl-nut","mam-nutrients-paleberry","mam-nutrients-bacon-agaric"}, {
+	{"modular-frame",25},
+	{"steel-pipe",50},
 	{"wire",500}
 }, {})
-addTech("mam-nutrients-nutritional-inhaler", "mam/medicinal-inhaler", "mam", "mam-nutrients", "m-5-5", 3, {"mam-nutrients-nutritional-mixture"}, {
+addTech("mam-nutrients-nutritional-inhaler", "mam/medicinal-inhaler", "mam", "mam-nutrients", "m-4-5", 3, {"mam-nutrients-nutritional-processor"}, {
 	{"bacon-agaric",2},
 	{"paleberry",4},
 	{"beryl-nut",10}
@@ -911,151 +932,188 @@ addTech("mam-nutrients-nutritional-inhaler", "mam/medicinal-inhaler", "mam", "ma
 	{type="unlock-recipe",recipe="nutritional-inhaler"}
 })
 
-addTech("mam-power-slugs-overclocking", "mam/overclocking", "mam", "mam-power-slugs", "m-6-1", 300, {"hub-tier1-field-research"}, {
-	{"iron-rod",50},
-	{"iron-plate",50},
-	{"wire",50}
-}, {})
-addTech("mam-power-slugs-blue-power-slugs", "mam/blue-power-slug", "mam", "mam-power-slugs", "m-6-2", 3, {"mam-power-slugs-overclocking"}, {
+addTech("mam-power-slugs-blue-power-slugs", "mam/blue-power-slug", "mam", "mam-power-slugs", "m-5-1", 3, {"hub-tier1-field-research"}, {
 	{"blue-power-slug",1}
 }, {
 	{type="unlock-recipe",recipe="power-shard-from-blue-power-slug"}
 })
-addTech("mam-power-slugs-slug-scanning", "mam/blue-power-slug", "mam", "mam-power-slugs", "m-6-3", 3, {"mam-power-slugs-blue-power-slugs"}, {
+addTech("mam-power-slugs-slug-scanning", "mam/blue-power-slug", "mam", "mam-power-slugs", "m-5-2", 3, {"mam-power-slugs-blue-power-slugs"}, {
 	{"iron-rod",50},
 	{"wire",100},
-	{"copper-cable",50}
+	{"screw",200}
 }, {
 	{type="unlock-recipe",recipe="scanner-power-slugs"}
 })
-addTech("mam-power-slugs-yellow-power-slugs", "mam/yellow-power-slug", "mam", "mam-power-slugs", "m-6-4", 3, {"mam-power-slugs-blue-power-slugs"}, {
+addTech("mam-power-slugs-yellow-power-slugs", "mam/yellow-power-slug", "mam", "mam-power-slugs", "m-5-3", 3, {"mam-power-slugs-blue-power-slugs"}, {
 	{"yellow-power-slug",1},
-	{"reinforced-iron-plate",25},
+	{"rotor",25},
 	{"copper-cable",100}
 }, {
 	{type="unlock-recipe",recipe="power-shard-from-yellow-power-slug"}
 })
-addTech("mam-power-slugs-purple-power-slugs", "mam/purple-power-slug", "mam", "mam-power-slugs", "m-6-5", 3, {"mam-power-slugs-yellow-power-slugs"}, {
+-- overclock production
+addTech("mam-power-slugs-purple-power-slugs", "mam/purple-power-slug", "mam", "mam-power-slugs", "m-5-5", 3, {"mam-power-slugs-yellow-power-slugs"}, {
 	{"purple-power-slug",1},
 	{"modular-frame",25},
-	{"copper-cable",200}
+	{"copper-sheet",100}
 }, {
 	{type="unlock-recipe",recipe="power-shard-from-purple-power-slug"}
 })
 
-addTech("mam-quartz-quartz", "mam/raw-quartz", "mam", "mam-quartz", "m-7-1", 3, {"hub-tier1-field-research"}, {
+addTech("mam-quartz-quartz", "mam/raw-quartz", "mam", "mam-quartz", "m-6-1", 3, {"hub-tier1-field-research"}, {
 	{"raw-quartz",10}
 }, {
 	{type="unlock-recipe",recipe="scanner-raw-quartz"}
 })
-addTech("mam-quartz-silica", "mam/silica", "mam", "mam-quartz", "m-7-2", 3, {"mam-quartz-quartz"}, {
-	{"raw-quartz",20}
-}, {
-	{type="unlock-recipe",recipe="silica"}
-})
-addTech("mam-quartz-quartz-crystals", "mam/quartz-crystal", "mam", "mam-quartz", "m-7-3", 3, {"mam-quartz-quartz"}, {
+addTech("mam-quartz-quartz-crystals", "mam/quartz-crystal", "mam", "mam-quartz", "m-6-2", 3, {"mam-quartz-quartz"}, {
 	{"raw-quartz",20}
 }, {
 	{type="unlock-recipe",recipe="quartz-crystal"}
 })
-addTech("mam-quartz-factory-lighting", "mam/lights", "mam", "mam-quartz", "m-7-4", 180, {"mam-quartz-quartz-crystals"}, {
+addTech("mam-quartz-silica", "mam/silica", "mam", "mam-quartz", "m-6-3", 3, {"mam-quartz-quartz"}, {
+	{"raw-quartz",20}
+}, {
+	{type="unlock-recipe",recipe="silica"}
+})
+addTech("mam-quartz-factory-lighting", "mam/lights", "mam", "mam-quartz", "m-6-3-2", 180, {"mam-quartz-quartz-crystals"}, {
 	{"quartz-crystal",100},
 	{"steel-beam",50}
 }, {
 	{type="unlock-recipe",recipe="small-lamp"}
 })
-addTech("mam-quartz-crystal-oscillator", "mam/crystal-oscillator", "mam", "mam-quartz", "m-7-5", 3, {"mam-quartz-quartz-crystals"}, {
+addTech("mam-quartz-shatter-rebar", "mam/crystal-oscillator", "mam", "mam-quartz", "m-6-4", 3, {"mam-quartz-quartz-crystals"}, {
+	{"quartz-crystal",30},
+	{"iron-rebar",150}
+}, {
+	{type="unlock-recipe",recipe="shatter-rebar"}
+})
+addTech("mam-quartz-crystal-oscillator", "mam/crystal-oscillator", "mam", "mam-quartz", "m-6-5", 3, {"mam-quartz-quartz-crystals"}, {
 	{"quartz-crystal",100},
 	{"reinforced-iron-plate",50}
 }, {
 	{type="unlock-recipe",recipe="crystal-oscillator"}
 })
-addTech("mam-quartz-signal-technologies", "mam/key", "mam", "mam-quartz", "m-7-6", 3, {"mam-quartz-crystal-oscillator"}, {
-	{"crystal-oscillator",5}
-}, {})
-addTech("mam-quartz-explorer", "mam/explorer", "mam", "mam-quartz", "m-7-7", 300, {"mam-quartz-signal-technologies"}, {
+addTech("mam-quartz-blade-runners", "mam/blade-runners", "mam", "mam-quartz", "m-6-6", 3, {"mam-quartz-silica"}, {
+	{"silica",50},
+	{"modular-frame",10}
+}, {
+	{type="unlock-recipe",recipe="blade-runners"}
+})
+addTech("mam-quartz-inflated-pocket-dimension", "mam/thumbsup", "mam", "mam-quartz", "m-6-7", 3, {"mam-quartz-silica"}, {
+	{"silica",200}
+}, {
+	{type="character-inventory-slots-bonus",modifier=6,use_icon_overlay_constant=false}
+})
+addTech("mam-quartz-explosive-resonance-application", "mam/pulse-nobelisk", "mam", "mam-quartz", "m-6-8", 3, {"mam-quartz-crystal-oscillator"}, {
+	{"crystal-oscillator",5},
+	{"nobelisk",100}
+}, {
+	{type="unlock-recipe",recipe="pulse-nobelisk"}
+})
+addTech("mam-quartz-explorer", "mam/explorer", "mam", "mam-quartz", "m-6-9", 3, {"mam-quartz-signal-technologies"}, {
 	{"crystal-oscillator",10},
 	{"modular-frame",100}
 }, {
 	{type="unlock-recipe",recipe="explorer"}
 })
---[[
-addTech("mam-quartz-frequency-mapping", "mam/map", "mam", "mam-quartz", "m-7-8", 300, {"mam-quartz-signal-technologies"}, {
-	{"crystal-oscillator",10},
-	{"map-marker",10}
-}, {
-	{
-		type = "nothing",
-		effect_description = {"technology-effect.map"},
-		icons = {
-			{icon = graphics.."technology/mam/map.png", icon_size = 256}
-		}
-	}
-})
-]]
-addTech("mam-quartz-radio-signal-scanning", "mam/crash-site", "mam", "mam-quartz", "m-7-9", 300, {"mam-quartz-frequency-mapping"}, {
-	{"crystal-oscillator",50},
+addTech("mam-quartz-radio-signal-scanning", "mam/crash-site", "mam", "mam-quartz", "m-6-a", 3, {"mam-quartz-crystal-oscillator"}, {
+	{"crystal-oscillator",100},
 	{"motor",100},
-	{"map-marker",10}
+	{"object-scanner",1}
 }, {
 	{type="unlock-recipe",recipe="scanner-crash-site"}
 })
-addTech("mam-quartz-radar-technology", "mam/radar-tower", "mam", "mam-quartz", "m-7-a", 3, {"mam-quartz-frequency-mapping"}, {
-	{"crystal-oscillator",100},
+addTech("mam-quartz-radar-technology", "mam/radar-tower", "mam", "mam-quartz", "m-6-b", 3, {"mam-quartz-crystal-oscillator"}, {
+	{"crystal-oscillator",50},
 	{"heavy-modular-frame",50},
-	{"map-marker",15}
+	{"circuit-board",100}
 }, {
 	{type="unlock-recipe",recipe="radar-tower"}
 })
-addTech("mam-quartz-radio-control-unit", "mam/radio-control-unit", "mam", "mam-quartz", "m-7-b", 3, {"mam-quartz-signal-technologies"}, {
-	{"crystal-oscillator",100},
-	{"alclad-aluminium-sheet",200}
-}, {
-	{type="unlock-recipe",recipe="radio-control-unit"}
-})
 
-addTech("mam-sulfur-sulfur", "mam/sulfur", "mam", "mam-sulfur", "m-8-1", 3, {"hub-tier1-field-research"}, {
+addTech("mam-sulfur-sulfur", "mam/sulfur", "mam", "mam-sulfur", "m-7-1", 3, {"hub-tier1-field-research"}, {
 	{"sulfur",10}
 }, {
 	{type="unlock-recipe",recipe="scanner-sulfur"}
 })
-addTech("mam-sulfur-black-powder", "mam/black-powder", "mam", "mam-sulfur", "m-8-2", 3, {"mam-sulfur-sulfur"}, {
+addTech("mam-sulfur-black-powder", "mam/black-powder", "mam", "mam-sulfur", "m-7-2", 3, {"mam-sulfur-sulfur"}, {
 	{"sulfur",50},
 	{"coal",25}
 }, {
 	{type="unlock-recipe",recipe="black-powder"}
 })
-addTech("mam-sulfur-volatile-applications", "mam/key", "mam", "mam-sulfur", "m-8-3", 3, {"mam-sulfur-black-powder"}, {
-	{"black-powder",50}
+addTech("mam-sulfur-experimental-power-generation", "mam/key", "mam", "mam-sulfur", "m-7-3", 3, {"mam-sulfur-sulfur"}, {
+	{"sulfur",25},
+	{"modular-frame",50},
+	{"rotor",100}
 }, {})
-addTech("mam-sulfur-nobelisk-detonator", "mam/nobelisk-detonator", "mam", "mam-sulfur", "m-8-4", 180, {"mam-sulfur-volatile-applications"}, {
-	{"encased-industrial-beam",10},
-	{"copper-cable",100},
-	{"object-scanner",5}
+addTech("mam-sulfur-compacted-coal", "mam/compacted-coal", "mam", "mam-sulfur", "m-7-4", 3, {"mam-sulfur-experimental-power-generation"}, {
+	{"hard-drive",1},
+	{"sulfur",25},
+	{"coal",25}
 }, {
-	{type="unlock-recipe",recipe="nobelisk-detonator"}
+	{type="unlock-recipe",recipe="compacted-coal"}
 })
-addTech("mam-sulfur-nobelisk", "mam/nobelisk", "mam", "mam-sulfur", "m-8-5", 3, {"mam-sulfur-nobelisk-detonator"}, {
-	{"black-powder",100},
-	{"steel-pipe",100}
+addTech("mam-sulfur-turbofuel", "mam/packaged-turbofuel", "mam", "mam-sulfur", "m-7-5", 3, {"mam-sulfur-experimental-power-generation"}, {
+	{"hard-drive",1},
+	{"compacted-coal",15},
+	{"packaged-fuel",50}
 }, {
+	{type="unlock-recipe",recipe="turbofuel"},
+	{type="unlock-recipe",recipe="packaged-turbofuel"},
+	{type="unlock-recipe",recipe="unpack-turbofuel"}
+})
+-- expanded toolbelt
+addTech("mam-sulfur-nobelisk-detonator", "mam/nobelisk-detonator", "mam", "mam-sulfur", "m-7-7", 3, {"mam-sulfur-black-powder"}, {
+	{"black-powder",50},
+	{"steel-pipe",100},
+	{"copper-cable",200}
+}, {
+	{type="unlock-recipe",recipe="nobelisk-detonator"},
 	{type="unlock-recipe",recipe="nobelisk"}
 })
-addTech("mam-sulfur-rifle", "mam/rifle", "mam", "mam-sulfur", "m-8-6", 180, {"mam-sulfur-volatile-applications"}, {
-	{"steel-pipe",100},
-	{"circuit-board",100},
-	{"heavy-modular-frame",5}
+addTech("mam-sulfur-smokeless-powder", "mam/smokeless-powder", "mam", "mam-sulfur", "m-7-8", 3, {"mam-sulfur-black-powder"}, {
+	{"black-powder",100},
+	{"plastic",50}
 }, {
-	{type="unlock-recipe",recipe="rifle"}
+	{type="unlock-recipe",recipe="smokeless-powder"}
 })
-addTech("mam-sulfur-rifle-cartridges", "mam/rifle-cartridge", "mam", "mam-sulfur", "m-8-7", 3, {"mam-sulfur-rifle"}, {
-	{"black-powder",200},
-	{"steel-pipe",200},
+addTech("mam-sulfur-nuclear-deterrent-development", "mam/nuke-nobelisk", "mam", "mam-sulfur", "m-7-9", 3, {"mam-sulfur-smokeless-powder"}, {
+	{"nobelisk",500},
+	{"encased-uranium-cell",10},
+	{"ai-limiter",100}
+}, {
+	{type="unlock-recipe",recipe="nuke-nobelisk"}
+})
+addTech("mam-sulfur-cluster-nobelisk", "mam/cluster-nobelisk", "mam", "mam-sulfur", "m-7-a", 3, {"mam-sulfur-smokeless-powder"}, {
+	{"smokeless-powder",100},
+	{"nobelisk",200}
+}, {
+	{type="unlock-recipe",recipe="cluster-nobelisk"}
+})
+addTech("mam-sulfur-explosive-rebar", "mam/explosive-rebar", "mam", "mam-sulfur", "m-7-b", 3, {"mam-sulfur-smokeless-powder"}, {
+	{"smokeless-powder",200},
+	{"iron-rebar",200},
+	{"steel-beam",200}
+}, {
+	{type="unlock-recipe",recipe="explosive-rebar"}
+})
+addTech("mam-sulfur-rifle", "mam/rifle", "mam", "mam-sulfur", "m-7-c", 3, {"mam-sulfur-smokeless-powder"}, {
+	{"smokeless-powder",50},
+	{"motor",100},
 	{"rubber",200}
 }, {
-	{type="unlock-recipe",recipe="rifle-cartridge"}
+	{type="unlock-recipe",recipe="rifle"},
+	{type="unlock-recipe",recipe="rifle-ammo"}
 })
-addTech("mam-sulfur-inflated-pocket-dimension", "mam/thumbsup", "mam", "mam-sulfur", "m-8-8", 180, {"mam-sulfur-nobelisk","mam-sulfur-rifle-cartridges"}, {
+addTech("mam-sulfur-turbo-rifle-ammo", "mam/turbo-rifle-ammo", "mam", "mam-sulfur", "m-7-d", 3, {"mam-sulfur-smokeless-powder"}, {
+	{"rifle-ammo",100},
+	{"packaged-turbofuel",50},
+	{"aluminium-casing",100}
+}, {
+	{type="unlock-recipe",recipe="turbo-rifle-ammo"}
+})
+addTech("mam-sulfur-inflated-pocket-dimension", "mam/thumbsup", "mam", "mam-sulfur", "m-7-e", 3, {"mam-sulfur-rifle"}, {
 	{"black-powder",50},
 	{"steel-beam",100}
 }, {

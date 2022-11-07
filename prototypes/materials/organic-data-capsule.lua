@@ -8,4 +8,18 @@ local item = {
 	order = "r[remains]-r["..name.."]",
 	stack_size = 50
 }
-data:extend{item}
+
+local recipe = {
+	name = name,
+	type = "recipe",
+	ingredients = {
+		{"alient-protein",1}
+	},
+	result = name,
+	energy_required = 6,
+	category = "constructing",
+	enabled = false
+}
+copyToHandcraft(recipe, 4)
+
+data:extend{item, recipe}
