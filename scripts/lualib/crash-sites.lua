@@ -106,13 +106,16 @@ local function onGuiOpened(event)
 		local inventory = player.get_main_inventory()
 		local available = inventory.get_item_count(struct.requirements.item)
 		if need > 0 and available >= need then
-			inventory.remove{
+			local inserted = struct.ship.insert{
 				name = struct.requirements.item,
-				count = struct.ship.insert{
-					name = struct.requirements.item,
-					count = need
-				}
+				count = need
 			}
+			if inserted > 0 then
+				inventory.remove{
+					name = struct.requirements.item,
+					count = inserted
+				}
+			end
 		end
 	end
 end
