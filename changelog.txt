@@ -10,9 +10,13 @@ Date: ????
     - The Map has been moved from Quartz research to a Tier 1 Milestone.
     - Added Alien Protein and Organic Data Capsules.
     - Blue Power Slug replaces Green Power Slug.
+    - MAM has been updated with the new tech trees.
+    - All MAM tech now only takes 3 seconds, except Hard Drive.
   Combat Balancing:
     - Flying Crab hatchers now have health and must be destroyed by the player.
     - Creatures now drop more specific remains, which can then be made into protein.
+    - Added new weapon ammo types.
+    - Gas Emitters can now be nuked.
   Graphics:
     - Changed all placeholder building graphics to a "dark-theme" style.
     - Revamped placeholder building graphics with more distinct input/output markers

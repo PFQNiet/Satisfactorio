@@ -10,5 +10,20 @@ local item = {
 	fuel_category = "carbon",
 	fuel_value = "630MJ"
 }
--- exclusively via alt recipe
-data:extend{item}
+
+local recipe = {
+	name = name,
+	type = "recipe",
+	ingredients = {
+		{"coal",5},
+		{"sulfur",5}
+	},
+	result = name,
+	result_count = 5,
+	energy_required = 12,
+	category = "assembling",
+	enabled = false
+}
+copyToHandcraft(recipe, 4)
+
+data:extend{item,recipe}

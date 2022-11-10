@@ -66,6 +66,9 @@ for _,pic in pairs(hugerock.pictures) do
 	pic.scale = 1.5
 	pic.hr_version.scale = 0.75
 end
+-- make vulnerable to nobelisk damage
+if not hugerock.trigger_target_mask then hugerock.trigger_target_mask = data.raw['utility-constants'].default.default_trigger_target_mask_by_type['simple-entity'] or {'common'} end
+table.insert(hugerock.trigger_target_mask, "nobelisk-explodable")
 
 data:extend({
 	{

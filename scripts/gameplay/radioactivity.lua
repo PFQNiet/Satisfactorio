@@ -14,7 +14,6 @@ local gui = require(modpath.."scripts.gui.radioactivity")
 ---@field radioactivity number
 ---@field entities LuaEntity[] Radiation emitters
 ---@field containers table<uint,LuaInventory> Containers built on this chunk, unit number => chest inventory
----@field behemoths table<uint,LuaEntity> Behemoth Worms ("gas emitters") may be weakened by exposure to radiation
 
 ---@class global.radioactivity
 ---@field enabled boolean
@@ -60,8 +59,7 @@ local function getOrCreateChunk(surface, chunkpos)
 			area = {{x*32,y*32},{(x+1)*32,(y+1)*32}},
 			radioactivity = 0,
 			entities = {},
-			containers = {},
-			behemoths = {}
+			containers = {}
 		}
 		table.insert(script_data.buckets[id % bucket_count], script_data.chunks[ref])
 	end
@@ -256,21 +254,6 @@ local function updateChunk(entry)
 			radiation = bit32.rshift(radiation, 1)
 		end
 	end
-
-	local pollution = surface.get_pollution({x1+1,y1+1})
-	if pollution > 1 then
-		local worms = entry.behemoths
-		local damage = math.sqrt(pollution) / 60 * bucket_count
-		for i,entity in pairs(worms) do
-			if not entity.valid then
-				worms[i] = nil
-			else
-				entity.destructible = true
-				entity.damage(math.min(entity.health-1, damage), game.forces.neutral, "radiation")
-				entity.destructible = false
-			end
-		end
-	end
 end
 
 ---@param player LuaPlayer
@@ -337,11 +320,6 @@ end
 ---@param entity LuaEntity
 local function onBuilt(entity)
 	local chunk = getOrCreateChunk(entity.surface, {math.floor(entity.position.x/32), math.floor(entity.position.x/32)})
-	if entity.name == "gas-emitter" then
-		chunk.behemoths[entity.unit_number] = entity
-		return
-	end
-
 	-- exclude fake boxes used in splitters and mergers, as they may only hold one item at a time so contribute negligible radiation to the chunk
 	if entity.name == "conveyor-merger-box" then return end
 	if entity.name == "conveyor-splitter-box" then return end
@@ -353,7 +331,6 @@ end
 ---@param entity LuaEntity
 local function onRemoved(entity)
 	local chunk = getOrCreateChunk(entity.surface, {math.floor(entity.position.x/32), math.floor(entity.position.x/32)})
-	chunk.behemoths[entity.unit_number] = nil
 	chunk.containers[entity.unit_number] = nil
 end
 

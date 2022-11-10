@@ -1,12 +1,35 @@
 -- uses global['nobelisk-queue'] to track a player's thrown Nobelisks
 -- uses global['nobelisk-explosions'] to track tick => {entity, offset, force} where entity is either the on-ground, or the thing a sticker is stuck to
 
-local name = "nobelisk"
 local detonator = "nobelisk-detonator"
-local sticker = name.."-armed"
-local onground = name.."-on-ground"
+local manualEffect = "nobelisk-explodable"
+local nukeEffect = "nobelisk-nukable"
+
+---@class NobeliskNames
+---@field name string
+---@field sticker string
+---@field onground string
+---@field detonation string
+---@field cooldown number
+
+---@type NobeliskNames[]
+local nobelisks = {}
+for _,name in pairs({"nobelisk","gas-nobelisk","pulse-nobelisk","cluster-nobelisk","nuke-nobelisk"}) do
+	nobelisks[name] = {
+		name = name,
+		sticker = name.."-armed",
+		onground = name.."-on-ground",
+		detonation = name.."-detonation",
+		cooldown = 12
+	}
+end
+nobelisks['pulse-nobelisk'].cooldown = 24
+nobelisks['gas-nobelisk'].cooldown = 30
+nobelisks['cluster-nobelisk'].cooldown = 48
+nobelisks['nuke-nobelisk'].cooldown = 240
 
 ---@class ExplosionData
+---@field name string Name of the Nobelisk thrown
 ---@field entity LuaEntity Either the entity it is stuck to, or the nobelisk-on-ground entity
 ---@field surface LuaSurface
 ---@field offset Position When stuck to an entity, the offset determines where exactly it was stuck on the entity
@@ -22,32 +45,35 @@ local script_data = {
 
 ---@param event on_script_trigger_effect
 local function onScriptTriggerEffect(event)
-	local source = event.source_entity and event.source_entity.type == "character" and event.source_entity.player and event.source_entity.player.index or 0
-	if event.effect_id == name then
-		local target, offset
-		if event.target_entity and (event.target_entity.type == "unit" or event.target_entity.type == "character" or event.target_entity.type == "car") then
-			target = event.target_entity
+	local playerIndex = event.source_entity and event.source_entity.valid and event.source_entity.type == "character" and event.source_entity.player and event.source_entity.player.index or 0
+	if nobelisks[event.effect_id] then
+		-- a nobelisk projectile hit a potential target; stick it if possible, or drop on ground at this position
+		local names = nobelisks[event.effect_id]
+		local target = event.target_entity
+		local offset
+		if target and (target.type == "unit" or target.type == "character" or target.type == "car") then
 			game.surfaces[event.surface_index].create_entity{
-				name = sticker,
+				name = names.sticker,
 				position = event.target_position,
 				force = event.source_entity and event.source_entity.force or "player",
 				target = event.target_entity
 			}
 			offset = {
-				event.target_entity.position.x - event.target_position.x,
-				event.target_entity.position.y - event.target_position.y
+				target.position.x - event.target_position.x,
+				target.position.y - event.target_position.y
 			}
 		else
 			target = game.surfaces[event.surface_index].create_entity{
-				name = onground,
+				name = names.onground,
 				position = event.target_position,
 				force = event.source_entity and event.source_entity.force or "player"
 			}
 			target.destructible = false
 			offset = {0,0}
 		end
-		if not script_data.queue[source] then script_data.queue[source] = {} end
-		table.insert(script_data.queue[source], {
+		if not script_data.queue[playerIndex] then script_data.queue[playerIndex] = {} end
+		table.insert(script_data.queue[playerIndex], {
+			name = names.name,
 			entity = target,
 			surface = target.surface,
 			offset = offset,
@@ -56,15 +82,50 @@ local function onScriptTriggerEffect(event)
 	end
 	if event.effect_id == detonator then
 		-- transfer player's queued nobelisks into the explosion queue
-		local queue = script_data.queue[source]
+		local queue = script_data.queue[playerIndex]
 		if queue then
-			for i,exp in pairs(queue) do
-				local tick = event.tick + 18 + i*12
+			local tick = event.tick + 18
+			for _,exp in pairs(queue) do
 				if not script_data.explosions[tick] then script_data.explosions[tick] = {} end
 				table.insert(script_data.explosions[tick], exp)
+				tick = tick + (nobelisks[exp.name] and nobelisks[exp.name].cooldown or 12)
 			end
-			(source > 0 and game.players[source] or game).play_sound{path="nobelisk-detonator"}
-			script_data.queue[source] = {}
+			(playerIndex > 0 and game.players[playerIndex] or game).play_sound{path="nobelisk-detonator"}
+			script_data.queue[playerIndex] = {}
+		end
+	end
+	if event.effect_id == manualEffect then
+		-- an entity that is normally indestructible has been exploded!
+		local force = event.source_entity and event.source_entity.valid and event.source_entity.force or game.forces.neutral
+		local target = event.target_entity
+		if not (target and target.valid) then return end
+		target.destructible = true
+		if target.type == "container" then
+			-- spill contents so you don't accidentally do something dumb like put the HUB Parts in wreckage and blow them up...
+			local inventory = target.get_output_inventory()
+			for i=1,#inventory do
+				local stack = inventory[i]
+				if stack.valid_for_read then
+					target.surface.spill_item_stack(target.position, stack, true, force, false)
+				end
+			end
+		end
+		if target.is_entity_with_health then
+			target.die(force)
+		else
+			target.destroy()
+		end
+	end
+	if event.effect_id == nukeEffect then
+		-- gas emitters can be nuked!
+		local force = event.source_entity and event.source_entity.valid and event.source_entity.force or game.forces.neutral
+		local target = event.target_entity
+		if not (target and target.valid) then return end
+		target.destructible = true
+		if target.is_entity_with_health then
+			target.die(force)
+		else
+			target.destroy()
 		end
 	end
 end
@@ -75,7 +136,7 @@ local function onEntityDied(event)
 				if exp.entity == event.entity then
 					-- drop nobelisk on the ground instead
 					exp.entity = event.entity.surface.create_entity{
-						name = onground,
+						name = nobelisks[exp.name].onground,
 						position = event.entity.position,
 						force = exp.force
 					}
@@ -85,121 +146,32 @@ local function onEntityDied(event)
 		end
 	end
 end
--- dictionary of entity names that are part of explodable spaceship wreckage
-local spaceship_wreckage = {
-	["crash-site-spaceship"] = true,
-	["crash-site-spaceship-wreck-big-1"] = true,
-	["crash-site-spaceship-wreck-big-2"] = true,
-	["crash-site-spaceship-wreck-medium-1"] = true,
-	["crash-site-spaceship-wreck-medium-2"] = true,
-	["crash-site-spaceship-wreck-medium-3"] = true,
-	["crash-site-spaceship-wreck-small-1"] = true,
-	["crash-site-spaceship-wreck-small-2"] = true,
-	["crash-site-spaceship-wreck-small-3"] = true,
-	["crash-site-spaceship-wreck-small-4"] = true,
-	["crash-site-spaceship-wreck-small-5"] = true,
-	["crash-site-spaceship-wreck-small-6"] = true
-}
--- target is in range of an explosion, do something!
----@param target LuaEntity
----@param dist2 number Distance^2 from the centre of the explosion
----@param force LuaForce The force that owns the explosion
-local function processExplosion(target, dist2, force)
-	if target.is_entity_with_health and target.destructible then
-		local damage = math.max(1, 50 - dist2)
-		if target.type == "tree" then damage = 100 end
-		target.damage(damage, force, "explosion")
-		return
-	end
-	if target.type == "cliff" then
-		-- smaller explosion radius
-		if dist2 < 4*4 then
-			target.destroy{do_cliff_correction = true}
-		end
-		return
-	end
-	if target.name == "spore-flower" or (target.name == "gas-emitter" and target.health < 5) then
-		-- slightly smaller explosion radius
-		if dist2 < 6*6 then
-			-- override destructibility to kill the entity
-			target.destructible = true
-			target.die(force)
-		end
-		return
-	end
-	if target.name == "rock-huge" then
-		-- slightly smaller explosion radius
-		if dist2 < 6*6 then
-			target.destroy()
-		end
-		return
-	end
-	if spaceship_wreckage[target.name] then
-		-- slightly smaller explosion radius
-		if dist2 < 6*6 then
-			target.destructible = true
-			-- spill contents so you don't accidentally do something dumb like put the HUB Parts in wreckage and blow them up...
-			if target.type == "container" then
-				local inventory = target.get_output_inventory()
-				for i=1,#inventory do
-					local stack = inventory[i]
-					if stack.valid_for_read then
-						target.surface.spill_item_stack(target.position, stack, true, force, false)
-					end
-				end
-			end
-			if target.is_entity_with_health then
-				target.die(force)
-			else
-				target.destroy()
-			end
-		end
-		return
-	end
-end
 
 local function onTick(event)
 	if script_data.explosions[event.tick] then
 		for _,explosion in pairs(script_data.explosions[event.tick]) do
+			local names = nobelisks[explosion.name] or "nobelisk"
 			local pos = explosion.offset
 			if explosion.entity and explosion.entity.valid then
 				pos[1] = pos[1] + explosion.entity.position.x
 				pos[2] = pos[2] + explosion.entity.position.y
 			end
 			explosion.surface.create_entity{
-				name = "big-explosion",
-				position = pos
-			}
-			if explosion.surface.can_place_entity{
-				name = "medium-scorchmark-tintable",
-				position = pos
-			} then explosion.surface.create_entity{
-				name = "medium-scorchmark-tintable",
-				position = pos
-			} end
-			-- find nearby entities-with-health and damage them according to distance from the centre
-			local entities = explosion.surface.find_entities_filtered{
+				name = names.detonation,
 				position = pos,
-				radius = 7
+				force = explosion.force,
+				target = pos,
+				speed = 1
 			}
-			for _,entity in pairs(entities) do
-				if entity.valid then
-					local tpos = entity.position
-					local dx = tpos.x - pos[1]
-					local dy = tpos.y - pos[2]
-					local distance_squared = dx*dx+dy*dy
-					processExplosion(entity, distance_squared, explosion.force)
-				end
-			end
 			if explosion.entity.valid then
-				if explosion.entity.name == onground then
+				if explosion.entity.name == names.onground then
 					explosion.entity.destroy()
 				else
 					-- if entity survived and nobody else has stickied it, remove its sticker
 					local clean = true
 					for _,q in pairs(script_data.queue) do
 						for _,e in pairs(q) do
-							if e.entity and e.entity.valid and e.entity == explosion.entity then
+							if e.name == names.name and e.entity and e.entity.valid and e.entity == explosion.entity then
 								clean = false
 								break
 							end
@@ -208,7 +180,7 @@ local function onTick(event)
 					end
 					if clean then
 						for _,s in pairs(explosion.entity.stickers) do
-							if s.name == sticker then
+							if s.name == names.sticker then
 								s.destroy()
 							end
 						end

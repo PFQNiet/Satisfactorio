@@ -13,7 +13,7 @@ local recipe = {
 	name = name,
 	type = "recipe",
 	ingredients = {
-		{"alient-protein",1}
+		{"alien-protein",1}
 	},
 	result = name,
 	energy_required = 6,

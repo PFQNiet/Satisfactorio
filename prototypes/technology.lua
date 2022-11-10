@@ -736,7 +736,7 @@ addTech("mam-alien-organisms-protein-inhaler", "mam/medicinal-inhaler", "mam", "
 }, {
 	{type="unlock-recipe",recipe="protein-inhaler"}
 })
-addTech("mam-alien-organisms-structural-analysis", "mam/key", "mam", "mam-alien-organisms", "m-1-7", 3, {"mam-align-organisms-bioorganic-properties"}, {
+addTech("mam-alien-organisms-structural-analysis", "mam/key", "mam", "mam-alien-organisms", "m-1-7", 3, {"mam-alien-organisms-bioorganic-properties"}, {
 	{"organic-data-capsule",5},
 	{"iron-rod",100}
 }, {})
@@ -745,11 +745,12 @@ addTech("mam-alien-organisms-rebar-gun", "mam/rebar-gun", "mam", "mam-alien-orga
 	{"reinforced-iron-plate",50},
 	{"screw",500}
 }, {
-	{type="unlock-recipe",recipe="rebar-gun"}
+	{type="unlock-recipe",recipe="rebar-gun"},
+	{type="unlock-recipe",recipe="iron-rebar"}
 })
 addTech("mam-alien-organisms-inflated-pocket-dimension", "mam/thumbsup", "mam", "mam-alien-organisms", "m-1-9", 3, {"mam-alien-organisms-bioorganic-properties"}, {
 	{"alien-protein",3},
-	{"wire",1000}
+	{"copper-cable",1000}
 }, {
 	{type="character-inventory-slots-bonus",modifier=6,use_icon_overlay_constant=false}
 })
@@ -981,7 +982,7 @@ addTech("mam-quartz-factory-lighting", "mam/lights", "mam", "mam-quartz", "m-6-3
 }, {
 	{type="unlock-recipe",recipe="small-lamp"}
 })
-addTech("mam-quartz-shatter-rebar", "mam/crystal-oscillator", "mam", "mam-quartz", "m-6-4", 3, {"mam-quartz-quartz-crystals"}, {
+addTech("mam-quartz-shatter-rebar", "mam/shatter-rebar", "mam", "mam-quartz", "m-6-4", 3, {"mam-quartz-quartz-crystals"}, {
 	{"quartz-crystal",30},
 	{"iron-rebar",150}
 }, {
@@ -1010,7 +1011,7 @@ addTech("mam-quartz-explosive-resonance-application", "mam/pulse-nobelisk", "mam
 }, {
 	{type="unlock-recipe",recipe="pulse-nobelisk"}
 })
-addTech("mam-quartz-explorer", "mam/explorer", "mam", "mam-quartz", "m-6-9", 3, {"mam-quartz-signal-technologies"}, {
+addTech("mam-quartz-explorer", "mam/explorer", "mam", "mam-quartz", "m-6-9", 3, {"mam-quartz-crystal-oscillator"}, {
 	{"crystal-oscillator",10},
 	{"modular-frame",100}
 }, {
@@ -1111,7 +1112,8 @@ addTech("mam-sulfur-turbo-rifle-ammo", "mam/turbo-rifle-ammo", "mam", "mam-sulfu
 	{"packaged-turbofuel",50},
 	{"aluminium-casing",100}
 }, {
-	{type="unlock-recipe",recipe="turbo-rifle-ammo"}
+	{type="unlock-recipe",recipe="turbo-rifle-ammo"},
+	{type="unlock-recipe",recipe="turbo-rifle-ammo-2"}
 })
 addTech("mam-sulfur-inflated-pocket-dimension", "mam/thumbsup", "mam", "mam-sulfur", "m-7-e", 3, {"mam-sulfur-rifle"}, {
 	{"black-powder",50},

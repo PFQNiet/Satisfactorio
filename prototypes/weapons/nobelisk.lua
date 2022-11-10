@@ -3,7 +3,7 @@ local capsule = {
 	name = name,
 	type = "capsule",
 	subgroup = "ammo",
-	order = "b[nobelisk]",
+	order = "c[nobelisk]-a["..name.."]",
 	stack_size = 50,
 	icon = graphics.."icons/"..name..".png",
 	icon_size = 64,
@@ -59,7 +59,7 @@ local projectile = {
 			target_effects = {
 				{
 					type = "script",
-					effect_id = "nobelisk"
+					effect_id = name
 				}
 			}
 		}
@@ -116,79 +116,125 @@ local onground = {
 	selectable_in_game = false
 }
 
-local recipe = {
-	name = name,
-	type = "recipe",
-	ingredients = {
-		{"black-powder",5},
-		{"steel-pipe",10}
-	},
-	result = name,
-	energy_required = 20,
-	category = "assembling",
-	enabled = false
-}
-copyToHandcraft(recipe, 5, true)
-
-data:extend{capsule,projectile,sticker,onground,recipe}
-
-name = "nobelisk-detonator"
-detonator = {
-	name = name,
-	type = "capsule",
-	subgroup = "gun",
-	order = "b[nobelisk]",
-	stack_size = 1,
-	icon = graphics.."icons/"..name..".png",
-	icon_size = 64,
-	capsule_action = {
-		type = "throw",
-		uses_stack = false,
-		attack_parameters = {
-			type = "projectile",
-			activation_type = "activate",
-			range = 0,
-			cooldown = 60,
-			ammo_category = "capsule",
-			ammo_type = {
-				category = "capsule",
-				target_type = "direction",
-				action = {
-					type = "direct",
-					action_delivery = {
-						type = "instant",
-						target_effects = {
-							{
-								type = "script",
-								effect_id = "nobelisk-detonator"
+local detonation = {
+	type = "projectile",
+	name = name.."-detonation",
+	flags = {"not-on-map"},
+	collision_box = {{-0.125,-0.125},{0.125,0.125}},
+	acceleration = 0,
+	animation = empty_graphic,
+	action = {
+		type = "direct",
+		action_delivery = {
+			type = "instant",
+			target_effects = {
+				{
+					type = "create-entity",
+					entity_name = "big-explosion"
+				},
+				{
+					type = "create-entity",
+					entity_name = "medium-scorchmark-tintable",
+					check_buildability = true
+				},
+				{
+					type = "invoke-tile-trigger",
+					repeat_count = 1
+				},
+				{
+					type = "destroy-decoratives",
+					from_render_layer = "decorative",
+					to_render_layer = "object",
+					include_soft_decoratives = true, -- soft decoratives are decoratives with grows_through_rail_path = true
+					include_decals = false,
+					invoke_decorative_trigger = true,
+					decoratives_with_trigger_only = false, -- if true, destroys only decoratives that have trigger_effect set
+					radius = 3.5 -- large radius for demostrative purposes
+				},
+				{
+					type = "nested-result",
+					action = {
+						type = "area",
+						radius = 7,
+						action_delivery = {
+							type = "instant",
+							target_effects = {
+								{
+									type = "damage",
+									damage = {amount = 50, type = "explosion"},
+									apply_damage_to_trees = false,
+									lower_distance_threshold = 0,
+									upper_distance_threshold = 7,
+									lower_damage_modifier = 1,
+									upper_damage_modifier = 0.5
+								},
+								{
+									type = "create-entity",
+									entity_name = "explosion"
+								}
 							}
 						}
 					}
+				},
+				{
+					type = "nested-result",
+					action = {
+						type = "area",
+						radius = 7,
+						trigger_target_mask = {"nobelisk-explodable"},
+						action_delivery = {
+							type = "instant",
+							target_effects = {
+								{
+									type = "script",
+									effect_id = "nobelisk-explodable"
+								}
+							}
+						}
+					}
+				},
+				{
+					type = "nested-result",
+					action = {
+						type = "area",
+						radius = 7,
+						trigger_target_mask = {"chainsawable"},
+						action_delivery = {
+							type = "instant",
+							target_effects = {
+								{
+									type = "damage",
+									damage = {
+										amount = 100,
+										type = "explosion"
+									},
+									vaporize = true
+								}
+							}
+						}
+					}
+				},
+				{
+					type = "destroy-cliffs",
+					radius = 7
 				}
 			}
 		}
 	}
 }
-recipe = {
+
+local recipe = {
 	name = name,
 	type = "recipe",
 	ingredients = {
-		{"object-scanner",5},
-		{"encased-industrial-beam",5},
-		{"copper-cable",50}
+		{"steel-pipe",2},
+		{"black-powder",2}
 	},
 	result = name,
-	energy_required = 20/4,
-	category = "equipment",
+	energy_required = 6,
+	category = "assembling",
 	enabled = false
 }
+copyToHandcraft(recipe, 5, true)
 
-data:extend{detonator,recipe}
-data:extend{
-	{
-		type = "sound",
-		name = "nobelisk-detonator",
-		filename = "__base__/sound/construction-robot-8.ogg",
-		volume = 0.7
-	}
-}
+data:extend{capsule,projectile,sticker,onground,detonation,recipe}

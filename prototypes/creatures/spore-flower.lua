@@ -23,7 +23,7 @@ attack.cooldown_deviation = 0
 attack.damage_modifier = 1
 attack.range = 84
 worm.healing_per_tick = 0
-worm.max_health = 9999
+worm.max_health = 1
 worm.resistances = nil
 worm.call_for_help_radius = 0
 worm.map_generator_bounding_box = {{-3.4,-3.2},{3.4,3.2}}
@@ -34,6 +34,9 @@ for i,flag in pairs(worm.flags) do
 		break
 	end
 end
+-- make vulnerable to nobelisk damage
+if not worm.trigger_target_mask then worm.trigger_target_mask = data.raw['utility-constants'].default.default_trigger_target_mask_by_type['turret'] or {'common'} end
+table.insert(worm.trigger_target_mask, "nobelisk-explodable")
 
 -- uses vanilla poison cloud changes defined in gas-emitter.lua
 data:extend{worm}

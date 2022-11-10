@@ -89,7 +89,9 @@ box.icons = {
 fakebox = table.deepcopy(fakebox)
 fakebox.name = "infinity-"..fakebox.name
 for _,sprite in pairs(fakebox.sprites) do
-	sprite.tint = {255,128,255}
+	for _,layer in pairs(sprite.layers) do
+		layer.tint = {255,128,255}
+	end
 end
 fakebox.minable.result = "infinity-"..fakebox.minable.result
 fakebox.icons = box.icons

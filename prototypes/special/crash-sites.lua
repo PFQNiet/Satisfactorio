@@ -8,36 +8,34 @@ local sounds = copySoundsFrom(data.raw.container["steel-chest"])
 ship.open_sound = sounds.open_sound
 ship.close_sound = sounds.close_sound
 
+local function tweakEntity(type, name, size)
+	local box = data.raw[type][name]
+	box.max_health = 1
+	box.minable = nil
+	box.collision_mask = {"object-layer","train-layer"}
+	if type == "container" then box.inventory_size = size end
+	box.localised_description = {"entity-description.crash-site-debris"}
+	-- make vulnerable to nobelisk damage
+	if not box.trigger_target_mask then box.trigger_target_mask = data.raw['utility-constants'].default.default_trigger_target_mask_by_type[type] or {'common'} end
+	table.insert(box.trigger_target_mask, "nobelisk-explodable")
+end
+
 -- alter crash site parts to also have 1 max HP (although they need to be set indestructible manually since Factorio doesn't trigger raise_built on them)
 for _,n in pairs({
 	"crash-site-spaceship-wreck-big-1", "crash-site-spaceship-wreck-big-2"
 }) do
-	local box = data.raw.container[n]
-	box.max_health = 1
-	box.minable = nil
-	box.collision_mask = {"object-layer","train-layer"}
-	box.inventory_size = 6
-	box.localised_description = {"entity-description.crash-site-debris"}
+	tweakEntity('container',n,6)
 end
 for _,n in pairs({
 	"crash-site-spaceship-wreck-medium-1", "crash-site-spaceship-wreck-medium-2", "crash-site-spaceship-wreck-medium-3"
 }) do
-	local box = data.raw.container[n]
-	box.max_health = 1
-	box.minable = nil
-	box.collision_mask = {"object-layer","train-layer"}
-	box.inventory_size = 4
-	box.localised_description = {"entity-description.crash-site-debris"}
+	tweakEntity('container',n,4)
 end
 for _,n in pairs({
 	"crash-site-spaceship-wreck-small-1", "crash-site-spaceship-wreck-small-2", "crash-site-spaceship-wreck-small-3",
 	"crash-site-spaceship-wreck-small-4", "crash-site-spaceship-wreck-small-5", "crash-site-spaceship-wreck-small-6"
 }) do
-	local box = data.raw['simple-entity-with-owner'][n]
-	box.max_health = 1
-	box.minable = nil
-	box.collision_mask = {"object-layer","train-layer"}
-	box.localised_description = {"entity-description.crash-site-debris"}
+	tweakEntity('simple-entity-with-owner',n)
 end
 
 -- add an EEI to accept power

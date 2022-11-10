@@ -37,7 +37,7 @@ local recipes = {
 		energy_required = 16,
 		category = "assembling",
 		icons = {"compacted-coal"},
-		prerequisites = {"alt-compacted-coal"}
+		prerequisites = {"mam-sulfur-compacted-coal"}
 	},
 	{
 		name = "caterium-wire",
@@ -115,7 +115,7 @@ local recipes = {
 		energy_required = 40,
 		category = "manufacturing",
 		icons = {"crystal-oscillator"},
-		prerequisites = {"mam-sulfur-nobelisk","mam-quartz-quartz-crystals"}
+		prerequisites = {"mam-sulfur-nobelisk-detonator","mam-quartz-quartz-crystals"}
 	},
 	{
 		name = "turbo-blend-fuel",
@@ -296,7 +296,7 @@ local recipes = {
 		energy_required = 16,
 		category = "foundry",
 		icons = {"compacted-coal"},
-		prerequisites = {"hub-tier3-basic-steel-production","alt-compacted-coal"}
+		prerequisites = {"hub-tier3-basic-steel-production","mam-sulfur-compacted-coal"}
 	},
 	{
 		name = "crystal-beacon",
@@ -413,19 +413,6 @@ local recipes = {
 		category = "refining",
 		icons = {"water"},
 		prerequisites = {"hub-tier3-coal-power","mam-quartz-quartz-crystals"}
-	},
-	{
-		name = "compacted-coal",
-		ingredients = {
-			{"coal",5},
-			{"sulfur",5}
-		},
-		result = "compacted-coal",
-		result_count = 5,
-		energy_required = 12,
-		category = "assembling",
-		icons = {},
-		prerequisites = {"hub-tier3-coal-power","mam-sulfur-sulfur"}
 	},
 	{
 		name = "encased-industrial-pipe",
@@ -858,7 +845,7 @@ local recipes = {
 		energy_required = 8,
 		category = "refining",
 		icons = {"heavy-oil-residue"},
-		prerequisites = {"hub-tier5-oil-processing","alt-compacted-coal"}
+		prerequisites = {"hub-tier5-oil-processing","mam-sulfur-compacted-coal"}
 	},
 	{
 		name = "classic-battery",
